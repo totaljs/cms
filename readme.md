@@ -13,3 +13,6 @@
 - install `$ npm install total.js`
 - open cms directory `$ cd cms`
 - run it `node debug.js`
+
+[license-image]: https://img.shields.io/badge/license-MIT-blue.svg?style=flat
+[license-url]: license.txt
