@@ -6,8 +6,6 @@
 
 - New version: `v7.0.0` (works only with __Total.js v2.0.2__)
 
----
-
 ## Installation
 
 - install `$ npm install total.js`
