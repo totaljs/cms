@@ -473,7 +473,7 @@ COMPONENT('textarea', function() {
 		self.$oldstate = invalid;
 		container.toggleClass('ui-textarea-invalid', self.isInvalid());
 	};
-});window.
+});
 
 COMPONENT('template', function() {
 	var self = this;
