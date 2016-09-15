@@ -1,13 +1,21 @@
-<div data-component="form" data-title="@(Select widget)" data-component-path="cmseditor.window" data-if="value === 'widgets'" data-width="500px" data-component-id="cmseditor_widgets">
+<div data-component="form" data-title="@(Select widget)" data-component-path="cmseditor.window" data-if="value === 'widgets'" data-width="600px" data-component-id="cmseditor_widgets">
+	<div class="padding npb">
+		<div data-component="textbox" data-component-path="cmseditor.widgetssearch" data-control-icon="fa-search" data-placeholder="@(Search widgets)"></div>
+	</div>
+	<hr class="nmb" />
 	<div class="padding">
-		<div data-component="repeater-group" data-component-path="cmseditor.widgets2" data-group="category">
-			<script type="text/html">
-				<div class="pages-editor-widget" data-id="{{ id }}" data-template="{{ istemplate }}" data-name="{{ name }}"><span class="fa fa-{{ if icon }}{{ icon }}{{ else if istemplate }}code{{ else }}plug{{ fi }} w18"></span> {{ name }}</div>
-			</script>
-			<script type="text/html">
-				<br />
-				<div class="silver fs11" style="margin-bottom:5px">{{ category }}</div>
-			</script>
+		<div data-component="search" data-component-path="cmseditor.widgetssearch" data-selector=".inline-search" data-class="hidden">
+			<div data-component="repeater-group" data-component-path="cmseditor.widgets2" data-group="category">
+				<script type="text/html">
+					<div class="pages-editor-widget inline-search" data-id="{{ id }}" data-template="{{ istemplate }}" data-name="{{ name }}" data-search="{{ name }}"><span class="fa fa-{{ if icon }}{{ icon }}{{ else if istemplate }}code{{ else }}plug{{ fi }} w18"></span> {{ name }}</div>
+				</script>
+				<script type="text/html">
+					<div class="inline-search">
+						{{ if index }}<br />{{ fi }}
+						<div class="silver fs11 mb5">{{ category }}</div>
+					</div>
+				</script>
+			</div>
 		</div>
 	</div>
 	<div class="ui-form-buttons">
@@ -66,9 +74,18 @@
 				<div data-component="textbox" data-component-path="cmseditor.attribute.title" class="m">@(Title)</div>
 				<div data-component="textbox" data-component-path="cmseditor.attribute.id" class="m">@(ID)</div>
 				<div data-component="textbox" data-component-path="cmseditor.attribute.cls" class="m">@(Class name)</div>
+				<div data-component="textbox" data-component-path="cmseditor.attribute.css" class="m">@(Custom styles)</div>
 			</div>
 		</div>
 	</div>
+
+	<div data-component="visible" data-component-path="cmseditor.attribute.isiframe" data-if="value === true">
+		<hr />
+		<div class="padding npt">
+			<div data-component="textbox" data-component-path="cmseditor.attribute.src" class="m">@(URL)</div>
+		</div>
+	</div>
+
 	<div data-component="visible" data-component-path="cmseditor.attribute.isimage" data-if="value === true">
 		<hr />
 		<div class="padding npt">
@@ -87,7 +104,7 @@
 				<div class="col-md-4">
 					<div data-component="textbox" data-component-path="cmseditor.attribute.dataheight" class="m" data-maxlenght="4" data-placeholder="120" data-align="center">@(Height)</div>
 				</div>
-				<div class="col-md-4">
+				<div class="col-md-4" data-component="visible" data-component-path="cmseditor.attribute.imgdefined" data-if="value">
 					<div data-component="textbox" data-component-path="cmseditor.attribute.datasize" class="m" data-maxlenght="4" data-placeholder="0%" data-align="center">@(Percentage)</div>
 				</div>
 			</div>
@@ -161,24 +178,22 @@
 	cmseditor.widgets = []; // Contains all widgets
 	cmseditor.widgets2 = []; // Contains all filtered widgets
 	cmseditor.settings = []; // Contains all widgets settings
+	cmseditor.widgetssearch = '';
 
 	setTimeout(function() {
 		$('#cmseditor_inlineupload').on('change', function(e) {
 			var data = new FormData();
 			var files = e.target.files;
 			var errmsg = $(this).attr('data-error-large');
-			var loading = FIND('loading').show();
+			SETTER('loading', 'show');
 			data.append('file0', files[0]);
 			this.value = '';
-			jC.UPLOAD('{0}/upload/'.format(managerurl), data, function(response, err) {
+			UPLOAD('{0}/upload/'.format(managerurl), data, function(response, err) {
+
+				SETTER('loading', 'hide', 100);
 
 				if (err) {
-					loading.hide();
-					var message = FIND('message');
-					if (message)
-						message.warning(errmsg);
-					else
-						alert(errmsg);
+					SETTER('message', 'warning', errmsg);
 					return;
 				}
 
@@ -186,8 +201,6 @@
 					cmseditor.instance.getTarget().attr('src', '/download/' + response[0]);
 					cmseditor.instance.change(true);
 				}
-
-				loading.hide(500);
 			});
 		});
 	}, 1000);
@@ -210,8 +223,7 @@
 		};
 
 		self.init = function() {
-			if (!window.widgets)
-				self.refreshWidgets();
+			!window.widgets && self.refreshWidgets();
 			WATCH('widgets.grid', function(path, value, type) {
 				var items = value && value.items ? value.items : [];
 				cmseditor.widgets = items; // cache
@@ -221,10 +233,8 @@
 
 		self.save = function(callback, type) {
 			var w = self.getWindow();
-			if (w.$cmseditor_save)
-				w.$cmseditor_save(type);
-			if (w.COM)
-				w.COM.emit('cmseditor.save', type);
+			w.$cmseditor_save && w.$cmseditor_save(type);
+			w.COM && w.COM.emit('cmseditor.save', type);
 			setTimeout(callback, 1000);
 		};
 
@@ -246,7 +256,6 @@
 			frm.document.write(content.replace('</body>', offsetter + '</body>'));
 			frm.document.close();
 			frm.$cmseditor = true;
-
 			iframe.css({ height: 'auto' });
 
 			setTimeout(function() {
@@ -330,8 +339,7 @@
 		};
 
 		self.state = function(type, who) {
-			if (who === 2)
-				self.resize(true);
+			who === 2 && self.resize(true);
 		};
 
 		self.getWidgets = function() {
@@ -384,11 +392,8 @@
 			for (var i = 0; i < length; i++) {
 				var word = words[i].trim();
 
-				if (word.length < min)
+				if (word.length < min || counter >= count)
 					continue;
-
-				if (counter >= count)
-					break;
 
 				if (alternative)
 					word = word.substring(0, (word.length / 100) * 80);
@@ -426,11 +431,8 @@
 		self.getPictures = function() {
 			var pictures = [];
 			self.doFind('img.CMS_edit').each(function() {
-				var el = $(this);
-				var url = el.attr('src');
-				if (pictures.indexOf(url) !== -1)
-					return;
-				pictures.length < 5 && pictures.push(url);
+				var url = $(this).attr('src');
+				url.substring(0, 5).toLowerCase() !== 'data:' && pictures.indexOf(url) === -1 && pictures.length < 5 && pictures.push(url);
 			});
 
 			return pictures;
@@ -449,11 +451,11 @@
 			content.find('.CMS_widget').html('');
 			content.find('.CMS_selected').removeClass('CMS_selected');
 			content.find('.CMS_edit:empty,.CMS_remove:empty,.CMS_widgets:empty').each(function() {
-				if (this.nodeName === 'IMG')
+				var tag = this.nodeName;
+				if (tag === 'IMG' || tag === 'IFRAME')
 					return;
 				var cls = this.getAttribute('class');
-				if (cls.indexOf('CMS_widget') === -1 && cls.indexOf('fa') === -1)
-					$(this).remove();
+				cls.indexOf('CMS_widget') === -1 && cls.indexOf('fa') === -1 && $(this).detach().remove();
 			});
 			return (content.find('#CMS').html() || '').trim().replace(offsetter, '');
 		};
@@ -493,6 +495,7 @@
 				}, 100);
 
 				var arr = el.attr('class').split(/\s+/);
+				var tag = this.nodeName;
 				target = el;
 
 				panel.find('span').each(function() {
@@ -525,6 +528,9 @@
 
 					if (disabled && name === 'widgets')
 						disabled = self.getParent('CMS_widgets', 5) === null;
+
+					if (name === 'edit' && tag === 'IFRAME')
+						disabled = true;
 
 					el.toggleClass('CMS_panel_disabled', disabled);
 				});
@@ -571,7 +577,7 @@
 					var url = '#' + Date.now();
 					self.getDocument().execCommand('CreateLink', false, url);
 					var tmp = self.getTarget().find('a[href="' + url + '"]');
-					if (tmp.length === 0)
+					if (!tmp.length)
 						return;
 
 					tmp.attr('class', 'CMS_edit');
@@ -639,18 +645,34 @@
 						var arr = [];
 
 						cls.forEach(function(cls) {
-							if (cls.substring(0, 4) !== 'CMS_')
-								arr.push(cls);
+							cls.substring(0, 4) !== 'CMS_' && arr.push(cls);
 						});
 
-						cmseditor.attribute.isimage = target.get(0).nodeName === 'IMG';
+						var tag = target.get(0).nodeName;
+						cmseditor.attribute.isimage = tag === 'IMG';
+						cmseditor.attribute.isiframe = tag === 'IFRAME';
 						cmseditor.attribute.id = target.attr('id') || '';
 						cmseditor.attribute.cls = arr.join(' ');
+						cmseditor.attribute.css = target.attr('style') || '';
 						cmseditor.attribute.title = target.attr('title') || '';
 
+						if (cmseditor.attribute.isiframe)
+							cmseditor.attribute.src = target.attr('src') || '';
+
 						if (cmseditor.attribute.isimage) {
-							cmseditor.attribute.datawidth = target.attr('data-width');
-							cmseditor.attribute.dataheight = target.attr('data-height');
+
+							var tw = target.attr('data-width');
+							var th = target.attr('data-height');
+
+							cmseditor.attribute.imgdefined = tw != null || th != null;
+
+							if (!cmseditor.attribute.imgdefined) {
+								tw = target.attr('width');
+								th = target.attr('height');
+							}
+
+							cmseditor.attribute.datawidth = tw;
+							cmseditor.attribute.dataheight = th;
 							cmseditor.attribute.datasize = target.attr('data-size');
 							cmseditor.attribute.alt = target.attr('alt') || '';
 						}
@@ -699,11 +721,11 @@
 							if (typeof(cmseditor.icons) === 'string') {
 								// Generate icons
 								cmseditor.icons = cmseditor.icons.split(',');
-								var builder = '';
+								var builder = [];
 								for (var i = 0, length = cmseditor.icons.length; i < length; i++)
-									builder += '<div class="col-xs-1"><span class="fa fa-' + cmseditor.icons[i] + '"></span></div>';
-								delete cmseditor.icons;
-								$('#cmseditoricons').html(builder);
+									builder.push('<div class="col-xs-1 inline-search" data-search="{0}"><span class="fa fa-{0}"></span></div>'.format(cmseditor.icons[i]));
+								cmseditor.icons = undefined;
+								$('#cmseditoricons').html(builder.join(''));
 							}
 
 							SET('cmseditor.window', 'icon');
@@ -733,7 +755,7 @@
 							cmseditor.crop.href = '';
 
 							var parent = target.parent('a');
-							if (parent.length > 0)
+							if (parent.length)
 								cmseditor.crop.href = parent.attr('href');
 
 							UPDATE('cmseditor.crop', true);
@@ -797,17 +819,18 @@
 		self.load = function(type) {
 			setTimeout(function() {
 				var w = self.getWindow();
-				if (w.$cmseditor_load)
-					w.$cmseditor_load(type);
-				if (w.COM)
-					w.COM.emit('cmseditor.load', type);
+				w.$cmseditor_load && w.$cmseditor_load(type);
+				w.COM && w.COM.emit('cmseditor.load', type);
 			}, 1000);
 		};
 
 		self.resize = function(force) {
-			setTimeout(function() {
+			setTimeout2('cmseditor', function() {
 				var contents = self.getContents();
-				var h = navigator.userAgent.indexOf('Safari') === -1 ? contents.outerHeight() : contents.find('#cmseditorheight').offset().top;
+				var elheight = contents.find('#cmseditorheight');
+				if (!elheight.length)
+					return self.resize(500);
+				var h = navigator.userAgent.indexOf('Safari') === -1 ? contents.outerHeight() : elheight.offset().top;
 				iframe.css({ height: h + 50 });
 				width = contents.width();
 				setTimeout(function() {
@@ -821,7 +844,7 @@
 			// Sets the current instance of editor to global variable
 			cmseditor.instance = self;
 
-			if (value === null || value === undefined) {
+			if (value == null) {
 				self.write('');
 				return;
 			}
@@ -912,10 +935,7 @@
 			var cropper = FIND('#cmseditor.crop');
 
 			target.attr('alt', cmseditor.crop.alt);
-
-			if (cmseditor.crop.href)
-				target.parent('a').attr('href', cmseditor.crop.href);
-
+			cmseditor.crop.href && target.parent('a').attr('href', cmseditor.crop.href);
 			editor.change(true);
 
 			// Is the picture changed?
@@ -925,36 +945,27 @@
 			}
 
 			var data = cropper.output();
-			var loading = FIND('loading');
-
-			loading.show();
+			SETTER('loading', 'show');
 
 			AJAX('POST {0}/upload/base64/'.format(managerurl), { file: data }, function(response, err) {
 
+				SETTER('loading', 'hide', 500);
+
 				if (err) {
-					var errmsg = $('#cmseditor_inlineupload').attr('data-error-large');
-					var message = FIND('message');
-					if (message)
-						message.warning(errmsg);
-					else
-						alert(errmsg);
-					loading.hide(500);
+					SETTER('message', 'warning', $('#cmseditor_inlineupload').attr('data-error-large'));
 					return;
 				}
 
-				if (response) {
-					setTimeout(function() {
-						var size = target.attr('data-size');
-						if (size) {
-							target.attr('data-original', response);
-							target.attr('src', response + '?s=' + size.replace('%', ''));
-						} else
-							target.attr('src', response);
-					}, 1000);
-				}
+				response && setTimeout(function() {
+					var size = target.attr('data-size');
+					if (size) {
+						target.attr('data-original', response);
+						target.attr('src', response + '?s=' + size.replace('%', ''));
+					} else
+						target.attr('src', response);
+				}, 1000);
 
 				setTimeout(hide, 1000);
-				loading.hide(1500);
 			});
 		};
 	});
@@ -984,9 +995,7 @@
 			else
 				link.attr('target', cmseditor.link.target);
 
-			if (target.data('temporary'))
-				target.removeData('temporary');
-
+			target.data('temporary') && target.removeData('temporary');
 			editor.change(true);
 			hide();
 		};
@@ -1022,6 +1031,9 @@
 			else
 				target.removeAttr('title');
 
+			if (cmseditor.attribute.isiframe)
+				target.attr('src', cmseditor.attribute.src.trim());
+
 			if (cmseditor.attribute.isimage) {
 				if (cmseditor.attribute.alt)
 					target.attr('alt', cmseditor.attribute.alt.trim());
@@ -1038,31 +1050,41 @@
 			var arr = target.attr('class').split(' ');
 			var cls = [];
 
-			for (var i = 0, length = arr.length; i < length; i++) {
-				if (arr[i].substring(0, 4) === 'CMS_')
-					cls.push(arr[i]);
-			}
+			for (var i = 0, length = arr.length; i < length; i++)
+				arr[i].substring(0, 4) === 'CMS_' && cls.push(arr[i]);
 
 			if (cmseditor.attribute.isimage) {
-				if (cmseditor.attribute.datawidth)
-					target.attr('data-width', cmseditor.attribute.datawidth);
-				else
-					target.removeAttr('data-width');
-
-				if (cmseditor.attribute.dataheight)
-					target.attr('data-width', cmseditor.attribute.dataheight);
-				else
-					target.removeAttr('data-width');
-
-				if (cmseditor.attribute.datasize)
-					target.attr('data-size', cmseditor.attribute.datasize + (cmseditor.attribute.datasize.lastIndexOf('%') === -1 ? '%' : ''));
-				else
-					target.removeAttr('data-size');
+				if (cmseditor.attribute.imgdefined) {
+					if (cmseditor.attribute.datawidth)
+						target.attr('data-width', cmseditor.attribute.datawidth);
+					else
+						target.removeAttr('data-width');
+					if (cmseditor.attribute.dataheight)
+						target.attr('data-width', cmseditor.attribute.dataheight);
+					else
+						target.removeAttr('data-width');
+					if (cmseditor.attribute.datasize)
+						target.attr('data-size', cmseditor.attribute.datasize + (cmseditor.attribute.datasize.lastIndexOf('%') === -1 ? '%' : ''));
+					else
+						target.removeAttr('data-size');
+				} else {
+					if (cmseditor.attribute.datawidth)
+						target.attr('width', cmseditor.attribute.datawidth);
+					else
+						target.removeAttr('width');
+					if (cmseditor.attribute.datawidth)
+						target.attr('height', cmseditor.attribute.dataheight);
+					else
+						target.removeAttr('height');
+				}
 			}
 
-			if (cmseditor.attribute.cls)
-				cls.push(cmseditor.attribute.cls.trim());
+			if (cmseditor.attribute.css)
+				target.attr('style', cmseditor.attribute.css);
+			else
+				target.removeAttr('style');
 
+			cmseditor.attribute.cls && cls.push(cmseditor.attribute.cls.trim());
 			target.attr('class', cls.join(' '));
 			cmseditor.instance.change(true);
 			hide();
@@ -1117,8 +1139,7 @@
 
 		var arr = [];
 		cmseditor.widgets.forEach(function(item) {
-			if (item.istemplate)
-				arr.push(item);
+			item.istemplate && arr.push(item);
 		});
 
 		SET('cmseditor.widgets2', arr);

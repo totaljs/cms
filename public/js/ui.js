@@ -53,9 +53,7 @@ COMPONENT('message', function() {
 		});
 
 		$(window).on('keyup', function(e) {
-			if (!visible)
-				return;
-			e.keyCode === 27 && self.hide();
+			visible && e.keyCode === 27 && self.hide();
 		});
 	};
 
@@ -515,7 +513,13 @@ COMPONENT('repeater', function() {
 	self.readonly();
 
 	self.make = function() {
-		var element = self.element.find('script');
+		var element = self.find('script');
+
+		if (!element.length) {
+			element = self.element;
+			self.element = self.element.parent();
+		}
+
 		var html = element.html();
 		element.remove();
 		self.template = Tangular.compile(html);
@@ -887,8 +891,9 @@ COMPONENT('form', function() {
 			});
 		});
 
-		$(document).on('click', '.ui-form-container-padding', function(e) {
-			if (!$(e.target).hasClass('ui-form-container-padding'))
+		$(document).on('click', '.ui-form-container', function(e) {
+			var el = $(e.target);
+			if (!(el.hasClass('ui-form-container-padding') || el.hasClass('ui-form-container')))
 				return;
 			var form = $(this).find('.ui-form');
 			var cls = 'ui-form-animate-click';
@@ -1206,6 +1211,7 @@ COMPONENT('repeater-group', function() {
 		}
 
 		var index = 0;
+		var indexgroup = 0;
 		var builder = '';
 		var keys = Object.keys(groups);
 
@@ -1217,6 +1223,7 @@ COMPONENT('repeater-group', function() {
 				var options = {};
 				options[group] = key;
 				options.length = arr.length;
+				options.index = indexgroup++;
 				builder += template_group(options);
 			}
 
@@ -1234,7 +1241,7 @@ COMPONENT('repeater-group', function() {
 COMPONENT('dropdowncheckbox', function() {
 
 	var self = this;
-	var required = self.element.attr('data-required') === 'true';
+	var required = self.attr('data-required') === 'true';
 	var datasource = '';
 	var container;
 	var data = [];
@@ -1253,7 +1260,7 @@ COMPONENT('dropdowncheckbox', function() {
 
 		var options = [];
 		var element = self.element;
-		var arr = (element.attr('data-options') || '').split(';');
+		var arr = (self.attr('data-options') || '').split(';');
 
 		for (var i = 0, length = arr.length; i < length; i++) {
 			var item = arr[i].split('|');
@@ -1266,7 +1273,7 @@ COMPONENT('dropdowncheckbox', function() {
 		}
 
 		var content = element.html();
-		var icon = element.attr('data-icon');
+		var icon = self.attr('data-icon');
 		var html = '<div class="ui-dropdowncheckbox"><span class="fa fa-sort"></span><div class="ui-dropdowncheckbox-selected"></div></div><div class="ui-dropdowncheckbox-values hidden">' + options.join('') + '</div>';
 
 		if (content.length) {
@@ -1276,9 +1283,9 @@ COMPONENT('dropdowncheckbox', function() {
 		} else
 			element.append(html);
 
-		self.element.addClass('ui-dropdowncheckbox-container');
-		container = self.element.find('.ui-dropdowncheckbox-values');
-		values = self.element.find('.ui-dropdowncheckbox-selected');
+		self.toggle('ui-dropdowncheckbox-container');
+		container = self.find('.ui-dropdowncheckbox-values');
+		values = self.find('.ui-dropdowncheckbox-selected');
 
 		self.element.on('click', '.ui-dropdowncheckbox', function(e) {
 
@@ -1306,7 +1313,6 @@ COMPONENT('dropdowncheckbox', function() {
 			var is = this.checked;
 			var index = parseInt(this.value);
 			var value = data[index];
-
 			if (value === undefined)
 				return;
 
@@ -1314,7 +1320,7 @@ COMPONENT('dropdowncheckbox', function() {
 
 			var arr = self.get();
 			if (!(arr instanceof Array))
-				arr = EMPTYARRAY;
+				arr = [];
 
 			var index = arr.indexOf(value);
 			if (is)
@@ -1421,11 +1427,7 @@ COMPONENT('dropdowncheckbox', function() {
 			this.checked = checked;
 		});
 
-		if (!label && value) {
-			// invalid data
-			// it updates model without notification
-			MAN.set(self.path, []);
-		}
+		!label && value && MAN.set(self.path, []);
 
 		if (!label && empty) {
 			values.html('<span>{0}</span>'.format(empty));
@@ -2258,6 +2260,49 @@ COMPONENT('pagination', function() {
 // ==========================================================
 // @{end}
 // ==========================================================
+
+COMPONENT('search', function() {
+
+	var self = this;
+	var options_class;
+	var options_selector;
+	var options_attribute;
+	var options_delay;
+
+	self.readonly();
+	self.make = function() {
+		options_class = self.attr('data-class') || 'hidden';
+		options_selector = self.attr('data-selector');
+		options_attribute = self.attr('data-attribute') || 'data-search';
+		options_delay = (self.attr('data-delay') || '200').parseInt();
+	};
+
+	self.setter = function(value) {
+
+		if (!options_selector || !options_attribute)
+			return;
+
+		KEYPRESS(function() {
+
+			var elements = self.element.find(options_selector);
+
+			if (!value) {
+				elements.removeClass(options_class);
+				return;
+			}
+
+			var search = value.toLowerCase().replace(/y/gi, 'i');
+
+			elements.toArray().waitFor(function(item, next) {
+				var el = $(item);
+				var val = (el.attr(options_attribute) || '').toLowerCase().replace(/y/gi, 'i');
+				el.toggleClass(options_class, val.indexOf(search) === -1);
+				setTimeout(next, 3);
+			});
+
+		}, options_delay, 'search' + self.id);
+	};
+});
 
 jC.parser(function(path, value, type) {
 

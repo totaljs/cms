@@ -96,16 +96,12 @@ Tangular.register('price', function(value, format) {
 	return currency.format(value.format(format));
 });
 
-Tangular.register('join', function(value) {
-	if (value instanceof Array)
-		return value.join(', ');
-	return '';
+Tangular.register('join', function(value, delimiter) {
+	return value instanceof Array ? value.join(delimiter || ', ') : '';
 });
 
 Tangular.register('default', function(value, def) {
-	if (value == null || value === '')
-		return def;
-	return value;
+	return value == null || value === '' ? def : value;
 });
 
 function getSelectionStartNode(context){
