@@ -542,12 +542,16 @@ F.eval(function() {
 });
 
 function clean(body) {
+
 	var beg;
+	var end;
 	var index = 0;
 	var count = 0;
-	var counter = 0;
 	var a = '<div class="CMS_template CMS_remove">';
 	var b = ' data-themes="';
+	var c = 'CMS_unwrap';
+	var tag;
+	var tagend;
 
 	body = U.minifyHTML(body);
 
@@ -583,8 +587,6 @@ function clean(body) {
 		}
 	}
 
-	beg = undefined;
-
 	while (true) {
 		beg = body.indexOf(b, beg);
 		if (beg === -1)
@@ -593,6 +595,63 @@ function clean(body) {
 		if (index === -1)
 			break;
 		body = body.substring(0, beg) + body.substring(index + 1);
+	}
+
+	var counter = 0;
+	var tmp = 0;
+
+	while (true) {
+
+		if (counter++ > 1000)
+			break;
+
+		beg = body.indexOf(c, beg);
+		if (beg === -1)
+			break;
+
+		index = beg;
+		while (true) {
+			if (body[--index] === '<' || index <= 0)
+				break;
+		}
+
+		if (index === beg || index <= 0)
+			return;
+
+		tag = body.substring(index + 1, body.indexOf('>', index + 1));
+		end = index + tag.length + 2;
+		tag = tag.substring(0, tag.indexOf(' '));
+		tagend = '</' + tag;
+		tag = '<' + tag;
+		count = 0;
+		beg = index;
+		index = end;
+
+		while (true) {
+			var str = body.substring(index, index + tagend.length);
+
+			if (index >= body.length) {
+				beg = body.length;
+				break;
+			}
+
+			if (str === tagend) {
+
+				if (count) {
+					count--;
+					index++;
+					continue;
+				}
+
+				body = body.substring(0, beg) + body.substring(end, index) + body.substring(index + 1 + tagend.length);
+				break;
+			}
+
+			if (str.substring(0, tag.length) === tag)
+				count++;
+
+			index++;
+		}
 	}
 
 	return body.replace(REGEXP_HTML_CLASS, function(text) {

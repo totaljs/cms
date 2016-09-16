@@ -41,7 +41,7 @@ if (window.su) {
 	});
 
 	can('settings') && jR.route(managerurl + '/settings/', function() {
-			SET('common.page', 'settings');
+		SET('common.page', 'settings');
 	});
 
 	can('users') && jR.route(managerurl + '/users/', function() {

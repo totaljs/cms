@@ -267,6 +267,18 @@
 				self.setEvents();
 				self.resize(10);
 			}, 500);
+
+			setTimeout(function() {
+				self.resize();
+			}, 3000);
+
+			setTimeout(function() {
+				self.resize();
+			}, 6000);
+
+			setTimeout(function() {
+				self.resize();
+			}, 10000);
 		};
 
 		self.setTemplate = function(name) {
@@ -492,8 +504,6 @@
 				if (left + 270 > width)
 					left = width - 270;
 
-				panel.css({ left: left, top: off.top - panel.innerHeight() - 5 });
-
 				// Firefox
 				setTimeout(function() {
 					panel.show();
@@ -501,8 +511,16 @@
 
 				var arr = el.attr('class').split(/\s+/);
 				var tag = this.nodeName;
+				var info = body.find('#CMS_panel_info');
+
 				target = el;
 
+				if (tag === 'IMG')
+					info.html('&lt;img /&gt; <b>{0}</b>x<b>{1}</b>px'.format(this.width, this.height));
+				else
+					info.html('&lt;{0}{1}&gt;'.format(tag.toLowerCase(), tag === 'BR' || tag === 'HR' ? ' /' : ''));
+
+				panel.css({ left: left, top: off.top - panel.innerHeight() - 5 });
 				panel.find('span').each(function() {
 					var el = $(this);
 					var name = el.attr('data-name');
@@ -550,7 +568,7 @@
 				var text = e.originalEvent.clipboardData.getData('text/plain');
 				if (target.hasClass('CMS_singleline'))
 					text = text.replace(/\n\r/g, ' ');
-				self.getDocument().execCommand('insertText', false, text);
+				self.getDocument().execCommand('insertText', false, text.trim().replace(/\s{2,}/g, ' ').replace(/\&nbsp;/g, ' '));
 			});
 
 			body.unbind('keydown').on('keydown', function(e) {
@@ -892,7 +910,7 @@
 			AJAX('POST {0}/api/pages/preview/'.format(managerurl), options, function(response) {
 				if (isError(arguments))
 					return;
-				self.write(response.replace('</body>', '<div id="CMS_panel"><span class="fa fa-pencil" title="@(Edit)" data-name="edit"></span><span class="fa fa-link" title="@(Change link)" data-name="link"></span><span class="fa fa-quote-left" title="@(Change attributes)" data-name="attribute"></span><span class="fa fa-copy" title="@(Duplicate)" data-name="repeat"></span></span><span class="fa fa-plug" title="@(Add widget)" data-name="widgets"></span><span class="fa fa-trash" title="@(Remove content)" data-name="remove"></span><span class="fa fa-toggle-down" title="@(Hide)" data-name="hide"></span></div></body>'));
+				self.write(response.replace('</body>', '<div id="CMS_panel"><div id="CMS_panel_info"></div><div class="CMS_panel_buttons"><span class="fa fa-pencil" title="@(Edit)" data-name="edit"></span><span class="fa fa-link" title="@(Change link)" data-name="link"></span><span class="fa fa-quote-left" title="@(Change attributes)" data-name="attribute"></span><span class="fa fa-copy" title="@(Duplicate)" data-name="repeat"></span></span><span class="fa fa-plug" title="@(Add widget)" data-name="widgets"></span><span class="fa fa-trash" title="@(Remove content)" data-name="remove"></span><span class="fa fa-toggle-down" title="@(Hide)" data-name="hide"></span></div></div></body>'));
 				SETTER('loading', 'hide', 500);
 			});
 		};
