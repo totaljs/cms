@@ -4,7 +4,7 @@
 
 # Node.js CMS
 
-- New version: `v7.0.0` (works only with __Total.js v2.0.2__)
+- New version: `v7.0.0` (works only with __Total.js v2.1.0__)
 
 ## Installation
 
