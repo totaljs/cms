@@ -7,6 +7,8 @@
 // Supported workflows
 // "create-url"
 
+const REGEXP_HTML_CLASS = /(\s)class\=\".*?\"/g;
+
 NEWSCHEMA('Page').make(function(schema) {
 
 	schema.define('id', 'String(20)');
@@ -287,28 +289,12 @@ NEWSCHEMA('Page').make(function(schema) {
 						}, true);
 
 					}, function() {
+
 						// DONE
 						if (response.language)
 							response.body = F.translator(response.language, response.body);
 
-						response.body = U.minifyHTML(response.body.replace(/<br>/g, '<br />'));
-
-						// cleaner
-						response.body = response.body.replace(/(\s)class\=\".*?\"/g, function(text) {
-
-							var is = text[0] === ' ';
-							var arr = text.substring(is ? 8 : 7, text.length - 1).split(' ');
-							var builder = '';
-
-							for (var i = 0, length = arr.length; i < length; i++) {
-								var cls = arr[i];
-								if (cls[0] === 'C' && cls[3] === '_' && cls !== 'CMS_hidden')
-									continue;
-								builder += (builder ? ' ' : '') + cls;
-							}
-
-							return builder ? (is ? ' ' : '') + 'class="' + builder + '"' : '';
-						});
+						response.body = clean(response.body);
 
 						if (response.partial && response.partial.length) {
 							schema.operation2('render-multiple', { id: response.partial }, function(err, partial) {
@@ -521,7 +507,7 @@ F.eval(function() {
 			}
 		}
 
-		self.memorize('cache.' + url, '1 minute', DEBUG || cache !== true, function() {
+		self.memorize('cache.' + url, '3 minute', cache !== true, function() {
 
 			var options = {};
 
@@ -554,5 +540,76 @@ F.eval(function() {
 		return self;
 	};
 });
+
+function clean(body) {
+	var beg;
+	var index = 0;
+	var count = 0;
+	var counter = 0;
+	var a = '<div class="CMS_template CMS_remove">';
+	var b = ' data-themes="';
+
+	body = U.minifyHTML(body);
+
+	while (true) {
+		beg = body.indexOf(a, beg);
+		if (beg === -1)
+			break;
+
+		index = beg + a.length;
+		count = 0;
+
+		while (true) {
+			var str = body.substring(index++, index + 3);
+			if (index >= body.length) {
+				beg = body.length;
+				break;
+			}
+
+			if (str === '</di') {
+
+				if (count) {
+					count--;
+					continue;
+				}
+
+				body = body.substring(0, beg) + body.substring(beg + a.length, index - 1) + body.substring(index + 5);
+				beg -= a.length;
+				break;
+			}
+
+			if (str === '<div')
+				count++;
+		}
+	}
+
+	beg = undefined;
+
+	while (true) {
+		beg = body.indexOf(b, beg);
+		if (beg === -1)
+			break;
+		index = body.indexOf('"', beg + b.length);
+		if (index === -1)
+			break;
+		body = body.substring(0, beg) + body.substring(index + 1);
+	}
+
+	return body.replace(REGEXP_HTML_CLASS, function(text) {
+
+		var is = text[0] === ' ';
+		var arr = text.substring(is ? 8 : 7, text.length - 1).split(' ');
+		var builder = '';
+
+		for (var i = 0, length = arr.length; i < length; i++) {
+			var cls = arr[i];
+			if (cls[0] === 'C' && cls[3] === '_' && cls !== 'CMS_hidden')
+				continue;
+			builder += (builder ? ' ' : '') + cls;
+		}
+
+		return builder ? (is ? ' ' : '') + 'class="' + builder + '"' : '';
+	});
+}
 
 F.on('settings', refresh);
