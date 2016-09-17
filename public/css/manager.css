@@ -107,7 +107,7 @@ canvas { display: block; }
 .mainmenu-button { font-size: 25px; margin-top: 4px; color: gray; float: right; }
 .mainmenu-visible { display: block; }
 
-.font-awesome-editor > div { text-align: center; }
+.font-awesome-editor > div { text-align: center; border-bottom: 1px solid #E0E0E0; }
 .font-awesome-editor .fa { font-size: 18px; padding: 10px 0; color: #AAB2BD; cursor: pointer; }
 .font-awesome-editor .fa:hover { color: black; }
 

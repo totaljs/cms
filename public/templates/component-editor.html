@@ -76,9 +76,7 @@
 				<div data-component="visible" data-component-path="cmseditor.attribute.themes" data-if="value && value.length">
 					<div data-component="dropdown" data-component-path="cmseditor.attribute.theme" class="m b" data-source="cmseditor.attribute.themes" data-icon="fa-paint-brush">@(Theme)</div>
 				</div>
-				<div data-component="visible" data-component-path="cmseditor.attribute.themes" data-if="!value || !value.length">
-					<div data-component="textbox" data-component-path="cmseditor.attribute.cls" class="m">@(Class name)</div>
-				</div>
+				<div data-component="textbox" data-component-path="cmseditor.attribute.cls" class="m">@(Class name)</div>
 				<div data-component="textbox" data-component-path="cmseditor.attribute.css" class="m">@(Custom styles)</div>
 			</div>
 		</div>
@@ -583,7 +581,11 @@
 
 				if (e.keyCode === 13) {
 					// "div" prevention
+					var tmp = target.html();
 					self.getDocument().execCommand('insertHTML', false, '<br>');
+					var end = target.html().trim();
+					if (end.substring(end.length - 3) !== tmp.substring(tmp.length - 3))
+						self.getDocument().execCommand('insertHTML', false, '<br><br>');
 					e.preventDefault();
 					e.stopPropagation();
 					return;
@@ -696,8 +698,10 @@
 								value = value.split('|');
 								var obj = { name: value[0], id: value[1] == null ? value[0] : value[1] };
 								arr.push(obj);
-								if (cmseditor.attribute.cls.indexOf(obj.id) !== -1)
+								if (cmseditor.attribute.cls.indexOf(obj.id) !== -1) {
 									selected = obj.id;
+									cmseditor.attribute.cls = cmseditor.attribute.cls.replace(obj.id, '').trim().replace(/\s{2,}/g, '');
+								}
 							});
 
 							cmseditor.attribute.themes = arr;
