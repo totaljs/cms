@@ -182,6 +182,8 @@
 	cmseditor.widgets2 = []; // Contains all filtered widgets
 	cmseditor.settings = []; // Contains all widgets settings
 	cmseditor.widgetssearch = '';
+	cmseditor.wrap = null; // Helper for wrapped element
+	cmseditor.wrap_widgets = null;
 
 	setTimeout(function() {
 		$('#cmseditor_inlineupload').on('change', function(e) {
@@ -518,8 +520,12 @@
 				else
 					info.html('&lt;{0}{1}&gt;'.format(tag.toLowerCase(), tag === 'BR' || tag === 'HR' ? ' /' : ''));
 
+				var wrap = self.getParent('CMS_template') || self.getParent('CMS_widget');
+				cmseditor.wrap = wrap;
+
 				panel.css({ left: left, top: off.top - panel.innerHeight() - 5 });
-				panel.find('span').each(function() {
+				panel.find('#CMS_panel_buttons_move').toggle(wrap && wrap.length ? true : false);
+				panel.find('.CMS_panel_buttons span').each(function() {
 					var el = $(this);
 					var name = el.attr('data-name');
 
@@ -547,8 +553,10 @@
 					if (disabled && name === 'remove')
 						disabled = self.getParent('CMS_remove') === null;
 
-					if (disabled && name === 'widgets')
-						disabled = self.getParent('CMS_widgets', 5) === null;
+					if (disabled && name === 'widgets') {
+						cmseditor.wrap_widgets = self.getParent('CMS_widgets', 5);
+						disabled = cmseditor.wrap_widgets == null;
+					}
 
 					if (name === 'edit' && tag === 'IFRAME')
 						disabled = true;
@@ -651,6 +659,14 @@
 				e.preventDefault();
 			});
 
+			body.find('#CMS_panel').on('mouseenter mouseleave', '.fa-arrow-up,.fa-arrow-down', function(e) {
+				cmseditor.wrap && cmseditor.wrap.length && cmseditor.wrap.toggleClass('CMS_selected_template', e.type === 'mouseenter');
+			});
+
+			body.find('#CMS_panel').on('mouseenter mouseleave', '.fa-plug', function(e) {
+				cmseditor.wrap_widgets && cmseditor.wrap_widgets.length && cmseditor.wrap_widgets.toggleClass('CMS_selected_template', e.type === 'mouseenter');
+			});
+
 			body.find('#CMS_panel').on('click', 'span', function(e) {
 
 				e.preventDefault();
@@ -661,17 +677,30 @@
 					return;
 
 				var name = el.attr('data-name');
+				var tmp;
 				switch (name) {
 
-					case 'widgets':
-						SET('cmseditor.window', 'widgets');
-						return;
+					case 'up':
+						tmp = cmseditor.wrap.prev();
+						tmp.length && tmp.before(cmseditor.wrap);
+						body.find('#CMS_panel').find('[data-name="hide"]').trigger('click');
+						break;
+					case 'down':
+						tmp = cmseditor.wrap.next();
+						tmp.length && tmp.after(cmseditor.wrap);
+						body.find('#CMS_panel').find('[data-name="hide"]').trigger('click');
+						break;
 
 					case 'hide':
 						self.getToolbar().hide();
 						target.removeAttr('contentEditable');
 						target.removeClass('CMS_selected');
+						body.find('.CMS_selected_template').removeClass('CMS_selected_template');
 						target = null;
+						return;
+
+					case 'widgets':
+						SET('cmseditor.window', 'widgets');
 						return;
 
 					case 'attribute':
@@ -914,7 +943,7 @@
 			AJAX('POST {0}/api/pages/preview/'.format(managerurl), options, function(response) {
 				if (isError(arguments))
 					return;
-				self.write(response.replace('</body>', '<div id="CMS_panel"><div id="CMS_panel_info"></div><div class="CMS_panel_buttons"><span class="fa fa-pencil" title="@(Edit)" data-name="edit"></span><span class="fa fa-link" title="@(Change link)" data-name="link"></span><span class="fa fa-quote-left" title="@(Change attributes)" data-name="attribute"></span><span class="fa fa-copy" title="@(Duplicate)" data-name="repeat"></span></span><span class="fa fa-plug" title="@(Add widget)" data-name="widgets"></span><span class="fa fa-trash" title="@(Remove content)" data-name="remove"></span><span class="fa fa-toggle-down" title="@(Hide)" data-name="hide"></span></div></div></body>'));
+				self.write(response.replace('</body>', '<div id="CMS_panel"><div id="CMS_panel_buttons_move"><span class="fa fa-arrow-up" data-name="up" title="@(Move up)"></span><span class="fa fa-arrow-down" data-name="down" title="@(Move down)"></span></div><div id="CMS_panel_info"></div><div class="CMS_panel_buttons"><span class="fa fa-pencil" title="@(Edit)" data-name="edit"></span><span class="fa fa-link" title="@(Change link)" data-name="link"></span><span class="fa fa-quote-left" title="@(Change attributes)" data-name="attribute"></span><span class="fa fa-copy" title="@(Duplicate)" data-name="repeat"></span></span><span class="fa fa-plug" title="@(Add widget)" data-name="widgets"></span><span class="fa fa-trash" title="@(Remove content)" data-name="remove"></span><span class="fa fa-caret-square-o-down" title="@(Hide)" data-name="hide"></span></div></div></body>'));
 				SETTER('loading', 'hide', 500);
 			});
 		};
