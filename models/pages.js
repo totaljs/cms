@@ -33,23 +33,8 @@ NEWSCHEMA('Page').make(function(schema) {
 	schema.define('body', String);
 	schema.define('datecreated', Date);
 
-	// Sets default values
-	schema.setDefault(function(name) {
-		switch (name) {
-			case 'datecreated':
-				return new Date();
-		}
-	});
-
 	// Gets listing
 	schema.setQuery(function(error, options, callback) {
-
-		// options.search {String}
-		// options.navigation {String}
-		// options.language {String}
-		// options.ispartial {Boolean}
-		// options.page {String or Number}
-		// options.max {String or Number}
 
 		options.page = U.parseInt(options.page) - 1;
 		options.max = U.parseInt(options.max, 20);
@@ -64,7 +49,7 @@ NEWSCHEMA('Page').make(function(schema) {
 		if (options.search)
 			options.search = options.search.keywords(true, true);
 
-		var filter = DB('pages').find();
+		var filter = NOSQL('pages').find();
 
 		if (options.ispartial)
 			filter.where('ispartial', options.ispartial);
@@ -92,7 +77,7 @@ NEWSCHEMA('Page').make(function(schema) {
 			data.limit = options.max;
 			data.pages = Math.ceil(data.count / options.max);
 
-			if (data.pages === 0)
+			if (!data.pages)
 				data.pages = 1;
 
 			data.page = options.page + 1;
@@ -105,7 +90,7 @@ NEWSCHEMA('Page').make(function(schema) {
 	// Gets a specific page
 	schema.setGet(function(error, model, options, callback) {
 
-		var filter = DB('pages').one();
+		var filter = NOSQL('pages').one();
 
 		if (options.url)
 			filter.where('url', options.url);
@@ -116,7 +101,6 @@ NEWSCHEMA('Page').make(function(schema) {
 		if (options.language)
 			filter.where('language', options.language);
 
-		// Gets specific document
 		filter.callback(function(err, doc) {
 			!doc && error.push('error-404-page');
 			callback(doc);
@@ -125,7 +109,7 @@ NEWSCHEMA('Page').make(function(schema) {
 
 	// Removes a specific page
 	schema.setRemove(function(error, id, callback) {
-		var db = DB('pages');
+		var db = NOSQL('pages');
 		db.remove().where('id', id).callback(callback);
 		db.counter.remove(id);
 		setTimeout2('pages', refresh, 1000);
@@ -134,13 +118,11 @@ NEWSCHEMA('Page').make(function(schema) {
 	// Saves the page into the database
 	schema.setSave(function(error, model, options, callback) {
 
-		// options.id {String}
-		// options.url {String}
-
 		if (!model.name)
 			model.name = model.title;
 
 		var newbie = false;
+		var nosql = NOSQL('pages');
 
 		if (!model.id) {
 			model.id = UID();
@@ -157,10 +139,12 @@ NEWSCHEMA('Page').make(function(schema) {
 				model.url = '/' + model.url;
 		}
 
-		(newbie ? DB('pages').insert(model) : DB('pages').update(model).where('id', model.id)).callback(function(err, count) {
-			callback(SUCCESS(true));
+		(newbie ? nosql.insert(model) : nosql.update(model).where('id', model.id)).callback(function(err, count) {
 			F.emit('pages.save', model);
 			setTimeout2('pages', refresh, 1000);
+
+			callback(SUCCESS(true));
+
 			model.datebackuped = F.datetime;
 			DB('pages_backup').insert(model);
 		});
@@ -355,7 +339,7 @@ NEWSCHEMA('Page').make(function(schema) {
 
 	// Clears database
 	schema.addWorkflow('clear', function(error, model, options, callback) {
-		DB('pages').remove().callback(() => setTimeout(refresh, 1000));
+		NOSQL('pages').remove().callback(() => setTimeout(refresh, 1000));
 		callback(SUCCESS(true));
 	});
 });
@@ -393,7 +377,7 @@ function refresh() {
 		}
 	};
 
-	DB('pages').find().prepare(prepare).callback(function() {
+	NOSQL('pages').find().prepare(prepare).callback(function() {
 
 		// Pairs parents by URL
 		Object.keys(sitemap).forEach(function(key) {
