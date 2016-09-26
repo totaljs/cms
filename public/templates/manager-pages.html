@@ -70,7 +70,7 @@
 <div data-component="form" data-title="@(Page form)" data-component-path="common.form" data-if="value === 'pages'" data-width="1300px" data-component-id="pages.form">
 	<div class="padding" style="padding-bottom:10px">
 		<div class="row">
-			<div class="col-md-4 m">
+			<div class="col-md-3 m">
 				<div data-component="textbox" data-component-path="pages.form.title" data-required="true" data-placeholder="@(Page title)">@(Title)</div>
 				<div data-component="template" data-component-path="pages.form" class="fs11 mt5 silver">
 					<script type="text/html">
@@ -78,14 +78,17 @@
 					</script>
 				</div>
 			</div>
-			<div class="col-md-4 m">
+			<div class="col-md-3 m">
 				<div data-component="textbox" data-component-path="pages.form.url" data-required="true" data-placeholder="@(Page relative URL address)" data-icon="fa-globe">@(URL address)</div>
 				<div data-component="checkbox" data-component-path="pages.form.ispartial" class="green mt10">@(Is partial content)</div>
 			</div>
-			<div class="col-md-4 m">
+			<div class="col-md-3 m">
 				<div data-component="dropdown" data-component-path="pages.form.template" data-source="pages.dependencies.templates" data-empty="">@(Template)</div>
 				<div class="mt5 fs11" style="float:left"><a href="javascript:void(0)" data-component="click" data-component-path="pages_new_content"><span class="fa fa-code mr5"></span>@(Create custom content)</a></div>
 				<div class="cl"></div>
+			</div>
+			<div class="col-md-3 m">
+				<div data-component="dropdown" data-component-path="pages.form.language" data-align="center" data-maxlength="2" data-icon="fa-flag" data-source="languages" data-empty="">@(Language)</div>
 			</div>
 		</div>
 	</div>
@@ -106,7 +109,7 @@
 			<div class="col-md-6 m">
 				<div class="row">
 					<div class="col-md-12 m" data-component="disable" data-component-path="pages.form.ispartial" data-if="value">
-						<div data-component="dropdown" data-component-path="pages.form.parent" data-source="pages.sitemap" data-source-text="name" data-source-value="id" data-empty="" data-icon="fa-sitemap">@(Parent)</div>
+						<div data-component="dropdown" data-component-path="pages.form.parent" data-source="pages.sitemap2" data-source-text="name" data-source-value="id" data-empty="" data-icon="fa-sitemap">@(Parent)</div>
 						<div class="help">@(Affects sitemap and breadcrumb.)</div>
 					</div>
 				</div>
@@ -136,9 +139,6 @@
 			<div class="col-md-2 m">
 				<div data-component="textbox" data-component-path="pages.form.priority" data-align="center" data-component-type="number" data-maxlength="3" data-increment="true" data-icon="fa-sort-amount-desc">@(Priority)</div>
 				<div class="help">@(Affects navigation ordering.)</div>
-			</div>
-			<div class="col-md-2 m">
-				<div data-component="dropdown" data-component-path="pages.form.language" data-align="center" data-maxlength="2" data-icon="fa-flag" data-source="languages" data-empty="">@(Language)</div>
 			</div>
 		</div>
 	</div>
@@ -268,6 +268,19 @@
 			type === 2 && SET('pages.form.body', '');
 		});
 	});
+
+	WATCH('pages.sitemap', pages_form_language);
+	WATCH('pages.form.language', pages_form_language);
+
+	function pages_form_language() {
+		var lng = pages.form.language;
+		var arr = [];
+		pages.sitemap.forEach(function(item) {
+			if (!lng || lng === item.language)
+				arr.push(item);
+		});
+		SET('pages.sitemap2', arr);
+	}
 
 	ON('#pages.form', function(component) {
 		component.submit = function(hide) {
