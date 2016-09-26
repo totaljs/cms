@@ -131,7 +131,7 @@ button { outline: 0; }
 	.ui-dropdowncheckbox .fa { margin-top: 5px; font-size: 14px; }
 }
 
-.ui-calendar { font-size: 12px; position: absolute; background-color: white; width: 220px; height: 236px; border: 1px solid #E0E0E0; left: 100px; top: 100px; padding: 10px; border-radius: 2px; z-index: 30; color: gray; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+.ui-calendar { font-size: 12px; position: absolute; background-color: white; width: 220px; height: 236px; border: 1px solid #E0E0E0; left: 100px; top: 100px; padding: 10px; border-radius: 2px; z-index: 50; color: gray; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
 .ui-calendar table { width: 100%; margin-bottom: 10px; border-bottom: 1px solid #F0F0F0; }
 .ui-calendar table td { padding: 3px 0; text-align: center; vertical-align: middle; font-size: 11px; }
 .ui-calendar table th { padding: 8px 0 5px; text-align: center; width: 14%; border-top: 1px solid #E0E0E0; vertical-align: middle; }
@@ -166,6 +166,17 @@ button { outline: 0; }
 .ui-pagination .selected { background-color: #F0F0F0; }
 .ui-pagination div { float: right; font-size: 11px; color: #A0A0A0; padding-top: 8px; }
 
+.ui-autocomplete-container { position: absolute; z-index: 80; }
+.ui-autocomplete { background-color: white; width: 100%; margin: -5px 0 0 0; padding: 2px 0; border-radius: 0 0 4px 4px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); border: 1px solid #E0E0E0; line-height: 14px; }
+.ui-autocomplete ul { list-style-type: none; margin: 0; padding: 0; }
+.ui-autocomplete li { margin: 0; padding: 5px 12px 0; border-bottom: 1px solid #F0F0F0; cursor: pointer; font-size: 12px; color: #505050; height: 24px; }
+.ui-autocomplete li:last-child { border-bottom: 0; }
+.ui-autocomplete .selected { background-color: #F0F0F0; }
+.ui-autocomplete li span { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+.ui-autocomplete li i { width: 16px; margin-right: 2px; }
+.ui-autocomplete li span:first-child { float: left; width: 65%;  }
+.ui-autocomplete li span:last-child { float: right; width: 30%; font-size: 11px; color: #A0A0A0; }
+
 @media(max-width: 767px) {
     .ui-pagination { height: 100px; text-align: center; }
     .ui-pagination nav { display: inline-block; }
@@ -190,7 +201,8 @@ button { outline: 0; }
 .ui-textbox li:first-child { border-top: 0; }
 .ui-textbox li.selected { background-color: #F0F0F0; }
 .ui-textbox button { background-color: transparent; border: 0; padding: 0; margin: 0; }
-.ui-textbox .fa-caret-up, .ui-textbox .fa-caret-down { display:block; line-height:9px; cursor: pointer; }
+.ui-textbox .fa-caret-up, .ui-textbox .fa-caret-down { display:block; line-height: 9px; cursor: pointer; }
+.ui-textbox .fa-calendar { cursor: pointer; }
 .ui-textarea { border: 2px solid #E0E0E0; padding: 4px 5px; border-radius: 2px; position: relative; display: block; width: 100%; background-color: white; }
 .ui-textarea textarea { border: 0; width: 100%; outline: 0; font: normal 14px Arial; color: black; resize: none; min-height: 50px; background-color: white; padding: 0; }
 .ui-textarea-label { margin-bottom: 5px; font-size: 12px; text-align: left; }
