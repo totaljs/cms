@@ -95,42 +95,33 @@
 	<hr style="margin:0 0 8px" />
 	<div class="help ui-center" style="margin-bottom:8px;padding:0 20px"><b>@(Editor formatting:)</b> @(bold) (&#8984+B), @(italic) (&#8984+I), @(underline) (&#8984+U), @(link) (&#8984+L). <a href="javascript:void(0)" data-component="click" data-component-path="pages_sourcecode" class="black"><span class="fa fa-code w18"></span>@(Show source-code)</a></div>
 	<div class="pages-editor" data-component="editor" data-component-path="pages.form.body" data-component-import="/templates/component-editor.html" data-component-id="pages.editor"></div>
-	<div class="padding npb bg-fade">
+	<div class="padding npb">
 		<br />
 		<div class="row">
-			<div class="col-md-6 m">
-				<div data-component="disable" data-component-path="pages.form.ispartial" data-if="value" data-selector=".ui-dropdowncheckbox">
-					<div data-component="dropdowncheckbox" data-component-path="pages.form.navigations" data-source="pages.dependencies.navigations" data-icon="fa-bars" data-empty="@(Doesn't contain any navigation.)">@(Navigation)</div>
-					<div class="help m">@(Where will be the page shown?)</div>
-					<div data-component="dropdowncheckbox" data-component-path="pages.form.partial" data-source="pages.partial" data-icon="fa-database" data-empty="@(Doesn't contain any partial pages.)">@(Nested partial pages)</div>
-					<div class="help">@(Join other partial pages with this.)</div>
-				</div>
+			<div class="col-md-4 m" data-component="disable" data-component-path="pages.form.ispartial" data-if="value" data-selector=".ui-dropdowncheckbox">
+				<div data-component="dropdowncheckbox" data-component-path="pages.form.navigations" data-source="pages.dependencies.navigations" data-icon="fa-bars" data-empty="@(Doesn't contain any navigation.)">@(Navigation)</div>
+				<div class="help m">@(Where will be the page shown?)</div>
 			</div>
-			<div class="col-md-6 m">
-				<div class="row">
-					<div class="col-md-12 m" data-component="disable" data-component-path="pages.form.ispartial" data-if="value">
-						<div data-component="dropdown" data-component-path="pages.form.parent" data-source="pages.sitemap2" data-source-text="name" data-source-value="id" data-empty="" data-icon="fa-sitemap">@(Parent)</div>
-						<div class="help">@(Affects sitemap and breadcrumb.)</div>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-md-6 m">
-						<div data-component="textbox" data-component-path="pages.form.name" data-maxlenght="50">@(Name)</div>
-						<div class="help">@(Name in sitemap.)</div>
-					</div>
-					<div class="col-md-6">
-						<div data-component="textbox" data-component-path="pages.form.keywords" data-maxlenght="80" data-icon="fa-tags">@(Keywords)</div>
-						<div class="help">@(Meta keywords, maximum 6 words.)</div>
-					</div>
-				</div>
+			<div class="col-md-4 m" data-component="disable" data-component-path="pages.form.ispartial" data-if="value" data-selector=".ui-dropdowncheckbox">
+				<div data-component="dropdowncheckbox" data-component-path="pages.form.partial" data-source="pages.partial" data-icon="fa-database" data-empty="@(Doesn't contain any partial pages.)">@(Nested partial pages)</div>
+				<div class="help">@(Join other partial pages with this.)</div>
+			</div>
+			<div class="col-md-4 m" data-component="disable" data-component-path="pages.form.ispartial" data-if="value">
+				<div data-component="dropdown" data-component-path="pages.form.parent" data-source="pages.sitemap2" data-source-text="name" data-source-value="id" data-empty="" data-icon="fa-sitemap">@(Parent)</div>
+				<div class="help">@(Affects sitemap and breadcrumb.)</div>
 			</div>
 		</div>
 	</div>
 	<hr class="nmt" />
-	<div class="padding">
+	<div class="padding npt">
 		<div class="row">
-			<div class="col-md-6 m">
-				<div data-component="textboxtags" data-component-path="pages.form.tags">@(Internal tags)</div>
+			<div class="col-md-4 m">
+				<div data-component="textbox" data-component-path="pages.form.name" data-maxlenght="50">@(Name)</div>
+				<div class="help">@(Name in sitemap.)</div>
+			</div>
+			<div class="col-md-4">
+				<div data-component="textbox" data-component-path="pages.form.keywords" data-maxlenght="80" data-icon="fa-tags">@(Keywords)</div>
+				<div class="help">@(Meta keywords, maximum 6 words.)</div>
 			</div>
 			<div class="col-md-2 m">
 				<div data-component="textbox" data-component-path="pages.form.icon" data-align="center" data-maxlength="20" data-placeholder="e.g. home" data-icon="fa-camera">@(Icon)</div>
@@ -174,12 +165,15 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-md-6 m">
+			<div class="col-md-4 m">
 				<div data-component="textbox" data-component-path="widgets.form.icon" data-placeholder="e.g. home" data-icon="fa-camera">@(Icon)</div>
 				<div class="help"><a href="http://fortawesome.github.io/Font-Awesome/icons/" target="_blank">Font-Awesome</a> @(without) <code>fa-</code></div>
 			</div>
-			<div class="col-md-6 m">
-				<div data-component="textbox" data-component-path="widgets.form.category" data-placeholder="e.g. Headers" data-icon="fa-folder">@(Category)</div>
+			<div class="col-md-4 m">
+				<div data-component="dropdown" data-component-path="widgets.form.category" data-source="widgets.categories" data-source-text="name" data-source-value="name" data-icon="fa-folder" data-empty="">@(Existing category)</div>
+			</div>
+			<div class="col-md-4 m">
+				<div data-component="textbox" data-component-path="widgets.form.category" data-placeholder="e.g. Headers">@(Category)</div>
 			</div>
 		</div>
 	</div>
@@ -267,6 +261,19 @@
 			FIND('#pages.editor').setTemplate(value);
 			type === 2 && SET('pages.form.body', '');
 		});
+
+		FIND('.pages.form.icon', function(component) {
+			component.find('input').on('focus', function() {
+				pages_form_autocomplete_icons(this);
+			});
+		});
+
+		FIND('.widgets.form.icon', function(component) {
+			component.find('input').on('focus', function() {
+				pages_form_autocomplete_icons(this);
+			});
+		});
+
 	});
 
 	WATCH('pages.sitemap', pages_form_language);
@@ -280,6 +287,20 @@
 				arr.push(item);
 		});
 		SET('pages.sitemap2', arr);
+	}
+
+	function pages_form_autocomplete_icons(element) {
+		FIND('autocomplete', function(component) {
+			component.attach(element, function(q, render) {
+				var arr = [];
+				cmseditor.icons.forEach(function(icon) {
+					arr.length < 5 && icon.indexOf(q) !== -1 && arr.push({ name: '<i class="fa fa-{0}"></i>{0}'.format(icon), value: icon });
+				});
+				render(arr);
+			}, function(value, input) {
+				input.val(value.value);
+			}, 14, -5, 9);
+		});
 	}
 
 	ON('#pages.form', function(component) {
@@ -438,6 +459,7 @@
 	widgets.grid = {};
 	widgets.form = {};
 	widgets.response = null;
+	widgets.categories = [];
 
 	ON('#widgets.grid', function(component) {
 		widgets_refresh(true);
@@ -461,6 +483,7 @@
 						loading.hide();
 					});
 					break;
+
 				case 'remove':
 					FIND('confirm').confirm('@(Do you want to remove) <b>{0}</b>?'.format(row.name), ['@(OK)', '@(Cancel)'], function(index) {
 						if (index)
@@ -511,7 +534,29 @@
 		AJAX('GET {0}/api/widgets/'.format(managerurl), function(response) {
 			if (isError(arguments))
 				return;
+
+			var category = {};
+			var arr = [];
+
+			response.forEach(function(item) {
+				if (!item.category)
+					return;
+				if (category[item.category])
+					category[item.category]++;
+				else
+					category[item.category] = 1;
+			});
+
+			Object.keys(category).forEach(function(key) {
+				arr.push({ name: key, count: category[key], search: key.toLowerCase() });
+			});
+
+			arr.sort(function(a, b) {
+				return a.name.toLowerCase().removeDiacritics().localeCompare(b.name.toLowerCase().removeDiacritics());
+			});
+
 			SET('widgets.grid', { items: response, page: 1, pages: 1, count: response.length, limit: 1000 });
+			SET('widgets.categories', arr);
 		});
 	}
 
@@ -523,10 +568,8 @@
 
 	function pages_reload() {
 		var hash = location.hash;
-		if (hash && hash.length > 1) {
-			setTimeout(function() {
-				pages_edit(hash.substring(1));
-			}, 500);
-		}
+		hash && hash.length > 1 && setTimeout(function() {
+			pages_edit(hash.substring(1));
+		}, 500);
 	}
 </script>
