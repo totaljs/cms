@@ -134,15 +134,11 @@ function settings_save() {
 
 		success(true);
 		RESET('settings.form.*');
+		EXEC('pages_refresh_dependencies');
+		EXEC('posts_refresh_codelists');
 
-		if (window.pages_refresh_dependencies)
-			window.pages_refresh_dependencies();
-
-		if (window.posts_refresh_codelists)
-			window.posts_refresh_codelists();
-
-		// Restore users list
 		settings.form.users = tmp;
+		SET('languages', settings.form.languages);
 
 		if (settings.cache.currency === settings.form.currency) {
 			loading.hide(500);
@@ -162,7 +158,7 @@ function settings_users_add() {
 }
 
 Tangular.register('roles', function(value, separator) {
-	if (!(value instanceof Array) || value.length === 0)
+	if (!(value instanceof Array) || !value.length)
 		return '<em>@(super admin)</em>';
 	return value.join(separator);
 });
