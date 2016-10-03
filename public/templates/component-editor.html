@@ -351,6 +351,22 @@
 			return null;
 		};
 
+		self.getContainer = function(max) {
+
+			if (target.hasClass('CMS_widget') || target.hasClass('CMS_template') || target.hasClass('CMS_widgets'))
+				return target;
+
+			var parent = target.parent();
+
+			for (var i = 0; i < max; i++) {
+				if (parent.hasClass('CMS_widget') || parent.hasClass('CMS_template') || parent.hasClass('CMS_widgets'))
+					return parent;
+				parent = parent.parent();
+			}
+
+			return null;
+		};
+
 		self.getParentElement = function(name) {
 			if (target.get(0).nodeName === name)
 				return target;
@@ -531,7 +547,7 @@
 				else
 					info.html('&lt;{0}{1}&gt;'.format(tag.toLowerCase(), tag === 'BR' || tag === 'HR' ? ' /' : ''));
 
-				var wrap = self.getParent('CMS_template') || self.getParent('CMS_widget');
+				var wrap = self.getParent('CMS_widget') || self.getParent('CMS_template');
 				cmseditor.wrap = wrap;
 
 				panel.css({ left: left, top: off.top - panel.innerHeight() - 5 });
@@ -595,6 +611,7 @@
 
 				if (e.keyCode === 13 && target.hasClass('CMS_singleline')) {
 					e.preventDefault();
+					e.stopPropagation();
 					return;
 				}
 
@@ -695,13 +712,13 @@
 						tmp = cmseditor.wrap.prev();
 						tmp.length && tmp.before(cmseditor.wrap);
 						body.find('#CMS_panel').find('[data-name="hide"]').trigger('click');
-						editor.change(true);
+						self.change(true);
 						break;
 					case 'down':
 						tmp = cmseditor.wrap.next();
 						tmp.length && tmp.after(cmseditor.wrap);
 						body.find('#CMS_panel').find('[data-name="hide"]').trigger('click');
-						editor.change(true);
+						self.change(true);
 						break;
 
 					case 'hide':
@@ -982,22 +999,19 @@
 
 			var target = editor.getTarget();
 			if (!target.hasClass('CMS_widgets')) {
-				var tmp = editor.getParent('CMS_widget', 5);
-				if (!tmp)
-					tmp = editor.getParent('CMS_template', 5);
-				if (!tmp)
-					tmp = editor.getParent('CMS_widgets', 5);
+				var tmp = editor.getContainer(10);
 				if (!tmp)
 					return;
 				target = tmp;
 			}
 
+			var after = target.hasClass('CMS_template') || target.hasClass('CMS_widget');
 			if (!is) {
 				var content = '<div class="CMS_widget CMS_remove" data-id="' + id + '">--- <span class="fa fa-plug"></span> ' + el.attr('data-name') + ' ---<pre></pre></div>';
-				if (target.hasClass('CMS_widgets'))
-					target.append(content);
-				else
+				if (after)
 					target.after(content);
+				else
+					target.append(content);
 				editor.change(true);
 				editor.resize();
 				return;
@@ -1008,10 +1022,10 @@
 				if (isError(arguments))
 					return;
 				var content = '<div class="CMS_template CMS_remove">' + response.body + '</div>';
-				if (target.hasClass('CMS_widgets'))
-					target.append(content);
-				else
+				if (after)
 					target.after(content);
+				else
+					target.append(content);
 				editor.change(true);
 				editor.resize();
 				SETTER('loading', 'hide', 500);
