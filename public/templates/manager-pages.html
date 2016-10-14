@@ -93,7 +93,10 @@
 		</div>
 	</div>
 	<hr style="margin:0 0 8px" />
-	<div class="help ui-center" style="margin-bottom:8px;padding:0 20px"><b>@(Editor formatting:)</b> @(bold) (&#8984+B), @(italic) (&#8984+I), @(underline) (&#8984+U), @(link) (&#8984+L). <a href="javascript:void(0)" data-component="click" data-component-path="pages_sourcecode" class="black"><span class="fa fa-code w18"></span>@(Show source-code)</a></div>
+	<div class="cmseditor-help">
+		<nav><i class="fa fa-desktop"></i><a href="javascript:pages_device(1)">@(Large)</a><a href="javascript:pages_device(2)">@(Medium)</a><a href="javascript:pages_device(3)">@(Tablet)</a><a href="javascript:pages_device(4)">@(Mobile)</a></nav>
+		<div><b>@(Editor formatting:)</b> @(bold) (&#8984+B), @(italic) (&#8984+I), @(underline) (&#8984+U), @(link) (&#8984+L). <a href="javascript:void(0)" data-component="click" data-component-path="pages_sourcecode" class="black"><span class="fa fa-code w18"></span>@(Show source-code)</a></div>
+	</div>
 	<div class="pages-editor" data-component="editor" data-component-path="pages.form.body" data-component-import="/templates/component-editor.html" data-component-id="pages.editor"></div>
 	<div class="padding npb">
 		<br />
@@ -278,6 +281,25 @@
 
 	WATCH('pages.sitemap', pages_form_language);
 	WATCH('pages.form.language', pages_form_language);
+
+	function pages_device(type) {
+		var e = FIND('editor');
+		SETTER('loading', 'show')('loading', 'hide', 1000);
+		switch (type) {
+			case 1:
+				e.device('lg');
+				return;
+			case 2:
+				e.device('md');
+				return;
+			case 3:
+				e.device('sm');
+				return;
+			case 4:
+				e.device('xs');
+				return;
+		}
+	}
 
 	function pages_form_language() {
 		var lng = pages.form.language;

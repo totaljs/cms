@@ -115,6 +115,12 @@ canvas { display: block; }
 .oauth2callback input { width: 100%; color: #505050; padding: 5px; cursor: text; background: #F8F8F8; border: 0; }
 .oauth2callback div { margin-bottom: 3px; }
 
+.cmseditor-help { font-size: 11px; color: #AAB2BD; margin-top: 7px; line-height: 13px; margin-bottom: 8px; padding: 5px 20px 0; height: 20px; }
+.cmseditor-help nav { float: left; }
+.cmseditor-help nav a { margin-right: 8px; padding-right: 8px; border-right: 1px solid #E0E0E0; }
+.cmseditor-help > div { float: right; }
+.cmseditor-help nav .fa { margin-right: 8px; }
+
 @media(max-width: 996px) {
 	header .photo { display: none; }
 	header nav { display: none; }
