@@ -39,19 +39,25 @@
 <div data-component="form" data-title="@(Post form)" data-component-path="common.form" data-if="value === 'posts'" data-width="1300px" data-component-id="posts.form">
 	<div class="padding">
 		<div class="row">
-			<div class="col-md-4 m">
+			<div class="col-md-3 m">
 				<div data-component="textbox" data-component-path="posts.form.name" data-required="true" data-placeholder="@(Post name)">@(Name)</div>
 			</div>
-			<div class="col-md-4 m">
+			<div class="col-md-3 m">
+				<div data-component="dropdown" data-component-path="posts.form.category" data-source="posts.categories" data-empty="" data-source-value="name" data-required="true">@(Category)</div>
+			</div>
+			<div class="col-md-3 m">
 				<div data-component="dropdown" data-component-path="posts.form.template" data-source="posts.templates" data-empty="" data-required="true">@(Template)</div>
 			</div>
-			<div class="col-md-4 m">
-				<div data-component="dropdown" data-component-path="posts.form.category" data-source="posts.categories" data-empty="" data-source-value="name" data-required="true">@(Category)</div>
+			<div class="col-md-3 m">
+				<div data-component="textbox" data-component-path="posts.form.author" data-maxlength="30" data-icon="fa-user" data-required="true">@(Author)</div>
 			</div>
 		</div>
 	</div>
 	<hr style="margin:0 0 8px" />
-	<div class="help ui-center" style="margin-bottom:8px;padding:0 20px"><b>@(Editor formatting:)</b> @(bold) (&#8984+B), @(italic) (&#8984+I), @(underline) (&#8984+U), @(link) (&#8984+L). <a href="javascript:void(0)" data-component="click" data-component-path="posts_sourcecode" class="black"><span class="fa fa-code w18"></span>@(Show source-code)</a></div>
+	<div class="cmseditor-help">
+		<nav><i class="fa fa-desktop"></i><a href="javascript:posts_device(1)">@(Large)</a><a href="javascript:posts_device(2)">@(Medium)</a><a href="javascript:posts_device(3)">@(Tablet)</a><a href="javascript:posts_device(4)">@(Mobile)</a></nav>
+		<div><b>@(Editor formatting:)</b> @(bold) (&#8984+B), @(italic) (&#8984+I), @(underline) (&#8984+U), @(link) (&#8984+L). <a href="javascript:void(0)" data-component="click" data-component-path="posts_sourcecode" class="black"><span class="fa fa-code w18"></span>@(Show source-code)</a></div>
+	</div>
 	<div class="pages-editor" data-component="editor" data-component-path="posts.form.body" data-component-import="/templates/component-editor.html" data-component-id="posts.editor"></div>
 	<br />
 	<div class="padding">
@@ -63,7 +69,7 @@
 				<div data-component="textbox" data-component-path="posts.form.datecreated" data-align="center" data-maxlength="10" data-icon="fa-calendar" data-component-type="date" data-component-format="@(yyyy-MM-dd)">@(Created)</div>
 			</div>
 			<div class="col-md-2 m">
-				<div data-component="dropdown" data-component-path="posts.form.language" data-align="center" data-maxlength="2" data-source="languages" data-empty="" data-icon="fa-flag">@(Language)</div>
+				<div data-component="dropdown" data-component-path="posts.form.language" data-align="center" data-source="languages" data-empty="" data-icon="fa-flag">@(Language)</div>
 			</div>
 		</div>
 	</div>
@@ -79,10 +85,8 @@
 <script>
 
 	var posts = {};
-
 	posts.filter = {};
 	posts.filter.page = 1;
-
 	posts.grid = {};
 	posts.form = {};
 	posts.categories = [];
@@ -122,16 +126,13 @@
 
 		WATCH('posts.form.template', function(path, value, type) {
 			FIND('#posts.editor').setTemplate(value);
-			if (type === 2)
-				SET('posts.form.body', '');
+			type === 2 && SET('posts.form.body', '');
 		});
 	});
 
 	// Watch for changes in posts filter
 	WATCH('posts.filter.*', function(path, value) {
-		if (NOTMODIFIED('posts.filter', posts.filter))
-			return;
-		posts_refresh(path !== 'posts.filter.page');
+		!NOTMODIFIED('posts.filter', posts.filter) && posts_refresh(path !== 'posts.filter.page');
 	});
 
 	ON('#posts.form', function(component) {
@@ -191,7 +192,7 @@
 	}
 
 	function posts_new() {
-		SET('posts.form', {}, true);
+		SET('posts.form', { author: su.name }, true);
 		SET('posts.response', null);
 		SET('common.form', 'posts');
 
@@ -227,12 +228,29 @@
 		FIND('#posts.editor').showSourceCode();
 	}
 
+	function posts_device(type) {
+		var e = FIND('editor');
+		SETTER('loading', 'show')('loading', 'hide', 1000);
+		switch (type) {
+			case 1:
+				e.device('lg');
+				return;
+			case 2:
+				e.device('md');
+				return;
+			case 3:
+				e.device('sm');
+				return;
+			case 4:
+				e.device('xs');
+				return;
+		}
+	}
+
 	function posts_reload() {
 		var hash = location.hash;
-		if (hash && hash.length > 1) {
-			setTimeout(function() {
-				posts_edit(hash.substring(1));
-			}, 500);
-		}
+		hash && hash.length > 1 && setTimeout(function() {
+			posts_edit(hash.substring(1));
+		}, 500);
 	}
 </script>

@@ -1,8 +1,7 @@
 <div class="filter">
 	<div class="container">
 		<nav class="buttons">
-			<a href="javascript:void(0)" data-component="click" data-component-path="widgets_new" title="@(Add new widget)"><i class="fa fa-plug"></i><span>@(Add new widget)</span></a>
-			<a href="javascript:void(0)" data-component="click" data-component-path="pages_new" title="@(Add new page)"><i class="fa fa-plus-circle"></i><span>@(Add new page)</span></a>
+			<a href="javascript:void(0)" data-component="click" data-component-path="pages_menu"><i class="fa fa-navicon"></i><span>@(Options)</span></a>
 		</nav>
 		<div class="caption"><i class="fa fa-file-text"></i>@(Pages)</div>
 		<div class="row">
@@ -165,6 +164,12 @@
 		<div class="row">
 			<div class="col-md-12 m">
 				<div data-component="codemirror" data-component-path="widgets.form.body" data-height="350px" class="ui-textarea-code" data-icon="fa-code">@(Body)</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12 m">
+				<div data-component="codemirror" data-component-path="widgets.form.css" data-height="100px" class="ui-textarea-code" data-icon="fa-paint-brush" data-type="text/css">@(CSS)</div>
+				<div class="help">@(Widget can contain own CSS classes.)</div>
 			</div>
 		</div>
 		<div class="row">
@@ -586,6 +591,17 @@
 		SET('widgets.response', null);
 		SET('widgets.form', { istemplate: true }, true);
 		SET('common.form', 'widgets');
+	}
+
+	function pages_menu(component) {
+		var items = [];
+
+		items.push({ name: 'Add new page', value: 'pages_new', icon: 'fa-font' });
+		items.push({ name: 'Add new widget', value: 'widgets_new', icon: 'fa-plug' });
+
+		FIND('contextmenu').show('right', component.element, items, function(value) {
+			EXEC(value);
+		}, -15, 10);
 	}
 
 	function pages_reload() {

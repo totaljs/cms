@@ -27,9 +27,9 @@ h2 b { font-weight: 700; }
 .success-animation { transform: scale(2) translate(10px, 10px); }
 
 .buttons { float: right; }
-.buttons a { float: left; height: 30px; background-color: #F0F0F0; width: 34px; text-align: center; font-size: 14px; padding: 5px 0 0 0; border-radius: 4px; color: #A0A0A0; margin-left: 5px; text-shadow: 1px 1px 1px white; }
-.buttons a:hover { background-color: #E0E0E0; color: black; }
-.buttons a span { display: none; }
+.buttons a { float: left; height: 30px; background-color: white; text-align: center; font-size: 12px; padding: 6px 10px 0; border-radius: 4px; color: #A0A0A0; margin-left: 5px; text-shadow: 1px 1px 1px white; border: 1px solid #E0E0E0; }
+.buttons a:hover { background-color: #E0E0E0; color: black; text-decoration: none; }
+.buttons .fa { margin-right: 5px; }
 
 .padding { padding: 20px; }
 .m { margin-bottom: 20px; }

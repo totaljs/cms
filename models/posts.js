@@ -5,6 +5,7 @@ NEWSCHEMA('Post').make(function(schema) {
 	schema.define('template', 'String(30)', true);
 	schema.define('language', 'Lower(3)');
 	schema.define('name', 'String(80)', true);
+	schema.define('author', 'String(30)');
 	schema.define('perex', 'String(500)');
 	schema.define('template', 'String(50)');
 	schema.define('keywords', 'String(200)');
