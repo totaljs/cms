@@ -50,7 +50,7 @@
 <hr />
 <div class="container">
 	<div class="help" style="margin-top:10px">@(For creating another access into the administration click on to below button:)</div>
-	<div class="mt5"><a href="javascript:void(0)" data-component="click" data-component-path="settings_users_add"><span class="fa fa-user mr5"></span>@(Add new administrator)</a></div>
+	<div class="mt5"><a href="javascript:void(0)" class="exec" data-exec="settings_users_add"><span class="fa fa-user mr5"></span>@(Add new administrator)</a></div>
 	<br />
 	<div data-component="grid" data-component-path="settings.form.users" data-max="1000000" data-component-id="settings.users">
 		<script type="text/html">
@@ -69,7 +69,7 @@
 	<div class="row">
 		<div class="col-md-4 m col-md-offset-4">
 			<div data-component="validation" data-component-path="settings.form">
-				<button class="button b" data-component="click" data-component-path="settings_save">@(SAVE SETTINGS)</button>
+				<button class="button b exec" data-exec="settings_save">@(SAVE SETTINGS)</button>
 			</div>
 		</div>
 	</div>
@@ -80,7 +80,7 @@
 	<div class="padding" style="padding-bottom:0">
 		<div class="row">
 			<div class="col-md-12 m">
-				<div data-component="textbox" data-component-path="settings.formuser.name" data-required="true">@(User name)</div>
+				<div data-component="textbox" data-component-path="settings.formuser.name" data-required="true" data-placeholder="@(Peter Sirka)">@(User name)</div>
 			</div>
 		</div>
 		<div class="row">

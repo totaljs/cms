@@ -1,19 +1,22 @@
 <div class="filter">
 	<div class="container">
 		<nav class="buttons">
-			<a href="javascript:void(0)" data-component="click" data-component-path="posts_new" title="@(Add post)"><i class="fa fa-plus-circle"></i><span>@(Add post)</span></a>
+			<a href="javascript:void(0)" class="exec" data-exec="posts_new"><i class="fa fa-plus-circle"></i><span>@(New)</span></a>
 		</nav>
 		<div class="caption"><span class="fa fa-hashtag mr5"></span> @(Posts)</div>
 		<div class="row">
-			<div class="col-md-4 m">
+			<div class="col-md-3 m">
 				<div data-component="textbox" data-component-path="posts.filter.search" data-placeholder="@(Search posts ...)" data-control-icon="fa-search"></div>
 				<div class="help" data-component="template" data-component-path="posts.grid"><script type="text/html">{{ count | pluralize(@('# items','# item','# items','# items')) }} / {{ pages | pluralize(@('# pages','# page','# pages','# pages')) }}</script></div>
 			</div>
-			<div class="col-md-4 m">
+			<div class="col-md-3 m">
 				<div data-component="dropdown" data-component-path="posts.filter.category" data-source="posts.categories" data-empty="@(All posts)" data-source-value="name"></div>
 				<div>&nbsp;</div>
 			</div>
-			<div class="col-md-4 m">
+			<div class="col-md-3 m">
+				<div data-component="dropdown" data-component-path="posts.filter.template" data-source="posts.templates" data-empty="@(All templates)"></div>
+			</div>
+			<div class="col-md-3 m">
 				<div data-component="dropdown" data-component-path="posts.filter.language" data-source="languages" data-empty="@(All languages)"></div>
 			</div>
 		</div>
@@ -56,7 +59,7 @@
 	<hr style="margin:0 0 8px" />
 	<div class="cmseditor-help">
 		<nav><i class="fa fa-desktop"></i><a href="javascript:posts_device(1)">@(Large)</a><a href="javascript:posts_device(2)">@(Medium)</a><a href="javascript:posts_device(3)">@(Tablet)</a><a href="javascript:posts_device(4)">@(Mobile)</a></nav>
-		<div><b>@(Editor formatting:)</b> @(bold) (&#8984+B), @(italic) (&#8984+I), @(underline) (&#8984+U), @(link) (&#8984+L). <a href="javascript:void(0)" data-component="click" data-component-path="posts_sourcecode" class="black"><span class="fa fa-code w18"></span>@(Show source-code)</a></div>
+		<div><b>@(Editor formatting:)</b> @(bold) (&#8984+B), @(italic) (&#8984+I), @(underline) (&#8984+U), @(link) (&#8984+L). <a href="javascript:void(0)" data-exec="posts_sourcecode" class="exec black"><span class="fa fa-code w18"></span>@(Show source-code)</a></div>
 	</div>
 	<div class="pages-editor" data-component="editor" data-component-path="posts.form.body" data-component-import="/templates/component-editor.html" data-component-id="posts.editor"></div>
 	<br />

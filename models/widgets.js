@@ -45,6 +45,9 @@ NEWSCHEMA('Widget').make(function(schema) {
 			model.datecreated = F.datetime;
 		}
 
+		if (model.body)
+			model.body = U.minifyHTML(model.body);
+
 		(newbie ? nosql.insert(model) : nosql.modify(model).where('id', model.id)).callback(function() {
 			F.emit('widgets.save', model);
 			callback(SUCCESS(true));
@@ -74,6 +77,10 @@ NEWSCHEMA('Widget').make(function(schema) {
 		});
 
 		filter.callback(() => callback(output));
+	});
+
+	schema.addWorkflow('import', function(error, model, base64, callback) {
+
 	});
 });
 

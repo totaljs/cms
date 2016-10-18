@@ -22,6 +22,19 @@ COMPONENT('click', function() {
 	};
 });
 
+COMPONENT('exec', function() {
+	var self = this;
+	self.readonly();
+	self.blind();
+	self.make = function() {
+		self.element.on('click', self.attr('data-selector') || '.exec', function() {
+			var el = $(this);
+			var attr = el.attr('data-exec');
+			attr && EXEC(attr, el);
+		});
+	};
+});
+
 COMPONENT('visible', function() {
 	var self = this;
 	var condition = self.attr('data-if');
@@ -337,6 +350,20 @@ COMPONENT('textbox', function() {
 
 		if (!icon2 && self.type === 'date')
 			icon2 = 'fa-calendar';
+		else if (self.type === 'search') {
+			icon2 = 'fa-search ui-textbox-control-icon';
+			self.element.on('click', '.ui-textbox-control-icon', function() {
+				self.$stateremoved = false;
+				$(this).removeClass('fa-times').addClass('fa-search');
+				self.set('');
+			});
+			self.getter2 = function(value) {
+				if (self.$stateremoved && !value)
+					return;
+				self.$stateremoved = value ? false : true;
+				self.find('.ui-textbox-control-icon').toggleClass('fa-times', value ? true : false).toggleClass('fa-search', value ? false : true);
+			};
+		}
 
 		icon2 && builder.push('<div><span class="fa {0}"></span></div>'.format(icon2));
 		increment && !icon2 && builder.push('<div><span class="fa fa-caret-up"></span><span class="fa fa-caret-down"></span></div>');
@@ -972,11 +999,14 @@ COMPONENT('form', function() {
 		EXEC('$calendar.hide');
 
 		if (isHidden) {
+			self.release(true);
 			self.element.find('.ui-form').removeClass('ui-form-animate');
 			return;
 		}
 
 		self.resize();
+		self.release(false);
+
 		var el = self.element.find('input,select,textarea');
 		el.length > 0 && el.eq(0).focus();
 		window.$$form_level++;
@@ -1242,7 +1272,6 @@ COMPONENT('dropdowncheckbox', function() {
 
 	var self = this;
 	var required = self.attr('data-required') === 'true';
-	var datasource = '';
 	var container;
 	var data = [];
 	var values;
@@ -1690,6 +1719,10 @@ COMPONENT('codemirror', function() {
 		return required ? value && value.length > 0 : true;
 	};
 
+	self.released = function(is) {
+		is && editor.setValue('');
+	};
+
 	self.make = function() {
 
 		var height = self.element.attr('data-height');
@@ -1702,6 +1735,9 @@ COMPONENT('codemirror', function() {
 		height !== 'auto' && editor.setSize('100%', height || '200px');
 
 		editor.on('change', function(a, b) {
+
+			if (self.release())
+				return;
 
 			if (skipB && b.origin !== 'paste') {
 				skipB = false;
@@ -2550,6 +2586,132 @@ COMPONENT('contextmenu', function() {
 			self.target = null;
 			is = false;
 		}, sleep ? sleep : 100);
+	};
+});
+
+COMPONENT('checkboxlist', function() {
+	var self = this;
+	var template = Tangular.compile('<div class="ui-checkboxlist-checkbox {0}" data-search="{{ name }}"><label><input type="checkbox" value="{{ id }}"><span>{{ name }}</span></label></div>'.format(self.attr('data-class')));
+	var datasource;
+	var items;
+	var condition;
+
+	self.make = function() {
+
+		self.element.on('click', 'input', function() {
+			var arr = self.get();
+
+			if (!(arr instanceof Array))
+				arr = [];
+
+			var value = self.parser(this.value);
+			var index = arr.indexOf(value);
+			if (index === -1)
+				arr.push(value);
+			else
+				arr.splice(index, 1);
+
+			self.set(arr);
+			setTimeout2(self.id, function() {
+				self.change(true);
+			}, 400);
+		});
+
+		self.element.on('click', 'a', function() {
+			var arr = [];
+			var inputs = self.element.find('input');
+			var value = self.get();
+
+			if (value && inputs.length === value.length) {
+				self.set(arr);
+				return;
+			}
+
+			inputs.each(function() {
+				arr.push(self.parser(this.value));
+			});
+
+			self.set(arr);
+			setTimeout2(self.id, function() {
+				self.change(true);
+			}, 400);
+		});
+
+		self.make = function() {
+
+			var options = self.attr('data-options');
+			if (!options)
+				return;
+
+			var arr = options.split(';');
+			var datasource = [];
+
+			for (var i = 0, length = arr.length; i < length; i++) {
+				var item = arr[i].split('|');
+				datasource.push({ id: item[1] === undefined ? item[0] : item[1], name: item[0] });
+			}
+
+			self.redraw(datasource);
+		};
+
+		self.setter = function(value) {
+			self.element.find('input').each(function() {
+				this.checked = value && value.indexOf(self.parser(this.value)) !== -1;
+			});
+		};
+
+		self.redraw = function(arr) {
+			var builder = [];
+			var kn = self.attr('data-source-text') || 'name';
+			var kv = self.attr('data-source-value') || 'id';
+
+			for (var i = 0, length = arr.length; i < length; i++) {
+				var item = arr[i];
+
+				if (condition && !condition(item))
+					continue;
+
+				if (typeof(item) === 'string')
+					builder.push(template({ id: item, name: item }));
+				else
+					builder.push(template({ id: item[kv] === undefined ? item[kn] : item[kv], name: item[kn] }));
+			}
+
+			if (!builder.length)
+				return;
+
+			self.attr('data-button') && builder.push('<div class="clearfix"></div><div class="{1}"><div class="ui-checkboxlist-selectall"><a href="javascript:void(0)"><i class="fa fa-check-square mr5"></i>{0}</a></div></div>'.format(self.attr('data-button'), self.attr('data-class')));
+			self.html(builder.join(''));
+			self.setter(self.get());
+			return self;
+		};
+
+		condition = self.attr('data-if');
+		if (condition)
+			condition = FN(condition);
+
+		datasource = self.attr('data-source');
+		datasource && self.watch(datasource, function(path, value) {
+			if (self.release())
+				return;
+			items = value || EMPTYARRAY;
+			self.redraw(value);
+		});
+	};
+
+	self.released = function(is) {
+
+		if (is) {
+			self.empty();
+			items = null;
+			return;
+		}
+
+		var tmp = self.get(datasource) || EMPTYARRAY;
+		if (tmp === items)
+			return;
+		items = tmp;
+		self.redraw(items);
 	};
 });
 // ==========================================================
