@@ -211,8 +211,8 @@ function json_dashboard_online() {
 	model.visitors = counter.online();
 	model.today = counter.today();
 	model.last = counter.today().last;
-	model.memoryused = (memory.heapUsed / 1024 / 1024).floor(2);
-	model.memorytotal = (memory.heapTotal / 1024 / 1024).floor(2);
+	model.memoryused = memory.heapUsed.filesize();
+	model.memorytotal = memory.heapTotal.filesize();
 	self.json(model);
 }
 
@@ -224,10 +224,7 @@ function json_dashboard_clear() {
 	Fs.unlink('databases/webcounter.nosql', NOOP);
 	Fs.unlink('databases/webcounter.cache', NOOP);
 
-	Object.keys(instance.stats).forEach(function(key) {
-		instance.stats[key] = 0;
-	});
-
+	Object.keys(instance.stats).forEach(key => instance.stats[key] = 0);
 	self.json(SUCCESS(true));
 }
 
