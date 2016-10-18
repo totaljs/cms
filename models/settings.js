@@ -28,16 +28,12 @@ NEWSCHEMA('Settings').make(function(schema) {
 			settings.url = settings.url.substring(0, settings.url.length - 1);
 
 		settings.datebackup = F.datetime;
-
 		DB('settings_backup').insert(JSON.parse(JSON.stringify(settings)));
-		delete settings.datebackup;
+		settings.datebackup = undefined;
 
 		// Writes settings into the file
 		Fs.writeFile(filename, JSON.stringify(settings), function() {
-
 			F.emit('settings.save', settings);
-
-			// Returns response
 			callback(SUCCESS(true));
 		});
 	});
@@ -87,8 +83,6 @@ NEWSCHEMA('Settings').make(function(schema) {
 				F.config.custom.languages = [];
 
 			F.emit('settings', settings);
-
-			// Returns response
 			callback(SUCCESS(true));
 		});
 	});
