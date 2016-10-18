@@ -817,7 +817,9 @@ COMPONENT('page', function() {
 
 			reload && self.get(reload)();
 			isProcessed = true;
-			el.toggleClass('hidden', !is);
+			setTimeout(function() {
+				el.toggleClass('hidden', !is);
+			}, 200);
 			SETTER('loading', 'hide', 1000);
 		});
 	};
