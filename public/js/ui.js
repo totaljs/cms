@@ -855,7 +855,7 @@ COMPONENT('grid', function() {
 		setTimeout(function() {
 			var max = self.attr('data-max');
 			if (max === 'auto')
-				self.max = (Math.floor(($(window).height() - (self.element.offset().top + 110)) / 26));
+				self.max = (Math.floor(($(window).height() - (self.element.offset().top + 250)) / 27));
 			else
 				self.max = parseInt(max);
 			if (self.max < 10)
