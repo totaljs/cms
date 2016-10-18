@@ -43,16 +43,12 @@ NEWSCHEMA('Post').make(function(schema) {
 		filter.callback(function(err, docs, count) {
 
 			var data = {};
-
 			data.count = count;
 			data.items = docs;
 			data.limit = options.max;
-			data.pages = Math.ceil(data.count / options.max);
-
-			if (!data.pages)
-				data.pages = 1;
-
+			data.pages = Math.ceil(data.count / options.max) || 1;
 			data.page = options.page + 1;
+
 			callback(data);
 		});
 	});
@@ -81,7 +77,7 @@ NEWSCHEMA('Post').make(function(schema) {
 	});
 
 	// Saves the post into the database
-	schema.setSave(function(error, model, options, callback) {
+	schema.setSave(function(error, model, controller, callback) {
 
 		var newbie = model.id ? false : true;
 		var nosql = NOSQL('posts');
@@ -89,6 +85,10 @@ NEWSCHEMA('Post').make(function(schema) {
 		if (newbie) {
 			model.id = UID();
 			model.datecreated = F.datetime;
+			model.admin_create = controller.user.name;
+		} else {
+			model.admin_update = controller.user.name;
+			model.dateupdated = F.datetime;
 		}
 
 		model.linker = model.datecreated.format('yyyyMMdd') + '-' + model.name.slug();

@@ -27,7 +27,8 @@ NEWSCHEMA('Settings').make(function(schema) {
 		if (settings.url.endsWith('/'))
 			settings.url = settings.url.substring(0, settings.url.length - 1);
 
-		settings.datebackup = new Date();
+		settings.datebackup = F.datetime;
+
 		DB('settings_backup').insert(JSON.parse(JSON.stringify(settings)));
 		delete settings.datebackup;
 
@@ -44,15 +45,12 @@ NEWSCHEMA('Settings').make(function(schema) {
 	// Gets settings
 	schema.setGet(function(error, model, options, callback) {
 		Fs.readFile(filename, function(err, data) {
-			var settings = {};
 
-			if (!err) {
-				settings = JSON.parse(data.toString('utf8'));
-				callback(settings);
-				return;
-			}
+			if (err)
+				settings = { 'manager-superadmin': 'admin:admin' };
+			else
+				settings = data.toString('utf8').parseJSON();
 
-			settings['manager-superadmin'] = 'admin:admin';
 			callback(settings);
 		});
 	});

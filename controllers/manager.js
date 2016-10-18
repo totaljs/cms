@@ -1,53 +1,56 @@
 const SITEMAP = {};
+const Fs = require('fs');
 
 exports.install = function() {
 	// Auto-localize static HTML templates
 	F.localize('/templates/*.html', ['compress']);
 
+	var url = CONFIG('manager-url');
+
 	// COMMON
-	F.route(CONFIG('manager-url') + '/*', '~manager');
-	F.route(CONFIG('manager-url') + '/upload/',                  upload, ['post', 'upload', 10000], 3084); // 3 MB
-	F.route(CONFIG('manager-url') + '/upload/base64/',           upload_base64, ['post', 10000], 2048); // 2 MB
-	F.route(CONFIG('manager-url') + '/logoff/',                  redirect_logoff);
+	F.route(url + '/*', '~manager');
+	F.route(url + '/upload/',                  upload, ['post', 'upload', 10000], 3084); // 3 MB
+	F.route(url + '/upload/base64/',           upload_base64, ['post', 10000], 2048); // 2 MB
+	F.route(url + '/logoff/',                  redirect_logoff);
 
 	// DASHBOARD
-	F.route(CONFIG('manager-url') + '/api/dashboard/',           json_dashboard);
-	F.route(CONFIG('manager-url') + '/api/dashboard/online/',    json_dashboard_online);
-	F.route(CONFIG('manager-url') + '/api/dashboard/clear/',     json_dashboard_clear);
+	F.route(url + '/api/dashboard/',           json_dashboard);
+	F.route(url + '/api/dashboard/online/',    json_dashboard_online);
+	F.route(url + '/api/dashboard/clear/',     json_dashboard_clear);
 
 	// POSTS
-	F.route(CONFIG('manager-url') + '/api/posts/',               json_query, ['*Post']);
-	F.route(CONFIG('manager-url') + '/api/posts/',               json_save, ['post', '*Post']);
-	F.route(CONFIG('manager-url') + '/api/posts/{id}/',          json_read, ['*Post']);
-	F.route(CONFIG('manager-url') + '/api/posts/',               json_remove, ['delete', '*Post']);
-	F.route(CONFIG('manager-url') + '/api/posts/clear/',         json_clear, ['*Post']);
-	F.route(CONFIG('manager-url') + '/api/posts/codelists/',     json_posts_codelists);
+	F.route(url + '/api/posts/',               json_query, ['*Post']);
+	F.route(url + '/api/posts/',               json_save, ['post', '*Post']);
+	F.route(url + '/api/posts/{id}/',          json_read, ['*Post']);
+	F.route(url + '/api/posts/',               json_remove, ['delete', '*Post']);
+	F.route(url + '/api/posts/clear/',         json_clear, ['*Post']);
+	F.route(url + '/api/posts/codelists/',     json_posts_codelists);
 
 	// PAGES
-	F.route(CONFIG('manager-url') + '/api/pages/',               json_query, ['*Page']);
-	F.route(CONFIG('manager-url') + '/api/pages/',               json_pages_save, ['post', '*Page']);
-	F.route(CONFIG('manager-url') + '/api/pages/',               json_remove, ['delete', '*Page']);
-	F.route(CONFIG('manager-url') + '/api/pages/{id}/',          json_read, ['*Page']);
-	F.route(CONFIG('manager-url') + '/api/pages/preview/',       view_pages_preview, ['json']);
-	F.route(CONFIG('manager-url') + '/api/pages/dependencies/',  json_pages_dependencies);
-	F.route(CONFIG('manager-url') + '/api/pages/clear/',         json_clear, ['*Page']);
-	F.route(CONFIG('manager-url') + '/api/pages/sitemap/',       json_pages_sitemap);
+	F.route(url + '/api/pages/',               json_query, ['*Page']);
+	F.route(url + '/api/pages/',               json_pages_save, ['post', '*Page']);
+	F.route(url + '/api/pages/',               json_remove, ['delete', '*Page']);
+	F.route(url + '/api/pages/{id}/',          json_read, ['*Page']);
+	F.route(url + '/api/pages/preview/',       view_pages_preview, ['json']);
+	F.route(url + '/api/pages/dependencies/',  json_pages_dependencies);
+	F.route(url + '/api/pages/clear/',         json_clear, ['*Page']);
+	F.route(url + '/api/pages/sitemap/',       json_pages_sitemap);
 
 	// WIDGETS
-	F.route(CONFIG('manager-url') + '/api/widgets/',             json_query, ['*Widget']);
-	F.route(CONFIG('manager-url') + '/api/widgets/',             json_widgets_save, ['post', '*Widget']);
-	F.route(CONFIG('manager-url') + '/api/widgets/',             json_remove, ['delete', '*Widget']);
-	F.route(CONFIG('manager-url') + '/api/widgets/{id}/',        json_read, ['*Widget']);
-	F.route(CONFIG('manager-url') + '/api/widgets/clear/',       json_clear, ['*Widget']);
+	F.route(url + '/api/widgets/',             json_query, ['*Widget']);
+	F.route(url + '/api/widgets/',             json_widgets_save, ['post', '*Widget']);
+	F.route(url + '/api/widgets/',             json_remove, ['delete', '*Widget']);
+	F.route(url + '/api/widgets/{id}/',        json_read, ['*Widget']);
+	F.route(url + '/api/widgets/clear/',       json_clear, ['*Widget']);
 
 	// NEWSLETTER
-	F.route(CONFIG('manager-url') + '/api/newsletter/',          json_query, ['*Newsletter']);
-	F.route(CONFIG('manager-url') + '/api/newsletter/csv/',      file_newsletter, ['*Newsletter']);
-	F.route(CONFIG('manager-url') + '/api/newsletter/clear/',    json_clear, ['*Newsletter']);
+	F.route(url + '/api/newsletter/',          json_query, ['*Newsletter']);
+	F.route(url + '/api/newsletter/csv/',      file_newsletter, ['*Newsletter']);
+	F.route(url + '/api/newsletter/clear/',    json_clear, ['*Newsletter']);
 
 	// SETTINGS
-	F.route(CONFIG('manager-url') + '/api/settings/',            json_settings, ['*Settings']);
-	F.route(CONFIG('manager-url') + '/api/settings/',            json_settings_save, ['put', '*Settings']);
+	F.route(url + '/api/settings/',            json_settings, ['*Settings']);
+	F.route(url + '/api/settings/',            json_settings_save, ['put', '*Settings']);
 };
 
 // ==========================================================================
@@ -124,7 +127,7 @@ function json_query() {
 
 function json_save() {
 	var self = this;
-	self.body.$save(self.callback());
+	self.body.$save(self, self.callback());
 }
 
 function json_remove() {
@@ -218,9 +221,8 @@ function json_dashboard_clear() {
 	var self = this;
 	var instance = MODULE('webcounter').instance;
 
-	var fs = require('fs');
-	fs.unlink('databases/webcounter.nosql', NOOP);
-	fs.unlink('databases/webcounter.cache', NOOP);
+	Fs.unlink('databases/webcounter.nosql', NOOP);
+	Fs.unlink('databases/webcounter.cache', NOOP);
 
 	Object.keys(instance.stats).forEach(function(key) {
 		instance.stats[key] = 0;
@@ -264,9 +266,9 @@ function json_pages_save() {
 
 	// Is auto-creating URL?
 	if (self.body.url[0] === '-')
-		self.body.$async(self.callback(), 1).$workflow('create-url').$save();
+		self.body.$async(self.callback(), 1).$workflow('url', self).$save(self);
 	else
-		self.body.$save(self.callback());
+		self.body.$save(self, self.callback());
 
 	// Clears view cache
 	setTimeout(() => F.cache.removeAll('cache.'), 2000);
@@ -285,7 +287,7 @@ function json_pages_sitemap() {
 // Saves (updates or creates) specific widget
 function json_widgets_save() {
 	var self = this;
-	self.body.$save(self.callback());
+	self.body.$save(self, self.callback());
 
 	// Clears view cache
 	setTimeout(() => F.cache.removeAll('cache.'));
