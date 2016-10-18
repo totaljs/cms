@@ -81,10 +81,6 @@ NEWSCHEMA('Widget').make(function(schema) {
 
 		filter.callback(() => callback(output));
 	});
-
-	schema.addWorkflow('import', function(error, model, base64, callback) {
-
-	});
 });
 
 function refresh() {
