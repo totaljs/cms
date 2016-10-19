@@ -42,9 +42,9 @@ NEWSCHEMA('Widget').make(function(schema) {
 		if (newbie) {
 			model.id = UID();
 			model.datecreated = F.datetime;
-			model.admin_create = controller.user.name;
+			model.admincreate = controller.user.name;
 		} else {
-			model.admin_update = controller.user.name;
+			model.adminupdate = controller.user.name;
 			model.dateupdated = F.datetime;
 		}
 
