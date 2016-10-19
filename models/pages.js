@@ -215,12 +215,11 @@ NEWSCHEMA('Page').make(function(schema) {
 						// Executes transform
 						Widget.transform(key, widgets[key], custom, function(err, content) {
 
-							if (err) {
+							if (err)
 								F.error(err, 'Widget: ' + widgets[key].name + ' - ' + key + ' (page: ' + response.name + ')', response.url);
-								return next();
-							}
+							else
+								response.body = response.body.replace('data-id="' + key + '">', '>' + content);
 
-							response.body = response.body.replace('data-id="' + key + '">', '>' + content);
 							next();
 						}, true);
 
@@ -247,7 +246,7 @@ NEWSCHEMA('Page').make(function(schema) {
 								response.partial = arr;
 								callback(response);
 							});
-							return
+							return;
 						}
 
 						callback(response);
