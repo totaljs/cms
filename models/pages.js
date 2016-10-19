@@ -109,15 +109,13 @@ NEWSCHEMA('Page').make(function(schema) {
 		if (newbie) {
 			model.id = UID();
 			model.datecreated = F.datetime;
-			model.admincreate = controller.user.name;
+			model.admincreated = controller.user.name;
 		} else {
-			model.adminupdate = controller.user.name;
 			model.dateupdated = F.datetime;
+			model.adminupdated = controller.user.name;
 		}
 
-		if (model.body)
-			model.body = U.minifyHTML(model.body);
-
+		model.body = U.minifyHTML(model.body);
 		model.search = ((model.title || '') + ' ' + (model.keywords || '') + ' ' + model.search).keywords(true, true).join(' ').max(1000);
 
 		// Sanitizes URL
