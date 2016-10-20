@@ -158,9 +158,6 @@
 	function dashboard_refresh() {
 		AJAX('GET {0}/api/dashboard/'.format(managerurl), function(response, err) {
 
-			if (isError(arguments))
-				return;
-
 			SET('dashboard.data', response);
 			if (dashboard.cache.processed)
 				return;
@@ -285,8 +282,6 @@
 
 	function dashboard_refresh_online() {
 		AJAX('GET {0}/api/dashboard/online/'.format(managerurl), function(response) {
-			if (isError(arguments))
-				return;
 			if (NOTMODIFIED('dashboard.online', response))
 				return;
 			SET('dashboard.online', response);

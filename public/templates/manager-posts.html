@@ -117,8 +117,6 @@
 							return;
 						var loading = FIND('loading');
 						AJAX('DELETE {0}/api/posts/'.format(managerurl), { id: row.id }, function() {
-							if (isError(arguments))
-								return;
 							loading.hide(500);
 							posts_refresh();
 						});
@@ -151,10 +149,6 @@
 			posts.form.search = editor.getKeywords();
 
 			AJAX('POST {0}/api/posts/'.format(managerurl), posts.form, function(response) {
-
-				if (isError(arguments))
-					return;
-
 				loading.hide(500);
 
 				// Error handling
@@ -172,9 +166,6 @@
 	function posts_edit(id) {
 		var loading = FIND('loading').show();
 		AJAX('GET {0}/api/posts/{1}/'.format(managerurl, id), function(response) {
-
-			if (isError(arguments))
-				return;
 
 			loading.hide(500);
 
@@ -211,10 +202,6 @@
 	// Method refreshes categories
 	function posts_refresh_codelists() {
 		AJAX('GET {0}/api/posts/codelists/'.format(managerurl), function(response) {
-
-			if (isError(arguments))
-				return;
-
 			SET('posts.categories', response.categories);
 			SET('posts.templates', response.templates);
 		});
