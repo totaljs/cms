@@ -28,10 +28,10 @@ exports.install = function() {
 
 	// PAGES
 	F.route(url + '/api/pages/',               json_query, ['*Page']);
-	F.route(url + '/api/pages/',               json_pages_save, ['post', '*Page']);
+	F.route(url + '/api/pages/',               json_pages_save, ['post', '*Page'], 512);
 	F.route(url + '/api/pages/',               json_remove, ['delete', '*Page']);
 	F.route(url + '/api/pages/{id}/',          json_read, ['*Page']);
-	F.route(url + '/api/pages/preview/',       view_pages_preview, ['json']);
+	F.route(url + '/api/pages/preview/',       view_pages_preview, ['json'], 512);
 	F.route(url + '/api/pages/dependencies/',  json_pages_dependencies);
 	F.route(url + '/api/pages/clear/',         json_clear, ['*Page']);
 	F.route(url + '/api/pages/sitemap/',       json_pages_sitemap);
