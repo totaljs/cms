@@ -142,7 +142,6 @@
 	</div>
 </div>
 
-
 <script>
 
 	Chart.defaults.global.legend.display = false;
@@ -159,6 +158,7 @@
 		AJAX('GET {0}/api/dashboard/'.format(managerurl), function(response, err) {
 
 			SET('dashboard.data', response);
+
 			if (dashboard.cache.processed)
 				return;
 
@@ -174,9 +174,7 @@
 			options.type = 'doughnut';
 			options.data = { labels: labels, datasets: [data], display: false };
 
-			if (dashboard.cache.online)
-				dashboard.cache.online.destroy();
-
+			dashboard.cache.online && dashboard.cache.online.destroy();
 			dashboard.cache.online = new Chart($('#dashboard-online').get(0).getContext('2d'), options);
 			dashboard.year = (new Date()).getFullYear();
 			dashboard.years = [];
@@ -189,8 +187,7 @@
 				stats_mobile += stats.mobile;
 				stats_desktop += stats.desktop;
 				var year = key.substring(key.indexOf('-') + 1).parseInt();
-				if (dashboard.years.indexOf(year) === -1)
-					dashboard.years.push(year);
+				dashboard.years.indexOf(year) === -1 && dashboard.years.push(year);
 			});
 
 			dashboard.years.sort();
@@ -242,9 +239,7 @@
 		options.type = 'bar';
 		options.data = { labels: window.$calendar.months_short, datasets: data };
 
-		if (dashboard.cache.visitors)
-			dashboard.cache.visitors.destroy();
-
+		dashboard.cache.visitors && dashboard.cache.visitors.destroy();
 		el = $('#dashboard-monthly-visitors');
 		dashboard.cache.visitors = new Chart(el.get(0).getContext('2d'), options);
 
@@ -254,9 +249,7 @@
 		options.type = 'bar';
 		options.data = { labels: window.$calendar.months_short, datasets: data };
 
-		if (dashboard.cache.contactforms)
-			dashboard.cache.contactforms.destroy();
-
+		dashboard.cache.contactforms && dashboard.cache.contactforms.destroy();
 		el = $('#dashboard-monthly-contactforms');
 		dashboard.cache.contactforms = new Chart(el.get(0).getContext('2d'), options);
 
@@ -266,9 +259,7 @@
 		options.type = 'bar';
 		options.data = { labels: window.$calendar.months_short, datasets: data };
 
-		if (dashboard.cache.hits)
-			dashboard.cache.hits.destroy();
-
+		dashboard.cache.hits && dashboard.cache.hits.destroy();
 		el = $('#dashboard-monthly-hits');
 		dashboard.cache.hits = new Chart($('#dashboard-monthly-hits').get(0).getContext('2d'), options);
 	}
@@ -282,9 +273,7 @@
 
 	function dashboard_refresh_online() {
 		AJAX('GET {0}/api/dashboard/online/'.format(managerurl), function(response) {
-			if (NOTMODIFIED('dashboard.online', response))
-				return;
-			SET('dashboard.online', response);
+			!NOTMODIFIED('dashboard.online', response) && SET('dashboard.online', response);
 		});
 	}
 
