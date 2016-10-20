@@ -20,7 +20,7 @@ exports.install = function() {
 
 	// POSTS
 	F.route(url + '/api/posts/',               json_query, ['*Post']);
-	F.route(url + '/api/posts/',               json_save, ['post', '*Post']);
+	F.route(url + '/api/posts/',               json_save, ['post', '*Post'], 512);
 	F.route(url + '/api/posts/{id}/',          json_read, ['*Post']);
 	F.route(url + '/api/posts/',               json_remove, ['delete', '*Post']);
 	F.route(url + '/api/posts/clear/',         json_clear, ['*Post']);
