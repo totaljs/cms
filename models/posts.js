@@ -8,6 +8,7 @@ NEWSCHEMA('Post').make(function(schema) {
 	schema.define('perex', 'String(500)');
 	schema.define('template', 'String(50)');
 	schema.define('keywords', 'String(200)');
+        schema.define('description', 'String(250)');// Meta Description
 	schema.define('tags', '[String]');
 	schema.define('search', 'String(1000)');
 	schema.define('pictures', '[String]');  		// URL addresses for first 5 pictures
