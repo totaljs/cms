@@ -995,6 +995,10 @@ COMPONENT('form', function() {
 	self.getter = null;
 	self.setter = function(value) {
 
+		setTimeout2('noscroll', function() {
+			$('html').toggleClass('noscroll', $('.ui-form-container').not('.hidden').length ? true : false);
+		}, 50);
+
 		var isHidden = !EVALUATE(self.path, self.condition);
 		self.element.toggleClass('hidden', isHidden);
 		EXEC('$calendar.hide');
@@ -2571,7 +2575,7 @@ COMPONENT('contextmenu', function() {
 		self.element.show();
 		setTimeout(function() {
 			self.element.addClass('ui-contextmenu-visible');
-            self.emit('contextmenu', true, self, self.target);
+			self.emit('contextmenu', true, self, self.target);
 		}, 100);
 
 		is = true;
@@ -2583,7 +2587,7 @@ COMPONENT('contextmenu', function() {
 		clearTimeout(timeout);
 		timeout = setTimeout(function() {
 			self.element.hide().removeClass('ui-contextmenu-visible');
-            self.emit('contextmenu', false, self, self.target);
+			self.emit('contextmenu', false, self, self.target);
 			self.callback = null;
 			self.target = null;
 			is = false;
