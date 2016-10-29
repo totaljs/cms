@@ -115,11 +115,15 @@
 	<hr class="nmt" />
 	<div class="padding npt">
 		<div class="row">
-			<div class="col-md-4 m">
+			<div class="col-md-2 m">
 				<div data-component="textbox" data-component-path="pages.form.name" data-maxlenght="50">@(Name)</div>
 				<div class="help">@(Name in sitemap.)</div>
 			</div>
-			<div class="col-md-4">
+                        <div class="col-md-4 m">
+				<div data-component="textarea" data-component-path="pages.form.description" data-maxlenght="250" data-icon="fa-google">@(Description)</div>
+				<div class="help">@(Description in meta.)</div>
+			</div>
+			<div class="col-md-2">
 				<div data-component="textbox" data-component-path="pages.form.keywords" data-maxlenght="80" data-icon="fa-tags">@(Keywords)</div>
 				<div class="help">@(Meta keywords, maximum 6 words.)</div>
 			</div>

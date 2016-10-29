@@ -28,6 +28,7 @@ NEWSCHEMA('Page').make(function(schema) {
 	schema.define('name', 'String(50)');
 	schema.define('perex', 'String(500)');
 	schema.define('title', 'String(100)', true);
+        schema.define('description', 'String(250)');// Meta Description
 	schema.define('priority', Number);
 	schema.define('ispartial', Boolean);
 	schema.define('body', String);
@@ -472,6 +473,7 @@ F.eval(function() {
 
 				self.sitemap(response.breadcrumb);
 				self.title(response.title);
+                                self.description(response.description);
 
 				if (!view)
 					view = '~/cms/' + response.template;

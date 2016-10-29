@@ -56,8 +56,12 @@
 	<br />
 	<div class="padding">
 		<div class="row">
-			<div class="col-md-6 m">
+			<div class="col-md-4 m">
 				<div data-component="textboxtags" data-component-path="posts.form.tags">@(Tags)</div>
+			</div>
+                        <div class="col-md-4 m">
+				<div data-component="textarea" data-component-path="posts.form.description" data-maxlenght="250" data-icon="fa-google">@(Description)</div>
+                                <div class="help">@(Description in meta.)</div>
 			</div>
 			<div class="col-md-2 m">
 				<div data-component="textbox" data-component-path="posts.form.datecreated" data-align="center" data-maxlength="10" data-icon="fa-calendar" data-component-type="date" data-component-format="@(yyyy-MM-dd)">@(Created)</div>
