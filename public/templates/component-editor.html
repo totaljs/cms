@@ -422,7 +422,7 @@
 		};
 
 		self.getPerex = function() {
-			return self.doFind('.CMS_perex').html();
+			return self.doFind('.CMS_perex').html().replace(/<\/?[^>]+(>|$)/g, '');
 		};
 
 		self.getKeywords = function() {
