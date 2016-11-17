@@ -16,7 +16,7 @@ NEWSCHEMA('Page').make(function(schema) {
 	schema.define('icon', 'String(20)');                // Font-Awesome icon name
 	schema.define('ispartial', Boolean);                // Is only partial page (the page will be shown in another page)
 	schema.define('keywords', 'String(200)');           // Meta keywords
-	schema.define('description', 'String(200)');           // Meta description
+	schema.define('description', 'String(200)');        // Meta description
 	schema.define('language', 'Lower(2)');              // For which language is the page targeted?
 	schema.define('name', 'String(50)');                // Name in manager
 	schema.define('navigations', '[String]');           // In which navigation will be the page?
@@ -462,7 +462,7 @@ F.eval(function() {
 				NOSQL('pages').counter.hit(self.repository.page.id);
 
 				self.sitemap(response.breadcrumb);
-				self.title(response.title);
+				self.meta(response.title, response.description, response.keywords);
 				self.view(view || '~/cms/' + response.template, model);
 			});
 
