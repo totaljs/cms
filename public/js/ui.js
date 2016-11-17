@@ -627,13 +627,20 @@ COMPONENT('cookie', function() {
 COMPONENT('expander', function() {
 	var self = this;
 	self.readonly();
+
+	self.toggle = function(v) {
+		self.element.toggleClass('ui-expander-expanded', v);
+		var fa = self.element.find('.ui-expander-button').find('.fa');
+		fa.toggleClass('fa-angle-double-down', v);
+		fa.toggleClass('fa-angle-double-up', !v);
+	};
+
 	self.make = function() {
-		self.element.addClass('ui-expander');
+		self.classes('ui-expander' + (self.attr('data-expand') === 'true' ? ' ui-expander-expanded' : ''));
 		self.element.wrapInner('<div class="ui-expander-container"></div>');
 		self.append('<div class="ui-expander-fade"></div><div class="ui-expander-button"><span class="fa fa-angle-double-down"></span></div>');
 		self.element.on('click', '.ui-expander-button', function() {
-			self.element.toggleClass('ui-expander-expanded');
-			self.element.find('.ui-expander-button').find('.fa').toggleClass('fa-angle-double-down fa-angle-double-up');
+			self.toggle();
 		});
 	};
 });
@@ -839,7 +846,7 @@ COMPONENT('grid', function() {
 		self.template = Tangular.compile(element.html());
 		self.element.on('click', 'tr', function() {});
 		self.element.addClass('ui-grid');
-		self.html('<div><div class="ui-grid-page"></div><table width="100%" cellpadding="0" cellspacing="0" border="0"><tbody></tbody></table></div><div data-component="pagination" data-component-path="{0}" data-max="8" data-pages="{1}" data-items="{2}" data-target-path="{3}"></div>'.format(self.path, self.attr('data-pages'), self.attr('data-items'), self.attr('data-pagination-path')));
+		self.html('<div><div class="ui-grid-page"></div><table width="100%" cellpadding="0" cellspacing="0" border="0"><tbody></tbody></table></div><div data-jc="pagination" data-jc-path="{0}" data-max="8" data-pages="{1}" data-items="{2}" data-target-path="{3}"></div>'.format(self.path, self.attr('data-pages'), self.attr('data-items'), self.attr('data-pagination-path')));
 		self.element.on('click', 'button', function() {
 			switch (this.name) {
 				default:
@@ -861,8 +868,6 @@ COMPONENT('grid', function() {
 			if (self.max < 10)
 				self.max = 10;
 		}, 10);
-
-		return true;
 	};
 
 	self.refresh = function() {
@@ -967,6 +972,7 @@ COMPONENT('form', function() {
 
 		var el = $('#' + self._id);
 		el.find('.ui-form').get(0).appendChild(self.element.get(0));
+		self.classes('-hidden');
 		self.element = el;
 
 		self.element.on('scroll', function() {
@@ -2791,10 +2797,8 @@ jC.formatter(function(path, value, type) {
 
 	if (type === 'date') {
 		if (value instanceof Date)
-			return value.format(this.attr('data-component-format'));
-		if (!value)
-			return value;
-		return new Date(Date.parse(value)).format(this.attr('data-component-format'));
+			return value.format(this.attr('data-jc-format'));
+		return value ? new Date(Date.parse(value)).format(this.attr('data-jc-format')) : value;
 	}
 
 	if (type !== 'currency')

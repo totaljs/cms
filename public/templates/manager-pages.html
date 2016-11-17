@@ -79,7 +79,7 @@
 	</div>
 </div>
 
-<div data-jc="form" data-title="@(Page form)" data-jc-path="common.form" data-if="value === 'pages'" data-width="1300px" data-jc-id="pages.form">
+<div data-jc="form" data-title="@(Page form)" data-jc-path="common.form" data-if="value === 'pages'" data-width="1300px" data-jc-id="pages.form" class="hidden">
 	<div class="padding" style="padding-bottom:10px">
 		<div class="row">
 			<div class="col-md-3 m">
@@ -110,41 +110,56 @@
 		<div><b>@(Editor formatting:)</b> @(bold) (&#8984+B), @(italic) (&#8984+I), @(underline) (&#8984+U), @(link) (&#8984+L). <a href="javascript:void(0)" data-exec="pages_sourcecode" class="exec black"><span class="fa fa-code w18"></span>@(Show source-code)</a></div>
 	</div>
 	<div class="pages-editor" data-jc="editor" data-jc-path="pages.form.body" data-jc-import="/templates/component-editor.html" data-jc-id="pages.editor" data-jc-released="true"></div>
-	<div class="padding npb">
-		<br />
-		<div class="row">
-			<div class="col-md-4 m" data-jc="disable" data-jc-path="pages.form.ispartial" data-if="value" data-selector=".ui-dropdowncheckbox">
-				<div data-jc="dropdowncheckbox" data-jc-path="pages.form.navigations" data-source="pages.dependencies.navigations" data-icon="fa-bars" data-empty="@(Doesn't contain any navigation.)">@(Navigation)</div>
-				<div class="help m">@(Where will be the page shown?)</div>
+	<div data-jc="expander" data-jc-id="pages.form.expander">
+		<div class="padding npb">
+			<br />
+			<div class="section">
+				<hr />
+				<span><i class="fa fa-cog"></i>@(Advanced settings)</span>
 			</div>
-			<div class="col-md-4 m" data-jc="disable" data-jc-path="pages.form.ispartial" data-if="value" data-selector=".ui-dropdowncheckbox">
-				<div data-jc="dropdowncheckbox" data-jc-path="pages.form.partial" data-source="pages.partial" data-icon="fa-database" data-empty="@(Doesn't contain any partial pages.)">@(Nested partial pages)</div>
-				<div class="help">@(Join other partial pages with this.)</div>
-			</div>
-			<div class="col-md-4 m" data-jc="disable" data-jc-path="pages.form.ispartial" data-if="value">
-				<div data-jc="dropdown" data-jc-path="pages.form.parent" data-source="pages.sitemap2" data-source-text="name" data-source-value="id" data-empty="" data-icon="fa-sitemap">@(Parent)</div>
-				<div class="help">@(Affects sitemap and breadcrumb.)</div>
+			<div class="row">
+				<div class="col-md-4 m" data-jc="disable" data-jc-path="pages.form.ispartial" data-if="value" data-selector=".ui-dropdowncheckbox">
+					<div data-jc="dropdowncheckbox" data-jc-path="pages.form.navigations" data-source="pages.dependencies.navigations" data-icon="fa-bars" data-empty="@(Doesn't contain any navigation.)">@(Navigation)</div>
+					<div class="help m">@(Where will be the page shown?)</div>
+				</div>
+				<div class="col-md-4 m" data-jc="disable" data-jc-path="pages.form.ispartial" data-if="value" data-selector=".ui-dropdowncheckbox">
+					<div data-jc="dropdowncheckbox" data-jc-path="pages.form.partial" data-source="pages.partial" data-icon="fa-database" data-empty="@(Doesn't contain any partial pages.)">@(Nested partial pages)</div>
+					<div class="help">@(Join other partial pages with this.)</div>
+				</div>
+				<div class="col-md-4 m" data-jc="disable" data-jc-path="pages.form.ispartial" data-if="value">
+					<div data-jc="dropdown" data-jc-path="pages.form.parent" data-source="pages.sitemap2" data-source-text="name" data-source-value="id" data-empty="" data-icon="fa-sitemap">@(Parent)</div>
+					<div class="help">@(Affects sitemap and breadcrumb.)</div>
+				</div>
 			</div>
 		</div>
-	</div>
-	<hr class="nmt" />
-	<div class="padding npt">
-		<div class="row">
-			<div class="col-md-4 m">
-				<div data-jc="textbox" data-jc-path="pages.form.name" data-maxlenght="50">@(Name)</div>
-				<div class="help">@(Name in sitemap.)</div>
+		<hr class="nmt" />
+		<div class="padding">
+			<div class="row">
+				<div class="col-md-4 m">
+					<div data-jc="textbox" data-jc-path="pages.form.name" data-maxlenght="50">@(Name)</div>
+					<div class="help">@(Name in sitemap.)</div>
+				</div>
+				<div class="col-md-4 m">
+					<div data-jc="textbox" data-jc-path="pages.form.keywords" data-maxlenght="80" data-icon="fa-tags">@(Keywords)</div>
+					<div class="help">@(Meta keywords, maximum 6 words.)</div>
+				</div>
+				<div class="col-md-4">
+					<div data-jc="textbox" data-jc-path="pages.form.description" data-maxlenght="120" data-icon="fa-align-center">@(Description)</div>
+					<div class="help">@(Meta description, maximum 120 chars.)</div>
+				</div>
 			</div>
-			<div class="col-md-4">
-				<div data-jc="textbox" data-jc-path="pages.form.keywords" data-maxlenght="80" data-icon="fa-tags">@(Keywords)</div>
-				<div class="help">@(Meta keywords, maximum 6 words.)</div>
-			</div>
-			<div class="col-md-2 m">
-				<div data-jc="textbox" data-jc-path="pages.form.icon" data-align="center" data-maxlength="20" data-placeholder="e.g. home" data-icon="fa-camera">@(Icon)</div>
-				<div class="help"><a href="http://fortawesome.github.io/Font-Awesome/icons/" target="_blank">Font-Awesome</a> @(without) <code>fa-</code></div>
-			</div>
-			<div class="col-md-2 m">
-				<div data-jc="textbox" data-jc-path="pages.form.priority" data-align="center" data-jc-type="number" data-maxlength="3" data-increment="true" data-icon="fa-sort-amount-desc">@(Priority)</div>
-				<div class="help">@(Affects navigation ordering.)</div>
+		</div>
+		<hr class="nmt" />
+		<div class="padding npb">
+			<div class="row">
+				<div class="col-md-2 m">
+					<div data-jc="textbox" data-jc-path="pages.form.icon" data-align="center" data-maxlength="20" data-placeholder="e.g. home" data-icon="fa-camera">@(Icon)</div>
+					<div class="help"><a href="http://fortawesome.github.io/Font-Awesome/icons/" target="_blank">Font-Awesome</a> @(without) <code>fa-</code></div>
+				</div>
+				<div class="col-md-2 m">
+					<div data-jc="textbox" data-jc-path="pages.form.priority" data-align="center" data-jc-type="number" data-maxlength="3" data-increment="true" data-icon="fa-sort-amount-desc">@(Priority)</div>
+					<div class="help">@(Affects navigation ordering.)</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -157,7 +172,7 @@
 	</div>
 </div>
 
-<div data-jc="form" data-title="@(Widget form)" data-jc-path="common.form" data-if="value === 'widgets'" data-width="900px" data-jc-id="widgets.form">
+<div data-jc="form" data-title="@(Widget form)" data-jc-path="common.form" data-if="value === 'widgets'" data-width="900px" data-jc-id="widgets.form" class="hidden">
 	<div class="padding npb">
 		<div class="row">
 			<div class="col-md-12">
@@ -207,7 +222,7 @@
 	</div>
 </div>
 
-<div data-jc="form" data-title="@(Create custom HTML content)" data-jc-path="pages.window" data-if="value === 'html'" data-width="1100px" data-jc-id="pages.html">
+<div data-jc="form" data-title="@(Create custom HTML content)" data-jc-path="pages.window" data-if="value === 'html'" data-width="1100px" data-jc-id="pages.html" class="hidden">
 	<div class="padding">
 		<div class="row">
 			<div class="col-md-12">
@@ -226,7 +241,7 @@
 	</div>
 </div>
 
-<div data-jc="form" data-title="@(Exports widgets)" data-jc-path="common.form" data-if="value === 'widgets-export'" data-width="500px" data-jc-id="widgets.export">
+<div data-jc="form" data-title="@(Exports widgets)" data-jc-path="common.form" data-if="value === 'widgets-export'" data-width="500px" data-jc-id="widgets.export" class="hidden">
 	<div class="padding npt npb">
 		<p class="silver">@(Please select widgets which want to export. Only templated widgets can be exported.)</p>
 	</div>
@@ -251,7 +266,7 @@
 	</div>
 </div>
 
-<div data-jc="form" data-title="@(Import widgets)" data-jc-path="common.form" data-if="value === 'widgets-import'" data-width="500px" data-jc-id="widgets.import">
+<div data-jc="form" data-title="@(Import widgets)" data-jc-path="common.form" data-if="value === 'widgets-import'" data-width="500px" data-jc-id="widgets.import" class="hidden">
 	<div class="padding npt">
 		<p class="silver">@(Please paste export of widgets into the field below:)</p>
 		<div data-jc="textarea" data-jc-path="widgets.import.base64" data-height="200px" data-required="true">@(Data)</div>
@@ -444,6 +459,7 @@
 			editor.setSettings(response.settings);
 
 			SET('pages.response', null);
+			FIND('#pages.form.expander').toggle(false);
 			FIND('#pages.editor').setTemplate(response.template);
 			SET('pages.form', $.extend({ $index: index }, response), true);
 			SET('common.form', 'pages');
@@ -487,6 +503,7 @@
 		SET('pages.response', null);
 		// CMS creates automatically URL when the URL field will contain "---"
 		SET('pages.form', { url: '---' }, true);
+		FIND('#pages.form.expander').toggle(true);
 		SET('common.form', 'pages');
 
 		// /templates/component-editor.html:
