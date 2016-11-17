@@ -998,8 +998,6 @@ COMPONENT('form', function() {
 		enter === 'true' && self.element.on('keydown', 'input', function(e) {
 			e.keyCode === 13 && self.element.find('button[name="submit"]').get(0).disabled && self.submit(hide);
 		});
-
-		return true;
 	};
 
 	self.getter = null;
