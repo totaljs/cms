@@ -6,10 +6,10 @@ exports.install = function() {
 	F.route('/api/ping/',        json_ping);
 
 	// NEWSLETTER
-	F.route('/api/newsletter/',  json_newsletter, ['post', '*Newsletter']);
+	F.route('/api/newsletter/',  json_save, ['post', '*Newsletter']);
 
 	// CONTACTFORM
-	F.route('/api/contact/',     json_contact, ['post', '*Contact']);
+	F.route('/api/contact/',     json_save, ['post', '*Contact']);
 };
 
 // ==========================================================================
@@ -22,23 +22,11 @@ function json_ping() {
 }
 
 // ==========================================================================
-// NEWSLETTER
+// NEWSLETTER & CONTACT
 // ==========================================================================
 
 // Appends a new email into the newsletter list
-function json_newsletter() {
-	var self = this;
-	self.body.language = self.language || '';
-	self.body.ip = self.ip;
-	self.body.$save(self.callback());
-}
-
-// ==========================================================================
-// CONTACTFORM
-// ==========================================================================
-
-// Processes the contact form
-function json_contact() {
+function json_save() {
 	var self = this;
 	self.body.language = self.language || '';
 	self.body.ip = self.ip;
