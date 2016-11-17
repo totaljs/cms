@@ -423,7 +423,8 @@
 		};
 
 		self.getPerex = function() {
-			return self.doFind('.CMS_perex').html().replace(/<\/?[^>]+(>|$)/g, '');
+			var el = self.doFind('.CMS_perex');
+			return el.length ? el.html().replace(/<\/?[^>]+(>|$)/g, '') : '';
 		};
 
 		self.getKeywords = function() {
