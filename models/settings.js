@@ -17,7 +17,7 @@ NEWSCHEMA('Settings').make(function(schema) {
 	schema.define('templates', '[String]');
 	schema.define('posts', '[String]');
 	schema.define('navigations', '[String]');
-	schema.define('languages', '[String(2)]');
+	schema.define('languages', '[Lower(2)]');
 	schema.define('users', '[SuperUser]');
 
 	// Saves settings into the file
