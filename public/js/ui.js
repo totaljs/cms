@@ -8,7 +8,7 @@ COMPONENT('click', function() {
 		if (typeof(value) === 'string')
 			self.set(self.parser(value));
 		else
-			self.get(self.attr('data-component-path'))(self);
+			self.get(self.attr('data-jc-path'))(self);
 	};
 
 	self.make = function() {
@@ -243,7 +243,7 @@ COMPONENT('dropdown', function() {
 		self.element.addClass('ui-dropdown-container');
 
 		var label = self.html();
-		var html = '<div class="ui-dropdown"><span class="fa fa-sort"></span><select data-component-bind="">{0}</select></div>'.format(options.join(''));
+		var html = '<div class="ui-dropdown"><span class="fa fa-sort"></span><select data-jc-bind="">{0}</select></div>'.format(options.join(''));
 		var builder = [];
 
 		if (label.length) {
@@ -333,9 +333,9 @@ COMPONENT('textbox', function() {
 		attrs.attr('type', self.type === 'password' ? self.type : 'text');
 		attrs.attr('placeholder', self.attr('data-placeholder'));
 		attrs.attr('maxlength', self.attr('data-maxlength'));
-		attrs.attr('data-component-keypress', self.attr('data-component-keypress'));
-		attrs.attr('data-component-keypress-delay', self.attr('data-component-keypress-delay'));
-		attrs.attr('data-component-bind', '');
+		attrs.attr('data-jc-keypress', self.attr('data-jc-keypress'));
+		attrs.attr('data-jc-keypress-delay', self.attr('data-jc-keypress-delay'));
+		attrs.attr('data-jc-bind', '');
 
 		tmp = self.attr('data-align');
 		tmp && attrs.attr('class', 'ui-' + tmp);
@@ -455,7 +455,7 @@ COMPONENT('textarea', function() {
 
 		attrs.attr('placeholder', self.attr('data-placeholder'));
 		attrs.attr('maxlength', self.attr('data-maxlength'));
-		attrs.attr('data-component-bind', '');
+		attrs.attr('data-jc-bind', '');
 
 		tmp = self.attr('data-height');
 		tmp && attrs.attr('style', 'height:' + tmp);
@@ -550,7 +550,7 @@ COMPONENT('repeater', function() {
 		var html = element.html();
 		element.remove();
 		self.template = Tangular.compile(html);
-		recompile = html.indexOf('data-component="') !== -1;
+		recompile = html.indexOf('data-jc="') !== -1;
 	};
 
 	self.setter = function(value) {
@@ -1035,86 +1035,6 @@ COMPONENT('form', function() {
 		setTimeout2(self.id, function() {
 			self.element.css('z-index', (window.$$form_level * 10) + 1);
 		}, 1000);
-	};
-});
-
-COMPONENT('pictures', function() {
-
-	var self = this;
-
-	self.skip = false;
-	self.readonly();
-
-	self.make = function() {
-		self.element.addClass('ui-pictures');
-	};
-
-	self.setter = function(value) {
-
-		if (typeof(value) === 'string')
-			value = value.split(',');
-
-		if (this.skip) {
-			this.skip = false;
-			return;
-		}
-
-		this.element.find('.fa').unbind('click');
-		this.element.find('img').unbind('click');
-		this.element.empty();
-
-		if (!(value instanceof Array) || !value.length)
-			return;
-
-		var count = 0;
-		var builder = [];
-
-		for (var i = 0, length = value.length; i < length; i++) {
-			var id = value[i];
-			id && builder.push('<div data-id="' + id + '" class="col-xs-3 col-lg-2 m"><span class="fa fa-times"></span><img src="/images/small/{0}.jpg" class="img-responsive" alt="" /></div>'.format(id));
-		}
-
-		self.html(builder);
-		setTimeout(FN('() => $(window).trigger("resize");'), 500);
-
-		this.element.find('.fa').bind('click', function(e) {
-
-			var el = $(this).parent().remove();
-			var id = [];
-
-			self.element.find('div').each(function() {
-				id.push($(this).attr('data-id'));
-			});
-
-			self.skip = true;
-			self.set(id);
-		});
-
-		this.element.find('img').bind('click', function() {
-
-			var selected = self.element.find('.selected');
-			var el = $(this);
-
-			el.toggleClass('selected');
-
-			if (!selected.length)
-				return;
-
-			var id1 = el.parent().attr('data-id');
-			var id2 = selected.parent().attr('data-id');
-			var arr = self.get();
-
-			var index1 = arr.indexOf(id1);
-			var index2 = arr.indexOf(id2);
-
-			arr[index1] = id2;
-			arr[index2] = id1;
-
-			setTimeout(function() {
-				self.change();
-				self.set(arr);
-			}, 500);
-		});
 	};
 });
 
