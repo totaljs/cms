@@ -110,6 +110,35 @@
 		<div><b>@(Editor formatting:)</b> @(bold) (&#8984+B), @(italic) (&#8984+I), @(underline) (&#8984+U), @(link) (&#8984+L). <a href="javascript:void(0)" data-exec="pages_sourcecode" class="exec black"><span class="fa fa-code w18"></span>@(Show source-code)</a></div>
 	</div>
 	<div class="pages-editor" data-jc="editor" data-jc-path="pages.form.body" data-jc-import="/templates/component-editor.html" data-jc-id="pages.editor" data-jc-released="true"></div>
+	<div data-jc="visible" data-jc-path="pages.form.id" data-if="value && value.length">
+		<div class="padding npb">
+			<div class="row">
+				<div class="col-lg-2 col-md-3 m">
+					<div class="keyvalue">
+						<div class="key">@(# Id)</div>
+						<div class="value" data-binder="pages.form.id" data-binder-html="n => n"></div>
+					</div>
+				</div>
+				<div class="col-lg-2 col-md-3 m">
+					<div class="keyvalue">
+						<div class="key"><i class="fa fa-calendar"></i>@(Created)</div>
+						<div class="value" data-binder="pages.form.datecreated" data-binder-html="n => Tangular.helpers.time(n)"></div>
+					</div>
+				</div>
+				<div class="col-lg-2 col-md-3 m">
+					<div class="keyvalue">
+						<div class="key"><i class="fa fa-calendar"></i>@(Updated)</div>
+						<div class="value" data-binder="pages.form.dateupdated" data-binder-html="n => n ? Tangular.helpers.time(n) : '@(unchanged)'"></div>
+					</div>
+				</div>
+				<div class="col-lg-6 m">
+					<div data-jc="nosqlcounter" data-jc-path="pages.form.stats.views" style="height:52px" data-count="16"></div>
+					<div class="help"><i class="fa fa-bar-chart"></i>@(Stats of all views for last 16 months)</div>
+				</div>
+			</div>
+		</div>
+		<hr class="nmt" />
+	</div>
 	<div data-jc="expander" data-jc-id="pages.form.expander">
 		<div class="padding npb">
 			<br />
@@ -463,6 +492,8 @@
 			FIND('#pages.editor').setTemplate(response.template);
 			SET('pages.form', $.extend({ $index: index }, response), true);
 			SET('common.form', 'pages');
+
+			AJAX('GET {0}/api/pages/{1}/stats/'.format(managerurl, response.id), 'pages.form.stats');
 
 			// /templates/component-editor.html:
 			cmseditor_widgets(true);

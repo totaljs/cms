@@ -21,36 +21,44 @@
 		</div>
 	</div>
 </div>
-<br />
 <div class="hidden" data-jc="visible" data-jc-path="user" data-if="su.sa === true">
-	<hr style="margin-top:0" />
+	<hr />
 	<div class="container">
-		<h2>@(Developer's CMS settings)</h2>
+		<h2>@(Internal settings only for <b>Super Admin</b>)</h2>
 		<br />
 		<div class="row">
 			<div class="col-md-6 m">
-				<div data-jc="textboxtags" data-jc-path="settings.form.templates">@(Registered templates)</div>
-				<div class="help">@(Templates must be created manually in <code>/views/cms/</code> directory.)</div>
+				<div data-jc="textboxlist" data-jc-path="settings.form.templates" class="m" data-icon="fa-object-ungroup" data-placeholder="@(Type a name of template and press enter)">@(Pages templates)</div>
 			</div>
 			<div class="col-md-6 m">
+				<div data-jc="textboxlist" data-jc-path="settings.form.templatesposts" class="m" data-icon="fa-object-ungroup" data-placeholder="@(Type a name of template and press enter)">@(Post templates)</div>
+			</div>
+		</div>
+		<div class="help nmt"><i class="fa fa-warning"></i>@(All templates has to be created manually in <code>/views/cms/</code> directory.)</div>
+		<hr />
+		<br />
+		<div class="row">
+			<div class="col-md-4 m">
 				<div data-jc="textboxtags" data-jc-path="settings.form.navigations">@(Registered navigations)</div>
-				<div class="help">@(Navigations must be rendered manually in the layout or view. For render use: <code>F.global.navigation.NAME</code>)</div>
+				<div class="help">@(Storage: <code>F.global.navigation.NAME</code>)</div>
 			</div>
-			<div class="col-md-6 m">
+
+			<div class="col-md-4 m">
 				<div data-jc="textboxtags" data-jc-path="settings.form.posts">@(Posts categories)</div>
-				<div class="help">@(Posts must be rendered manually in the layout or view. Categories: <code>F.global.posts</code>)</div>
+				<div class="help">@(Storage: <code>F.global.posts</code>)</div>
 			</div>
-			<div class="col-md-6 m">
+			<div class="col-md-4 m">
 				<div data-jc="textboxtags" data-jc-path="settings.form.languages">@(Supported languages)</div>
 				<div class="help">@(E.g. <code>en</code> <code>sk</code> <code>ru</code>)</div>
 			</div>
 		</div>
 	</div>
+	<hr />
 </div>
-<hr />
+
 <div class="container">
 	<div class="help" style="margin-top:10px">@(For creating another access into the administration click on to below button:)</div>
-	<div class="mt5"><a href="javascript:void(0)" class="exec" data-exec="settings_users_add"><span class="fa fa-user mr5"></span>@(Add new administrator)</a></div>
+	<div class="mt5"><a href="javascript:void(0)" data-jc="click" data-jc-path="settings_users_add"><span class="fa fa-user mr5"></span>@(Add new administrator)</a></div>
 	<br />
 	<div data-jc="grid" data-jc-path="settings.form.users" data-max="1000000" data-jc-id="settings.users">
 		<script type="text/html">
@@ -69,7 +77,7 @@
 	<div class="row">
 		<div class="col-md-4 m col-md-offset-4">
 			<div data-jc="validation" data-jc-path="settings.form">
-				<button class="button b exec" data-exec="settings_save">@(SAVE SETTINGS)</button>
+				<button class="button b" data-jc="click" data-jc-path="settings_save">@(SAVE SETTINGS)</button>
 			</div>
 		</div>
 	</div>

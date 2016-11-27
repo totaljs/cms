@@ -15,6 +15,7 @@ NEWSCHEMA('Settings').make(function(schema) {
 	schema.define('emailsender', 'email', true);
 	schema.define('url', 'Lower', true);
 	schema.define('templates', '[String]');
+	schema.define('templatesposts', '[String]');
 	schema.define('posts', '[String]');
 	schema.define('navigations', '[String]');
 	schema.define('languages', '[Lower(2)]');
