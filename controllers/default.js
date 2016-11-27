@@ -124,5 +124,10 @@ function view_blogs_detail(linker) {
 	var options = {};
 	options.category = 'Blogs';
 	options.linker = linker;
-	self.$get(options, self.callback('blogs-detail'));
+	self.$read(options, function(err, response) {
+		if (err)
+			return self.throw404(err);
+		NOSQL('posts').counter.hit(response.id);
+		self.view('blogs-detail', response);
+	});
 }
