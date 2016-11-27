@@ -9,7 +9,7 @@ exports.install = function() {
 
 	// COMMON
 	F.route(url + '/*', '~manager');
-	F.route(url + '/upload/',                  upload, ['post', 'upload', 10000], 3084); // 3 MB
+	F.route(url + '/upload/',                  upload,        ['post', 'upload', 10000], 3084); // 3 MB
 	F.route(url + '/upload/base64/',           upload_base64, ['post', 10000], 2048); // 2 MB
 	F.route(url + '/logoff/',                  redirect_logoff);
 
@@ -19,35 +19,36 @@ exports.install = function() {
 	F.route(url + '/api/dashboard/clear/',     json_dashboard_clear);
 
 	// POSTS
-	F.route(url + '/api/posts/',               json_query, ['*Post']);
-	F.route(url + '/api/posts/',               json_save, ['post', '*Post'], 512);
-	F.route(url + '/api/posts/{id}/',          json_read, ['*Post']);
-	F.route(url + '/api/posts/',               json_remove, ['delete', '*Post']);
-	F.route(url + '/api/posts/clear/',         json_clear, ['*Post']);
+	F.route(url + '/api/posts/',               json_query,  ['*Post']);
+	F.route(url + '/api/posts/',               json_save,   ['*Post', 'post'], 512);
+	F.route(url + '/api/posts/{id}/',          json_read,   ['*Post']);
+	F.route(url + '/api/posts/',               json_remove, ['*Post', 'delete']);
+	F.route(url + '/api/posts/{id}/stats/',    json_stats,  ['*Post']);
+	F.route(url + '/api/posts/clear/',         json_clear,  ['*Post']);
 	F.route(url + '/api/posts/codelists/',     json_posts_codelists);
-	F.route(url + '/api/posts/{id}/stats/',    json_posts_stats, ['*Post']);
 
 	// PAGES
-	F.route(url + '/api/pages/',               json_query, ['*Page']);
-	F.route(url + '/api/pages/',            json_pages_save, ['post', '*Page'], 512);
-	F.route(url + '/api/pages/',               json_remove, ['delete', '*Page']);
-	F.route(url + '/api/pages/{id}/',          json_read, ['*Page']);
+	F.route(url + '/api/pages/',               json_query,  ['*Page']);
+	F.route(url + '/api/pages/',               json_remove, ['*Page', 'delete']);
+	F.route(url + '/api/pages/{id}/',          json_read,   ['*Page']);
+	F.route(url + '/api/pages/clear/',         json_clear,  ['*Page']);
+	F.route(url + '/api/pages/{id}/stats/',    json_stats,  ['*Page']);
+	F.route(url + '/api/pages/',               json_pages_save, ['*Page', 'post'], 512);
 	F.route(url + '/api/pages/preview/',       view_pages_preview, ['json'], 512);
 	F.route(url + '/api/pages/dependencies/',  json_pages_dependencies);
-	F.route(url + '/api/pages/clear/',         json_clear, ['*Page']);
 	F.route(url + '/api/pages/sitemap/',       json_pages_sitemap);
-	F.route(url + '/api/pages/{id}/stats/',    json_pages_stats, ['*Page']);
 
 	// WIDGETS
-	F.route(url + '/api/widgets/',             json_query, ['*Widget']);
-	F.route(url + '/api/widgets/',             json_widgets_save, ['post', '*Widget']);
+	F.route(url + '/api/widgets/',             json_query,  ['*Widget']);
+	F.route(url + '/api/widgets/',             json_save,   ['post', '*Widget']);
 	F.route(url + '/api/widgets/',             json_remove, ['delete', '*Widget']);
-	F.route(url + '/api/widgets/{id}/',        json_read, ['*Widget']);
-	F.route(url + '/api/widgets/clear/',       json_clear, ['*Widget']);
+	F.route(url + '/api/widgets/{id}/',        json_read,   ['*Widget']);
+	F.route(url + '/api/widgets/clear/',       json_clear,  ['*Widget']);
 
 	// NEWSLETTER
 	F.route(url + '/api/newsletter/',          json_query,  ['*Newsletter']);
 	F.route(url + '/api/newsletter/clear/',    json_clear,  ['*Newsletter']);
+	F.route(url + '/api/newsletter/stats/',    json_stats,  ['*Newsletter']);
 	F.route(url + '/newsletter/export/',       file_newsletter, ['*Newsletter']);
 
 	// SETTINGS
@@ -166,6 +167,12 @@ function json_read(id) {
 	var options = {};
 	options.id = id;
 	self.$get(options, self.callback());
+}
+
+function json_stats(id) {
+	var self = this;
+	self.id = id;
+	self.$workflow('stats', self, self.callback());
 }
 
 // ==========================================================================
@@ -311,25 +318,6 @@ function json_pages_stats(id) {
 		model.views = views;
 		self.json(model);
 	});
-}
-
-// ==========================================================================
-// WIDGETS
-// ==========================================================================
-
-// Saves (updates or creates) specific widget
-function json_widgets_save() {
-	var self = this;
-	self.body.$save(self, self.callback());
-
-	// Clears view cache
-	setTimeout(() => F.cache.removeAll('cache.'));
-}
-
-// Clears all widgets
-function json_widgets_clear() {
-	var self = this;
-	self.$workflow('clear', self.callback());
 }
 
 // ==========================================================================
