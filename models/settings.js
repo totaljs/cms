@@ -13,7 +13,7 @@ NEWSCHEMA('Settings').make(function(schema) {
 	schema.define('emailcontactform', 'email', true);
 	schema.define('emailreply', 'email', true);
 	schema.define('emailsender', 'email', true);
-	schema.define('url', 'Lower', true);
+	schema.define('url', 'Url', true);
 	schema.define('templates', '[String]');
 	schema.define('templatesposts', '[String]');
 	schema.define('posts', '[String]');
