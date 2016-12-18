@@ -61,6 +61,8 @@ function file_read(req, res) {
 
 	var size;
 
+	var size;
+
 	// Small hack for the file cache.
 	// F.exists() uses req.uri.pathname for creating temp identificator and skips all query strings by creating (because this hack).
 	if (req.query.s) {
