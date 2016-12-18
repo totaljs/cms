@@ -2,11 +2,10 @@ const Fs = require('fs');
 const filename = F.path.databases('settings.json');
 
 NEWSCHEMA('SuperUser').make(function(schema) {
-
+	schema.define('name', String, true);
 	schema.define('login', String, true);
 	schema.define('password', String, true);
 	schema.define('roles', '[String]');
-
 });
 
 NEWSCHEMA('Settings').make(function(schema) {
@@ -14,11 +13,12 @@ NEWSCHEMA('Settings').make(function(schema) {
 	schema.define('emailcontactform', 'email', true);
 	schema.define('emailreply', 'email', true);
 	schema.define('emailsender', 'email', true);
-	schema.define('url', 'Lower', true);
+	schema.define('url', 'Url', true);
 	schema.define('templates', '[String]');
+	schema.define('templatesposts', '[String]');
 	schema.define('posts', '[String]');
 	schema.define('navigations', '[String]');
-	schema.define('languages', '[String(2)]');
+	schema.define('languages', '[Lower(2)]');
 	schema.define('users', '[SuperUser]');
 
 	// Saves settings into the file
@@ -28,16 +28,13 @@ NEWSCHEMA('Settings').make(function(schema) {
 		if (settings.url.endsWith('/'))
 			settings.url = settings.url.substring(0, settings.url.length - 1);
 
-		settings.datebackup = new Date();
+		settings.datebackup = F.datetime;
 		DB('settings_backup').insert(JSON.parse(JSON.stringify(settings)));
-		delete settings.datebackup;
+		settings.datebackup = undefined;
 
 		// Writes settings into the file
 		Fs.writeFile(filename, JSON.stringify(settings), function() {
-
 			F.emit('settings.save', settings);
-
-			// Returns response
 			callback(SUCCESS(true));
 		});
 	});
@@ -45,15 +42,12 @@ NEWSCHEMA('Settings').make(function(schema) {
 	// Gets settings
 	schema.setGet(function(error, model, options, callback) {
 		Fs.readFile(filename, function(err, data) {
-			var settings = {};
 
-			if (!err) {
-				settings = JSON.parse(data.toString('utf8'));
-				callback(settings);
-				return;
-			}
+			if (err)
+				settings = { 'manager-superadmin': 'admin:admin' };
+			else
+				settings = data.toString('utf8').parseJSON();
 
-			settings['manager-superadmin'] = 'admin:admin';
 			callback(settings);
 		});
 	});
@@ -70,7 +64,7 @@ NEWSCHEMA('Settings').make(function(schema) {
 
 			// Adds an admin (service) account
 			var sa = CONFIG('manager-superadmin').split(':');
-			F.config.custom.users.push({ login: sa[0], password: sa[1], roles: [], sa: true });
+			F.config.custom.users.push({ name: 'Administrator', login: sa[0], password: sa[1], roles: [], sa: true });
 
 			// Optimized for the performance
 			var users = {};
@@ -90,8 +84,6 @@ NEWSCHEMA('Settings').make(function(schema) {
 				F.config.custom.languages = [];
 
 			F.emit('settings', settings);
-
-			// Returns response
 			callback(SUCCESS(true));
 		});
 	});

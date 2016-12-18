@@ -3,10 +3,10 @@ NEWSCHEMA('Post').make(function(schema) {
 	schema.define('id', 'String(20)');
 	schema.define('category', 'String(50)');
 	schema.define('template', 'String(30)', true);
-	schema.define('language', 'Lower(3)');
+	schema.define('language', 'Lower(2)');
 	schema.define('name', 'String(80)', true);
+	schema.define('author', 'String(30)');
 	schema.define('perex', 'String(500)');
-	schema.define('template', 'String(50)');
 	schema.define('keywords', 'String(200)');
 	schema.define('tags', '[String]');
 	schema.define('search', 'String(1000)');
@@ -37,21 +37,17 @@ NEWSCHEMA('Post').make(function(schema) {
 		filter.take(take);
 		filter.skip(skip);
 		filter.fields('id', 'category', 'name', 'language', 'datecreated', 'linker', 'category_linker', 'pictures', 'perex', 'tags');
-		filter.sort('datecreated');
+		filter.sort('datecreated', true);
 
 		filter.callback(function(err, docs, count) {
 
 			var data = {};
-
 			data.count = count;
 			data.items = docs;
 			data.limit = options.max;
-			data.pages = Math.ceil(data.count / options.max);
-
-			if (!data.pages)
-				data.pages = 1;
-
+			data.pages = Math.ceil(data.count / options.max) || 1;
 			data.page = options.page + 1;
+
 			callback(data);
 		});
 	});
@@ -68,6 +64,7 @@ NEWSCHEMA('Post').make(function(schema) {
 		options.linker && filter.where('linker', options.linker);
 		options.id && filter.where('id', options.id);
 		options.language && filter.where('language', options.language);
+		options.template && filter.where('template', options.template);
 
 		filter.callback(callback, 'error-404-post');
 	});
@@ -79,15 +76,21 @@ NEWSCHEMA('Post').make(function(schema) {
 	});
 
 	// Saves the post into the database
-	schema.setSave(function(error, model, options, callback) {
+	schema.setSave(function(error, model, controller, callback) {
 
 		var newbie = model.id ? false : true;
 		var nosql = NOSQL('posts');
 
 		if (newbie) {
 			model.id = UID();
-			model.datecreated = F.datetime;
+			model.admincreated = controller.user.name;
+		} else {
+			model.dateupdated = F.datetime;
+			model.adminupdated = controller.user.name;
 		}
+
+		if (!model.datecreated)
+			model.datecreated = F.datetime;
 
 		model.linker = model.datecreated.format('yyyyMMdd') + '-' + model.name.slug();
 
@@ -96,6 +99,7 @@ NEWSCHEMA('Post').make(function(schema) {
 			model.category_linker = category.linker;
 
 		model.search = ((model.name || '') + ' ' + (model.keywords || '') + ' ' + (model.search || '')).keywords(true, true).join(' ').max(1000);
+		model.body = U.minifyHTML(model.body);
 
 		(newbie ? nosql.insert(model) : nosql.modify(model).where('id', model.id)).callback(function() {
 
@@ -113,6 +117,11 @@ NEWSCHEMA('Post').make(function(schema) {
 	schema.addWorkflow('clear', function(error, model, options, callback) {
 		NOSQL('posts').remove().callback(refresh_cache);
 		callback(SUCCESS(true));
+	});
+
+	// Stats
+	schema.addWorkflow('stats', function(error, model, options, callback) {
+		NOSQL('posts').counter.monthly(options.id, callback);
 	});
 });
 

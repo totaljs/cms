@@ -8,7 +8,7 @@ COMPONENT('click', function() {
 		if (typeof(value) === 'string')
 			self.set(self.parser(value));
 		else
-			self.get(self.attr('data-component-path'))(self);
+			self.get(self.attr('data-jc-path'))(self);
 	};
 
 	self.make = function() {
@@ -22,6 +22,19 @@ COMPONENT('click', function() {
 	};
 });
 
+COMPONENT('exec', function() {
+	var self = this;
+	self.readonly();
+	self.blind();
+	self.make = function() {
+		self.element.on('click', self.attr('data-selector') || '.exec', function() {
+			var el = $(this);
+			var attr = el.attr('data-exec');
+			attr && EXEC(attr, el);
+		});
+	};
+});
+
 COMPONENT('visible', function() {
 	var self = this;
 	var condition = self.attr('data-if');
@@ -29,10 +42,10 @@ COMPONENT('visible', function() {
 	self.setter = function(value) {
 		var is = true;
 		if (condition)
-			is = EVALUATE(self.path, condition);
+			is = EVALUATE(self.path, condition) ? true : false;
 		else
 			is = value ? true : false;
-		self.element.toggleClass('hidden', !is);
+		self.toggle('hidden', !is);
 	};
 });
 
@@ -230,7 +243,7 @@ COMPONENT('dropdown', function() {
 		self.element.addClass('ui-dropdown-container');
 
 		var label = self.html();
-		var html = '<div class="ui-dropdown"><span class="fa fa-sort"></span><select data-component-bind="">{0}</select></div>'.format(options.join(''));
+		var html = '<div class="ui-dropdown"><span class="fa fa-sort"></span><select data-jc-bind="">{0}</select></div>'.format(options.join(''));
 		var builder = [];
 
 		if (label.length) {
@@ -320,9 +333,9 @@ COMPONENT('textbox', function() {
 		attrs.attr('type', self.type === 'password' ? self.type : 'text');
 		attrs.attr('placeholder', self.attr('data-placeholder'));
 		attrs.attr('maxlength', self.attr('data-maxlength'));
-		attrs.attr('data-component-keypress', self.attr('data-component-keypress'));
-		attrs.attr('data-component-keypress-delay', self.attr('data-component-keypress-delay'));
-		attrs.attr('data-component-bind', '');
+		attrs.attr('data-jc-keypress', self.attr('data-jc-keypress'));
+		attrs.attr('data-jc-keypress-delay', self.attr('data-jc-keypress-delay'));
+		attrs.attr('data-jc-bind', '');
 
 		tmp = self.attr('data-align');
 		tmp && attrs.attr('class', 'ui-' + tmp);
@@ -337,6 +350,20 @@ COMPONENT('textbox', function() {
 
 		if (!icon2 && self.type === 'date')
 			icon2 = 'fa-calendar';
+		else if (self.type === 'search') {
+			icon2 = 'fa-search ui-textbox-control-icon';
+			self.element.on('click', '.ui-textbox-control-icon', function() {
+				self.$stateremoved = false;
+				$(this).removeClass('fa-times').addClass('fa-search');
+				self.set('');
+			});
+			self.getter2 = function(value) {
+				if (self.$stateremoved && !value)
+					return;
+				self.$stateremoved = value ? false : true;
+				self.find('.ui-textbox-control-icon').toggleClass('fa-times', value ? true : false).toggleClass('fa-search', value ? false : true);
+			};
+		}
 
 		icon2 && builder.push('<div><span class="fa {0}"></span></div>'.format(icon2));
 		increment && !icon2 && builder.push('<div><span class="fa fa-caret-up"></span><span class="fa fa-caret-down"></span></div>');
@@ -399,7 +426,7 @@ COMPONENT('textarea', function() {
 
 		var is = false;
 		var type = typeof(value);
-		if (input.prop('disabled') || isRequired)
+		if (input.prop('disabled') || !isRequired)
 			return true;
 
 		if (type === 'undefined' || type === 'object')
@@ -428,7 +455,7 @@ COMPONENT('textarea', function() {
 
 		attrs.attr('placeholder', self.attr('data-placeholder'));
 		attrs.attr('maxlength', self.attr('data-maxlength'));
-		attrs.attr('data-component-bind', '');
+		attrs.attr('data-jc-bind', '');
 
 		tmp = self.attr('data-height');
 		tmp && attrs.attr('style', 'height:' + tmp);
@@ -452,7 +479,7 @@ COMPONENT('textarea', function() {
 
 		builder = [];
 		builder.push('<div class="ui-textarea-label{0}">'.format(isRequired ? ' ui-textarea-label-required' : ''));
-		icon && builder.push('<span class="fa {0}"></span> '.format(icon));
+		icon && builder.push('<span class="fa {0}"></span>'.format(icon));
 		builder.push(content);
 		builder.push(':</div><div class="ui-textarea">{0}</div>'.format(html));
 
@@ -523,7 +550,7 @@ COMPONENT('repeater', function() {
 		var html = element.html();
 		element.remove();
 		self.template = Tangular.compile(html);
-		recompile = html.indexOf('data-component="') !== -1;
+		recompile = html.indexOf('data-jc="') !== -1;
 	};
 
 	self.setter = function(value) {
@@ -575,19 +602,49 @@ COMPONENT('error', function() {
 
 COMPONENT('cookie', function() {
 	var self = this;
-	self.readonly();
 	self.singleton();
+	self.readonly();
+
+	self.cancel = function() {
+		document.cookie.split(';').forEach(function(key) {
+			jC.cookies.set(key.split('=')[0], '', '-2 days');
+		});
+		try {
+			Object.keys(localStorage).forEach(function(key) {
+				localStorage.removeItem(key);
+			});
+		} catch (e) {}
+		location.href = 'about:blank';
+		return self;
+	};
+
 	self.make = function() {
-		var cookie = localStorage.getItem('cookie');
+
+		var cookie;
+
+		// private mode
+		try {
+			cookie = localStorage.getItem('cookie');
+		} catch (e) {}
+
 		if (cookie) {
 			self.element.addClass('hidden');
 			return;
 		}
 
 		self.element.removeClass('hidden').addClass('ui-cookie');
-		self.element.append('<button>' + (self.attr('data-button') || 'OK') + '</button>');
+		self.element.append('<button name="agree">' + (self.attr('data-agree') || 'OK') + '</button>');
+		self.element.append('<button name="cancel">' + (self.attr('data-cancel') || 'Cancel') + '</button>');
+
 		self.element.on('click', 'button', function() {
-			localStorage.setItem('cookie', '1');
+
+			if (this.name === 'cancel')
+				return self.cancel();
+
+			// private mode
+			try {
+				localStorage.setItem('cookie', '1');
+			} catch (e) {}
 			self.element.addClass('hidden');
 		});
 	};
@@ -600,13 +657,24 @@ COMPONENT('cookie', function() {
 COMPONENT('expander', function() {
 	var self = this;
 	self.readonly();
+
+	self.toggle = function(v) {
+
+		if (v === undefined)
+			v = !self.element.hasClass('ui-expander-expanded');
+
+		self.element.toggleClass('ui-expander-expanded', v);
+		var fa = self.element.find('.ui-expander-button').find('.fa');
+		fa.toggleClass('fa-angle-double-down', !v);
+		fa.toggleClass('fa-angle-double-up', v);
+	};
+
 	self.make = function() {
-		self.element.addClass('ui-expander');
+		self.classes('ui-expander' + (self.attr('data-expand') === 'true' ? ' ui-expander-expanded' : ''));
 		self.element.wrapInner('<div class="ui-expander-container"></div>');
 		self.append('<div class="ui-expander-fade"></div><div class="ui-expander-button"><span class="fa fa-angle-double-down"></span></div>');
 		self.element.on('click', '.ui-expander-button', function() {
-			self.element.toggleClass('ui-expander-expanded');
-			self.element.find('.ui-expander-button').find('.fa').toggleClass('fa-angle-double-down fa-angle-double-up');
+			self.toggle();
 		});
 	};
 });
@@ -790,7 +858,9 @@ COMPONENT('page', function() {
 
 			reload && self.get(reload)();
 			isProcessed = true;
-			el.toggleClass('hidden', !is);
+			setTimeout(function() {
+				el.toggleClass('hidden', !is);
+			}, 200);
 			SETTER('loading', 'hide', 1000);
 		});
 	};
@@ -810,7 +880,7 @@ COMPONENT('grid', function() {
 		self.template = Tangular.compile(element.html());
 		self.element.on('click', 'tr', function() {});
 		self.element.addClass('ui-grid');
-		self.html('<div><div class="ui-grid-page"></div><table width="100%" cellpadding="0" cellspacing="0" border="0"><tbody></tbody></table></div><div data-component="pagination" data-component-path="{0}" data-max="8" data-pages="{1}" data-items="{2}" data-target-path="{3}"></div>'.format(self.path, self.attr('data-pages'), self.attr('data-items'), self.attr('data-pagination-path')));
+		self.html('<div><div class="ui-grid-page"></div><table width="100%" cellpadding="0" cellspacing="0" border="0"><tbody></tbody></table></div><div data-jc="pagination" data-jc-path="{0}" data-max="8" data-pages="{1}" data-items="{2}" data-target-path="{3}"></div>'.format(self.path, self.attr('data-pages'), self.attr('data-items'), self.attr('data-pagination-path')));
 		self.element.on('click', 'button', function() {
 			switch (this.name) {
 				default:
@@ -826,14 +896,12 @@ COMPONENT('grid', function() {
 		setTimeout(function() {
 			var max = self.attr('data-max');
 			if (max === 'auto')
-				self.max = (Math.floor(($(window).height() - (self.element.offset().top + 110)) / 26));
+				self.max = (Math.floor(($(window).height() - (self.element.offset().top + 250)) / 28));
 			else
 				self.max = parseInt(max);
 			if (self.max < 10)
 				self.max = 10;
 		}, 10);
-
-		return true;
 	};
 
 	self.refresh = function() {
@@ -936,9 +1004,9 @@ COMPONENT('form', function() {
 
 		$(document.body).append('<div id="{0}" class="hidden ui-form-container"><div class="ui-form-container-padding"><div class="ui-form" style="max-width:{1}"><div class="ui-form-title"><span class="fa fa-times ui-form-button-close" data-id="{2}"></span>{3}</div>{4}</div></div>'.format(self._id, width, self.id, self.attr('data-title')));
 
-		self.element.data(COM_ATTR, self);
 		var el = $('#' + self._id);
 		el.find('.ui-form').get(0).appendChild(self.element.get(0));
+		self.classes('-hidden');
 		self.element = el;
 
 		self.element.on('scroll', function() {
@@ -958,114 +1026,45 @@ COMPONENT('form', function() {
 		});
 
 		enter === 'true' && self.element.on('keydown', 'input', function(e) {
-			e.keyCode === 13 && self.element.find('button[name="submit"]').get(0).disabled && self.submit(hide);
+			e.keyCode === 13 && !self.element.find('button[name="submit"]').get(0).disabled && self.submit(hide);
 		});
-
-		return true;
 	};
 
 	self.getter = null;
 	self.setter = function(value) {
+
+		setTimeout2('noscroll', function() {
+			$('html').toggleClass('noscroll', $('.ui-form-container').not('.hidden').length ? true : false);
+		}, 50);
 
 		var isHidden = !EVALUATE(self.path, self.condition);
 		self.element.toggleClass('hidden', isHidden);
 		EXEC('$calendar.hide');
 
 		if (isHidden) {
+			self.release(true);
 			self.element.find('.ui-form').removeClass('ui-form-animate');
 			return;
 		}
 
 		self.resize();
+		self.release(false);
+
 		var el = self.element.find('input,select,textarea');
-		el.length > 0 && el.eq(0).focus();
+		el.length && el.eq(0).focus();
+
 		window.$$form_level++;
 		self.element.css('z-index', window.$$form_level * 10);
-		self.element.animate({ scrollTop: 0 }, 0, function() {
-			setTimeout(function() {
-				self.element.find('.ui-form').addClass('ui-form-animate');
-			}, 300);
-		});
-	};
-});
+		self.element.scrollTop(0);
 
-COMPONENT('pictures', function() {
+		setTimeout(function() {
+			self.element.find('.ui-form').addClass('ui-form-animate');
+		}, 300);
 
-	var self = this;
-
-	self.skip = false;
-	self.readonly();
-
-	self.make = function() {
-		self.element.addClass('ui-pictures');
-	};
-
-	self.setter = function(value) {
-
-		if (typeof(value) === 'string')
-			value = value.split(',');
-
-		if (this.skip) {
-			this.skip = false;
-			return;
-		}
-
-		this.element.find('.fa').unbind('click');
-		this.element.find('img').unbind('click');
-		this.element.empty();
-
-		if (!(value instanceof Array) || !value.length)
-			return;
-
-		var count = 0;
-		var builder = [];
-
-		for (var i = 0, length = value.length; i < length; i++) {
-			var id = value[i];
-			id && builder.push('<div data-id="' + id + '" class="col-xs-3 m"><span class="fa fa-times"></span><img src="/images/small/{0}.jpg" class="img-responsive" alt="" /></div>'.format(id));
-		}
-
-		self.html(builder);
-		setTimeout(FN('() => $(window).trigger("resize");'), 500);
-
-		this.element.find('.fa').bind('click', function(e) {
-
-			var el = $(this).parent().remove();
-			var id = [];
-
-			self.element.find('div').each(function() {
-				id.push($(this).attr('data-id'));
-			});
-
-			self.skip = true;
-			self.set(id);
-		});
-
-		this.element.find('img').bind('click', function() {
-
-			var selected = self.element.find('.selected');
-			var el = $(this);
-
-			el.toggleClass('selected');
-
-			if (!selected.length)
-				return;
-
-			var id1 = el.parent().attr('data-id');
-			var id2 = selected.parent().attr('data-id');
-			var arr = self.get();
-
-			var index1 = arr.indexOf(id1);
-			var index2 = arr.indexOf(id2);
-
-			arr[index1] = id2;
-			arr[index2] = id1;
-
-			setTimeout(function() {
-				self.change();
-				self.set(arr);
-			}, 500);
-		});
+		// Fixes a problem with freezing of scrolling in Chrome
+		setTimeout2(self.id, function() {
+			self.element.css('z-index', (window.$$form_level * 10) + 1);
+		}, 1000);
 	};
 });
 
@@ -1242,7 +1241,6 @@ COMPONENT('dropdowncheckbox', function() {
 
 	var self = this;
 	var required = self.attr('data-required') === 'true';
-	var datasource = '';
 	var container;
 	var data = [];
 	var values;
@@ -1498,6 +1496,7 @@ COMPONENT('crop', function() {
 		height = h;
 		canvas.width = w;
 		canvas.height = h;
+		self.find('div').html('<span><b>{0}</b>x<b>{1}</b>px</span>'.format(w, h));
 	};
 
 	self.output = function(type) {
@@ -1514,7 +1513,7 @@ COMPONENT('crop', function() {
 		width = parseInt(self.attr('data-width') || 0);
 		height = parseInt(self.attr('data-height') || 0);
 		self.element.addClass('ui-crop');
-		self.append('<input type="file" style="display:none" accept="image/*" /><ul><li data-type="upload"><span class="fa fa-folder"></span></li><li data-type="plus"><span class="fa fa-plus"></span></li><li data-type="refresh"><span class="fa fa-refresh"></span></li><li data-type="minus"><span class="fa fa-minus"></span></li></ul>');
+		self.append('<input type="file" style="display:none" accept="image/*" /><ul><li data-type="upload"><span class="fa fa-folder"></span></li><li data-type="plus"><span class="fa fa-plus"></span></li><li data-type="refresh"><span class="fa fa-refresh"></span></li><li data-type="minus"><span class="fa fa-minus"></span></li></ul><div><span><b>{0}</b>x<b>{1}</b>px</span></div>'.format(width, height));
 		self.append(Tangular.render('<canvas width="{{ width }}" height="{{ height }}"></canvas>', { width: width, height: height }));
 		canvas = self.find('canvas').get(0);
 		context = canvas.getContext('2d');
@@ -1690,6 +1689,10 @@ COMPONENT('codemirror', function() {
 		return required ? value && value.length > 0 : true;
 	};
 
+	self.released = function(is) {
+		is && editor.setValue('');
+	};
+
 	self.make = function() {
 
 		var height = self.element.attr('data-height');
@@ -1702,6 +1705,9 @@ COMPONENT('codemirror', function() {
 		height !== 'auto' && editor.setSize('100%', height || '200px');
 
 		editor.on('change', function(a, b) {
+
+			if (self.release())
+				return;
 
 			if (skipB && b.origin !== 'paste') {
 				skipB = false;
@@ -2003,38 +2009,6 @@ COMPONENT('tabmenu', function() {
 	self.setter = function(value) {
 		self.element.find('.selected').removeClass('selected');
 		self.element.find('li[data-value="' + value + '"]').addClass('selected');
-	};
-});
-
-COMPONENT('disable', function() {
-	var self = this;
-	var condition = self.attr('data-if');
-	var selector = self.attr('data-selector') || 'input,texarea,select';
-
-	self.readonly();
-
-	self.setter = function(value) {
-		var is = true;
-
-		if (condition)
-			is = EVALUATE(self.path, condition);
-		else
-			is = value ? false : true;
-
-		self.find(selector).each(function() {
-			var el = $(this);
-			var tag = el.get(0).tagName;
-			if (tag === 'INPUT' || tag === 'SELECT') {
-				el.prop('disabled', is);
-				el.parent().parent().toggleClass('ui-disabled', is);
-				return;
-			}
-			el.toggleClass('ui-disabled', is);
-		});
-	};
-
-	self.state = function(type) {
-		self.update();
 	};
 });
 
@@ -2422,9 +2396,471 @@ COMPONENT('autocomplete', function() {
 		self.visible(true);
 	};
 });
+
+COMPONENT('contextmenu', function() {
+	var self = this;
+	var $window = $(window);
+	var is = false;
+	var timeout;
+	var container;
+	var arrow;
+
+	self.template = Tangular.compile('<div data-value="{{ value }}"{{ if selected }} class="selected"{{ fi }}><i class="fa {{ icon }}"></i><span>{{ name | raw }}</span></div>');
+	self.singleton();
+	self.readonly();
+	self.callback = null;
+
+	self.make = function() {
+
+		self.element.addClass('ui-contextmenu');
+		self.element.append('<span class="ui-contextmenu-arrow fa fa-caret-up"></span><div class="ui-contextmenu-items"></div>');
+		container = self.element.find('.ui-contextmenu-items');
+		arrow = self.element.find('.ui-contextmenu-arrow');
+
+		self.element.on('touchstart mousedown', 'div[data-value]', function(e) {
+			self.callback && self.callback($(this).attr('data-value'), $(self.target));
+			self.hide();
+			e.preventDefault();
+			e.stopPropagation();
+		});
+
+		$(document).on('touchstart mousedown', function(e) {
+			FIND('contextmenu').hide();
+		});
+	};
+
+	self.show = function(orientation, target, items, callback, left, top) {
+
+		if (is) {
+			clearTimeout(timeout);
+			var obj = target instanceof jQuery ? target.get(0) : target;
+			if (self.target === obj) {
+				self.hide(0);
+				return;
+			}
+		}
+
+		target = $(target);
+		var type = typeof(items);
+		var item;
+
+		if (type === 'string')
+			items = self.get(items);
+		else if (type === 'function') {
+			callback = items;
+			items = (target.attr('data-options') || '').split(';');
+			for (var i = 0, length = items.length; i < length; i++) {
+				item = items[i];
+				if (!item)
+					continue;
+				var val = item.split('|');
+				items[i] = { name: val[0], icon: val[1], value: val[2] || val[0] };
+			}
+		}
+
+		if (!items) {
+			self.hide(0);
+			return;
+		}
+
+		self.callback = callback;
+
+		var builder = [];
+		for (var i = 0, length = items.length; i < length; i++) {
+			item = items[i];
+			item.index = i;
+			if (!item.value)
+				item.value = item.name;
+			if (!item.icon)
+				item.icon = 'fa-caret-right';
+			builder.push(self.template(item));
+		}
+
+		self.target = target.get(0);
+		var offset = target.offset();
+
+		container.html(builder);
+
+		switch (orientation) {
+			case 'left':
+				arrow.css({ left: '15px' });
+				break;
+			case 'right':
+				arrow.css({ left: '170px' });
+				break;
+			case 'center':
+				arrow.css({ left: '107px' });
+				break;
+		}
+
+		if (!left)
+			left = 0;
+		if (!top)
+			top = 0;
+
+		var options = { left: orientation === 'center' ? Math.ceil((offset.left - self.element.width() / 2) + (target.innerWidth() / 2) + left) : orientation === 'left' ? offset.left - 8 : (offset.left - self.element.width() + left) + target.innerWidth(), top: offset.top + top + target.innerHeight() + 10 };
+		self.element.css(options);
+
+		if (is)
+			return;
+
+		self.element.show();
+		setTimeout(function() {
+			self.element.addClass('ui-contextmenu-visible');
+			self.emit('contextmenu', true, self, self.target);
+		}, 100);
+
+		is = true;
+	};
+
+	self.hide = function(sleep) {
+		if (!is)
+			return;
+		clearTimeout(timeout);
+		timeout = setTimeout(function() {
+			self.element.hide().removeClass('ui-contextmenu-visible');
+			self.emit('contextmenu', false, self, self.target);
+			self.callback = null;
+			self.target = null;
+			is = false;
+		}, sleep ? sleep : 100);
+	};
+});
+
+COMPONENT('checkboxlist', function() {
+	var self = this;
+	var template = Tangular.compile('<div class="ui-checkboxlist-checkbox {0}" data-search="{{ name }}"><label><input type="checkbox" value="{{ id }}"><span>{{ name }}</span></label></div>'.format(self.attr('data-class')));
+	var datasource;
+	var items;
+	var condition;
+
+	self.make = function() {
+
+		self.element.on('click', 'input', function() {
+			var arr = self.get();
+
+			if (!(arr instanceof Array))
+				arr = [];
+
+			var value = self.parser(this.value);
+			var index = arr.indexOf(value);
+			if (index === -1)
+				arr.push(value);
+			else
+				arr.splice(index, 1);
+
+			self.set(arr);
+			setTimeout2(self.id, function() {
+				self.change(true);
+			}, 400);
+		});
+
+		self.element.on('click', 'a', function() {
+			var arr = [];
+			var inputs = self.element.find('input');
+			var value = self.get();
+
+			if (value && inputs.length === value.length) {
+				self.set(arr);
+				return;
+			}
+
+			inputs.each(function() {
+				arr.push(self.parser(this.value));
+			});
+
+			self.set(arr);
+			setTimeout2(self.id, function() {
+				self.change(true);
+			}, 400);
+		});
+
+		self.make = function() {
+
+			var options = self.attr('data-options');
+			if (!options)
+				return;
+
+			var arr = options.split(';');
+			var datasource = [];
+
+			for (var i = 0, length = arr.length; i < length; i++) {
+				var item = arr[i].split('|');
+				datasource.push({ id: item[1] === undefined ? item[0] : item[1], name: item[0] });
+			}
+
+			self.redraw(datasource);
+		};
+
+		self.setter = function(value) {
+			self.element.find('input').each(function() {
+				this.checked = value && value.indexOf(self.parser(this.value)) !== -1;
+			});
+		};
+
+		self.redraw = function(arr) {
+			var builder = [];
+			var kn = self.attr('data-source-text') || 'name';
+			var kv = self.attr('data-source-value') || 'id';
+
+			for (var i = 0, length = arr.length; i < length; i++) {
+				var item = arr[i];
+
+				if (condition && !condition(item))
+					continue;
+
+				if (typeof(item) === 'string')
+					builder.push(template({ id: item, name: item }));
+				else
+					builder.push(template({ id: item[kv] === undefined ? item[kn] : item[kv], name: item[kn] }));
+			}
+
+			if (!builder.length)
+				return;
+
+			self.attr('data-button') && builder.push('<div class="clearfix"></div><div class="{1}"><div class="ui-checkboxlist-selectall"><a href="javascript:void(0)"><i class="fa fa-check-square mr5"></i>{0}</a></div></div>'.format(self.attr('data-button'), self.attr('data-class')));
+			self.html(builder.join(''));
+			self.setter(self.get());
+			return self;
+		};
+
+		condition = self.attr('data-if');
+		if (condition)
+			condition = FN(condition);
+
+		datasource = self.attr('data-source');
+		datasource && self.watch(datasource, function(path, value) {
+			if (self.release())
+				return;
+			items = value || EMPTYARRAY;
+			self.redraw(value);
+		});
+	};
+
+	self.released = function(is) {
+
+		if (is) {
+			self.empty();
+			items = null;
+			return;
+		}
+
+		var tmp = self.get(datasource) || EMPTYARRAY;
+		if (tmp === items)
+			return;
+		items = tmp;
+		self.redraw(items);
+	};
+});
+
+COMPONENT('textboxlist', function() {
+	var self = this;
+	var container;
+	var empty = {};
+	var skip = false;
+
+	self.template = Tangular.compile('<div class="ui-textboxlist-item"><div><i class="fa fa-times"></i></div><div><input type="text" maxlength="{{ max }}" placeholder="{{ placeholder }}" value="{{ value }}" /></div></div>');
+	self.make = function() {
+
+		empty.max = (self.attr('data-maxlength') || '100').parseInt();
+		empty.placeholder = self.attr('data-placeholder');
+		empty.value = '';
+
+		var html = self.html();
+		var icon = self.attr('data-icon');
+
+		if (icon)
+			icon = '<i class="fa {0}"></i>'.format(icon);
+
+		self.toggle('ui-textboxlist');
+		self.html((html ? '<div class="ui-textboxlist-label">{1}{0}:</div>'.format(html, icon) : '') + '<div class="ui-textboxlist-items"></div>' + self.template(empty).replace('-item"', '-item ui-textboxlist-base"'));
+		container = self.find('.ui-textboxlist-items');
+
+		self.element.on('click', '.fa-times', function() {
+			var el = $(this);
+			var parent = el.closest('.ui-textboxlist-item');
+			var value = parent.find('input').val();
+			var arr = self.getArray();
+
+			parent.remove();
+
+			var index = arr.indexOf(value);
+			if (index === -1)
+				return;
+			arr.splice(index, 1);
+			skip = true;
+			self.set(self.path, arr, 2);
+			self.change(true);
+		});
+
+		self.getArray = function() {
+			var arr = self.get();
+			if (!arr)  {
+				arr = [];
+				self.set(arr);
+			}
+			return arr;
+		};
+
+		self.element.on('change keypress', 'input', function(e) {
+
+			if (e.type !== 'change' && e.keyCode !== 13)
+				return;
+
+			var el = $(this);
+
+			var value = this.value.trim();
+			if (!value)
+				return;
+
+			var arr = [];
+			var base = el.closest('.ui-textboxlist-base').length > 0;
+
+			if (base && e.type === 'change')
+				return;
+
+			if (base) {
+				self.getArray().indexOf(value) === -1 && self.push(self.path, value, 2);
+				this.value = '';
+				self.change(true);
+				return;
+			}
+
+			container.find('input').each(function() {
+				arr.push(this.value.trim());
+			});
+
+			skip = true;
+			self.set(self.path, arr, 2);
+			self.change(true);
+		});
+	};
+
+	self.setter = function(value, path, type) {
+
+		if (skip) {
+			skip = false;
+			return;
+		}
+
+		if (!value || !value.length) {
+			container.empty();
+			return;
+		}
+
+		var builder = [];
+
+		value.forEach(function(item) {
+			empty.value = item;
+			builder.push(self.template(empty));
+		});
+
+		container.empty().append(builder.join(''));
+	};
+});
+
+COMPONENT('nosqlcounter', function() {
+	var self = this;
+	var chart;
+	var count = (self.attr('data-count') || '12').parseInt();
+
+	self.readonly();
+	self.make = function() {
+		self.toggle('ui-nosqlcounter', true);
+	};
+
+	self.setter = function(value) {
+
+		if (!value || !value.length)
+			return self.empty();
+
+		var maxbars = count;
+
+		if (WIDTH() === 'xs')
+			maxbars = (maxbars / 2) >> 0;
+
+		var max = value.length - maxbars;
+		if (max < 0)
+			max = 0;
+
+		value = value.slice(max, value.length);
+		max = value.scalar('max', 'value');
+
+		var w = self.element.width();
+
+		var bar = 100 / maxbars;
+		var builder = [];
+		var months = FIND('calendar').months;
+		var current = new Date().format('yyyyMM');
+		var cls = '';
+
+		value.forEach(function(item, index) {
+			var val = item.value;
+			if (val > 999)
+				val = (val / 1000).format(1, 2) + 'K';
+			var h = (item.value / max) * 60;
+			h += 40;
+
+			cls = '';
+
+			if (item.id === current)
+				cls += (cls ? ' ' : '') + 'current';
+
+			if (index === 11)
+				cls += (cls ? ' ' : '') + 'last';
+
+			builder.push('<div style="width:{0}%;height:{1}%" title="{3}" class="{4}"><span>{2}</span></div>'.format(bar.format(0, 3), h.format(0, 3), val, months[item.month - 1] + ' ' + item.year, cls));
+		});
+
+		self.html(builder);
+	};
+});
+
 // ==========================================================
 // @{end}
 // ==========================================================
+
+COMPONENT('disable', function() {
+	var self = this;
+	var condition;
+	var selector;
+	var validate;
+
+	self.readonly();
+
+	self.make = function() {
+		condition = self.attr('data-if');
+		selector = self.attr('data-selector') || 'input,texarea,select';
+		validate = self.attr('data-validate');
+		if (validate)
+			validate = validate.split(',').trim();
+	};
+
+	self.setter = function(value) {
+		var is = true;
+
+		if (condition)
+			is = EVALUATE(self.path, condition);
+		else
+			is = value ? false : true;
+
+		self.find(selector).each(function() {
+			var el = $(this);
+			var tag = el.get(0).tagName;
+			if (tag === 'INPUT' || tag === 'SELECT') {
+				el.prop('disabled', is);
+				el.parent().toggleClass('ui-disabled', is);
+			} else
+				el.toggleClass('ui-disabled', is);
+		});
+
+		validate && validate.forEach(function(key) { jC.reset(key); });
+	};
+
+	self.state = function(type) {
+		self.update();
+	};
+});
 
 COMPONENT('search', function() {
 
@@ -2442,9 +2878,9 @@ COMPONENT('search', function() {
 		options_delay = (self.attr('data-delay') || '200').parseInt();
 	};
 
-	self.setter = function(value) {
+	self.setter = function(value, path, type) {
 
-		if (!options_selector || !options_attribute)
+		if (!options_selector || !options_attribute || value == null)
 			return;
 
 		KEYPRESS(function() {
@@ -2457,16 +2893,148 @@ COMPONENT('search', function() {
 			}
 
 			var search = value.toLowerCase().replace(/y/gi, 'i');
+			var hide = [];
+			var show = [];
 
 			elements.toArray().waitFor(function(item, next) {
 				var el = $(item);
 				var val = (el.attr(options_attribute) || '').toLowerCase().replace(/y/gi, 'i');
-				el.toggleClass(options_class, val.indexOf(search) === -1);
+				if (val.indexOf(search) === -1)
+					hide.push(el);
+				else
+					show.push(el);
 				setTimeout(next, 3);
+			}, function() {
+
+				hide.forEach(function(item) {
+					item.toggleClass(options_class, true);
+				});
+
+				show.forEach(function(item) {
+					item.toggleClass(options_class, false);
+				});
 			});
 
 		}, options_delay, 'search' + self.id);
 	};
+});
+
+COMPONENT('binder', function() {
+
+	var self = this;
+	var keys;
+	var keys_unique;
+
+	self.readonly();
+	self.blind();
+
+	self.make = function() {
+		self.watch('*', self.autobind);
+		self.scan();
+
+		self.on('component', function() {
+			setTimeout2(self.id, self.scan, 200);
+		});
+
+		self.on('destroy', function() {
+			setTimeout2(self.id, self.scan, 200);
+		});
+	};
+
+	self.autobind = function(path, value) {
+		var mapper = keys[path];
+		var template = {};
+		mapper && mapper.forEach(function(item) {
+			var value = self.get(item.path);
+			template.value = value;
+			item.classes && classes(item.element, item.classes(value));
+			item.visible && item.element.toggleClass('hidden', item.visible(value) ? false : true);
+			item.html && item.element.html(item.html(value));
+			item.template && item.element.html(item.template(template));
+		});
+	};
+
+	function classes(element, val) {
+		var add = '';
+		var rem = '';
+		val.split(' ').forEach(function(item) {
+			switch (item.substring(0, 1)) {
+				case '+':
+					add += (add ? ' ' : '') + item.substring(1);
+					break;
+				case '-':
+					rem += (rem ? ' ' : '') + item.substring(1);
+					break;
+				default:
+					add += (add ? ' ' : '') + item;
+					break;
+			}
+		});
+		rem && element.removeClass(rem);
+		add && element.addClass(add);
+	}
+
+	function decode(val) {
+		return val.replace(/\&\#39;/g, '\'');
+	}
+
+	self.scan = function() {
+		keys = {};
+		keys_unique = {};
+		self.find('[data-binder]').each(function() {
+
+			var el = $(this);
+			var path = el.attr('data-binder');
+			var arr = path.split('.');
+			var p = '';
+
+			var classes = el.attr('data-binder-class');
+			var html = el.attr('data-binder-html');
+			var visible = el.attr('data-binder-visible');
+			var obj = el.data('data-binder');
+
+			keys_unique[path] = true;
+
+			if (!obj) {
+				obj = {};
+				obj.path = path;
+				obj.element = el;
+				obj.classes = classes ? FN(decode(classes)) : undefined;
+				obj.html = html ? FN(decode(html)) : undefined;
+				obj.visible = visible ? FN(decode(visible)) : undefined;
+
+				var tmp = el.find('script[type="text/html"]');
+				var str = '';
+				if (tmp.length)
+					str = tmp.html();
+				else
+					str = el.html();
+
+				if (str.indexOf('{{') !== -1) {
+					obj.template = Tangular.compile(str);
+					tmp.length && tmp.remove();
+				}
+
+				el.data('data-binder', obj);
+			}
+
+			for (var i = 0, length = arr.length; i < length; i++) {
+				p += (p ? '.' : '') + arr[i];
+				if (keys[p])
+					keys[p].push(obj);
+				else
+					keys[p] = [obj];
+			}
+
+		});
+
+		Object.keys(keys_unique).forEach(function(key) {
+			self.autobind(key, self.get(key));
+		});
+
+		return self;
+	};
+
 });
 
 jC.parser(function(path, value, type) {
@@ -2493,10 +3061,8 @@ jC.formatter(function(path, value, type) {
 
 	if (type === 'date') {
 		if (value instanceof Date)
-			return value.format(this.attr('data-component-format'));
-		if (!value)
-			return value;
-		return new Date(Date.parse(value)).format(this.attr('data-component-format'));
+			return value.format(this.attr('data-jc-format'));
+		return value ? new Date(Date.parse(value)).format(this.attr('data-jc-format')) : value;
 	}
 
 	if (type !== 'currency')

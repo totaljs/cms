@@ -1,53 +1,59 @@
 const SITEMAP = {};
+const Fs = require('fs');
 
 exports.install = function() {
+	var url = CONFIG('manager-url');
+
 	// Auto-localize static HTML templates
 	F.localize('/templates/*.html', ['compress']);
 
 	// COMMON
-	F.route(CONFIG('manager-url') + '/*', '~manager');
-	F.route(CONFIG('manager-url') + '/upload/',                  upload, ['post', 'upload', 10000], 3084); // 3 MB
-	F.route(CONFIG('manager-url') + '/upload/base64/',           upload_base64, ['post', 10000], 2048); // 2 MB
-	F.route(CONFIG('manager-url') + '/logoff/',                  redirect_logoff);
+	F.route(url + '/*', '~manager');
+	F.route(url + '/upload/',                  upload,        ['post', 'upload', 10000], 3084); // 3 MB
+	F.route(url + '/upload/base64/',           upload_base64, ['post', 10000], 2048); // 2 MB
+	F.route(url + '/logoff/',                  redirect_logoff);
 
 	// DASHBOARD
-	F.route(CONFIG('manager-url') + '/api/dashboard/',           json_dashboard);
-	F.route(CONFIG('manager-url') + '/api/dashboard/online/',    json_dashboard_online);
-	F.route(CONFIG('manager-url') + '/api/dashboard/clear/',     json_dashboard_clear);
+	F.route(url + '/api/dashboard/',           json_dashboard);
+	F.route(url + '/api/dashboard/online/',    json_dashboard_online);
+	F.route(url + '/api/dashboard/clear/',     json_dashboard_clear);
 
 	// POSTS
-	F.route(CONFIG('manager-url') + '/api/posts/',               json_query, ['*Post']);
-	F.route(CONFIG('manager-url') + '/api/posts/',               json_save, ['post', '*Post']);
-	F.route(CONFIG('manager-url') + '/api/posts/{id}/',          json_read, ['*Post']);
-	F.route(CONFIG('manager-url') + '/api/posts/',               json_remove, ['delete', '*Post']);
-	F.route(CONFIG('manager-url') + '/api/posts/clear/',         json_clear, ['*Post']);
-	F.route(CONFIG('manager-url') + '/api/posts/codelists/',     json_posts_codelists);
+	F.route(url + '/api/posts/',               json_query,  ['*Post']);
+	F.route(url + '/api/posts/',               json_save,   ['*Post', 'post'], 512);
+	F.route(url + '/api/posts/{id}/',          json_read,   ['*Post']);
+	F.route(url + '/api/posts/',               json_remove, ['*Post', 'delete']);
+	F.route(url + '/api/posts/{id}/stats/',    json_stats,  ['*Post']);
+	F.route(url + '/api/posts/clear/',         json_clear,  ['*Post']);
+	F.route(url + '/api/posts/codelists/',     json_posts_codelists);
 
 	// PAGES
-	F.route(CONFIG('manager-url') + '/api/pages/',               json_query, ['*Page']);
-	F.route(CONFIG('manager-url') + '/api/pages/',               json_pages_save, ['post', '*Page']);
-	F.route(CONFIG('manager-url') + '/api/pages/',               json_remove, ['delete', '*Page']);
-	F.route(CONFIG('manager-url') + '/api/pages/{id}/',          json_read, ['*Page']);
-	F.route(CONFIG('manager-url') + '/api/pages/preview/',       view_pages_preview, ['json']);
-	F.route(CONFIG('manager-url') + '/api/pages/dependencies/',  json_pages_dependencies);
-	F.route(CONFIG('manager-url') + '/api/pages/clear/',         json_clear, ['*Page']);
-	F.route(CONFIG('manager-url') + '/api/pages/sitemap/',       json_pages_sitemap);
+	F.route(url + '/api/pages/',               json_query,  ['*Page']);
+	F.route(url + '/api/pages/',               json_remove, ['*Page', 'delete']);
+	F.route(url + '/api/pages/{id}/',          json_read,   ['*Page']);
+	F.route(url + '/api/pages/clear/',         json_clear,  ['*Page']);
+	F.route(url + '/api/pages/{id}/stats/',    json_stats,  ['*Page']);
+	F.route(url + '/api/pages/',               json_pages_save, ['*Page', 'post'], 512);
+	F.route(url + '/api/pages/preview/',       view_pages_preview, ['json'], 512);
+	F.route(url + '/api/pages/dependencies/',  json_pages_dependencies);
+	F.route(url + '/api/pages/sitemap/',       json_pages_sitemap);
 
 	// WIDGETS
-	F.route(CONFIG('manager-url') + '/api/widgets/',             json_query, ['*Widget']);
-	F.route(CONFIG('manager-url') + '/api/widgets/',             json_widgets_save, ['post', '*Widget']);
-	F.route(CONFIG('manager-url') + '/api/widgets/',             json_remove, ['delete', '*Widget']);
-	F.route(CONFIG('manager-url') + '/api/widgets/{id}/',        json_read, ['*Widget']);
-	F.route(CONFIG('manager-url') + '/api/widgets/clear/',       json_clear, ['*Widget']);
+	F.route(url + '/api/widgets/',             json_query,  ['*Widget']);
+	F.route(url + '/api/widgets/',             json_save,   ['post', '*Widget']);
+	F.route(url + '/api/widgets/',             json_remove, ['delete', '*Widget']);
+	F.route(url + '/api/widgets/{id}/',        json_read,   ['*Widget']);
+	F.route(url + '/api/widgets/clear/',       json_clear,  ['*Widget']);
 
 	// NEWSLETTER
-	F.route(CONFIG('manager-url') + '/api/newsletter/',          json_query, ['*Newsletter']);
-	F.route(CONFIG('manager-url') + '/api/newsletter/csv/',      file_newsletter, ['*Newsletter']);
-	F.route(CONFIG('manager-url') + '/api/newsletter/clear/',    json_clear, ['*Newsletter']);
+	F.route(url + '/api/newsletter/',          json_query,  ['*Newsletter']);
+	F.route(url + '/api/newsletter/clear/',    json_clear,  ['*Newsletter']);
+	F.route(url + '/api/newsletter/stats/',    json_stats,  ['*Newsletter']);
+	F.route(url + '/newsletter/export/',       file_newsletter, ['*Newsletter']);
 
 	// SETTINGS
-	F.route(CONFIG('manager-url') + '/api/settings/',            json_settings, ['*Settings']);
-	F.route(CONFIG('manager-url') + '/api/settings/',            json_settings_save, ['put', '*Settings']);
+	F.route(url + '/api/settings/',            json_settings, ['*Settings']);
+	F.route(url + '/api/settings/',            json_settings_save, ['put', '*Settings']);
 };
 
 // ==========================================================================
@@ -71,10 +77,7 @@ function upload() {
 			setTimeout(next, 100);
 		});
 
-	}, function() {
-		// Returns response
-		self.json(id);
-	});
+	}, () => self.json(id));
 }
 
 // Upload base64
@@ -87,7 +90,6 @@ function upload_base64() {
 	}
 
 	var type = self.body.file.base64ContentType();
-	var data = self.body.file.base64ToBuffer();
 	var ext;
 
 	switch (type) {
@@ -100,8 +102,12 @@ function upload_base64() {
 		case 'image/gif':
 			ext = '.gif';
 			break;
+		default:
+			self.json(null);
+			return;
 	}
 
+	var data = self.body.file.base64ToBuffer();
 	var id = DB('files').binary.insert('base64' + ext, data);
 	self.json('/download/' + id + ext);
 }
@@ -114,34 +120,59 @@ function redirect_logoff() {
 }
 
 // ==========================================================================
-// SCHEMA CRUD OPERATIONS
+// FILES
 // ==========================================================================
 
+// Clears all uploaded files
+function json_files_clear() {
+
+	U.ls(DB('files').binary.directory, function(files) {
+		files.wait((item, next) => Fs.unlink(item, next));
+	});
+
+	this.json(SUCCESS(true));
+}
+
+// ==========================================================================
+// COMMON CRUD OPERATIONS
+// ==========================================================================
+
+// Reads all items
 function json_query() {
 	var self = this;
 	self.$query(self.query, self.callback());
 }
 
+// Saves specific item
 function json_save() {
 	var self = this;
-	self.body.$save(self.callback());
+	self.body.$save(self, self.callback());
 }
 
+// Removes specific item
 function json_remove() {
 	var self = this;
 	self.$remove(self.body.id, self.callback());
 }
 
+// Clears all items
 function json_clear() {
 	var self = this;
 	self.$workflow('clear', self.callback());
 }
 
+// Reads a specific item by ID
 function json_read(id) {
 	var self = this;
 	var options = {};
 	options.id = id;
 	self.$get(options, self.callback());
+}
+
+function json_stats(id) {
+	var self = this;
+	self.id = id;
+	self.$workflow('stats', self, self.callback());
 }
 
 // ==========================================================================
@@ -180,9 +211,8 @@ function json_dashboard() {
 		var pending = [];
 
 		EACHSCHEMA(function(group, name, schema) {
-			if (!schema.operations || !schema.operations['dashboard'])
-				return;
-			pending.push(schema);
+			if (schema.operations && schema.operations['dashboard'])
+				pending.push(schema);
 		});
 
 		pending.wait(function(schema, next) {
@@ -208,8 +238,8 @@ function json_dashboard_online() {
 	model.visitors = counter.online();
 	model.today = counter.today();
 	model.last = counter.today().last;
-	model.memoryused = (memory.heapUsed / 1024 / 1024).floor(2);
-	model.memorytotal = (memory.heapTotal / 1024 / 1024).floor(2);
+	model.memoryused = memory.heapUsed.filesize();
+	model.memorytotal = memory.heapTotal.filesize();
 	self.json(model);
 }
 
@@ -218,25 +248,28 @@ function json_dashboard_clear() {
 	var self = this;
 	var instance = MODULE('webcounter').instance;
 
-	var fs = require('fs');
-	fs.unlink('databases/webcounter.nosql', NOOP);
-	fs.unlink('databases/webcounter.cache', NOOP);
+	Fs.unlink('databases/webcounter.nosql', NOOP);
+	Fs.unlink('databases/webcounter.cache', NOOP);
 
-	Object.keys(instance.stats).forEach(function(key) {
-		instance.stats[key] = 0;
-	});
-
+	Object.keys(instance.stats).forEach(key => instance.stats[key] = 0);
 	self.json(SUCCESS(true));
 }
 
 // ==========================================================================
 // POSTS
-// ==========================================================================
-
-// Reads all post categories and manufacturers
+// =======================ads all post categories and manufacturers
 function json_posts_codelists() {
 	var self = this;
-	self.json({ categories: F.global.posts, templates: F.config.custom.templates });
+	self.json({ categories: F.global.posts, templates: F.config.custom.templatesposts });
+}
+
+function json_posts_stats(id) {
+	var self = this;
+	NOSQL('posts').counter.monthly(id, function(err, views) {
+		var model = SINGLETON('posts.stats');
+		model.views = views;
+		self.json(model);
+	});
 }
 
 // ==========================================================================
@@ -264,9 +297,9 @@ function json_pages_save() {
 
 	// Is auto-creating URL?
 	if (self.body.url[0] === '-')
-		self.body.$async(self.callback(), 1).$workflow('create-url').$save();
+		self.body.$async(self.callback(), 1).$workflow('url').$save(self);
 	else
-		self.body.$save(self.callback());
+		self.body.$save(self, self.callback());
 
 	// Clears view cache
 	setTimeout(() => F.cache.removeAll('cache.'), 2000);
@@ -278,23 +311,13 @@ function json_pages_sitemap() {
 	this.json(SITEMAP);
 }
 
-// ==========================================================================
-// WIDGETS
-// ==========================================================================
-
-// Saves (updates or creates) specific widget
-function json_widgets_save() {
+function json_pages_stats(id) {
 	var self = this;
-	self.body.$save(self.callback());
-
-	// Clears view cache
-	setTimeout(() => F.cache.removeAll('cache.'));
-}
-
-// Clears all widgets
-function json_widgets_clear() {
-	var self = this;
-	self.$workflow('clear', self.callback());
+	NOSQL('pages').counter.monthly(id, function(err, views) {
+		var model = SINGLETON('pages.stats');
+		model.views = views;
+		self.json(model);
+	});
 }
 
 // ==========================================================================
@@ -305,12 +328,6 @@ function json_widgets_clear() {
 function file_newsletter() {
 	var self = this;
 	self.$workflow('download', self);
-}
-
-// Clears all email addreses in newsletter
-function json_newsletter_clear() {
-	var self = this;
-	self.$workflow('clear', self.callback());
 }
 
 // ==========================================================================
@@ -326,5 +343,5 @@ function json_settings() {
 // Saves and refresh custom settings
 function json_settings_save() {
 	var self = this;
-	self.body.$async(self.callback(), 0).$save().$workflow('load');
+	self.body.$async(self.callback(), 0).$save(self).$workflow('load');
 }

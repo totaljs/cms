@@ -4,12 +4,12 @@
 
 # Node.js CMS
 
-- New version: `v7.0.0` (works only with __Total.js v2.1.0__)
+- New version: `v8.0.0` (works only with __Total.js v2.3.0__)
 
 ## Installation
 
-- install `$ npm install total.js`
 - open cms directory `$ cd cms`
+- install `$ npm install total.js`
 - run it `node debug.js`
 
 [license-image]: https://img.shields.io/badge/license-MIT-blue.svg?style=flat

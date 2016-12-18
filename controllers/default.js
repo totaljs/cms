@@ -59,6 +59,8 @@ function file_read(req, res) {
 	// Custom image resizing
 	var size;
 
+	var size;
+
 	// Small hack for the file cache.
 	// F.exists() uses req.uri.pathname for creating temp identificator and skips all query strings by creating (because this hack).
 	if (req.query.s) {
@@ -123,5 +125,10 @@ function view_blogs_detail(linker) {
 	var options = {};
 	options.category = 'Blogs';
 	options.linker = linker;
-	self.$get(options, self.callback('blogs-detail'));
+	self.$read(options, function(err, response) {
+		if (err)
+			return self.throw404(err);
+		NOSQL('posts').counter.hit(response.id);
+		self.view('blogs-detail', response);
+	});
 }

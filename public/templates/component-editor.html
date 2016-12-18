@@ -1,11 +1,11 @@
-<div data-component="form" data-title="@(Select widget)" data-component-path="cmseditor.window" data-if="value === 'widgets'" data-width="600px" data-component-id="cmseditor_widgets">
+<div data-jc="form" data-title="@(Select widget)" data-jc-path="cmseditor.window" data-if="value === 'widgets'" data-width="600px" data-jc-id="cmseditor_widgets" class="hidden">
 	<div class="padding npb">
-		<div data-component="textbox" data-component-path="cmseditor.widgetssearch" data-control-icon="fa-search" data-placeholder="@(Search widgets)"></div>
+		<div data-jc="textbox" data-jc-path="cmseditor.widgetssearch" data-placeholder="@(Search widgets)" data-jc-type="search"></div>
 	</div>
 	<hr class="nmb" />
 	<div class="padding">
-		<div data-component="search" data-component-path="cmseditor.widgetssearch" data-selector=".inline-search" data-class="hidden">
-			<div data-component="repeater-group" data-component-path="cmseditor.widgets2" data-group="category">
+		<div data-jc="search" data-jc-path="cmseditor.widgetssearch" data-selector=".inline-search" data-class="hidden">
+			<div data-jc="repeater-group" data-jc-path="cmseditor.widgets2" data-group="category">
 				<script type="text/html">
 					<div class="pages-editor-widget inline-search" data-id="{{ id }}" data-template="{{ istemplate }}" data-name="{{ name }}" data-search="{{ name }}"><span class="fa fa-{{ if icon }}{{ icon }}{{ else if istemplate }}code{{ else }}plug{{ fi }} w18"></span> {{ name }}</div>
 				</script>
@@ -23,94 +23,93 @@
 	</div>
 </div>
 
-<div data-component="form" data-title="@(Picture editor)" data-component-path="cmseditor.window" data-if="value === 'picture'" data-width="1100px" data-component-id="cmseditor_picture">
+<div data-jc="form" data-title="@(Picture editor)" data-jc-path="cmseditor.window" data-if="value === 'picture'" data-width="1100px" data-jc-id="cmseditor_picture" class="hidden">
 	<div class="padding">
-		<div data-component="crop" data-component-path="cmseditor.crop.url" data-width="700" data-height="500" data-component-id="cmseditor.crop"></div>
+		<div data-jc="crop" data-jc-path="cmseditor.crop.url" data-width="700" data-height="500" data-jc-id="cmseditor.crop"></div>
 		<div class="row">
 			<br />
 			<div class="col-md-12 m">
-				<div data-component="textbox" data-component-path="cmseditor.crop.alt" data-required="true">@(Picture description)</div>
+				<div data-jc="textbox" data-jc-path="cmseditor.crop.alt" data-required="true">@(Picture description)</div>
 			</div>
-			<div class="col-md-12" data-component="visible" data-component-path="cmseditor.crop.href" data-if="value && value.length > 0">
-				<div data-component="dropdown" data-component-path="cmseditor.crop.href" class="m" data-icon="fa-sitemap" data-source="pages.sitemap" data-source-key="name" data-source-value="url" data-empty="">@(URL according to the sitemap)</div>
-				<div data-component="textbox" data-component-path="cmseditor.crop.href">@(URL address)</div>
+			<div class="col-md-12" data-jc="visible" data-jc-path="cmseditor.crop.href" data-if="value && value.length > 0">
+				<div data-jc="dropdown" data-jc-path="cmseditor.crop.href" class="m" data-icon="fa-sitemap" data-source="pages.sitemap" data-source-key="name" data-source-value="url" data-empty="">@(URL according to the sitemap)</div>
+				<div data-jc="textbox" data-jc-path="cmseditor.crop.href">@(URL address)</div>
 			</div>
 		</div>
 	</div>
 	<div class="ui-form-buttons">
-		<div data-component="validation" data-component-path="cmseditor.crop">
+		<div data-jc="validation" data-jc-path="cmseditor.crop">
 			<button name="submit">@(SUBMIT)</button>
 		</div>
 		<button name="cancel">@(Cancel)</button>
 	</div>
 </div>
 
-<div data-component="form" data-title="@(Link editor)" data-component-path="cmseditor.window" data-if="value === 'link'" data-width="500px" data-component-id="cmseditor_link">
+<div data-jc="form" data-title="@(Link editor)" data-jc-path="cmseditor.window" data-if="value === 'link'" data-width="500px" data-jc-id="cmseditor_link" class="hidden">
 	<div class="padding">
 		<div class="row">
 			<div class="col-md-12">
 				<div class="silver"><span class="fa fa-link"></span> @(<b>Change the target URL address</b> and other settings for the selected link.)</div>
 				<hr />
-				<div data-component="fileupload" data-component-path="cmseditor.link.file" data-placeholder="@(Browse device)" data-error-large="@(The uploaded file is too large.)" data-icon="fa-file" class="m" data-singlefile="true">@(Upload file)</div>
-				<div data-component="dropdown" data-component-path="cmseditor.link.href" class="m" data-icon="fa-sitemap" data-source="pages.sitemap" data-source-key="name" data-source-value="url" data-empty="">@(URL according to the sitemap)</div>
-				<div data-component="textbox" data-component-path="cmseditor.link.href" data-required="true" class="m" data-icon="fa-globe">@(URL address)</div>
-				<div data-component="dropdown" data-component-path="cmseditor.link.target" data-required="true" data-options="@(Current tab or window)|_self;@(New tab or window)|_blank" class="m">@(Target)</div>
-				<div data-component="textbox" data-component-path="cmseditor.link.title" data-icon="fa-info-circle">@(Title)</div>
+				<div data-jc="fileupload" data-jc-path="cmseditor.link.file" data-placeholder="@(Browse device)" data-error-large="@(The uploaded file is too large.)" data-icon="fa-file" class="m" data-singlefile="true">@(Upload file)</div>
+				<div data-jc="dropdown" data-jc-path="cmseditor.link.href" class="m" data-icon="fa-sitemap" data-source="pages.sitemap" data-source-key="name" data-source-value="url" data-empty="">@(URL according to the sitemap)</div>
+				<div data-jc="textbox" data-jc-path="cmseditor.link.href" data-required="true" class="m" data-icon="fa-globe">@(URL address)</div>
+				<div data-jc="dropdown" data-jc-path="cmseditor.link.target" data-required="true" data-options="@(Current tab or window)|_self;@(New tab or window)|_blank" class="m">@(Target)</div>
+				<div data-jc="textbox" data-jc-path="cmseditor.link.title" data-icon="fa-info-circle">@(Title)</div>
 			</div>
 		</div>
 	</div>
 	<div class="ui-form-buttons">
-		<div data-component="validation" data-component-path="cmseditor.link">
+		<div data-jc="validation" data-jc-path="cmseditor.link">
 			<button name="submit">@(SUBMIT)</button>
 		</div>
 		<button name="cancel">@(Cancel)</button>
 	</div>
 </div>
 
-<div data-component="form" data-title="@(Attributes editor)" data-component-path="cmseditor.window" data-if="value === 'attribute'" data-width="500px" data-component-id="cmseditor_attribute">
+<div data-jc="form" data-title="@(Attributes editor)" data-jc-path="cmseditor.window" data-if="value === 'attribute'" data-width="500px" data-jc-id="cmseditor_attribute" class="hidden">
 	<div class="padding npb">
 		<div class="row">
 			<div class="col-md-12">
-				<div data-component="textbox" data-component-path="cmseditor.attribute.title" class="m">@(Title)</div>
-				<div data-component="textbox" data-component-path="cmseditor.attribute.id" class="m">@(ID)</div>
-				<div data-component="visible" data-component-path="cmseditor.attribute.themes" data-if="value && value.length">
-					<div data-component="dropdown" data-component-path="cmseditor.attribute.theme" class="m b" data-source="cmseditor.attribute.themes" data-icon="fa-paint-brush">@(Theme)</div>
+				<div data-jc="textbox" data-jc-path="cmseditor.attribute.title" class="m">@(Title)</div>
+				<div data-jc="textbox" data-jc-path="cmseditor.attribute.id" class="m">@(ID)</div>
+				<div data-jc="visible" data-jc-path="cmseditor.attribute.themes" data-if="value && value.length">
+					<div data-jc="dropdown" data-jc-path="cmseditor.attribute.theme" class="m b" data-source="cmseditor.attribute.themes" data-icon="fa-paint-brush">@(Theme)</div>
 				</div>
-				<div data-component="textbox" data-component-path="cmseditor.attribute.cls" class="m">@(Class name)</div>
-				<div data-component="textbox" data-component-path="cmseditor.attribute.css" class="m">@(Custom styles)</div>
+				<div data-jc="textbox" data-jc-path="cmseditor.attribute.cls" class="m">@(Class name)</div>
+				<div data-jc="textbox" data-jc-path="cmseditor.attribute.css" class="m">@(Custom styles)</div>
 			</div>
 		</div>
 	</div>
 
-	<div data-component="visible" data-component-path="cmseditor.attribute.isiframe" data-if="value === true">
+	<div data-jc="visible" data-jc-path="cmseditor.attribute.isimage" data-if="value === true">
 		<hr />
-		<div class="padding npt">
-			<div data-component="textbox" data-component-path="cmseditor.attribute.src" class="m">@(URL)</div>
-		</div>
-	</div>
-
-	<div data-component="visible" data-component-path="cmseditor.attribute.isimage" data-if="value === true">
-		<hr />
-		<div class="padding npt">
+		<div class="padding npt npb">
 			<div class="help m"><span class="fa fa-photo"></span> @(Image settings)</div>
 
 			<div class="row">
 				<div class="col-md-12">
-					<div data-component="textbox" data-component-path="cmseditor.attribute.alt" class="m">@(Alternate text)</div>
+					<div data-jc="textbox" data-jc-path="cmseditor.attribute.alt" class="m">@(Alternate text)</div>
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="col-md-4">
-					<div data-component="textbox" data-component-path="cmseditor.attribute.datawidth" class="m" data-maxlenght="4" data-placeholder="120" data-align="center">@(Width)</div>
+					<div data-jc="textbox" data-jc-path="cmseditor.attribute.datawidth" class="m" data-maxlenght="4" data-placeholder="120" data-align="center">@(Width)</div>
 				</div>
 				<div class="col-md-4">
-					<div data-component="textbox" data-component-path="cmseditor.attribute.dataheight" class="m" data-maxlenght="4" data-placeholder="120" data-align="center">@(Height)</div>
+					<div data-jc="textbox" data-jc-path="cmseditor.attribute.dataheight" class="m" data-maxlenght="4" data-placeholder="120" data-align="center">@(Height)</div>
 				</div>
-				<div class="col-md-4" data-component="visible" data-component-path="cmseditor.attribute.imgdefined" data-if="value">
-					<div data-component="textbox" data-component-path="cmseditor.attribute.datasize" class="m" data-maxlenght="4" data-placeholder="0%" data-align="center">@(Percentage)</div>
+				<div class="col-md-4" data-jc="visible" data-jc-path="cmseditor.attribute.imgdefined" data-if="value">
+					<div data-jc="textbox" data-jc-path="cmseditor.attribute.datasize" class="m" data-maxlenght="4" data-placeholder="0%" data-align="center">@(Percentage)</div>
 				</div>
 			</div>
+		</div>
+	</div>
+	<div data-jc="visible" data-jc-path="cmseditor.attribute.isnone" data-if="value !== true">
+		<hr />
+		<div class="padding npt">
+			<div data-jc="textbox" data-jc-path="cmseditor.attribute.src" data-icon="fa-globe">@(Source URL)</div>
 		</div>
 	</div>
 	<div class="ui-form-buttons">
@@ -119,7 +118,7 @@
 	</div>
 </div>
 
-<div data-component="form" data-title="@(Icon editor)" data-component-path="cmseditor.window" data-if="value === 'icon'" data-width="700px" data-component-id="cmseditor_icon">
+<div data-jc="form" data-title="@(Icon editor)" data-jc-path="cmseditor.window" data-if="value === 'icon'" data-width="700px" data-jc-id="cmseditor_icon" class="hidden">
 	<div class="padding">
 		<div class="row font-awesome-editor" id="cmseditoricons"></div>
 	</div>
@@ -128,34 +127,34 @@
 	</div>
 </div>
 
-<div data-component="form" data-title="@(Widget settings)" data-component-path="cmseditor.window" data-if="value === 'widget'" data-width="500px" data-component-id="cmseditor_widget">
+<div data-jc="form" data-title="@(Widget settings)" data-jc-path="cmseditor.window" data-if="value === 'widget'" data-width="500px" data-jc-id="cmseditor_widget" class="hidden">
 	<div class="padding">
 		<div class="row">
 			<div class="col-md-12">
 				<div class="silver"><span class="fa fa-plug"></span> @(Add a custom settings for the selected widget. The setting affects behavior of the widget.)</div>
 				<hr />
-				<div data-component="textarea" data-component-path="cmseditor.widget.settings" data-icon="fa-cog" data-height="150px" class="ui-textarea-code">@(Settings)</div>
+				<div data-jc="textarea" data-jc-path="cmseditor.widget.settings" data-icon="fa-cog" data-height="150px" class="ui-textarea-code">@(Settings)</div>
 			</div>
 		</div>
 	</div>
 	<div class="ui-form-buttons">
-		<div data-component="validation" data-component-path="cmseditor.widget">
+		<div data-jc="validation" data-jc-path="cmseditor.widget">
 			<button name="submit">@(SUBMIT)</button>
 		</div>
 		<button name="cancel">@(Cancel)</button>
 	</div>
 </div>
 
-<div data-component="form" data-title="@(Source code editor)" data-component-path="cmseditor.window" data-if="value === 'source'" data-width="1100px" data-component-id="cmseditor_source">
+<div data-jc="form" data-title="@(Source code editor)" data-jc-path="cmseditor.window" data-if="value === 'source'" data-width="1100px" data-jc-id="cmseditor_source" class="hidden">
 	<div class="padding">
 		<div class="row">
 			<div class="col-md-12">
-				<div data-component="codemirror" data-component-path="cmseditor.source" data-icon="fa-code" data-height="500px" data-required="true" class="ui-textarea-code">@(HTML)</div>
+				<div data-jc="codemirror" data-jc-path="cmseditor.source" data-icon="fa-code" data-height="500px" data-required="true" class="ui-textarea-code">@(HTML)</div>
 			</div>
 		</div>
 	</div>
 	<div class="ui-form-buttons">
-		<div data-component="validation" data-component-path="cmseditor.source">
+		<div data-jc="validation" data-jc-path="cmseditor.source">
 			<button name="submit">@(SUBMIT)</button>
 		</div>
 		<button name="cancel">@(Cancel)</button>
@@ -214,6 +213,8 @@
 					cmseditor.instance.getTarget().attr('src', '/download/' + response[0]);
 					cmseditor.instance.change(true);
 				}
+
+				cmseditor.instance.autoresize();
 			});
 		});
 	}, 1000);
@@ -224,15 +225,50 @@
 		var self = this;
 		var target;
 		var iframe;
+		var container;
 		var width;
 		var offsetter = '<span id="cmseditorheight"></span><script>window.parent.cmseditor_iframeloaded();<\/script>';
 
 		self.options = { template: 'default' };
 		self.readonly();
 
+		self.released = function(is) {
+			is && iframe.attr('src', 'about:blank');
+		};
+
 		self.make = function() {
-			self.html('<iframe src="about:blank"></iframe>');
+			self.html('<div style="margin:0 auto"><iframe src="about:blank"></iframe></div>');
 			iframe = self.find('iframe');
+			container = self.find('div');
+		};
+
+		self.autoresize = function() {
+			setTimeout(function() {
+				self.resize(true);
+			}, 500);
+			setTimeout(function() {
+				self.resize(false);
+			}, 1500);
+			return self;
+		};
+
+		self.device = function(type) {
+			switch (type) {
+				case 'md':
+					container.css({ width: '1140px' });
+					break;
+				case 'sm':
+					container.css({ width: '960px' });
+					break;
+				case 'xs':
+					container.css({ width: '400px' });
+					break;
+				case 'lg':
+				default:
+					container.css({ width: 'auto' });
+					break;
+			}
+			return self.resize();
 		};
 
 		self.init = function() {
@@ -269,7 +305,7 @@
 				return;
 			}
 
-			window.cmseditor_iframeloaded = function(){ self.setEvents(); };
+			window.cmseditor_iframeloaded = self.setEvents;
 
 			frm.document.write(content.replace('</body>', offsetter + '</body>'));
 			frm.document.close();
@@ -303,8 +339,6 @@
 
 		self.refreshWidgets = function() {
 			AJAX('GET {0}/api/widgets/'.format(managerurl), function(response) {
-				if (isError(arguments))
-					return;
 				response.sort(FN('(a,b) => a.name.localeCompare(b.name)'));
 				SET('cmseditor.widgets', response);
 			});
@@ -401,7 +435,8 @@
 		};
 
 		self.getPerex = function() {
-			return self.doFind('.CMS_perex').html();
+			var el = self.doFind('.CMS_perex');
+			return el.length ? el.html().replace(/<\/?[^>]+(>|$)/g, '') : '';
 		};
 
 		self.getKeywords = function() {
@@ -487,7 +522,7 @@
 			var content = self.getContents();
 			content.find('[contenteditable]').removeAttr('contenteditable');
 			content.find('.CMS_selected').removeClass('CMS_selected');
-			return (content.find('#CMS').html() || '').trim().replace(/&nbsp;/g, ' ').replace(offsetter, '');
+			return cmseditor_prettify((content.find('#CMS').html() || '').trim().replace(/&nbsp;/g, ' ').replace(offsetter, ''));
 		};
 
 		self.getContent = function() {
@@ -505,6 +540,12 @@
 			return (content.find('#CMS').html() || '').trim().replace(offsetter, '');
 		};
 
+		self.check = function(el) {
+			var type = el.get(0).nodeName;
+			if (type === 'DIV' || type === 'P' || type === 'B' || type.substring(0, 1) === 'H')
+				!el.html() && el.html('&nbsp;');
+		};
+
 		self.setEvents = function() {
 
 			var body = self.getContents();
@@ -517,6 +558,7 @@
 				var el = $(this);
 
 				if (target && this !== target.get(0)) {
+					self.check(target);
 					target.removeClass('CMS_selected');
 					target.removeAttr('contenteditable');
 					target = null;
@@ -549,7 +591,9 @@
 					info.html('&lt;{0}{1}&gt;'.format(tag.toLowerCase(), tag === 'BR' || tag === 'HR' ? ' /' : ''));
 
 				var wrap = self.getParent('CMS_widget') || self.getParent('CMS_template');
+
 				cmseditor.wrap = wrap;
+				cmseditor.wrapremove = self.getParent('CMS_remove');
 
 				panel.css({ left: left, top: off.top - panel.innerHeight() - 5 });
 				panel.find('#CMS_panel_buttons_move').toggle(wrap && wrap.length ? true : false);
@@ -579,7 +623,7 @@
 						disabled = self.getParent('CMS_repeat') === null;
 
 					if (disabled && name === 'remove')
-						disabled = self.getParent('CMS_remove') === null;
+						disabled = cmseditor.wrapremove === null;
 
 					if (disabled && name === 'widgets') {
 						cmseditor.wrap_widgets = self.getParent('CMS_widgets', 5);
@@ -600,9 +644,55 @@
 				e.preventDefault();
 				e.stopPropagation();
 				var text = e.originalEvent.clipboardData.getData('text/plain');
-				if (target.hasClass('CMS_singleline'))
+				if (!target.hasClass('CMS_multiline'))
 					text = text.replace(/\n\r/g, ' ');
 				self.getDocument().execCommand('insertText', false, text.trim().replace(/\s{2,}/g, ' ').replace(/\&nbsp;/g, ' '));
+			});
+
+			body.on('dragenter dragover dragexit drop dragleave', function (e) {
+
+				e.stopPropagation();
+				e.preventDefault();
+
+				switch (e.type) {
+					case 'drop':
+						break;
+					case 'dragenter':
+					case 'dragover':
+						return;
+					case 'dragexit':
+					case 'dragleave':
+					default:
+						return;
+				}
+
+				var el = $(e.target);
+				if (e.target.nodeName !== 'IMG' || !el.hasClass('CMS_edit') || el.attr('data-width'))
+					return;
+
+				var files = e.originalEvent.dataTransfer.files;
+				var data = new FormData();
+				var errmsg = $('#cmseditor_inlineupload').attr('data-error-large');
+
+				SETTER('loading', 'show');
+				data.append('file0', files[0]);
+
+				UPLOAD('{0}/upload/'.format(managerurl), data, function(response, err) {
+
+					SETTER('loading', 'hide', 100);
+
+					if (err) {
+						SETTER('message', 'warning', errmsg);
+						return;
+					}
+
+					if (response && response.length) {
+						el.attr('src', '/download/' + response[0]);
+						cmseditor.instance.change(true);
+					}
+
+					cmseditor.instance.autoresize();
+				});
 			});
 
 			body.unbind('keydown').on('keydown', function(e) {
@@ -610,7 +700,7 @@
 				if (!target)
 					return;
 
-				if (e.keyCode === 13 && target.hasClass('CMS_singleline')) {
+				if (e.keyCode === 13 && !target.hasClass('CMS_multiline')) {
 					e.preventDefault();
 					e.stopPropagation();
 					return;
@@ -696,6 +786,10 @@
 				cmseditor.wrap_widgets && cmseditor.wrap_widgets.length && cmseditor.wrap_widgets.toggleClass('CMS_selected_template', e.type === 'mouseenter');
 			});
 
+			body.find('#CMS_panel').on('mouseenter mouseleave', '.fa-trash', function(e) {
+				cmseditor.wrapremove && cmseditor.wrapremove.toggleClass('CMS_operation', e.type === 'mouseenter');
+			});
+
 			body.find('#CMS_panel').on('click', 'span', function(e) {
 
 				e.preventDefault();
@@ -715,6 +809,7 @@
 						body.find('#CMS_panel').find('[data-name="hide"]').trigger('click');
 						self.change(true);
 						break;
+
 					case 'down':
 						tmp = cmseditor.wrap.next();
 						tmp.length && tmp.after(cmseditor.wrap);
@@ -724,6 +819,7 @@
 
 					case 'hide':
 						self.getToolbar().hide();
+						self.check(target);
 						target.removeAttr('contentEditable');
 						target.removeClass('CMS_selected');
 						body.find('.CMS_selected_template').removeClass('CMS_selected_template');
@@ -745,6 +841,7 @@
 						var tag = target.get(0).nodeName;
 						cmseditor.attribute.isimage = tag === 'IMG';
 						cmseditor.attribute.isiframe = tag === 'IFRAME';
+						cmseditor.attribute.isnone = !cmseditor.attribute.isimage && !cmseditor.attribute.isiframe;
 						cmseditor.attribute.id = target.attr('id') || '';
 						cmseditor.attribute.cls = arr.join(' ');
 						cmseditor.attribute.css = target.attr('style') || '';
@@ -768,8 +865,7 @@
 							cmseditor.attribute.theme = selected;
 						}
 
-						if (cmseditor.attribute.isiframe)
-							cmseditor.attribute.src = target.attr('src') || '';
+						cmseditor.attribute.src = target.attr('src') || '';
 
 						if (cmseditor.attribute.isimage) {
 
@@ -904,6 +1000,7 @@
 							}
 						}
 
+						self.autoresize();
 						self.change(true);
 						break;
 				}
@@ -940,8 +1037,8 @@
 				var elheight = contents.find('#cmseditorheight');
 				if (!elheight.length)
 					return self.resize(500);
-				var h = navigator.userAgent.indexOf('Safari') === -1 ? contents.outerHeight() : elheight.offset().top;
-				iframe.css({ height: h + 50 });
+				var h = navigator.userAgent.indexOf('Safari') === -1 ? $(contents).find('body').get(0).scrollHeight : elheight.offset().top + 80;
+				iframe.css({ height: h });
 				width = contents.width();
 				setTimeout(function() {
 					SETTER('form', 'resize');
@@ -971,8 +1068,6 @@
 
 			SETTER('loading', 'show');
 			AJAX('POST {0}/api/pages/preview/'.format(managerurl), options, function(response) {
-				if (isError(arguments))
-					return;
 				self.write(response.replace('</body>', '<div id="CMS_panel"><div id="CMS_panel_buttons_move"><span class="fa fa-arrow-up" data-name="up" title="@(Move up)"></span><span class="fa fa-arrow-down" data-name="down" title="@(Move down)"></span></div><div id="CMS_panel_info"></div><div class="CMS_panel_buttons"><span class="fa fa-pencil" title="@(Edit)" data-name="edit"></span><span class="fa fa-link" title="@(Change link)" data-name="link"></span><span class="fa fa-quote-left" title="@(Change attributes)" data-name="attribute"></span><span class="fa fa-copy" title="@(Duplicate)" data-name="repeat"></span></span><span class="fa fa-plug" title="@(Add widget)" data-name="widgets"></span><span class="fa fa-trash" title="@(Remove content)" data-name="remove"></span><span class="fa fa-caret-square-o-down" title="@(Hide)" data-name="hide"></span></div></div></body>'));
 				SETTER('loading', 'hide', 500);
 			});
@@ -1008,7 +1103,7 @@
 
 			var after = target.hasClass('CMS_template') || target.hasClass('CMS_widget');
 			if (!is) {
-				var content = '<div class="CMS_widget CMS_remove" data-id="' + id + '">--- <span class="fa fa-plug"></span> ' + el.attr('data-name') + ' ---<pre></pre></div>';
+				var content = '<div class="CMS_widget CMS_remove" data-id="{0}">--- <span class="fa fa-plug"></span> {1} ---<pre></pre></div>'.format(id, el.attr('data-name'));
 				if (after)
 					target.after(content);
 				else
@@ -1020,9 +1115,7 @@
 
 			SETTER('loading', 'show');
 			AJAX('GET {0}/api/widgets/{1}/'.format(managerurl, id), function(response) {
-				if (isError(arguments))
-					return;
-				var content = '<div class="CMS_template CMS_remove">' + response.body + '</div>';
+				var content = '<div class="CMS_template CMS_remove" data-id="{0}">{1}</div>'.format(id, response.body);
 				if (after)
 					target.after(content);
 				else
@@ -1071,6 +1164,8 @@
 						target.attr('src', response + '?s=' + size.replace('%', ''));
 					} else
 						target.attr('src', response);
+
+					cmseditor.instance.autoresize();
 				}, 1000);
 
 				setTimeout(hide, 1000);
@@ -1139,7 +1234,7 @@
 			else
 				target.removeAttr('title');
 
-			if (cmseditor.attribute.isiframe)
+			if (cmseditor.attribute.isiframe || cmseditor.attribute.isimage)
 				target.attr('src', cmseditor.attribute.src.trim());
 
 			if (cmseditor.attribute.isimage) {
@@ -1208,6 +1303,7 @@
 
 			target.attr('class', clsnames);
 			cmseditor.instance.change(true);
+			cmseditor.instance.autoresize();
 			hide();
 		};
 	});
@@ -1237,9 +1333,9 @@
 			}
 
 			editor.doFind('#CMS').html(cmseditor.source);
-			editor.resize();
 			editor.change(true);
 			editor.load('sourcecode');
+			editor.autoresize();
 			hide();
 		};
 
@@ -1264,6 +1360,63 @@
 		});
 
 		SET('cmseditor.widgets2', arr);
+	}
+
+	function cmseditor_prettify(body) {
+
+		var index = 0;
+		var builder = [];
+		var count = 0;
+		var tmp;
+
+		var pad = function(count) {
+			return '\n'.padRight(count, '\t');
+		};
+
+		while (true) {
+
+			var c = body[index++];
+			var n = body[index];
+
+			if (index > body.length)
+				break;
+
+			if (c === '<' && n === 'd' && body.substring(index, index + 3) === 'div') {
+				tmp = index;
+				index = body.indexOf('>', index + 3) + 1;
+				builder.push(pad(count + 1) + body.substring(tmp - 1, index) + pad(count + 2));
+				count++;
+				continue;
+			}
+
+			if (c === '<' && n === '/' && body.substring(index, index + 4) === '/div') {
+				count--;
+				builder.push(pad(count + 1) + '</div>' + pad(count + 1));
+				index += 5;
+				continue;
+			}
+
+			builder.push(body.substring(index - 1, index));
+		}
+
+		for (var i = 0, length = builder.length; i < length; i++) {
+			var line = builder[i];
+			var next = builder[i + 1];
+			if (!next)
+				break;
+			var a = line.indexOf('>');
+			if (a === -1)
+				continue;
+			var b = next.indexOf('<');
+			if (b === -1)
+				continue;
+			next = next.substring(0, b);
+			if (line.indexOf('\n', a) === -1 || (next.indexOf('\n') === -1))
+				continue;
+			builder[i] = line.substring(0, a + 1) + line.substring(a + 2);
+		}
+
+		return builder.join('').trim();
 	}
 
 	$(document).on('click', '#cmseditoricons .fa', function() {

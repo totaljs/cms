@@ -1,3 +1,6 @@
+// Trims empty fields
+languages = languages.trim();
+
 var common = {};
 
 // Current page
@@ -18,10 +21,6 @@ $(document).ready(function() {
 	$(window).on('resize', resizer);
 	resizer();
 });
-
-function isError(arguments) {
-	return false;
-}
 
 // Because of login form
 if (window.su) {
@@ -91,9 +90,7 @@ function can(name) {
 }
 
 Tangular.register('price', function(value, format) {
-	if (value == null)
-		value = 0;
-	return currency.format(value.format(format));
+	return currency.format((value || 0).format(format));
 });
 
 Tangular.register('join', function(value, delimiter) {

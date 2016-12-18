@@ -1,37 +1,36 @@
-// Supported operations:
-// "render" renders page
-// "render-multiple" renders multiple pages (uses "render")
-// "breadcrumb" creates bredcrumb (uses "render")
-// "clear" clears database
+// ====== Supported operations:
+// "render"            - renders page
+// "render-multiple"   - renders multiple pages (uses "render")
+// "breadcrumb"        - creates bredcrumb (uses "render")
+// "clear"             - clears database
 
-// Supported workflows
-// "create-url"
+// ====== Supported workflows:
+// "url"               - creates URL
 
 const REGEXP_HTML_CLASS = /(\s)class\=\".*?\"/g;
 
 NEWSCHEMA('Page').make(function(schema) {
 
 	schema.define('id', 'String(20)');
-	schema.define('parent', 'String(20)');
-	schema.define('template', 'String(30)');
-	schema.define('language', 'Lower(3)');
-	schema.define('url', 'String(200)');
-	schema.define('keywords', 'String(200)');
-	schema.define('icon', 'String(20)');
-	schema.define('navigations', '[String]');
-	schema.define('partial', '[String]');       // A partial content
-	schema.define('widgets', '[String]');       // Widgets lists, contains Array of ID widget
-	schema.define('settings', '[String]');      // Widget settings (according to widgets array index)
-	schema.define('tags', '[String]');
-	schema.define('search', 'String(1000)');
-	schema.define('pictures', '[String]')       // URL addresses for first 5 pictures
-	schema.define('name', 'String(50)');
-	schema.define('perex', 'String(500)');
-	schema.define('title', 'String(100)', true);
-	schema.define('priority', Number);
-	schema.define('ispartial', Boolean);
-	schema.define('body', String);
-	schema.define('datecreated', Date);
+	schema.define('body', String);                      // RAW html
+	schema.define('icon', 'String(20)');                // Font-Awesome icon name
+	schema.define('ispartial', Boolean);                // Is only partial page (the page will be shown in another page)
+	schema.define('keywords', 'String(200)');           // Meta keywords
+	schema.define('description', 'String(200)');        // Meta description
+	schema.define('language', 'Lower(2)');              // For which language is the page targeted?
+	schema.define('name', 'String(50)');                // Name in manager
+	schema.define('navigations', '[String]');           // In which navigation will be the page?
+	schema.define('parent', 'String(20)');              // Parent page for breadcrumb
+	schema.define('partial', '[String]');               // A partial content
+	schema.define('perex', 'String(500)');              // Short page description generated according to the "CMS_perex" class in CMS editor
+	schema.define('pictures', '[String]')               // URL addresses for first 5 pictures
+	schema.define('priority', Number);                  // Sorting in navigation
+	schema.define('search', 'String(1000)');            // Search pharses
+	schema.define('settings', '[String]');              // Widget settings (according to widgets array index)
+	schema.define('template', 'String(30)');            // Render template views/cms/*.html
+	schema.define('title', 'String(100)', true);        // Meta title
+	schema.define('url', 'String(200)');                // URL (can be realive for showing content or absolute for redirects)
+	schema.define('widgets', '[String]');               // Widgets lists, contains Array of ID widget
 
 	// Gets listing
 	schema.setQuery(function(error, options, callback) {
@@ -55,6 +54,7 @@ NEWSCHEMA('Page').make(function(schema) {
 		options.language && filter.where('language', options.language);
 		options.navigation && filter.in('navigations', options.navigation);
 		options.search && filter.like('search', options.search);
+		options.template && filter.where('template', options.template);
 
 		filter.take(take);
 		filter.skip(skip);
@@ -64,15 +64,10 @@ NEWSCHEMA('Page').make(function(schema) {
 		filter.callback(function(err, docs, count) {
 
 			var data = {};
-
 			data.count = count;
 			data.items = docs;
 			data.limit = options.max;
-			data.pages = Math.ceil(data.count / options.max);
-
-			if (!data.pages)
-				data.pages = 1;
-
+			data.pages = Math.ceil(data.count / options.max) || 1;
 			data.page = options.page + 1;
 
 			// Returns data
@@ -104,7 +99,7 @@ NEWSCHEMA('Page').make(function(schema) {
 	});
 
 	// Saves the page into the database
-	schema.setSave(function(error, model, options, callback) {
+	schema.setSave(function(error, model, controller, callback) {
 
 		if (!model.name)
 			model.name = model.title;
@@ -115,8 +110,13 @@ NEWSCHEMA('Page').make(function(schema) {
 		if (newbie) {
 			model.id = UID();
 			model.datecreated = F.datetime;
+			model.admincreated = controller.user.name;
+		} else {
+			model.dateupdated = F.datetime;
+			model.adminupdated = controller.user.name;
 		}
 
+		model.body = U.minifyHTML(model.body);
 		model.search = ((model.title || '') + ' ' + (model.keywords || '') + ' ' + model.search).keywords(true, true).join(' ').max(1000);
 
 		// Sanitizes URL
@@ -126,7 +126,7 @@ NEWSCHEMA('Page').make(function(schema) {
 				model.url = '/' + model.url;
 		}
 
-		(newbie ? nosql.insert(model) : nosql.update(model).where('id', model.id)).callback(function(err, count) {
+		(newbie ? nosql.insert(model) : nosql.modify(model).where('id', model.id)).callback(function(err, count) {
 			F.emit('pages.save', model);
 			setTimeout2('pages', refresh, 1000);
 			callback(SUCCESS(true));
@@ -135,28 +135,28 @@ NEWSCHEMA('Page').make(function(schema) {
 		});
 	});
 
-	schema.addWorkflow('create-url', function(error, model, options, callback) {
+	schema.addWorkflow('url', function(error, model, options, callback) {
 
 		if (!model.parent) {
 			model.url = model.title.slug();
 			return callback();
 		}
 
-		var options = {};
-		options.id = model.parent;
+		// Gets parent URL
+		schema.get({ id: model.parent }, function(err, response) {
 
-		// Gets Parent
-		schema.get(options, function(err, response) {
-
-			if (err) {
+			if (err)
 				model.url = model.title.slug();
-				return callback();
-			}
+			else
+				model.url = response.url + model.title.slug() + '/';
 
-			// Gets parent URL and adds current page title
-			model.url = response.url + model.title.slug() + '/';
 			callback();
 		});
+	});
+
+	// Stats
+	schema.addWorkflow('stats', function(error, model, options, callback) {
+		NOSQL('pages').counter.monthly(options.id, callback);
 	});
 
 	// Renders page
@@ -219,21 +219,21 @@ NEWSCHEMA('Page').make(function(schema) {
 						// Executes transform
 						Widget.transform(key, widgets[key], custom, function(err, content) {
 
-							if (err) {
+							if (err)
 								F.error(err, 'Widget: ' + widgets[key].name + ' - ' + key + ' (page: ' + response.name + ')', response.url);
-								return next();
-							}
+							else
+								response.body = response.body.replace('data-id="' + key + '">', '>' + content);
 
-							response.body = response.body.replace('data-id="' + key + '">', '>' + content);
 							next();
 						}, true);
 
 					}, function() {
+
 						// DONE
 						if (response.language)
 							response.body = F.translator(response.language, response.body);
 
-						response.body = clean(response.body);
+						response.body = response.body.tidyCMS();
 
 						if (response.partial && response.partial.length) {
 							schema.operation2('render-multiple', { id: response.partial }, function(err, partial) {
@@ -250,7 +250,7 @@ NEWSCHEMA('Page').make(function(schema) {
 								response.partial = arr;
 								callback(response);
 							});
-							return
+							return;
 						}
 
 						callback(response);
@@ -378,7 +378,6 @@ function refresh() {
 		F.global.navigations = navigation;
 		F.global.sitemap = sitemap;
 		F.global.partial = partial;
-
 		F.cache.removeAll('cache.');
 	});
 }
@@ -403,15 +402,11 @@ F.eval(function() {
 		var self = this;
 		var page = F.global.partial.find(n => n.url === url && n.language === (self.language || ''));
 
-		if (!page) {
+		if (page)
+			GETSCHEMA('Page').operation('render', { id: page.id }, callback);
+		else
 			callback(new ErrorBuilder().push('error-404-page'));
-			return;
-		}
 
-		var options = {};
-		options.id = page.id;
-
-		GETSCHEMA('Page').operation('render', options, callback);
 		return self;
 	};
 
@@ -438,6 +433,7 @@ F.eval(function() {
 			cache = true;
 
 		if (!partial) {
+
 			if (self.language)
 				url = self.language + ':' + url;
 
@@ -471,12 +467,8 @@ F.eval(function() {
 				NOSQL('pages').counter.hit(self.repository.page.id);
 
 				self.sitemap(response.breadcrumb);
-				self.title(response.title);
-
-				if (!view)
-					view = '~/cms/' + response.template;
-
-				self.view(view, model);
+				self.meta(response.title, response.description, response.keywords);
+				self.view(view || '~/cms/' + response.template, model);
 			});
 
 		}, NOOP, () => NOSQL('pages').counter.hit(self.repository.page.id));
@@ -484,51 +476,21 @@ F.eval(function() {
 	};
 });
 
-function clean(body) {
+// Cleans CMS markup
+String.prototype.tidyCMS = function() {
 
+	var body = this;
 	var beg;
 	var end;
 	var index = 0;
 	var count = 0;
-	var a = '<div class="CMS_template CMS_remove">';
 	var b = ' data-themes="';
 	var c = 'CMS_unwrap';
 	var tag;
 	var tagend;
+	var tmp = 0;
 
-	body = U.minifyHTML(body);
-
-	while (true) {
-		beg = body.indexOf(a, beg);
-		if (beg === -1)
-			break;
-
-		index = beg + a.length;
-		count = 0;
-
-		while (true) {
-			var str = body.substring(index++, index + 3);
-			if (index >= body.length) {
-				beg = body.length;
-				break;
-			}
-
-			if (str === '</di') {
-
-				if (count) {
-					count--;
-					continue;
-				}
-
-				body = body.substring(0, beg) + body.substring(beg + a.length, index - 1) + body.substring(index + 5);
-				beg -= a.length;
-				break;
-			}
-
-			if (str === '<div')
-				count++;
-		}
-	}
+	body = U.minifyHTML(body).replace(/\sclass=\"CMS_template CMS_remove\"/gi, '');
 
 	while (true) {
 		beg = body.indexOf(b, beg);
@@ -539,8 +501,6 @@ function clean(body) {
 			break;
 		body = body.substring(0, beg) + body.substring(index + 1);
 	}
-
-	var tmp = 0;
 
 	while (true) {
 		beg = body.indexOf(c, beg);
@@ -607,6 +567,6 @@ function clean(body) {
 
 		return builder ? (is ? ' ' : '') + 'class="' + builder + '"' : '';
 	});
-}
+};
 
 F.on('settings', refresh);
