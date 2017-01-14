@@ -52,18 +52,12 @@ COMPONENT('gallery', function() {
 
 		$(document).on('click', '.gallery-prev,.gallery-next,.gallery-close', function() {
 			var el = $(this);
-
-			if (el.hasClass('gallery-close')) {
+			if (el.hasClass('gallery-close'))
 				window.$gallery.hide();
-				return;
-			}
-
-			if (el.hasClass('gallery-prev')) {
+			else if (el.hasClass('gallery-prev'))
 				window.$gallery.prev();
-				return;
-			}
-
-			window.$gallery.next();
+			else
+				window.$gallery.next();
 		});
 
 		$(window).on('resize', function() {
