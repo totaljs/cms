@@ -25,10 +25,7 @@ function json_ping() {
 // NEWSLETTER & CONTACT
 // ==========================================================================
 
-// Appends a new email into the newsletter list
 function json_save() {
 	var self = this;
-	self.body.language = self.language || '';
-	self.body.ip = self.ip;
 	self.body.$save(self.callback());
 }
