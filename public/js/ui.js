@@ -30,7 +30,9 @@ COMPONENT('exec', function() {
 		self.element.on('click', self.attr('data-selector') || '.exec', function() {
 			var el = $(this);
 			var attr = el.attr('data-exec');
+			var path = el.attr('data-path');
 			attr && EXEC(attr, el);
+			path && SET(path, new Function('return ' + el.attr('data-value'))());
 		});
 	};
 });
@@ -192,10 +194,13 @@ COMPONENT('dropdown', function() {
 		else
 			value = value.toString();
 
-		EXEC('$calendar.hide');
+		WORKFLOW('reflow')(self.name);
 
-		if (self.type === 'currency' || self.type === 'number')
-			return value > 0;
+		switch (self.type) {
+			case 'currency':
+			case 'number':
+				return value > 0;
+		}
 
 		return value.length > 0;
 	};
@@ -276,7 +281,7 @@ COMPONENT('dropdown', function() {
 		if (invalid === self.$oldstate)
 			return;
 		self.$oldstate = invalid;
-		container.toggleClass('ui-dropdown-invalid', self.isInvalid());
+		container.toggleClass('ui-dropdown-invalid', invalid);
 	};
 });
 
@@ -300,7 +305,7 @@ COMPONENT('textbox', function() {
 		else
 			value = value.toString();
 
-		EXEC('$calendar.hide');
+		WORKFLOW('reflow')(self.name);
 
 		switch (self.type) {
 			case 'email':
@@ -336,6 +341,7 @@ COMPONENT('textbox', function() {
 		attrs.attr('data-jc-keypress', self.attr('data-jc-keypress'));
 		attrs.attr('data-jc-keypress-delay', self.attr('data-jc-keypress-delay'));
 		attrs.attr('data-jc-bind', '');
+		attrs.attr('name', self.path);
 
 		tmp = self.attr('data-align');
 		tmp && attrs.attr('class', 'ui-' + tmp);
@@ -411,7 +417,7 @@ COMPONENT('textbox', function() {
 		if (invalid === self.$oldstate)
 			return;
 		self.$oldstate = invalid;
-		container.toggleClass('ui-textbox-invalid', self.isInvalid());
+		container.toggleClass('ui-textbox-invalid', invalid);
 	};
 });
 
@@ -424,7 +430,6 @@ COMPONENT('textarea', function() {
 
 	self.validate = function(value) {
 
-		var is = false;
 		var type = typeof(value);
 		if (input.prop('disabled') || !isRequired)
 			return true;
@@ -434,7 +439,7 @@ COMPONENT('textarea', function() {
 		else
 			value = value.toString();
 
-		EXEC('$calendar.hide');
+		WORKFLOW('reflow')(self.name);
 		return value.length > 0;
 	};
 
@@ -496,7 +501,7 @@ COMPONENT('textarea', function() {
 		if (invalid === self.$oldstate)
 			return;
 		self.$oldstate = invalid;
-		container.toggleClass('ui-textarea-invalid', self.isInvalid());
+		container.toggleClass('ui-textarea-invalid', invalid);
 	};
 });
 
@@ -949,7 +954,7 @@ COMPONENT('form', function() {
 		window.$$form_level = window.$$form_level || 1;
 		MAN.$$form = true;
 		$(document).on('click', '.ui-form-button-close', function() {
-			SET($.components.findById($(this).attr('data-id')).path, '');
+			SET($(this).attr('data-path'), '');
 			window.$$form_level--;
 		});
 
@@ -1002,7 +1007,7 @@ COMPONENT('form', function() {
 		autocenter = self.attr('data-autocenter') === 'true';
 		self.condition = self.attr('data-if');
 
-		$(document.body).append('<div id="{0}" class="hidden ui-form-container"><div class="ui-form-container-padding"><div class="ui-form" style="max-width:{1}"><div class="ui-form-title"><span class="fa fa-times ui-form-button-close" data-id="{2}"></span>{3}</div>{4}</div></div>'.format(self._id, width, self.id, self.attr('data-title')));
+		$(document.body).append('<div id="{0}" class="hidden ui-form-container"><div class="ui-form-container-padding"><div class="ui-form" style="max-width:{1}"><div class="ui-form-title"><span class="fa fa-times ui-form-button-close" data-path="{2}"></span>{3}</div>{4}</div></div>'.format(self._id, width, self.path, self.attr('data-title')));
 
 		var el = $('#' + self._id);
 		el.find('.ui-form').get(0).appendChild(self.element.get(0));
@@ -1010,7 +1015,7 @@ COMPONENT('form', function() {
 		self.element = el;
 
 		self.element.on('scroll', function() {
-			EXEC('$calendar.hide');
+			WORKFLOW('reflow')(self.name);
 		});
 
 		self.element.find('button').on('click', function(e) {
@@ -1030,7 +1035,6 @@ COMPONENT('form', function() {
 		});
 	};
 
-	self.getter = null;
 	self.setter = function(value) {
 
 		setTimeout2('noscroll', function() {
@@ -1039,7 +1043,7 @@ COMPONENT('form', function() {
 
 		var isHidden = !EVALUATE(self.path, self.condition);
 		self.element.toggleClass('hidden', isHidden);
-		EXEC('$calendar.hide');
+		WORKFLOW('reflow')(self.name);
 
 		if (isHidden) {
 			self.release(true);
@@ -1176,12 +1180,11 @@ COMPONENT('repeater-group', function() {
 			var html = element.html();
 			element.remove();
 
-			if (!index) {
+			if (index)
+				template_group = Tangular.compile(html);
+			else
 				self.template = Tangular.compile(html);
-				return;
-			}
 
-			template_group = Tangular.compile(html);
 		});
 	};
 
@@ -1203,10 +1206,10 @@ COMPONENT('repeater-group', function() {
 			if (!name)
 				name = '0';
 
-			if (!groups[name])
-				groups[name] = [value[i]];
-			else
+			if (groups[name])
 				groups[name].push(value[i]);
+			else
+				groups[name] = [value[i]];
 		}
 
 		var index = 0;
@@ -1218,13 +1221,12 @@ COMPONENT('repeater-group', function() {
 		keys.forEach(function(key) {
 			var arr = groups[key];
 
-			if (key !== '0') {
-				var options = {};
-				options[group] = key;
-				options.length = arr.length;
-				options.index = indexgroup++;
-				builder += template_group(options);
-			}
+			var options = {};
+			options[group] = key === '0' ? '' : key;
+			options.length = arr.length;
+			options.index = indexgroup++;
+
+			builder += template_group(options);
 
 			for (var i = 0, length = arr.length; i < length; i++) {
 				var item = arr[i];
@@ -1764,6 +1766,7 @@ COMPONENT('calendar', function() {
 	var self = this;
 	var skip = false;
 	var skipDay = false;
+	var visible = false;
 	var callback;
 
 	self.days = self.attr('data-days').split(',');
@@ -1828,12 +1831,10 @@ COMPONENT('calendar', function() {
 
 		for (var i = 0; i < days + from; i++) {
 
-			count++;
-			var obj = { isToday: false, isSelected: false, isEmpty: false, isFuture: false, number: 0, index: count };
+			var obj = { isToday: false, isSelected: false, isEmpty: false, isFuture: false, number: 0, index: ++count };
 
 			if (i >= from) {
-				index++;
-				obj.number = index;
+				obj.number = ++index;
 				obj.isSelected = sy === year && sm === month && sd === index;
 				obj.isToday = ty === year && tm === month && td === index;
 				obj.isFuture = ty < year;
@@ -1855,19 +1856,14 @@ COMPONENT('calendar', function() {
 		}
 
 		indexEmpty = 0;
-		for (var i = count; i < 42; i++) {
-			count++;
-			indexEmpty++;
-			var obj = { isToday: false, isSelected: false, isEmpty: true, isFuture: false, number: indexEmpty, index: count };
-			output.days.push(obj);
-		}
-
+		for (var i = count; i < 42; i++)
+			output.days.push({ isToday: false, isSelected: false, isEmpty: true, isFuture: false, number: ++indexEmpty, index: ++count });
 		return output;
 	}
 
 	self.hide = function() {
-		if (!self.element.hasClass('hidden'))
-			self.element.addClass('hidden');
+		self.element.toggleClass('hidden', true);
+		visible = false;
 		return self;
 	};
 
@@ -1890,6 +1886,7 @@ COMPONENT('calendar', function() {
 		self.element.css({ left: off.left + (offset || 0), top: off.top + h + 12 }).removeClass('hidden');
 		self.click = callback;
 		self.date(value);
+		visible = true;
 		return self;
 	};
 
@@ -1906,9 +1903,9 @@ COMPONENT('calendar', function() {
 		self.element.on('click', '.ui-calendar-day', function() {
 			var arr = this.getAttribute('data-date').split('-');
 			var dt = new Date(parseInt(arr[0]), parseInt(arr[1]), parseInt(arr[2]));
-			skip = true;
 			self.element.find('.ui-calendar-selected').removeClass('ui-calendar-selected');
 			$(this).addClass('ui-calendar-selected');
+			skip = true;
 			self.hide();
 			self.click && self.click(dt);
 		});
@@ -1933,10 +1930,14 @@ COMPONENT('calendar', function() {
 		});
 
 		$(document.body).on('scroll', function() {
-			EXEC('$calendar.hide');
+			visible && WORKFLOW('reflow')(self.name);
 		});
 
 		window.$calendar = self;
+
+		WORKFLOW('reflow', function() {
+			visible && EXEC('$calendar.hide');
+		});
 	};
 
 	self.date = function(value) {
@@ -1982,16 +1983,16 @@ COMPONENT('calendar', function() {
 
 			!empty && item.isSelected && cls.push('ui-calendar-selected');
 			item.isToday && cls.push('ui-calendar-day-today');
-			builder.push('<td class="' + cls.join(' ') + '" data-date="' + output.year + '-' + output.month + '-' + item.number + '">' + item.number + '</td>');
+			builder.push('<td class="{0}" data-date="{1}-{2}-{3}">{3}</td>'.format(cls.join(' '), output.year, output.month, item.number));
 		}
 
 		builder.push('</tr>');
 
 		var header = [];
 		for (var i = 0; i < 7; i++)
-			header.push('<th>' + output.header[i].name + '</th>');
+			header.push('<th>{0}</th>'.format(output.header[i].name));
 
-		self.element.html('<div class="ui-calendar-header"><button class="ui-calendar-header-prev" name="prev" data-date="' + output.year + '-' + output.month + '"><span class="fa fa-chevron-left"></span></button><div class="ui-calendar-header-info">' + self.months[value.getMonth()] + ' ' + value.getFullYear() + '</div><button class="ui-calendar-header-next" name="next" data-date="' + output.year + '-' + output.month + '"><span class="fa fa-chevron-right"></span></button></div><table cellpadding="0" cellspacing="0" border="0"><thead>' + header.join('') + '</thead><tbody>' + builder.join('') + '</tbody></table>' + (self.today ? '<div><a href="javascript:void(0)" class="ui-calendar-today">' + self.today + '</a></div>' : ''));
+		self.element.html('<div class="ui-calendar-header"><button class="ui-calendar-header-prev" name="prev" data-date="{0}-{1}"><span class="fa fa-chevron-left"></span></button><div class="ui-calendar-header-info">{2} {3}</div><button class="ui-calendar-header-next" name="next" data-date="{0}-{1}"><span class="fa fa-chevron-right"></span></button></div><table cellpadding="0" cellspacing="0" border="0"><thead>{4}</thead><tbody>{5}</tbody></table>'.format(output.year, output.month, self.months[value.getMonth()], value.getFullYear(), header.join(''), builder.join('')) + (self.today ? '<div><a href="javascript:void(0)" class="ui-calendar-today">' + self.today + '</a></div>' : ''));
 	};
 });
 
@@ -2528,34 +2529,36 @@ COMPONENT('contextmenu', function() {
 });
 
 COMPONENT('checkboxlist', function() {
+
 	var self = this;
-	var template = Tangular.compile('<div class="ui-checkboxlist-checkbox {0}" data-search="{{ name }}"><label><input type="checkbox" value="{{ id }}"><span>{{ name }}</span></label></div>'.format(self.attr('data-class')));
-	var datasource;
-	var items;
-	var condition;
+	var isRequired = self.attr('data-required');
+	var template = Tangular.compile('<div class="{0} ui-checkboxlist-checkbox"><label><input type="checkbox" value="{{ id }}"><span>{{ name }}</span></label></div>'.format(self.attr('data-class')));
+
+	self.validate = function(value) {
+		return isRequired ? value && value.length > 0 : true;
+	};
+
+	self.required = function(value) {
+		isRequired = value;
+		return self;
+	};
+
+	!isRequired && self.noValid();
 
 	self.make = function() {
 
 		self.element.on('click', 'input', function() {
-			var arr = self.get();
-
-			if (!(arr instanceof Array))
-				arr = [];
-
+			var arr = self.get() || [];
 			var value = self.parser(this.value);
 			var index = arr.indexOf(value);
 			if (index === -1)
 				arr.push(value);
 			else
 				arr.splice(index, 1);
-
 			self.set(arr);
-			setTimeout2(self.id, function() {
-				self.change(true);
-			}, 400);
 		});
 
-		self.element.on('click', 'a', function() {
+		self.element.on('click', '.ui-checkboxlist-selectall', function() {
 			var arr = [];
 			var inputs = self.element.find('input');
 			var value = self.get();
@@ -2570,86 +2573,59 @@ COMPONENT('checkboxlist', function() {
 			});
 
 			self.set(arr);
-			setTimeout2(self.id, function() {
-				self.change(true);
-			}, 400);
 		});
 
-		self.make = function() {
-
-			var options = self.attr('data-options');
-			if (!options)
-				return;
-
-			var arr = options.split(';');
-			var datasource = [];
-
-			for (var i = 0, length = arr.length; i < length; i++) {
-				var item = arr[i].split('|');
-				datasource.push({ id: item[1] === undefined ? item[0] : item[1], name: item[0] });
-			}
-
-			self.redraw(datasource);
-		};
-
-		self.setter = function(value) {
-			self.element.find('input').each(function() {
-				this.checked = value && value.indexOf(self.parser(this.value)) !== -1;
-			});
-		};
-
-		self.redraw = function(arr) {
-			var builder = [];
-			var kn = self.attr('data-source-text') || 'name';
-			var kv = self.attr('data-source-value') || 'id';
-
-			for (var i = 0, length = arr.length; i < length; i++) {
-				var item = arr[i];
-
-				if (condition && !condition(item))
-					continue;
-
-				if (typeof(item) === 'string')
-					builder.push(template({ id: item, name: item }));
-				else
-					builder.push(template({ id: item[kv] === undefined ? item[kn] : item[kv], name: item[kn] }));
-			}
-
-			if (!builder.length)
-				return;
-
-			self.attr('data-button') && builder.push('<div class="clearfix"></div><div class="{1}"><div class="ui-checkboxlist-selectall"><a href="javascript:void(0)"><i class="fa fa-check-square mr5"></i>{0}</a></div></div>'.format(self.attr('data-button'), self.attr('data-class')));
-			self.html(builder.join(''));
-			self.setter(self.get());
-			return self;
-		};
-
-		condition = self.attr('data-if');
-		if (condition)
-			condition = FN(condition);
-
-		datasource = self.attr('data-source');
+		var datasource = self.attr('data-source');
 		datasource && self.watch(datasource, function(path, value) {
-			if (self.release())
-				return;
-			items = value || EMPTYARRAY;
+			if (!value)
+				value = [];
 			self.redraw(value);
+		}, true);
+
+		var options = self.attr('data-options');
+		if (!options)
+			return;
+
+		var arr = options.split(';');
+		var datasource = [];
+
+		for (var i = 0, length = arr.length; i < length; i++) {
+			var item = arr[i].split('|');
+			datasource.push({ id: item[1] === undefined ? item[0] : item[1], name: item[0] });
+		}
+
+		self.redraw(datasource);
+	};
+
+	self.setter = function(value) {
+		self.element.find('input').each(function() {
+			this.checked = value && value.indexOf(self.parser(this.value)) !== -1;
 		});
 	};
 
-	self.released = function(is) {
+	self.redraw = function(arr) {
+		var builder = [];
+		var kn = self.attr('data-source-text') || 'name';
+		var kv = self.attr('data-source-value') || 'id';
 
-		if (is) {
-			self.empty();
-			items = null;
-			return;
+		for (var i = 0, length = arr.length; i < length; i++) {
+			var item = arr[i];
+			if (typeof(item) === 'string')
+				builder.push(template({ id: item, name: item }));
+			else
+				builder.push(template({ id: item[kv] === undefined ? item[kn] : item[kv], name: item[kn] }));
 		}
 
-		var tmp = self.get(datasource) || EMPTYARRAY;
-		if (tmp === items)
+		if (!builder.length)
 			return;
-		items = tmp;
-		self.redraw(items);
+
+		var btn = self.attr('data-button') || '';
+		if (btn)
+			btn = '<div class="ui-checkboxlist-selectall"><a href="javascript:void(0)"><i class="fa fa-check-square-o mr5"></i>{0}</a></div>'.format(btn);
+
+		builder.push('<div class="clearfix"></div>' + btn);
+		self.html(builder.join(''));
+		return self;
 	};
 });
 
