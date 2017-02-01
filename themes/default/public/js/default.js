@@ -11,7 +11,7 @@ COMPONENT('emaildecode', function() {
 	var self = this;
 	self.readonly();
 	self.make = function() {
-		var m = self.element.html().replace(/\(\w+\)/g, function(value) {
+		var m = self.html().replace(/\(\w+\)/g, function(value) {
 			switch (value) {
 				case '(at)':
 					return '@';
@@ -20,7 +20,7 @@ COMPONENT('emaildecode', function() {
 			}
 			return value;
 		});
-		self.element.html('<a href="mailto:' + m + '">' + m + '</a>');
+		self.html('<a href="mailto:' + m + '">' + m + '</a>');
 	};
 });
 
