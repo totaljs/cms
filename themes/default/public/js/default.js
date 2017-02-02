@@ -105,7 +105,7 @@ COMPONENT('gallery', function() {
 	self.make = function() {
 		layer = $('#gallery-layer');
 		self.refresh();
-		self.element.on('click', '.gallery', function() {
+		self.event('click', '.gallery', function() {
 			var item = $(this);
 			self.index = parseInt(item.attr('data-index'));
 			self.show();
@@ -173,7 +173,7 @@ COMPONENT('newsletter', function() {
 		button = self.find('button');
 		input = self.find('input');
 
-		self.element.on('keydown', 'input', function(e) {
+		self.event('keydown', 'input', function(e) {
 			if (e.keyCode !== 13)
 				return;
 			button.trigger('click');
