@@ -27,6 +27,8 @@ h3 { font-family: $font; margin: 0 0 10px; padding: 0; font-size: 20px; font-wei
 h3.large { font-size: 30px; margin-bottom: 15px; font-weight: 200; }
 
 .m { margin-bottom: 20px; }
+.fs11 { font-size: 11px; }
+.b { font-weight: bold; }
 
 .newsletter { background-color: #F0F0F0; margin: 20px 0; }
 .newsletter-input { margin-right: 150px; padding: 0 20px; background-color: #F0F0F0; }
