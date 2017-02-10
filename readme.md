@@ -5,6 +5,7 @@
 # Node.js CMS
 
 - New version: `v8.0.0` (works only with __Total.js v2.3.0__)
+- [__Live chat with professional support__](https://messenger.totaljs.com)
 - [A simple documentation](https://docs.totaljs.com/eshop-cms/latest.html)
 
 ## Installation
