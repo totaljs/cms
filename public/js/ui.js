@@ -637,7 +637,7 @@ COMPONENT('cookie', function() {
 			return;
 		}
 
-		self.classes('-hidden').addClass('ui-cookie');
+		self.classes('-hidden ui-cookie');
 		self.append('<button name="agree">' + (self.attr('data-agree') || 'OK') + '</button>');
 		self.append('<button name="cancel">' + (self.attr('data-cancel') || 'Cancel') + '</button>');
 
