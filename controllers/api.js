@@ -1,31 +1,25 @@
-// API for e.g. Mobile application
-// This API uses the website
-
 exports.install = function() {
-	// COMMON
-	F.route('/api/ping/',        json_ping);
 
-	// NEWSLETTER
-	F.route('/api/newsletter/',  json_save, ['post', '*Newsletter']);
+	// Enable CORS for API
+	CORS();
 
-	// CONTACTFORM
-	F.route('/api/contact/',     json_save, ['post', '*Contact']);
+	// Operations
+	ROUTE('POST /api/subscribers/',              ['*Subscriber --> @save']);
+	ROUTE('POST /api/contact/',                  ['*Contact --> @save']);
+	ROUTE('GET  /api/track/{id}/',               ['*Tracking --> @exec']);
+	ROUTE('GET  /api/unsubscribe/', unsubscribe, ['*Subscriber']);
+
+	// Newsletter view
+	FILE('/newsletter.gif', file_newsletterviewstats);
 };
 
-// ==========================================================================
-// COMMON
-// ==========================================================================
-
-function json_ping() {
-	var self = this;
-	self.plain('null');
+function file_newsletterviewstats(req, res) {
+	NOSQL('newsletters').counter.hit('all');
+	req.query.id && NOSQL('newsletters').counter.hit(req.query.id);
+	res.binary('R0lGODdhAQABAIAAAAAAAAAAACH5BAEAAAEALAAAAAABAAEAAAICTAEAOw==', 'image/gif', 'base64');
 }
 
-// ==========================================================================
-// NEWSLETTER & CONTACT
-// ==========================================================================
-
-function json_save() {
+function unsubscribe() {
 	var self = this;
-	self.body.$save(self.callback());
+	self.$workflow('unsubscribe', () => self.plain(TRANSLATOR(self.language, '@(You have been successfully unsubscribed.\nThank you)')));
 }

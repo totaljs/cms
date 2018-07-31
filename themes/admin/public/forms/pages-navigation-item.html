@@ -1,0 +1,87 @@
+<div data-jc="form__common.form2__icon:sitemap;if:pages-navigation-item;title:@(Navigation);width:650;autofocus:true;submit:pagesnavigationitem/submit" class="hidden">
+	<div class="padding bg-smoke">
+		<div data-jc="dropdown__pages.navigationitem.url__datasource:pages.list;if:n => n.ispartial === false;empty:;icon:sitemap;value:url">@(URL according to the sitemap)</div>
+		<div class="help m"><i class="fa fa-refresh"></i>@(CMS will synchronizes all information automatically according to the page settings.)</div>
+	</div>
+	<hr class="nmt" />
+	<div class="padding npt">
+		<div class="row">
+			<div class="col-md-8 m">
+				<div data-jc="textbox__pages.navigationitem.name__required:true;maxlength:50">@(Name)</div>
+			</div>
+			<div class="col-md-4 m">
+				<div data-jc="dropdown__pages.navigationitem.language__datasource:common.dependencies.languages">@(Language)</div>
+			</div>
+		</div>
+		<div data-jc="textbox__pages.navigationitem.url__maxlength:500;required:true">@(URL address)</div>
+		<div class="mt10 fs12"><a href="javascript:void(0)" class="exec" data-exec="pagesnavigationitem/file"><i class="fa fa-folder-o mr5"></i>@(Browse files)</a></div>
+	</div>
+	<hr class="nmt" />
+	<div class="padding npt npb">
+		<div class="row">
+			<div class="col-md-6 m">
+				<div data-jc="dropdown__pages.navigationitem.target__items:@(Current tab or window)|_self,@(New tab or window)|_blank;required:true__'_self'">@(Target)</div>
+			</div>
+			<div class="col-md-6 m">
+				<div data-jc="dropdown__pages.navigationitem.behaviour__items:@(Default)|default,@(Highlight)|highlight,@(Info)|info,@(Warning)|warn,@(Special)|special__'default'">@(Behaviour)</div>
+			</div>
+		</div>
+		<div data-jc="textbox__pages.navigationitem.title__maxlength:100">@(Tooltip)</div>
+	</div>
+	<hr class="nmb" />
+	<div class="padding bg-yellow">
+		<div class="mt5" data-jc="fontawesomebox__pages.navigationitem.icon__search:@(Search icons);height:152"></div>
+	</div>
+	<div class="ui-form-buttons" data-jc="validation__pages.navigationitem">
+		<button name="cancel">@(Cancel)</button>
+		<button name="submit">@(APPLY)</button>
+	</div>
+</div>
+
+<script>
+
+	PLUGIN('pagesnavigationitem', function(exports) {
+
+		exports.file = function() {
+			refresh_filebrowser('pages.navigationitem.url');
+		};
+
+		exports.submit = function(com) {
+
+			var obj = pages.navigationitem;
+			var page = pages.grid.items.findItem('url', obj.url);
+
+			obj.idpage = page ? page.id : null;
+
+			if (obj.id) {
+				var index = obj.$target.findIndex('id', obj.id);
+				obj.$target[index] = obj;
+				obj.$target = undefined;
+			} else {
+				obj.id = GUID(10);
+				obj.$target.push(obj);
+				obj.$target = undefined;
+			}
+
+			com.hide();
+
+			// Notifies parent
+			UPDATE('pages.navigation.children');
+			CHANGE('pages.navigation.children', true);
+		};
+
+		WATCH('pages.navigationitem.url', function(path, value, type) {
+			if (type === 2) {
+				var item = pages.grid.items.findItem('url', value);
+				if (item) {
+					var tmp = GET('pages.navigationitem');
+					tmp.name = item.name;
+					tmp.icon = item.icon;
+					tmp.title = item.title;
+					tmp.language = item.language;
+					UPDATE('pages.navigationitem');
+				}
+			}
+		});
+	});
+</script>

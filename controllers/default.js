@@ -1,132 +1,57 @@
 exports.install = function() {
-	// CMS rendering
-	F.route('/*', view_page);
-	F.route('/demo/');
+	ROUTE('/*', view_cms);
 
-	// POSTS
-	F.route('#blogs',            view_blogs, ['*Post']);
-	F.route('#blogsdetail',      view_blogs_detail, ['*Post']);
+	ROUTE('#posts',   view_posts,        ['*Post']);
+	ROUTE('#post',    view_posts_detail, ['*Post']);
+	ROUTE('#notices', view_notices,      ['*Notice']);
 
-	// FILES
-	F.file('/download/', file_read);
+	ROUTE('/design/', '=design/index');
 };
 
-// ==========================================================================
-// CMS (Content Management System)
-// ==========================================================================
-
-function view_page() {
-	var self = this;
-	// models/pages.js --> Controller.prototype.render()
-	self.render(self.url);
+function view_cms() {
+	this.CMSpage();
 }
 
-// ==========================================================================
-// FILES
-// ==========================================================================
-
-// Reads a specific file from database
-// For images (jpg, gif, png) supports percentual resizing according "?s=NUMBER" argument in query string e.g.: .jpg?s=50, .jpg?s=80 (for image galleries)
-// URL: /download/*.*
-function file_read(req, res) {
-
-	var id = req.split[1].replace('.' + req.extension, '');
-	var resize = req.query.s && (req.extension === 'jpg' || req.extension === 'gif' || req.extension === 'png') ? true : false;
-
-	if (!resize) {
-		// Reads specific file by ID
-		F.exists(req, res, function(next, filename) {
-			NOSQL('files').binary.read(id, function(err, stream, header) {
-
-				if (err) {
-					next();
-					return res.throw404();
-				}
-
-				var writer = require('fs').createWriteStream(filename);
-
-				CLEANUP(writer, function() {
-					res.file(filename);
-					next();
-				});
-
-				stream.pipe(writer);
-			});
-		});
-		return;
-	}
-
-	// Custom image resizing
-	var size;
-
-	// Small hack for the file cache.
-	// F.exists() uses req.uri.pathname for creating temp identificator and skips all query strings by creating (because this hack).
-	if (req.query.s) {
-		size = req.query.s.parseInt();
-		req.uri.pathname = req.uri.pathname.replace('.', size + '.');
-	}
-
-	// Below method checks if the file exists (processed) in temporary directory
-	// More information in total.js documentation
-	F.exists(req, res, 10, function(next, filename) {
-
-		// Reads specific file by ID
-		NOSQL('files').binary.read(id, function(err, stream, header) {
-
-			if (err) {
-				next();
-				return res.throw404();
-			}
-
-			var writer = require('fs').createWriteStream(filename);
-
-			CLEANUP(writer, function() {
-
-				// Releases F.exists()
-				next();
-
-				// Image processing
-				res.image(filename, function(image) {
-					image.output(req.extension);
-					req.extension === 'jpg' && image.quality(85);
-					size && image.resize(size + '%');
-					image.minify();
-				});
-			});
-
-			stream.pipe(writer);
-		});
-	});
-}
-
-// ============================================
-// POSTS
-// ============================================
-
-function view_blogs() {
+function view_posts() {
 	var self = this;
 	var options = {};
 
-	options.category = 'Blogs';
+	options.page = self.query.page;
+	options.published = true;
+	options.limit = 10;
+	// options.category = 'category_linker';
 
-	if (self.query.q)
-		options.search = self.query.q;
-
-	if (self.query.page)
-		options.page = self.query.page;
-
-	self.$query(options, self.callback('blogs-all'));
+	self.sitemap();
+	self.$query(options, self.callback('posts'));
 }
 
-function view_blogs_detail(linker) {
+function view_posts_detail(linker) {
+
 	var self = this;
 	var options = {};
-	options.category = 'Blogs';
+
 	options.linker = linker;
-	self.$read(options, function(err, response) {
-		if (err)
-			return self.throw404(err);
-		NOSQL('posts').counter.hit(response.id);
-		self.view('blogs-detail', response);
+	// options.category = 'category_linker';
+
+	self.$workflow('render', options, function(err, response) {
+
+		if (err) {
+			self.throw404();
+			return;
+		}
+
+		self.sitemap();
+		self.sitemap_replace(self.sitemapid, response.name);
+		self.view('cms/' + response.template, response);
 	});
+}
+
+function view_notices() {
+	var self = this;
+	var options = {};
+
+	options.published = true;
+
+	self.sitemap();
+	self.$query(options, self.callback('notices'));
 }

@@ -1,0 +1,46 @@
+@{notranslate}
+@{nocompress html}
+
+@{if repository.preview}
+	<!-- ALL CMS CONTENT (FOR EDITOR) MUST BE WRAPPED IN <div id="CMS"> -->
+	<br />
+	<div class="row">
+		<div class="col-md-3">
+			<div class="totaljs">Navigation</div>
+			<br />
+		</div>
+		<div class="col-md-9 menulayoutborder">
+			<div id="CMS">
+				@{if repository.page && repository.page.body}
+					<!-- RENDER UPDATED CONTENT -->
+					@{!repository.page.body}
+				@{else}
+					<!-- DEFAULT CONTENT FOR NEW PAGES FO THIS TEMPLATE -->
+					<div class="CMS_widgets" data-cms-category="Content,Columns"></div>
+				@{fi}
+			</div>
+		</div>
+	</div>
+@{else}
+	<!-- RENDERING FOR VISITORS -->
+	@{if repository.page && repository.page.body}
+	<div class="row">
+		<div class="col-md-3">
+			@{if repository.page.navigations}
+				@{foreach m in repository.page.navigations}
+				 	<div class="sidemenu">
+						<nav>
+						@{foreach n in global.navigations[m].children}
+							<a href="@{n.url}"@{if n.contains(url, true)} class="selected"@{fi}><i class="fa fa-caret-right"></i>@{n.name}</a>
+						@{end}
+						</nav>
+					</div>
+				@{end}
+			@{fi}
+		</div>
+		<div class="col-md-9 menulayoutborder">
+			@{!repository.page.body}
+		</div>
+	</div>
+	@{fi}
+@{fi}

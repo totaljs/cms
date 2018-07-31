@@ -1,0 +1,162 @@
+<div data-jc="form__common.form__icon:newspaper-o;if:posts-form;title:@(Edit);width:1500;reload:postsform/show;submit:postsform/submit;autofocus:true" class="hidden">
+	<div class="padding" style="padding-bottom:10px">
+		<div class="row">
+			<div class="col-md-4 m">
+				<div data-jc="textbox__posts.form.name__required:true;maxlength:100">@(Name)</div>
+				<div data-jc="checkbox__posts.form.ispublished" class="b mt10">@(Is published)</div>
+			</div>
+			<div class="col-md-8">
+				<div class="row">
+					<div class="col-md-4 m">
+						<div data-jc="dropdown__posts.form.idcategory__datasource:common.dependencies.posts;icon:folder-o;empty:;required:true">@(Category)</div>
+					</div>
+					<div class="col-md-4 m">
+						<div data-jc="dropdown__posts.form.template__datasource:common.dependencies.templatesposts;empty:;icon:paint-brush">@(Template)</div>
+					</div>
+					<div class="col-md-4 m">
+						<div data-jc="textbox__posts.form.date__type:date;icon:clock-o;placeholder:@(yyyy-MM-dd);align:center">@(Date)</div>
+						<div class="help">@(You can specify a publish date.)</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="cmseditor" data-jc="cmseditor__posts.form.body" data-jc-import="[url]components/cmseditor.html"></div>
+	<div class="backups hidden" data-bind="posts.form.id__show:!!value"><a href="javascript:void(0)" class="exec" data-exec="postsform/backups"><i class="fa fa-clock-o mr5"></i>@(Restore a backup)</a></div>
+	<div class="padding bg-yellow">
+		<div class="row">
+			<div class="col-md-4 m">
+				<div data-jc="textbox__posts.form.description__maxlength:300">@(Description)</div>
+			</div>
+			<div class="col-md-4 m">
+				<div data-jc="dropdowncheckbox__posts.form.signals__alltext:null;datasource:signals;empty:@(Doesn't contain any signals.);icon:dot-circle-o">@(Signals)</div>
+				<div class="help">@(Signals can start special actions when the page is displayed.)</div>
+			</div>
+			<div class="col-md-4 m">
+				<div data-jc="textbox__posts.form.author__maxlength:30;icon:user">@(Author)</div>
+			</div>
+		</div>
+	</div>
+	<div data-bind="posts.form.id__show:value && value.length" class="hidden">
+		<hr class="nmt" />
+		<div class="padding">
+			<div class="row">
+				<div class="col-lg-2 col-md-3 m">
+					<div class="keyvalue">
+						<div class="key">@(# Id)</div>
+						<div class="value" data-bind="posts.form.id__html:value"></div>
+					</div>
+				</div>
+				<div class="col-lg-2 col-md-3 m">
+					<div class="keyvalue">
+						<div class="key"><i class="fa fa-calendar"></i>@(Created)</div>
+						<div class="value" data-bind="posts.form.datecreated__html:Thelpers.time(value)"></div>
+					</div>
+				</div>
+				<div class="col-lg-2 col-md-3 m">
+					<div class="keyvalue">
+						<div class="key"><i class="fa fa-calendar"></i>@(Updated)</div>
+						<div class="value" data-bind="posts.form.dateupdated__html:value ? Thelpers.time(value) : '@(unchanged)'"></div>
+					</div>
+				</div>
+				<div class="col-lg-6 m" data-bind="posts.form.stats__show:value">
+					<div data-jc="nosqlcounter__posts.form.stats__height:52"></div>
+					<div class="help"><i class="fa fa-chart-bar"></i>@(Stats of all views for the last period)</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div data-jc="error__posts.form.response"></div>
+	<div class="ui-form-buttons" data-jc="validation__posts.form">
+		<button name="cancel">@(Cancel)</button>
+		<button name="submit">@(SAVE)</button>
+	</div>
+</div>
+
+<script>
+
+	PLUGIN('postsform', function(exports) {
+
+		exports.scope = 'posts';
+
+		exports.show = function(com) {
+			var model = posts.form;
+			com.reconfigure({ title: model.id ? '@(Edit post)' : '@(New post)' });
+			model.id && AJAX('GET [url]api/{0}/{1}/stats/'.format(exports.scope, model.id), exports.scope + '.form.stats');
+			WAIT('cmseditor.instance', function() {
+				cmseditor.instance.setWidgetOptions(model.widgets);
+				cmseditor.instance.lock(false);
+			});
+		};
+
+		exports.submit = function(com) {
+
+			SETTER('loading', 'show');
+
+			var model = CLONE(posts.form);
+			var editor = cmseditor.instance;
+
+			model.pictures = editor.getPictures();
+			model.summary = editor.getSummary();
+			model.body = editor.getContent().replace(/\n[\s\t]+\n/g, '\n');
+			model.search = editor.getKeywords();
+
+			var w = editor.getWidgets();
+			model.widgets = w.settings;
+			model.bodywidgets = w.widgets;
+			model.stats = undefined;
+
+			var parts = { type: 'post', items: editor.getParts() };
+
+			AJAX('POST [url]api/posts/ REPEAT', model, function(response) {
+				SETTER('loading', 'hide', 1000);
+
+				if (response.success) {
+					SETTER('snackbar', 'success', '@(Post has been saved successfully.)');
+					com.hide();
+					EXEC('posts/refresh');
+
+					// Updates parts
+					parts.idowner = response.value;
+					AJAX('POST [url]api/parts/', parts, NOOP);
+				}
+
+			});
+		};
+
+		exports.backups = function(el) {
+
+			SETTER('loading', 'show');
+			AJAX('GET [url]api/posts/{0}/backups/'.format(GET(exports.scope + '.form.id')), function(response) {
+
+				SETTER('loading', 'hide', 1000);
+
+				for (var i = 0, length = response.length; i < length; i++) {
+					var item = response[i];
+					item.name = '{0} <b class="badge badge-blue ml5"><i class="fa fa-user mr5"></i>{1}</b>'.format(item.date.format('@(dd. MMM yyyy - HH:mm)'), item.user);
+				}
+
+				response.quicksort('date', false);
+
+				SETTER('suggestion', 'show', 'left', el, response, function(value) {
+					SETTER('loading', 'show');
+					setTimeout(function() {
+						cmseditor.instance.replace(value.data.body);
+						SETTER('loading', 'hide', 1000);
+					}, 100);
+				});
+			});
+		};
+
+		WATCH(exports.scope + '.form.template', function(path, value, type) {
+
+			if (type === 2) {
+				cmseditor.instance.reconfigure('template:' + value);
+				cmseditor.instance.set('');
+			}
+
+		}, true);
+
+	});
+
+</script>

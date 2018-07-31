@@ -1,0 +1,63 @@
+<div data-jc="form__common.form__icon:user;if:settings-admin;title:@(Administrator);width:500;submit:settingsform/submit;autofocus:true" class="hidden">
+	<div class="padding npb">
+		<div class="row">
+			<div class="col-md-12 m">
+				<div data-jc="textbox__settings.formuser.name__placeholder:@(Peter Sirka);required:true">@(User name)</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12 m">
+				<div data-jc="textbox__settings.formuser.login__required:true;placeholder:@(petersirka)">@(Login name)</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12 m">
+				<div data-jc="textbox__settings.formuser.password__required:true">@(Login password)</div>
+				<div class="help"><a href="javascript:void(0)" class="exec" data-exec="settingsform/password">@(Generate password)</a></div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12 m">
+				<div data-jc="dropdowncheckbox__settings.formuser.roles__alltext:null;items:[roles]">@(Roles)</div>
+				<div class="help">@(If the user roles will be empty then the user will be access to all functionality.)</div>
+			</div>
+		</div>
+	</div>
+	<div class="ui-form-buttons center" data-jc="validation__settings.formuser">
+		<button name="cancel">@(Cancel)</button>
+		<button name="submit">@(SAVE)</button>
+	</div>
+</div>
+
+<script>
+
+	PLUGIN('settingsform', function(exports) {
+
+		exports.password = function() {
+			SET('settings.formuser.password', GUID(10));
+		};
+
+		exports.submit = function(com) {
+
+			com.hide();
+
+			var frm = settings.formuser;
+
+			if (frm.id) {
+				var user = settings.form.users.findItem('id', frm.id);
+				user.name = frm.name;
+				user.login = frm.login;
+				user.password = frm.password;
+				user.roles = frm.roles;
+				UPDATE('settings.form.users');
+			} else {
+				frm.id = GUID(15);
+				PUSH('settings.form.users', frm);
+			}
+
+			// Performs change for validation
+			CHANGE('settings.form.url');
+		};
+	});
+
+</script>

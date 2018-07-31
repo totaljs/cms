@@ -1,97 +1,114 @@
 /*auto*/
 
 $font    : 'Source Sans Pro';
+
+html,body { margin: 0; padding: 0; }
+body { background-color: white; }
+
 .CMS_hidden { display: none; }
-.container { padding-left: 25px; padding-right: 25px; }
+.wp { padding-left: 0; padding-right: 0; }
+.menulayoutborder .wp { padding-left: 30px; padding-right: 30px; }
+.wb .wp { padding-left: 20px; padding-right: 20px; }
+.wpi {}
+.wm { margin-bottom: 20px; }
+.wmi { margin-bottom: 20px; }
+.wnowrap { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+.right { text-align: right; }
+.center { text-align: center; }
 
-html,body { height: 100%; }
-body { background-color: white; padding: 0; color: #AAB2BD; font-smoothing: antialiased; }
-form { padding: 0; margin: 0; }
+h1 { font-family: $font; margin: 0 0 20px 0; padding: 0; font-weight: 700; font-size: 30px; }
+h2 { font-family: $font; margin: 0 0 15px 0; padding: 0; font-weight: 700; font-size: 23px; }
+h3 { font-family: $font; margin: 0 0 10px 0; padding: 0; font-weight: 700; font-size: 18px; }
 
-header { border-bottom: 1px solid #F0F0F0; padding: 15px 0; margin-bottom: 5px; }
-header nav { float: right; margin: 5px 0 0 0; }
-header nav a { margin-left: 20px; color: gray; }
+header { border-bottom: 1px solid #E0E0E0; height: 80px; }
+header nav { margin: 5px 0 0 30px; padding: 18px 0 18px 30px; float: right; }
+header nav a { font-size: 14px; color: black; text-transform: uppercase; font-weight: bold; margin-left: 10px; padding: 5px 7px; display: inline-block; position: relative; font-family: $font; border-radius: 3px; }
 header nav a:first-child { margin-left: 0; }
-header nav .fa { margin-right: 5px; }
+header nav a:hover { text-decoration: none; color: #505050; }
+header nav .selected { color: white !important; background-color: #78AE4E; }
+header nav .fa { margin-right: 8px; }
 
-.mainmenu-button { border: 1px solid #F0F0F0; background-color: white; outline: 0; border-radius: 4px; font-size: 18px; width: 34px; height: 30px; position: absolute; right: 20px; display: none; text-align: center; color: silver; padding: 1px 0 0 0; text-decoration: none !important; }
-.mainmenu-visible { display: block; }
-.hidden-website { display: none; }
+header .linkbutton { border-radius: 100px; color: #D0D0D0; font-size: 20px; padding: 25px 0; width: 100%; display: block; border: 2px solid gray; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: all 0.3s; font-weight: bold; }
+header .linkbutton .fa { margin-right: 10px; }
+header .linkbutton:hover { text-decoration: none; background-color: #303030; color: white; border-color: white; }
+header .logo { float: left; margin: 12px 0 10px 20px; width: 150px; }
 
-h1 { font-family: $font; margin: 10px 0 30px; padding: 0; font-size: 34px; font-weight: 400; color: #656D78; text-align: center; }
-h1 b, h1 strong { font-weight: 700; }
-h2 { font-family: $font; margin: 0 0 10px; padding: 0; font-size: 20px; font-weight: 400; }
-h2.large { font-size: 30px; margin-bottom: 15px; font-weight: 200; }
+footer { text-align: center; padding: 20px 0; margin: 50px auto 0; border-top: 1px solid #E0E0E0; font-size: 11px; color: gray; max-width: 500px; }
+footer nav { margin-bottom: 3px; }
+footer nav a { margin: 0 5px; font-size: 12px; font-weight: bold; color: black; }
+footer > a { color: black; }
 
-h3 { font-family: $font; margin: 0 0 10px; padding: 0; font-size: 20px; font-weight: 400; color: #656D78; }
-h3.large { font-size: 30px; margin-bottom: 15px; font-weight: 200; }
+.mainmenuvisible header nav { display: block !important; }
+.mainmenubutton { position: absolute; right: 0; margin: 15px 20px 0 0; display: none; }
+.mainmenubutton button { border: 2px solid #404040; border-radius: 4px; outline: 0; cursor: pointer; width: 40px; height: 40px; background-color: transparent; color: #505050; font-size: 22px; text-align: center; padding: 0; }
+.mainmenubutton button .fa { transition: all 0.2s; }
+.mainmenubutton button:hover { color: black; }
+.mainmenubutton-visible .fa { transform: rotate(-90deg); }
+.mainmenubutton-visible { color: #A0A0A0 !important; border-color: #A0A0A0 !important; }
 
-.m { margin-bottom: 20px; }
-.fs11 { font-size: 11px; }
-.b { font-weight: bold; }
+.breadcrumb { margin: 0 0 20px; padding: 8px 0; list-style-type: none; font: normal normal 11px Arial; }
+.breadcrumb .fa { margin-right: 5px; }
+.breadcrumb li { position: relative; display: inline-block; }
+.breadcrumb li:after { content: '\f0da'; font-family: 'Font Awesome 5 Free'; margin: 0 8px; color: black; width: 12px; font-weight: 900; }
+.breadcrumb li:last-child:after { content: ''; margin: 0; }
+.breadcrumb li:last-child { font-weight: bold; }
+.breadcrumb a { text-decoration: none; color: black; }
+.breadcrumb a:hover { text-decoration: underline; }
 
-.newsletter { background-color: #F0F0F0; margin: 20px 0; }
-.newsletter-input { margin-right: 150px; padding: 0 20px; background-color: #F0F0F0; }
-.newsletter-input input { width: 100%; background-color: transparent; border: 0; font-size: 16px; height: 40px; outline: 0; color: black; }
-.newsletter-button { width: 150px; float: right; margin: 0; padding: 0; }
-.newsletter-button button { width: 100%; background-color: #D0D0D0; border: 0; height: 40px; color: gray; }
-.newsletter-button button:hover { background-color: black; color: white; }
-.newsletter-button .fa { margin-right: 8px; font-size: 16px; }
-.newsletter-success { color: #7B9B46 !important; }
+.post { background-color: white; border-radius: 3px; box-shadow: 0 5px 10px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid #E8E8E8; }
+.postbody { padding: 20px; }
+.post .image img { border-radius: 4px 4px 0 0; }
+.post .title { font-size: 16px; display: block; font-weight: bold; text-overflow: ellipsis; white-space: nowrap; overflow-y: hidden; }
+.post p { font-size: 12px; line-height: 14px; height: 42px; overflow: hidden; }
+.post .read { font-size: 12px; width: 100px; text-align: center; position: relative; display: inline-block; background-color: #4285F4; color: white; border-radius: 3px; padding: 3px 0; vertical-align: middle; }
+.post .read:hover { text-decoration: none; opacity: 0.9; }
+.post .date { display: inline-block; position: relative; margin-left: 20px; vertical-align: middle; font-size: 11px; color: #A0A0A0; }
+.post .fa { margin-right: 5px; }
 
-.linkbutton { display: block; border: 2px solid #69AF44; padding: 20px 0; text-align: center; border-radius: 4px; color: #69AF44; font-family: $font; font-size: 20px; background-color: white; text-decoration: none; }
-.linkbutton:hover { color: white; text-decoration: none; background-color: #69AF44; }
-.linkbutton:focus { color: #69AF44; text-decoration: none; background-color: white; }
-.linkbutton:active { box-shadow: inset 0 2px 5px rgba(0,0,0,0.1); color: white; background-color: #69AF44; }
+.postdetail { max-width: 900px; margin: 0 auto; border-left: 1px dashed silver; border-right: 1px dashed silver; padding: 0 50px; }
+.postdetail .image img { border-radius: 4px; }
+.postdetail .image { margin-bottom: 20px; }
 
-.reference a { position: relative; display: block; color: gray; }
-.reference a:hover { text-decoration: none !important; }
-.reference a:hover * { text-decoration: none; }
-.reference a:hover span { background-color: #F0F0F0; color: black; }
-.reference-title { display: block; padding: 10px 0; background-color: #F8F8F8; text-align: center; font-size: 12px; }
-.reference b { display: block; font-size: 14px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-.reference { margin-bottom: 30px; }
+.notice { background-color: white; border-radius: 3px; line-height: 18px; font-size: 14px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); margin-bottom: 20px; }
+.noticepinned { border: 5px solid #FFFDBA; }
+.noticeheadline { padding: 20px 20px 0; border-bottom: 1px solid #E0E0E0; }
+.noticeheadline h2 { font-size: 20px; margin: 0; }
+.noticeheadline > div { font-size: 12px; margin: 5px 0 15px; }
+.noticeheadline .fa { margin-right: 5px; }
+.noticebody { padding: 10px 20px 20px; }
+.noticebody p { margin: 10px 0 0; }
+.noticebody ul { margin: 10px 0 0; }
+.noticebody img { display: block; margin: 10px 0 0; border-radius: 4px; }
 
-.breadcrumb { color: silver; display: block; overflow: hidden; font-size: 11px; }
-.breadcrumb ul { position: relative; display: inline-block; list-style-type: none; margin: 4px 0 0 0; padding: 0; }
-.breadcrumb li { position: relative; display: inline-block; max-width: 150px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; vertical-align: middle; }
-.breadcrumb a { color: gray; }
-.breadcrumb li .fa { margin: 0 8px 0 10px; }
+.empty { padding: 30px 0; border-top: 1px solid #D0D0D0; border-bottom: 1px solid #D0D0D0; text-align: center; font-size: 16px; max-width: 600px; margin: 0 auto; }
+.empty .fa { margin-right: 8px; }
 
-footer { text-align: center; font-size: 12px; padding: 50px 0; color: gray; border-top: 1px solid #E0E0E0; }
+.sidemenu a { display: block; color: gray; font-family: $font; margin-bottom: 2px; font-size: 16px; }
+.sidemenu .fa { margin-right: 5px; }
+.sidemenu .selected { color: black; font-weight: bold; }
+.sidemenu label { font-size: 18px; font-family: $font; text-transform: uppercase; margin-bottom: 10px; display: block; font-weight: bold; color: #A0A0A0; }
+.sidemenu { margin-bottom: 20px; background-color: #F0F0F0; padding: 10px 15px; border-radius: 3px; margin-right: 10px; }
 
-.bloglisting > div { border-bottom: 1px solid #E0E0E0; padding-top: 0; padding-bottom: 25px; margin-top: 0; margin-bottom: 25px; }
-.bloglisting a { font-size: 22px; font-weight: 700; font-family: $font; }
+.menulayoutborder { border-left: 1px solid #E8E8E8; padding-left: 0; min-height: 500px; }
 
-.message-success { background-color: #8CC152; color: white; padding: 18px 20px; text-align: center; font-size: 16px; }
+@media(max-width: 768px) {
 
-#gallery-layer { background-color: rgba(0,0,0,0.5); z-index: 5; left: 0; top: 0; position: fixed; bottom: 0; right: 0; overflow: hidden; display: none; width: 100%; height: 100%; }
-.gallery-close { position: absolute; right: 0; top: 0; font-size: 20px; color: white; cursor: pointer; background-color: black; width: 40px; padding: 5px 0; text-align: center; }
-.gallery-container { display: table; width: 100%; height: 100%; }
-.gallery-container img { max-width: 100%; border-radius: 4px; }
-.gallery-container > div { display: table-cell; height: 100%; vertical-align: middle; max-width: 100%; }
-.gallery-container .fa { background-color: black; padding: 40px 20px; cursor: pointer; font-size: 20px; user-select: none; color: white; }
-.gallery-next { display: table-cell; width: 15%; text-align: right; }
-.gallery-prev { display: table-cell; width: 15%; }
-.gallery-image { display: table-cell; text-align: center; }
-.gallery-image img { box-shadow: 0 0 20px rgba(0,0,0,0.2); margin: 0 auto; }
-.gallery-alt { color: #E0E0E0; margin-top: 15px; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; background-color: #505050; border-radius: 3px; padding: 5px 10px; }
+	.postdetail { border: 0; padding: 0; }
 
-.gallery { cursor: pointer; margin-bottom: 20px; }
-.gallery img { border-radius: 4px; }
-.gallery-info { font-size: 11px; margin-top: 10px; text-align: center; }
-.gallery-info > div { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 2px; }
-.gallery-info .fa { margin-right: 3px; }
-
-.pagination { padding: 15px 0 5px; text-align: center; }
-.pagination nav { margin: 10px 0 15px; }
-.pagination nav a { position: relative; display: inline-block; width: 30px; padding: 5px 0; text-align: center; font-size: 16px; border-radius: 3px; }
-.pagination nav .selected { background-color: #F0F0F0; color: silver; }
-
-@media (max-width: 767px) {
-	.mainmenu-button { display: block; }
-	header { padding-bottom: 15px; }
-	header nav { display: none; float: none; margin-top: 20px; }
-	header nav a { display: block; border-top: 1px solid #F0F0F0; margin: 3px 0; padding: 5px 0; font-size: 16px; }
+	header { border-radius: 0; box-shadow: none; margin: 0; padding: 15px 0 0 0; min-height: 100px; }
+	header .logo { float: none; display: block; width: 150px; }
+	header nav { display: none; float: none; border: 0; margin: 0 0 20px; padding: 0; background-color: white; box-shadow: 0 8px 20px rgba(0,0,0,0.2); border-top: 1px solid #E0E0E0; position: absolute; width: 100%; z-index: 5; }
+	header nav a { display: block; margin: 0; padding: 8px 25px; border-top: 1px solid #E0E0E0; color: black; border-radius: 0; }
 	header nav a:first-child { border-top: 0; }
+
+	footer { height: auto; padding-bottom: 30px; }
+	footer nav { float: none; text-align: center; }
+	footer .about { float: none; text-align: center;}
+
+	.menulayoutborder { padding-left: 15px; }
+	.wp { padding-left: 15px; padding-right: 15px; }
+	.sidemenu { background-color: #F0F0F0; border-radius: 3px; padding: 15px; margin-bottom: 0; }
+	.nowrap { overflow-x: auto; text-overflow: clip; overflow-scrolling: touch; }
+	.mainmenubutton { display: block; }
 }
+

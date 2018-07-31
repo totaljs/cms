@@ -1,18 +1,26 @@
 [![MIT License][license-image]][license-url]
 
-[![Support](https://www.totaljs.com/img/button-support.png?v=2)](https://www.totaljs.com/support/)
+# Total.js CMS
 
-# Node.js CMS
+[![Professional Support](https://www.totaljs.com/img/badge-support.svg)](https://www.totaljs.com/support/) [![Chat with contributors](https://www.totaljs.com/img/badge-chat.svg)](https://messenger.totaljs.com)
 
-- New version: `v8.0.0` (works only with __Total.js +v2.6.0__)
+- Latest version: `v12.0.0` (requires __Total.js +v3.0.0__)
 - [__Live chat with professional support__](https://messenger.totaljs.com)
-- [A simple documentation](https://docs.totaljs.com/eshop-cms/latest.html)
+- [__HelpDesk with professional support__](https://helpdesk.totaljs.com)
+- [Documentation](https://wiki.totaljs.com?q=cms+welcome)
+
+---
 
 ## Installation
 
-- open cms directory `$ cd cms`
+- `$ cd cms`
 - install `$ npm install total.js`
-- run it `node debug.js`
+
+Read more in [__documentation__](https://wiki.totaljs.com/?q=cms+welcome).
+
+## License
+
+The source-code is under __MIT license__.
 
 [license-image]: https://img.shields.io/badge/license-MIT-blue.svg?style=flat
 [license-url]: license.txt

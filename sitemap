@@ -1,4 +1,8 @@
-// ID : Title ---> URL --> [Parent]
-homepage                 : @(Homepage)               --> /
-blogs                    : @(Blogs)                  --> /blogs/                      --> homepage
-blogsdetail              : @(Blog detail)            --> /blogs/{0}/                  --> blogs
+// Common
+homepage          : @(Home)            --> /
+posts             : @(Blog)                --> @(/blog/)                 --> homepage
+post              : @(Post)                --> @(/blog/{0}/)             --> posts
+notices           : @(Notices)             --> @(/notices/)              --> homepage
+
+// Admin area
+admin             : @(Admin)               --> @(/admin/*)

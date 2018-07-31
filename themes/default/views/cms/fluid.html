@@ -1,0 +1,23 @@
+@{notranslate}
+@{nocompress html}
+
+@{repository.fluid = true}
+
+@{if repository.preview}
+	<!-- ALL CMS CONTENT (FOR EDITOR) MUST BE WRAPPED IN <div id="CMS"> -->
+	<br />
+	<div id="CMS">
+		@{if repository.page && repository.page.body}
+			<!-- RENDER UPDATED CONTENT -->
+			@{!repository.page.body}
+		@{else}
+			<!-- DEFAULT CONTENT FOR NEW PAGES FO THIS TEMPLATE -->
+			<div class="CMS_widgets" data-cms-category="Layouts"></div>
+		@{fi}
+	</div>
+@{else}
+	<!-- RENDERING FOR VISITORS -->
+	@{if repository.page && repository.page.body}
+		@{!repository.page.body}
+	@{fi}
+@{fi}

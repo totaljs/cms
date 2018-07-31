@@ -1,8 +1,12 @@
 {
   "name": "CMS",
   "description": "A simple and powerful CMS solution written in Total.js / Node.js.",
-  "version": "8.0.0",
+  "version": "12.0.0",
   "main": "release.js",
+  "repository": {
+      "type": "git",
+      "url": "https://github.com/totaljs/cms"
+  },
   "dependencies": {
     "total.js": "latest"
   },
@@ -10,9 +14,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "eshop",
-    "ecommerce"
+    "cms"
   ],
   "author": "Peter Širka",
-  "license": "MIT"
+  "license":"MIT"
 }

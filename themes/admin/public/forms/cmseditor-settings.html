@@ -1,0 +1,37 @@
+<div data-jc="form__cmseditor.form__icon:cofg;if:settings;title:@(Widget settings);width:500;submit:cmseditorsettings/submit" class="hidden">
+	<div class="padding">
+		<div data-jc="multioptions__cmseditor.settings.options" data-jc-id="cmseditor.settings"></div>
+	</div>
+	<div class="ui-form-buttons" data-jc="validation__cmseditor.settings">
+		<button name="cancel">@(Cancel)</button>
+		<button name="submit">@(APPLY)</button>
+	</div>
+</div>
+
+<script>
+
+	PLUGIN('cmseditorsettings', function(exports) {
+		exports.submit = function(com) {
+			com.hide();
+			setTimeout(function() {
+
+				var form = cmseditor.settings;
+				var prev = cmseditor.widgetsettings[form.id];
+				var dep = FIND('#cmseditor.settings').dependencies();
+
+				// dep === Code lists
+
+				form.exports.configure && form.exports.configure.call(dep, form.options, cmseditor.settings.target, prev);
+				cmseditor.widgetsettings[form.id] = form.options;
+				var editor = cmseditor.instance;
+				editor.change(true);
+				editor.autoresize();
+
+				var target = editor.getTarget();
+				editor.setTarget(null);
+				target.trigger('click');
+			}, 1200);
+		};
+	});
+
+</script>
