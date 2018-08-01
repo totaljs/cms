@@ -3034,7 +3034,7 @@ COMPONENT('fontawesomebox', 'height:300;fa:false', function(self, config) {
 COMPONENT('multioptions', function(self) {
 
 	var Tarea = Tangular.compile('<textarea class="ui-moi-save ui-moi-value-inputarea" data-name="{{ name }}"{{ if def }} placeholder="{{ def }}"{{ fi }}{{ if max }} maxlength="{{ max }}"{{ fi }} data-type="text">{{ value }}</textarea>');
-	var Tinput = Tangular.compile('<input class="ui-moi-save ui-moi-value-inputtext" data-name="{{ name }}" type="text" value="{{ value }}"{{ if def }} placeholder="{{ def }}"{{ fi }}{{ if max }} maxlength="{{ max }}"{{ fi }} data-type="text" />');
+	var Tinput = Tangular.compile('<div class="ui-moi-value-inputtext-buttons"><span class="multioptions-operation" data-name="file"><i class="fa fa-folder"></i></span></div><div class="ui-moi-value-inputtext"><input class="ui-moi-save" data-name="{{ name }}" type="text" value="{{ value }}"{{ if def }} placeholder="{{ def }}"{{ fi }}{{ if max }} maxlength="{{ max }}"{{ fi }} data-type="text" /></div>');
 	var Tselect = Tangular.compile('<div class="ui-moi-value-select"><i class="fa fa-chevron-down"></i><select data-name="{{ name }}" class="ui-moi-save ui-multioptions-select">{{ foreach m in values }}<option value="{{ $index }}"{{ if value === m.value }} selected="selected"{{ fi }}>{{ m.text }}</option>{{ end }}</select></div>');
 	var Tnumber = Tangular.compile('<div class="ui-moi-value-inputnumber-buttons"><span class="multioptions-operation" data-type="number" data-step="{{ step }}" data-name="plus" data-max="{{ max }}" data-min="{{ min }}"><i class="fa fa-plus"></i></span><span class="multioptions-operation" data-type="number" data-name="minus" data-step="{{ step }}" data-max="{{ max }}" data-min="{{ min }}"><i class="fa fa-minus"></i></span></div><div class="ui-moi-value-inputnumber"><input data-name="{{ name }}" class="ui-moi-save ui-moi-value-numbertext" type="text" value="{{ value }}"{{ if def }} placeholder="{{ def }}"{{ fi }} data-max="{{ max }}" data-min="{{ max }}" data-type="number" /></div>');
 	var Tboolean = Tangular.compile('<div data-name="{{ name }}" data-type="boolean" class="ui-moi-save multioptions-operation ui-moi-value-boolean{{ if value }} checked{{ fi }}"><i class="fa fa-check"></i></div>');
@@ -3072,6 +3072,15 @@ COMPONENT('multioptions', function(self) {
 			var type = el.attrd('type');
 
 			e.stopPropagation();
+
+			if (name === 'file') {
+				el = el.parent().parent().find('input');
+				cmseditor.instance.filebrowser(function(url) {
+					el.val(url);
+					self.$save();
+				});
+				return;
+			}
 
 			if (type === 'date') {
 				el = el.parent().parent().find('input');

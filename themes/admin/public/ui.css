@@ -354,13 +354,18 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 
 .ui-moi-name { float: left; width: 30%; font-size: 12px; margin: 10px 0 0 0; padding-right: 10px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .ui-moi-value { float: right; width: 70%; }
-.ui-moi-value-inputtext { font-size: 11px; border: 0; background-color: white; width: 100%; margin: 8px 0 0 0; padding: 0 6px 0; color: black; outline: 0; height: 20px; line-height: 15px; }
 .ui-moi-value-inputarea { font-size: 11px; border: 0; background-color: white; width: 100%; margin: 8px 0 0 0; padding: 2px 6px; color: black; outline: 0; height: 42px; line-height: 12px; resize: none; }
 .ui-moi-value-inputnumber input { font-size: 11px; border: 0; background-color: white; width: 100%; margin: 8px 0 0 0; padding: 0 6px 0; color: black; outline: 0; height: 20px; line-height: 15px; }
 .ui-moi-value-inputnumber { margin-left: 40px; }
 .ui-moi-value-inputnumber-buttons { float: left; width: 40px; }
 .ui-moi-value-inputnumber-buttons span { width: 19px; float: left; text-align: center; margin: 8px 1px 0 0; padding: 3px 0 0 0; height: 20px; cursor: pointer; color: #656D78; font-size: 12px; background-color: #CCD1D9; }
 .ui-moi-value-inputnumber-buttons span:hover { background-color: #656D78; color: white; }
+
+.ui-moi-value-inputtext input { font-size: 11px; border: 0; background-color: white; width: 100%; margin: 8px 0 0 0; padding: 0 6px 0; color: black; outline: 0; height: 20px; line-height: 15px; }
+.ui-moi-value-inputtext { margin-left: 20px; }
+.ui-moi-value-inputtext-buttons { float: left; width: 20px; }
+.ui-moi-value-inputtext-buttons span { width: 19px; float: left; text-align: center; margin: 8px 1px 0 0; padding: 3px 0 0 0; height: 20px; cursor: pointer; color: #656D78; font-size: 12px; background-color: #CCD1D9; }
+.ui-moi-value-inputtext-buttons span:hover { background-color: #656D78; color: white; }
 
 .ui-moi-value-inputpath input { font-size: 11px; border: 0; background-color: white; width: 100%; margin: 8px 0 0 0; padding: 0 6px 0; color: black; outline: 0; height: 20px; line-height: 15px; }
 .ui-moi-value-inputpath { margin-left: 20px; }
