@@ -152,6 +152,10 @@
 			});
 		}
 
+		WATCH('pages.form.draft', function(path, value, type) {
+			type === 2 && BIND('pages.form.url');
+		});
+
 		exports.preview = function(value) {
 			return value + (pages.form && pages.form.draft ? '?DRAFT=1' : '');
 		};
