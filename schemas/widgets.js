@@ -438,6 +438,12 @@ function refresh(callback, force) {
 			F.cache.removeAll('cachecms');
 			F.temporary.views = {};
 		}
+
+		if (!F.global.css) {
+			F.global.css = '/' + CSS + '?ts=' + GUID(5);
+			Fs.writeFile(F.path.temp(CSS), '', NOOP);
+		}
+
 	});
 }
 
