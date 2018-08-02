@@ -67,6 +67,8 @@ NEWSCHEMA('Post').make(function(schema) {
 				return;
 			}
 
+			ADMIN.alert($.user, 'posts.edit', response.id);
+
 			F.functions.read('posts', response.id, function(err, body) {
 				response.body = body;
 				$.callback(response);

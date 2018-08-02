@@ -21,7 +21,7 @@
 	<div data-jc="LAZY calendar" data-jc-config="days:@(SU,MO,TU,WE,TH,FR,SO);months:@(January,February,March,April,May,June,July,August,September,October,November,December);today:@(Set date to today);firstday:0"></div>
 	<div data-jc="LAZY confirm"></div>
 	<div data-jc="LAZY features" data-jc-config="placeholder:@(Search ...)"></div>
-	<div data-jc="LAZY snackbar" data-jc-config="button:@(Close);timeout:4500"></div>
+	<div data-jc="LAZY snackbar" data-jc-config="button:@(Close);timeout:5500"></div>
 	<div data-jc="LAZY suggestion" data-jc-config="placeholder:@(Search)"></div>
 
 	<div data-jc="contextmenu"></div>
@@ -192,6 +192,26 @@
 			switch (item.type) {
 				case 'navigation.save':
 					msg = t.format('@(Navigation has been saved)', item.message);
+					break;
+				case 'navigations.edit':
+				case 'pages.edit':
+				case 'posts.edit':
+				case 'newsletters.edit':
+				case 'notices.edit':
+				case 'widgets.edit':
+
+					if (user.name !== item.user) {
+					}
+
+					var t = item.type.substring(0, item.type.indexOf('.'));
+					if (t === 'navigations')
+						t = 'pages-navigation';
+					else
+						t += '-form';
+
+					if (t === common.form)
+						SETTER('snackbar', 'warning', '@(<b>IMPORTANT:</b> The user called "<b>{0}</b>" is editing same item.)'.format(user.name));
+
 					break;
 				case 'newsletters.save':
 					msg = t.format('@(Nesletter has been saved)', item.message);

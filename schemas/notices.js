@@ -52,11 +52,10 @@ NEWSCHEMA('Notice').make(function(schema) {
 
 		var options = $.options;
 		var filter = NOSQL('notices').one();
-
-		options.id && filter.where('id', options.id);
-		$.id && filter.where('id', $.id);
-
+		var id = options.id || $.id;
+		filter.where('id', id);
 		filter.callback($.callback, 'error-notices-404');
+		ADMIN.alert($.user, 'notices.edit', id);
 	});
 
 	// Removes a specific post

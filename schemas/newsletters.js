@@ -36,13 +36,15 @@ NEWSCHEMA('Newsletter').make(function(schema) {
 	// Gets a specific post
 	schema.setGet(function($) {
 		var filter = NOSQL('newsletters').one();
-		$.id && filter.where('id', $.id);
+		filter.where('id', $.id);
 		filter.callback(function(err, response) {
 
 			if (err) {
 				$.callback();
 				return;
 			}
+
+			ADMIN.alert($.user, 'newsletters.edit', response.id);
 
 			F.functions.read('newsletters', response.id, function(err, body) {
 				response.body = body;

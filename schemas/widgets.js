@@ -35,10 +35,11 @@ NEWSCHEMA('Widget').make(function(schema) {
 	schema.setGet(function($) {
 		var opt = $.options;
 		var filter = NOSQL('widgets').one();
+		var id = opt.id || $.controller.id;
 		opt.url && filter.where('url', opt.url);
-		opt.id && filter.where('id', opt.id);
-		$.controller && filter.where('id', $.controller.id);
+		filter.where('id', id);
 		filter.callback($.callback, 'error-widgets-404');
+		ADMIN.alert($.user, 'widgets.edit', id);
 	});
 
 	schema.setSave(function($) {

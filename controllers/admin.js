@@ -1,4 +1,5 @@
 const MSG_NOTIFY = { TYPE: 'notify' };
+const MSG_ALERT = { TYPE: 'alert' };
 const ALLOW = ['/api/dependencies/', '/api/pages/preview/', '/api/upload/', '/api/nav/', '/api/files/', '/stats/', '/live/', '/api/widgets/'];
 
 var DDOS = {};
@@ -10,6 +11,15 @@ global.ADMIN.notify = function(value) {
 		MSG_NOTIFY.type = value instanceof Object ? value.type : value;
 		MSG_NOTIFY.message = value instanceof Object ? value.message : '';
 		WS.send(MSG_NOTIFY);
+	}
+};
+
+global.ADMIN.alert = function(user, type, value) {
+	if (user && WS) {
+		MSG_ALERT.type = type;
+		MSG_ALERT.message = value;
+		MSG_ALERT.user = user.name;
+		WS.send(MSG_ALERT);
 	}
 };
 

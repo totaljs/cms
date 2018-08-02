@@ -61,12 +61,15 @@ NEWSCHEMA('Page').make(function(schema) {
 		opt.url && filter.where('url', opt.url);
 		opt.id && filter.where('id', opt.id);
 		$.id && filter.where('id', $.id);
+
 		filter.callback(function(err, response) {
 
 			if (err) {
 				$.invalid(err);
 				return;
 			}
+
+			ADMIN.alert($.user, 'pages.edit', response.id);
 
 			var redirects = Object.keys(F.global.redirects);
 			response.redirects = [];

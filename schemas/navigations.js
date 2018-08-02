@@ -16,6 +16,7 @@ NEWSCHEMA('Navigation').make(function(schema) {
 	schema.define('children', '[NavigationItem]');
 
 	schema.setGet(function($) {
+		ADMIN.alert($.user, 'navigations.edit', $.controller.id);
 		NOSQL('navigations').one().where('id', $.controller.id).callback(function(err, response) {
 			if (response) {
 				$.callback(response);
