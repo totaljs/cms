@@ -201,16 +201,14 @@
 				case 'widgets.edit':
 
 					if (user.name !== item.user) {
+						var t = item.type.substring(0, item.type.indexOf('.'));
+						if (t === 'navigations')
+							t = 'pages-navigation';
+						else
+							t += '-form';
+						if (t === common.form)
+							SETTER('snackbar', 'warning', '@(<b>IMPORTANT:</b> The user called "<b>{0}</b>" is editing same item.)'.format(user.name));
 					}
-
-					var t = item.type.substring(0, item.type.indexOf('.'));
-					if (t === 'navigations')
-						t = 'pages-navigation';
-					else
-						t += '-form';
-
-					if (t === common.form)
-						SETTER('snackbar', 'warning', '@(<b>IMPORTANT:</b> The user called "<b>{0}</b>" is editing same item.)'.format(user.name));
 
 					break;
 				case 'newsletters.save':
