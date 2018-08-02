@@ -25,7 +25,10 @@
 				cmseditor.widgetsettings[form.id] = form.options;
 				var editor = cmseditor.instance;
 				editor.change(true);
-				editor.autoresize();
+
+				setTimeout(function() {
+					editor.autoresize();
+				}, 500);
 
 				var target = editor.getTarget();
 				editor.setTarget(null);

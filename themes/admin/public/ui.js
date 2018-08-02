@@ -3366,7 +3366,7 @@ COMPONENT('multioptions', function(self) {
 
 			if (el.hclass('ui-moi-value-numbertext')) {
 
-				obj[key] = el.val().parseInt();
+				obj[key] = el.val().parseFloat();
 
 				if (opt.max !== null && obj[key] > opt.max) {
 					obj[key] = opt.max;
@@ -3417,7 +3417,7 @@ COMPONENT('multioptions', function(self) {
 			// option.min
 			// option.step
 
-			option.value = options[key] || option.def;
+			option.value = options[key] == null ? option.def : options[key];
 
 			var value = '';
 
