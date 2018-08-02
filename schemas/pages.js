@@ -166,10 +166,17 @@ NEWSCHEMA('Page').make(function(schema) {
 		model.oldurl = undefined;
 
 		if (model.draft) {
+			// Draft can have another widgets
+			// Therefore we must create a helper values
+			model.dwidgets = model.widgets;
+			model.dbodywidgets = model.widgets;
 			model.widgets = undefined;
 			model.bodywidgets = undefined;
 			F.functions.write('pages', model.id + '_draft', model.body, isUpdate);
 		} else {
+			// Removes helper values
+			model.dwidgets = null;
+			model.dbodywidgets = null;
 			F.functions.write('pages', model.id + '_' + model.stamp, model.body); // backup
 			F.functions.write('pages', model.id, model.body, isUpdate);
 		}
@@ -715,6 +722,7 @@ Controller.prototype.CMSpage = function(callback, cache) {
 			}
 
 			var counter = nosql.counter.hit('all').hit(response.id);
+			var DRAFT = !!self.query.DRAFT;
 			response.language && counter.hit(response.language);
 
 			if (response.css) {
@@ -722,9 +730,9 @@ Controller.prototype.CMSpage = function(callback, cache) {
 				self.head('<style type="text/css">' + response.css + '</style>');
 			}
 
-			F.functions.read('pages', response.id + (self.query.DRAFT ? '_draft' : ''), function(err, body) {
+			F.functions.read('pages', response.id + (DRAFT ? '_draft' : ''), function(err, body) {
 				response.body = body;
-				response.body.CMSrender(response.widgets, function(body) {
+				response.body.CMSrender(DRAFT ? response.dwidgets : response.widgets, function(body) {
 					response.body = body;
 					repo.page = response;
 					loadpartial(repo.page, function(partial) {

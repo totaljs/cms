@@ -29,7 +29,7 @@
 
 				var target = editor.getTarget();
 				editor.setTarget(null);
-				target.trigger('click');
+				target && target.trigger('click');
 			}, 1200);
 		};
 	});

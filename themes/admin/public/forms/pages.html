@@ -165,6 +165,7 @@
 				if (!index) {
 					SET('pages.form.body', pages.form.bodycurrent);
 					SET('pages.form.draft', false);
+					cmseditor.instance.setWidgetOptions(pages.form.widgets);
 				}
 			});
 		};
@@ -190,10 +191,10 @@
 
 			SET('pages.partial', partial);
 			SET('pages.parents', parent);
-			SET('pages.form.lockedtemplate2', !!pages.form.lockedtemplate, true);
+			SET('pages.form.lockedtemplate2', !!model.lockedtemplate, true);
 
 			WAIT('cmseditor.instance', function() {
-				cmseditor.instance.setWidgetOptions(model.widgets);
+				cmseditor.instance.setWidgetOptions(model.draft ? model.dwidgets : model.widgets);
 				cmseditor.instance.lock(!!model.lockedcontent);
 			});
 
