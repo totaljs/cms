@@ -112,7 +112,7 @@
 			if (attr.isiframe) {
 				// Is YouTube or Vimeo?
 				target.attr('src', attr.src.trim().replace('/watch?v=', '/embed/').replace('/vimeo.com/', '/player.vimeo.com/video'));
-			} else attr.isiframe || attr.isimage)
+			} else if (attr.isiframe || attr.isimage)
 				target.attr('src', attr.src.trim());
 
 			attr.isimage && target.attr('alt', attr.alt ? attr.alt.trim() : '');

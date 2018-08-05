@@ -145,7 +145,7 @@
 		};
 
 		exports.create = function() {
-			SET(exports.path('.form'), { widgets: [] }, true);
+			SET(exports.path('.form'), { widgets: [], limit: 1500 }, true);
 			SET('common.form', exports.path('-form'));
 		};
 

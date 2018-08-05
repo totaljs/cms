@@ -817,6 +817,8 @@
 					if (parent.length)
 						cmseditor.crop.href = parent.attr('href');
 
+					cmseditor.crop.ishref = !!cmseditor.crop.href;
+
 					UPDATE('cmseditor.crop', true);
 					SET('cmseditor.form', 'picture');
 					return;

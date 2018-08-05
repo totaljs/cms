@@ -1,11 +1,14 @@
 <div data-jc="form__common.form__icon:hash;if:newsletters-form;width:1200;reload:newslettersform/show;submit:newslettersform/submit;autofocus:true" class="hidden">
 	<div class="padding">
 		<div class="row">
-			<div class="col-md-6 m">
-				<div data-jc="textbox__newsletters.form.name__required:true;maxlength:100">@(Name)</div>
+			<div class="col-md-4 m">
+				<div data-jc="textbox__newsletters.form.name__required:true;maxlength:100">@(Subject)</div>
 			</div>
 			<div class="col-md-4 m">
 				<div data-jc="dropdown__newsletters.form.template__datasource:common.dependencies.templatesnewsletters;empty:;icon:paint-brush">@(Template)</div>
+			</div>
+			<div class="col-md-2 m">
+				<div data-jc="textbox__newsletters.form.limit__type:number;required:true;align:center;maxlength:9">@(Daily limit)</div>
 			</div>
 			<div class="col-md-2" style="margin-top:22px">
 				<button class="button button-small exec b" data-exec="newslettersform/test" data-bind="newsletters.form.template__disable:!value"><i class="fa fa-send"></i>Send test</button>
