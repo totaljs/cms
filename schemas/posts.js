@@ -89,11 +89,11 @@ NEWSCHEMA('Post').make(function(schema) {
 
 		filter.callback(function(err, response) {
 			if (response) {
+				$.controller && ($.controller.repository.post = $.controller.repository.page = response);
 				F.functions.read('posts', response.id, function(err, body) {
 					response.body = body;
 					response.body = response.body.CMSrender(response.widgets, function(body) {
 						response.body = body;
-						$.controller && ($.controller.repository.page = response);
 						nosql.counter.hit('all').hit(response.id);
 						$.callback(response);
 					}, $.controller);

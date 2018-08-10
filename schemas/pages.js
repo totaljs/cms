@@ -733,11 +733,12 @@ Controller.prototype.CMSpage = function(callback, cache) {
 				self.head('<style type="text/css">' + response.css + '</style>');
 			}
 
+			repo.page = response;
+
 			F.functions.read('pages', response.id + (DRAFT ? '_draft' : ''), function(err, body) {
 				response.body = body;
 				response.body.CMSrender(DRAFT ? response.dwidgets : response.widgets, function(body) {
 					response.body = body;
-					repo.page = response;
 					loadpartial(repo.page, function(partial) {
 						repo.page.partial = partial;
 						if (callback) {
@@ -793,11 +794,12 @@ Controller.prototype.CMSrender = function(url, callback) {
 			self.head('<style type="text/css">' + response.css + '</style>');
 		}
 
+		repo.page = response;
+
 		F.functions.read('pages', response.id, function(err, body) {
 			response.body = body;
 			response.body.CMSrender(response.widgets, function(body) {
 				response.body = body;
-				repo.page = response;
 				loadpartial(repo.page.partial, function(partial) {
 					repo.page.partial = partial;
 					callback(null, repo.page);

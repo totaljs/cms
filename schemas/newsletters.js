@@ -119,13 +119,14 @@ NEWSCHEMA('Newsletter').make(function(schema) {
 	schema.addWorkflow('test', function($) {
 
 		var newsletter = $.model.$clean();
-		var repository = {};
 
 		newsletter.body.CMSrender(newsletter.widgets, function(body) {
+
+			var repository = {};
 			repository.page = {};
-			repository.page.body = body;
 			repository.page.id = newsletter.id;
 			repository.page.name = newsletter.name;
+			repository.page.body = body;
 			repository.preview = false;
 			newsletter.body = F.view('~/cms/' + newsletter.template, null, repository);
 			newsletter.unsubscribe = G.config.url + '/api/unsubscribe/?email=';
@@ -163,10 +164,10 @@ NEWSCHEMA('Newsletter').make(function(schema) {
 			var cache = F.cache.get2('newsletters');
 
 			repository.page = {};
-			repository.page.body = body;
 			repository.page.id = newsletter.id;
 			repository.page.name = newsletter.name;
 			repository.preview = false;
+			repository.page.body = body;
 
 			newsletter.body = F.view('~/cms/' + newsletter.template, null, repository);
 			newsletter.unsubscribe = G.config.url + '/api/unsubscribe/?email=';
