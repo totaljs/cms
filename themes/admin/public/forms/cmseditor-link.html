@@ -39,8 +39,10 @@
 				SET('cmseditor.link.href', value);
 		});
 
-		WATCH('cmseditor.link.href', function(path, value) {
+		WATCH('cmseditor.link.href', function(path, value, type) {
 			SET('cmseditor.link.href2', value);
+			if (type === 1 && cmseditor.link.target !== '_blank' && (/^(http|https)\:\/\//i).test(value))
+				SET('cmseditor.link.target', '_blank');
 		}, true);
 
 		exports.reload = function() {
@@ -183,6 +185,17 @@
 						var item = arr[i];
 						(item.url.indexOf(query) !== -1 || item.name.indexOf(query) !== -1) && output.push({ name: item.url, type: item.name });
 					}
+
+					$(cmseditor.instance.getDocument()).find('a').each(function() {
+						var el = $(this);
+						var href = el.attr('href');
+						if (!href || href.substring(0, 1) === '#' || href.indexOf('void(0)') !== -1)
+							return;
+						if (output.findIndex('name', href) === -1) {
+							var text = el.text();
+							output.push({ name: href, type: text || '' });
+						}
+					});
 				}
 
 				output.quicksort('name');
