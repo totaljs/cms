@@ -207,18 +207,20 @@ NEWSCHEMA('Newsletter').make(function(schema) {
 						// Each "limit" it waits 24 hours
 						setTimeout(() => Mail.send2(messages, next), 60000 * 1440);
 					} else if (sum % 100 === 0) {
+
 						// Each 100 email waits 1 minute ....
 						setTimeout(() => Mail.send2(messages, next), 60000);
+
+						// Updates DB
+						NOSQL('newsletters').modify({ count: sum, datesent: F.datetime }).first().where('id', G.newsletter.id);
+
 					} else
 						Mail.send2(messages, () => setTimeout(next, 2000));
 
 				}, function() {
-
 					F.cache.remove('newsletters');
-
 					ADMIN.notify({ type: 'newsletters.sent', message: repository.page.name });
-					NOSQL('newsletters').modify({ count: count, datesent: F.datetime }).where('id', G.newsletter.id);
-
+					NOSQL('newsletters').modify({ count: sum, datesent: F.datetime }).first().where('id', G.newsletter.id);
 					G.newsletter.sending = false;
 					G.newsletter.percentage = 0;
 					G.newsletter.id = null;
