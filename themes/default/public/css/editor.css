@@ -43,5 +43,5 @@ iframe.CMS_edit { padding: 5px; border: 15px solid red;}
 .CMS_preview .CMS_part:before { position: absolute; content: attr(data-cms-part); color: white; background-color: #67C23A; padding: 2px 5px 2px 3px; border-radius: 2px; margin: -15px 0 0 -5px; font-size: 9px; border-left: 3px solid #5EB436; }
 .CMS_preview img[alt=""], .CMS_preview a[href=""] { outline: 3px dashed red !important; }
 .CMS_preview a[data-cms-track] { outline: 2px dashed blue; }
-
+.CMS_remove { min-height: 10px; }
 *[contentEditable] { cursor: text; }
