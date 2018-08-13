@@ -5609,6 +5609,8 @@ COMPONENT('autocomplete', 'height:200', function(self, config) {
 	var container, old, onSearch, searchtimeout, searchvalue, blurtimeout, onCallback, datasource, offsetter, scroller;
 	var is = false;
 	var margin = {};
+	var prev;
+	var skipmouse = false;
 
 	self.template = Tangular.compile('<li{{ if index === 0 }} class="selected"{{ fi }} data-index="{{ index }}"><span>{{ name }}</span><span>{{ type }}</span></li>');
 	self.readonly();
@@ -5635,7 +5637,10 @@ COMPONENT('autocomplete', 'height:200', function(self, config) {
 		});
 
 		self.event('mouseenter mouseleave', 'li', function(e) {
-			$(this).tclass('selected', e.type === 'mouseenter');
+			if (!skipmouse) {
+				prev && prev.rclass('selected');
+				prev = $(this).tclass('selected', e.type === 'mouseenter');
+			}
 		});
 
 		$(document).on('click', function() {
@@ -5645,6 +5650,10 @@ COMPONENT('autocomplete', 'height:200', function(self, config) {
 		$(window).on('resize', function() {
 			self.resize();
 		});
+	};
+
+	self.prerender = function(value) {
+		self.render(value);
 	};
 
 	self.configure = function(name, value) {
@@ -5671,7 +5680,7 @@ COMPONENT('autocomplete', 'height:200', function(self, config) {
 					return;
 				searchvalue = val;
 				self.resize();
-				onSearch(val, function(value) { self.render(value); });
+				onSearch(val, self.prerender);
 			}, 200);
 			return;
 		}
@@ -5679,8 +5688,9 @@ COMPONENT('autocomplete', 'height:200', function(self, config) {
 		if (!datasource || !datasource.length)
 			return;
 
-		var current = self.find('.selected');
+		var current = container.find('.selected');
 		if (c === 13) {
+			prev = null;
 			self.visible(false);
 			if (current.length) {
 				if (onCallback) {
@@ -5704,12 +5714,17 @@ COMPONENT('autocomplete', 'height:200', function(self, config) {
 			current = c === 40 ? current.next() : current.prev();
 		}
 
+		skipmouse = true;
 		!current.length && (current = self.find('li:{0}-child'.format(c === 40 ? 'first' : 'last')));
-		current.aclass('selected');
+		prev && prev.rclass('selected');
+		prev = current.aclass('selected');
 		var index = +current.attrd('index');
 		var h = current.innerHeight();
 		var offset = ((index + 1) * h) + (h * 2);
 		scroller.prop('scrollTop', offset > config.height ? offset - config.height : 0);
+		setTimeout2(self.ID + 'skipmouse', function() {
+			skipmouse = false;
+		}, 100);
 	}
 
 	function blur() {
@@ -5817,6 +5832,14 @@ COMPONENT('autocomplete', 'height:200', function(self, config) {
 		}
 
 		container.empty().append(builder.join(''));
+		skipmouse = true;
+
+		setTimeout(function() {
+			scroller.prop('scrollTop', 0);
+			skipmouse = false;
+		}, 100);
+
+		prev = container.find('.selected');
 		self.visible(true);
 	};
 });
