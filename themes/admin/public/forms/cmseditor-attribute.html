@@ -111,7 +111,13 @@
 
 			if (attr.isiframe) {
 				// Is YouTube or Vimeo?
-				target.attr('src', attr.src.trim().replace('/watch?v=', '/embed/').replace('/vimeo.com/', '/player.vimeo.com/video'));
+				var video = attr.src.trim().replace('/watch?v=', '/embed/').replace('/vimeo.com/', '/player.vimeo.com/video/');
+				if (video.indexOf('?') === -1) {
+					var index = video.indexOf('&');
+					if (index !== -1)
+						video = video.substring(0, index);
+				}
+				target.attr('src', video);
 			} else if (attr.isiframe || attr.isimage)
 				target.attr('src', attr.src.trim());
 
