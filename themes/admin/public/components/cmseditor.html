@@ -803,7 +803,7 @@
 
 					FIND('#cmseditor.crop', function(com) {
 						com.reconfigure('width:{0};height:{1}'.format(w, h));
-						SET('cmseditor.crop.url', el.attrd('cms-original') || el.attr('src'), 100);
+						SET('cmseditor.crop.url', el.attrd('cms-source') || el.attr('src'), 100);
 						setTimeout(function() {
 							com.load(files[0]);
 						}, 500);
@@ -1261,7 +1261,7 @@
 
 							FIND('#cmseditor.crop', function(com) {
 								com.reconfigure('width:{0};height:{1}'.format(w, h));
-								SET('cmseditor.crop.url', target.attrd('cms-original') || target.attr('src'), 100);
+								SET('cmseditor.crop.url', target.attrd('cms-source') || target.attr('src'), 100);
 							});
 
 							cmseditor.crop.alt = target.attr('alt');
