@@ -57,7 +57,7 @@
 			if (url) {
 				var size = target.attrd('cms-size');
 				if (size) {
-					target.attrd('cms-source', url);
+					target.attrd('cms-src', url);
 					target.attr('src', url + '?s=' + size.replace('%', ''));
 				} else
 					target.attr('src', url);
@@ -80,7 +80,7 @@
 				response && setTimeout(function() {
 					var size = target.attrd('cms-size');
 					if (size) {
-						target.attrd('cms-source', response);
+						target.attrd('cms-src', response);
 						target.attr('src', response + '?s=' + size.replace('%', ''));
 					} else
 						target.attr('src', response);
