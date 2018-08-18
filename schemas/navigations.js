@@ -42,7 +42,7 @@ NEWSCHEMA('Navigation').make(function(schema) {
 		}
 
 		db.update(model, model).where('id', model.id).backup(user).log('Update navigation "{0}"'.format(model.id), user).callback(function() {
-			$SAVE('Event', { type: 'navigations/save', user: user, id: model.id, admin: true }, NOOP, $);
+			$SAVE('Event', { type: 'navigations/save', user: user, id: model.id, body: model.name, admin: true }, NOOP, $);
 			EMIT('navigations.save', model);
 			refresh();
 			$.success();

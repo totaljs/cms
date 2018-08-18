@@ -267,7 +267,7 @@ function upload() {
 			file.extension = U.getExtension(file.filename);
 
 			FILESTORAGE('files').insert(file.filename, data, function(err, ref) {
-				id.push({ id: ref, name: file.filename, size: file.size, width: file.width, height: file.height, type: file.type, ctime: F.datetime, mtime: F.datetime, extension: file.extension, download: '/download/' + ref + '.' + file.extension });
+				id.push({ id: ref, name: file.filename, size: file.length, width: file.width, height: file.height, type: file.type, ctime: F.datetime, mtime: F.datetime, extension: file.extension, download: '/download/' + ref + '.' + file.extension });
 				setImmediate(next);
 			});
 

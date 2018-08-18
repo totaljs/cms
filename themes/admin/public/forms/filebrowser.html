@@ -111,11 +111,18 @@
 				return;
 
 			var files = filebrowser.files;
+
+			for (var i = 0; i < value.length; i++)
+				value[i].id += '.' + value[i].extension;
+
 			files.push.apply(files, value);
 			files.quicksort('ctime', false);
 
 			var obj = filebrowser;
 			var url = value[0].download;
+
+			console.log(value);
+
 			var type = typeof(obj.target);
 			if (type === 'string') {
 				SET(obj.target, url);
