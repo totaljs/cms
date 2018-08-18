@@ -41,7 +41,7 @@
 
 		WATCH('cmseditor.link.href', function(path, value, type) {
 			SET('cmseditor.link.href2', value);
-			if (type === 1 && cmseditor.link.target !== '_blank' && (/^(http|https)\:\/\//i).test(value))
+			if (type === 2 && cmseditor.link.target !== '_blank' && (/^(http|https)\:\/\//i).test(value))
 				SET('cmseditor.link.target', '_blank');
 		}, true);
 
