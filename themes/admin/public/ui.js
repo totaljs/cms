@@ -2699,7 +2699,7 @@ COMPONENT('crop', 'dragdrop:true;format:{0}', function(self, config) {
 		var width = config.width;
 		var height = config.height;
 
-		samesize = img.width === width && img.height === height && img.src.substring(0, 5) !== 'data:' ? img.src : '';
+		samesize = img.width === width && img.height === height && img.src.substring(0, 5) !== 'data:' ? $(img).attr('src') : '';
 
 		var nw = (img.width / 2);
 		var nh = (img.height / 2);
