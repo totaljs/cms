@@ -50,7 +50,7 @@ NEWSCHEMA('Settings').make(function(schema) {
 		// Writes settings into the file
 		Fs.writeFile(filename, JSON.stringify(settings), function() {
 			EMIT('settings.save', settings);
-			ADMIN.notify('settings.save');
+			$SAVE('Event', { type: 'settings', id: model.id, user: $.user.name, admin: true }, NOOP, $);
 			$.success();
 		});
 	});

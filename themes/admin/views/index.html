@@ -189,16 +189,18 @@
 			var msg = '';
 			var t = common.notifications.template;
 
+			console.log(item);
+
 			switch (item.type) {
 				case 'navigation.save':
 					msg = t.format('@(Navigation has been saved)', item.message);
 					break;
-				case 'navigations.edit':
-				case 'pages.edit':
-				case 'posts.edit':
-				case 'newsletters.edit':
-				case 'notices.edit':
-				case 'widgets.edit':
+				case 'navigations/edit':
+				case 'pages/edit':
+				case 'posts/edit':
+				case 'newsletters/edit':
+				case 'notices/edit':
+				case 'widgets/edit':
 
 					if (user.name !== item.user) {
 						var t = item.type.substring(0, item.type.indexOf('.'));
@@ -211,49 +213,53 @@
 					}
 
 					break;
-				case 'newsletters.save':
+				case 'newsletters/save':
 					msg = t.format('@(Nesletter has been saved)', item.message);
 					break;
-				case 'newsletters.percentage':
+				case 'newsletters/percentage':
 					msg = t.format('@(Sending of newsletter)', '@(Sent: {0}%)'.format(item.message));
 					break;
-				case 'newsletters.sent':
+				case 'newsletters/sent':
 					msg = t.format('@(Newsletter has been sent)', item.message);
 					break;
-				case 'subscribers.save':
+				case 'subscribers/save':
 					msg = t.format('@(Subscriber has been saved)', item.message);
 					break;
-				case 'subscribers.unsubscribe':
+				case 'subscribers/unsubscribe':
 					msg = t.format('@(Unsubscribed)', item.message);
 					break;
-				case 'files.clear':
+				case 'files/clear':
 					msg = t.format('@(Useless files have been removed)', '@(Count of files: {0}x)'.format(item.message));
 					common.form3 === 'filebrowser' && EXEC('filebrowser_refresh');
 					break;
-				case 'contacts.create':
+				case 'contacts/create':
 					msg = t.format('@(New contact form received)', '@(From: {0})'.format(item.message));
 					break;
-				case 'pages.save':
+				case 'pages/save':
 					msg = t.format('@(Page has been saved)', item.message);
 					break;
-				case 'posts.save':
+				case 'posts/save':
 					msg = t.format('@(Post has been saved)', item.message);
 					break;
-				case 'notices.save':
+				case 'notices/save':
 					msg = t.format('@(Notice has been saved)', item.message);
 					break;
-				case 'widgets.save':
+				case 'widgets/save':
 					msg = t.format('@(Widget has been saved)', item.message);
 					break;
-				case 'admin.login':
+				case 'admin/login':
 					msg = t.format('@(Administrator has been logged)', item.message);
 					break;
-				case 'settings.save':
+				case 'settings/save':
 					msg = '@(Settings have been updated.)';
 					break;
 				case 'success':
 				case 'warning':
 					SETTER('snackbar', item.type, item.message);
+					break;
+				default:
+					if (item.TYPE === 'event')
+						msg = t.format(item.type, item.message);
 					break;
 			}
 

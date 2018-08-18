@@ -95,7 +95,7 @@ NEWSCHEMA('Newsletter').make(function(schema) {
 		var db = isUpdate ? nosql.modify(model).where('id', model.id).backup(user).log('Update: ' + model.id, user) : nosql.insert(model).log('Create: ' + model.id, user);
 
 		db.callback(function() {
-			ADMIN.notify({ type: 'newsletters.save', message: model.name });
+			$SAVE('Event', { type: 'newsletters/save', user: user, id: model.id, body: model.name, admin: true }, NOOP, $);
 			EMIT('newsletter.save', model);
 			if ($.model.send) {
 				$.model.body = body;
@@ -199,7 +199,7 @@ NEWSCHEMA('Newsletter').make(function(schema) {
 					F.cache.set2('newsletters', { id: G.newsletter.id, count: sum }, '5 days');
 
 					if (G.newsletter.percentage !== old)
-						ADMIN.notify({ type: 'newsletters.percentage', message: G.newsletter.percentage + '' });
+						$SAVE('Event', { type: 'newsletters/percentage', body: G.newsletter.percentage.toString() + '%', admin: true }, NOOP, $);
 
 					old = G.newsletter.percentage;
 
@@ -220,7 +220,7 @@ NEWSCHEMA('Newsletter').make(function(schema) {
 
 				}, function() {
 					F.cache.remove('newsletters');
-					ADMIN.notify({ type: 'newsletters.sent', message: repository.page.name });
+					$SAVE('Event', { type: 'newsletters/sent', body: repository.page.name, admin: true }, NOOP, $);
 					NOSQL('newsletters').modify({ count: sum, datesent: F.datetime }).first().where('id', G.newsletter.id);
 					G.newsletter.sending = false;
 					G.newsletter.percentage = 0;

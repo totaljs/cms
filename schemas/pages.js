@@ -69,7 +69,7 @@ NEWSCHEMA('Page').make(function(schema) {
 				return;
 			}
 
-			ADMIN.alert($.user, 'pages.edit', response.id);
+			ADMIN.alert($.user, 'pages/edit', response.id);
 
 			var redirects = Object.keys(F.global.redirects);
 			response.redirects = [];
@@ -193,7 +193,7 @@ NEWSCHEMA('Page').make(function(schema) {
 
 		db.callback(function() {
 
-			ADMIN.notify({ type: 'pages.save', message: model.name });
+			$SAVE('Event', { type: 'pages/save', id: model.id, user: user, body: model.name, admin: true }, NOOP, $);
 			EMIT('pages.save', model);
 
 			if (model.replacelink && model.url !== oldurl && oldurl)

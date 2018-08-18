@@ -20,10 +20,12 @@ NEWSCHEMA('Contact').make(function(schema) {
 		$.success();
 
 		EMIT('contacts.save', model);
-		ADMIN.notify({ type: 'contacts.create', message: model.firstname + ' ' + model.lastname });
 
 		// Sends email
 		MAIL(F.global.config.emailcontactform, '@(Contact form #{0})'.format(model.id), '=?/mails/contact', model, $.language).reply(model.email, true);
+
+		// Events
+		$SAVE('Event', { type: 'contacts/add', user: model.firstname + ' ' + model.lastname, id: model.id }, NOOP, $);
 	});
 
 	// Stats

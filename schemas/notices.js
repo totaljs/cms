@@ -55,7 +55,7 @@ NEWSCHEMA('Notice').make(function(schema) {
 		var id = options.id || $.id;
 		filter.where('id', id);
 		filter.callback($.callback, 'error-notices-404');
-		ADMIN.alert($.user, 'notices.edit', id);
+		ADMIN.alert($.user, 'notices/edit', id);
 	});
 
 	// Removes a specific post
@@ -99,7 +99,7 @@ NEWSCHEMA('Notice').make(function(schema) {
 		var db = isUpdate ? nosql.modify(model).where('id', model.id).backup(user).log('Update: ' + model.id, user) : nosql.insert(model).log('Create: ' + model.id, user);
 
 		db.callback(function() {
-			ADMIN.notify({ type: 'notices.save', message: model.name });
+			$SAVE('Event', { type: 'notices/save', id: model.id, user: user, body: model.name, admin: true }, NOOP, $);
 			EMIT('notices.save', model);
 			F.cache.removeAll('cachecms');
 			$.success();

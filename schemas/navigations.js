@@ -16,7 +16,7 @@ NEWSCHEMA('Navigation').make(function(schema) {
 	schema.define('children', '[NavigationItem]');
 
 	schema.setGet(function($) {
-		ADMIN.alert($.user, 'navigations.edit', $.controller.id);
+		ADMIN.alert($.user, 'navigations/edit', $.controller.id);
 		NOSQL('navigations').one().where('id', $.controller.id).callback(function(err, response) {
 			if (response) {
 				$.callback(response);
@@ -42,7 +42,7 @@ NEWSCHEMA('Navigation').make(function(schema) {
 		}
 
 		db.update(model, model).where('id', model.id).backup(user).log('Update navigation "{0}"'.format(model.id), user).callback(function() {
-			ADMIN.notify({ type: 'navigations.save', message: model.name });
+			$SAVE('Event', { type: 'navigations/save', user: user, id: model.id, admin: true }, NOOP, $);
 			EMIT('navigations.save', model);
 			refresh();
 			$.success();

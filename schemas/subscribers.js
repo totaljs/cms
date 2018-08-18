@@ -24,7 +24,7 @@ NEWSCHEMA('Subscriber').make(function(schema) {
 			db.modify(obj, obj).where('email', obj.email).callback(function(err, count) {
 				if (count) {
 					if (email.length === 1)
-						ADMIN.notify({ type: 'subscribers.save', message: obj.email });
+						$SAVE('Event', { type: 'subscribers/add', user: $.user ? $.user.name : '', body: obj.email }, NOOP, $);
 					EMIT('subscribers.save', obj);
 					db.counter.hit('all', 1);
 				}
@@ -84,8 +84,8 @@ NEWSCHEMA('Subscriber').make(function(schema) {
 	});
 
 	schema.addWorkflow('unsubscribe', function($) {
-		ADMIN.notify({ type: 'subscribers.unsubscribe', message: $.query.email });
 		NOSQL('subscribers').modify({ unsubscribed: true, dateupdated: F.datetime }).where('email', $.query.email);
+		$SAVE('Event', { type: 'subscribers/rem', user: $.user ? $.user.name : '', body: $.query.email }, NOOP, $);
 		$.success();
 	});
 

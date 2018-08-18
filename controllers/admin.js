@@ -1,6 +1,7 @@
 const MSG_NOTIFY = { TYPE: 'notify' };
 const MSG_ALERT = { TYPE: 'alert' };
 const ALLOW = ['/api/dependencies/', '/api/pages/preview/', '/api/upload/', '/api/nav/', '/api/files/', '/stats/', '/live/', '/api/widgets/'];
+const SYSUSER = {};
 
 var DDOS = {};
 var WS = null;
@@ -12,6 +13,10 @@ global.ADMIN.notify = function(value) {
 		MSG_NOTIFY.message = value instanceof Object ? value.message : '';
 		WS.send(MSG_NOTIFY);
 	}
+};
+
+global.ADMIN.send = function(value) {
+	WS && WS.send(value);
 };
 
 global.ADMIN.alert = function(user, type, value) {
@@ -144,6 +149,9 @@ exports.install = function() {
 	// Websocket
 	WEBSOCKET('#admin/live/', socket, ['json']);
 
+	// System user
+	SYSUSER.name = F.config['admin-superadmin'].split(':')[0];
+	SYSUSER.token = true;
 };
 
 ON('controller', function(controller, name) {
@@ -159,6 +167,11 @@ ON('controller', function(controller, name) {
 	if (ddos > 5) {
 		controller.cancel();
 		controller.throw401();
+		return;
+	}
+
+	if (F.config['admin–token'] && controller.req.headers['x-token'] === F.config['admin–token']) {
+		controller.user = SYSUSER;
 		return;
 	}
 
@@ -230,7 +243,7 @@ function login() {
 	var key = (self.body.name + ':' + self.body.password).hash();
 
 	if (F.global.config.users[key]) {
-		OPERATION('admin.notify', { type: 'admin.login', message: self.body.name });
+		$SAVE('Event', { type: 'system/login', user: self.body.name, admin: true }, NOOP, $);
 		self.cookie(F.config['admin-cookie'], key, '1 month');
 		self.success();
 	} else

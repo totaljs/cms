@@ -67,7 +67,7 @@ NEWSCHEMA('Post').make(function(schema) {
 				return;
 			}
 
-			ADMIN.alert($.user, 'posts.edit', response.id);
+			ADMIN.alert($.user, 'posts/edit', response.id);
 
 			F.functions.read('posts', response.id, function(err, body) {
 				response.body = body;
@@ -155,7 +155,7 @@ NEWSCHEMA('Post').make(function(schema) {
 		var db = isUpdate ? nosql.modify(model).where('id', model.id).backup(user).log('Update: ' + model.id, user) : nosql.insert(model).log('Create: ' + model.id, user);
 
 		db.callback(function() {
-			ADMIN.notify({ type: 'posts.save', message: model.name });
+			$SAVE('Event', { type: 'posts/save', id: model.id, user: user, body: model.name, admin: true }, NOOP, $);
 			EMIT('posts.save', model);
 			$.success(model.id);
 			refresh_cache();

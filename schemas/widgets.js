@@ -39,7 +39,7 @@ NEWSCHEMA('Widget').make(function(schema) {
 		opt.url && filter.where('url', opt.url);
 		filter.where('id', id);
 		filter.callback($.callback, 'error-widgets-404');
-		ADMIN.alert($.user, 'widgets.edit', id);
+		ADMIN.alert($.user, 'widgets/edit', id);
 	});
 
 	schema.setSave(function($) {
@@ -72,11 +72,9 @@ NEWSCHEMA('Widget').make(function(schema) {
 		var db = isUpdate ? nosql.modify(model).where('id', model.id).backup(user).log('Update: ' + model.id, user) : nosql.insert(model).log('Create: ' + model.id, user);
 
 		db.callback(function() {
-			OPERATION('admin.notify', { type: 'widgets.save', message: model.name });
+			$SAVE('Event', { type: 'widgets/save', id: model.id, user: user, body: model.name, admin: true }, NOOP, $);
 			EMIT('widgets.save', model);
-			refresh(function() {
-				replace && $WORKFLOW('Widget', 'replace', { id: model.id }, F.error());
-			});
+			refresh(() => replace && $WORKFLOW('Widget', 'replace', { id: model.id }, ERROR('widgets.save')));
 			$.success();
 		});
 	});
@@ -357,7 +355,6 @@ function refresh(callback, force) {
 					} catch (e) {
 						WARNING.message = 'Widget <b>{0}</b> exception: <b>{1}</b>'.format(item.name, e.message);
 						ADMIN.notify(WARNING);
-						// F.error(e, 'Widget {0}: processing'.format(obj.name));
 					}
 					obj.total = o;
 					rebuild = true;
