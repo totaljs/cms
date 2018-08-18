@@ -9,6 +9,7 @@
 	.event-body { font-size: 14px; }
 	.event .fa { margin-right: 5px; }
 	.event:first-child { margin-top: 0; }
+	.event-bg-today { background: linear-gradient(#FFFFD5,white); }
 </style>
 
 <div class="container">
@@ -17,7 +18,7 @@
 		<div class="col-sm-4">
 			<div class="panel">
 				<label><i class="fa fa-circle green blink fs11"></i> @(Today events)</label>
-				<div class="fullheight scroller">
+				<div class="fullheight scroller event-bg-today">
 					<div data-bind="events.today__template">
 						<script type="text/html">
 							{{ foreach m in value }}
