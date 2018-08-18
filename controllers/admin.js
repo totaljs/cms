@@ -89,6 +89,10 @@ exports.install = function() {
 	ROUTE('GET     #admin/api/pages/redirects/                *Redirects --> @read');
 	ROUTE('POST    #admin/api/pages/redirects/                *Redirects --> @save', 30);
 
+	// MODEL: /models/events.js
+	ROUTE('GET     #admin/api/events/                         *Event --> @query');
+	ROUTE('GET     #admin/api/events/clear/                   *Event --> @clear');
+
 	// MODEL: /models/posts.js
 	ROUTE('GET     #admin/api/posts/                          *Post --> @query');
 	ROUTE('GET     #admin/api/posts/{id}/                     *Post --> @read');

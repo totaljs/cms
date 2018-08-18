@@ -40,7 +40,11 @@ NEWSCHEMA('Event', function(schema) {
 	});
 
 	schema.setQuery(function($) {
-		NOSQL('events').find2().callback((err, docs) => $.callback(docs));
+		NOSQL('events').find2().take(100).callback($.callback);
+	});
+
+	schema.addWorkflow('clear', function($) {
+		NOSQL('events').clear($.done());
 	});
 
 });

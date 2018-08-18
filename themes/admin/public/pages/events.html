@@ -1,0 +1,114 @@
+<style>
+	.event-type { font-weight: bold; height: 20px; }
+	.event-type span { float: right; font-weight: normal; font-size: 10px; margin: 2px 0 0; color: gray; }
+	.event-type span .fa { margin: 0 0 0 5px !important; }
+	.event-user { font-size: 10px; color: gray; margin-top: 5px; height: 20px; }
+	.event-user span { float: right; color: black; }
+	.event-user span .fa { margin: 0 0 0 5px !important; }
+	.event { border-bottom: 1px solid #E0E0E0; margin-top: 5px; padding: 8px 20px; font-size: 12px; }
+	.event-body { font-size: 14px; }
+	.event .fa { margin-right: 5px; }
+	.event:first-child { margin-top: 0; }
+</style>
+
+<div class="container">
+	<h1>@(Last 100 events)</h1>
+	<div class="row">
+		<div class="col-sm-4">
+			<div class="panel">
+				<label><i class="fa fa-circle green blink fs11"></i> @(Today events)</label>
+				<div class="fullheight scroller">
+					<div data-bind="events.today__template">
+						<script type="text/html">
+							{{ foreach m in value }}
+								<div class="event">
+									<div class="event-type">{{ if m.user }}<span>{{ m.user }}<i class="fa fa-user"></i></span>{{ fi }}<i class="fa fa-bookmark"></i>{{ m.type }}</div>
+									<div class="event-body">{{ m.body }}</div>
+									<div class="event-user"><span>{{ m.created | time }}<i class="fa fa-clock-o"></i></span>IP: {{ m.ip }}</div>
+								</div>
+							{{ end }}
+							{{ if !value.length }}
+								<div class="padding help center">@(No data)</div>
+							{{ fi }}
+						</script>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-4">
+			<div class="panel">
+				<label>@(Yesterday events)</label>
+				<div class="fullheight scroller">
+					<div data-bind="events.yesterday__template">
+						<script type="text/html">
+							{{ foreach m in value }}
+								<div class="event">
+									<div class="event-type">{{ if m.user }}<span>{{ m.user }}<i class="fa fa-user"></i></span>{{ fi }}<i class="fa fa-bookmark"></i>{{ m.type }}</div>
+									<div class="event-body">{{ m.body }}</div>
+									<div class="event-user"><span>{{ m.created | time }}<i class="fa fa-clock-o"></i></span>IP: {{ m.ip }}</div>
+								</div>
+							{{ end }}
+							{{ if !value.length }}
+								<div class="padding help center">@(No data)</div>
+							{{ fi }}
+						</script>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-4">
+			<div class="panel">
+				<label>@(Older events)</label>
+				<div class="fullheight scroller">
+					<div data-bind="events.older__template">
+						<script type="text/html">
+							{{ foreach m in value }}
+								<div class="event">
+									<div class="event-type">{{ if m.user }}<span>{{ m.user }}<i class="fa fa-user"></i></span>{{ fi }}<i class="fa fa-bookmark"></i>{{ m.type }}</div>
+									<div class="event-body">{{ m.body }}</div>
+									<div class="event-user"><span>{{ m.created | time }}<i class="fa fa-clock-o"></i></span>IP: {{ m.ip }}</div>
+								</div>
+							{{ end }}
+							{{ if !value.length }}
+								<div class="padding help center">@(No data)</div>
+							{{ fi }}
+						</script>
+					</div>
+				</div>
+		</div>
+	</div>
+</div>
+
+<script>
+
+	PLUGIN('events', function(exports) {
+
+		exports.scope = 'events';
+		exports.limit = 100; // Count of items per page
+
+		exports.refresh = function() {
+			if (common.page !== 'events')
+				return;
+			SETTER('loading', 'show');
+			AJAX('GET [url]api/{0}/'.format(exports.scope), function(response) {
+				var data = {};
+				var now = NOW.format('yyyyMMdd');
+				data.today = response.findAll(n => n.created.format('yyyyMMdd') === now);
+				now = NOW.add('-1 day').format('yyyyMMdd');
+				data.yesterday = response.findAll(n => n.created.format('yyyyMMdd') === now);
+				now = +now;
+				data.older = response.findAll(n => +n.created.format('yyyyMMdd') < now);
+				SET(exports.scope, data);
+				SETTER('loading', 'hide', 500);
+			});
+		};
+
+		exports.reload = function() {
+			exports.refresh();
+		};
+
+		ON('knockknock', exports.refresh);
+
+	});
+
+</script>

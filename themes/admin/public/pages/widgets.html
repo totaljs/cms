@@ -44,7 +44,7 @@
 		var toolbar = { btnChecked: exports.element.find('.toolbar button[name="checked"]') };
 
 		exports.refresh = function() {
-			SETTER('loading', 'show', 'refresh fa-spin');
+			SETTER('loading', 'show');
 			AJAX('GET [url]api/{0}/'.format(exports.scope), function(response) {
 
 				var categories = {};
@@ -146,7 +146,7 @@
 							if (index)
 								return;
 							var arr = FIND('.{0}.grid'.format(exports.scope)).checked().toArray();
-							SETTER('loading', 'show', 'trash-o');
+							SETTER('loading', 'show');
 							arr.waitFor(function(el, next, index) {
 								SET('common.progress', (index / arr.length) * 100);
 								AJAX('DELETE [url]api/{0}/'.format(exports.scope), { id: el.value }, next);

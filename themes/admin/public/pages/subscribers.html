@@ -31,7 +31,7 @@
 
 		exports.refresh = function() {
 
-			SETTER('loading', 'show', 'refresh fa-spin');
+			SETTER('loading', 'show');
 
 			!filter && (filter = {});
 			filter.limit = exports.limit;
@@ -52,7 +52,7 @@
 				case 'remove':
 					SETTER('confirm', 'show', '@(Are you sure you want to remove selected subscriber?)', ['"trash"@(Remove)', '@(No)'], function(index) {
 						if (!index) {
-							SETTER('loading', 'show', 'trash-o');
+							SETTER('loading', 'show');
 							AJAX('DELETE [url]api/{0}/'.format(exports.scope), { id: row.email }, function(response) {
 								SETTER('loading', 'hide', 1000);
 								if (response.success) {
@@ -93,7 +93,7 @@
 						SETTER('confirm', 'show', '@(Are you sure you want to remove all selected subscribers?)', ['"trash"@(Remove)', '@(No)'], function(index) {
 							if (index)
 								return;
-							SETTER('loading', 'show', 'trash-o');
+							SETTER('loading', 'show');
 							var arr = FIND('.{0}.grid'.format(exports.scope)).checked().toArray();
 							arr.waitFor(function(el, next, index) {
 								SET('common.progress', (index / arr.length) * 100);

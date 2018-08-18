@@ -34,7 +34,7 @@
 
 		exports.refresh = function() {
 
-			SETTER('loading', 'show', 'refresh fa-spin');
+			SETTER('loading', 'show');
 
 			!filter && (filter = {});
 			filter.limit = exports.limit;
@@ -55,7 +55,7 @@
 				case 'remove':
 					SETTER('confirm', 'show', '@(Are you sure you want to remove selected post?)', ['"trash"@(Remove)', '@(No)'], function(index) {
 						if (!index) {
-							SETTER('loading', 'show', 'trash-o');
+							SETTER('loading', 'show');
 							AJAX('DELETE [url]api/{0}/'.format(exports.scope), row, function(response) {
 								SETTER('loading', 'hide', 1000);
 								if (response.success) {
@@ -68,7 +68,7 @@
 					break;
 				case 'update':
 				case 'duplicate':
-					SETTER('loading', 'show', 'pencil');
+					SETTER('loading', 'show');
 					AJAX('GET [url]api/{0}/{1}/'.format(exports.scope, row.id), function(response) {
 
 						if (name === 'duplicate')
@@ -99,7 +99,7 @@
 						SETTER('confirm', 'show', '@(Are you sure you want to remove all selected notices?)', ['"trash"@(Remove)', '@(No)'], function(index) {
 							if (!index) {
 								var arr = FIND('.{0}.grid'.format(exports.scope)).checked().toArray();
-								SETTER('loading', 'show', 'trash-o');
+								SETTER('loading', 'show');
 								arr.waitFor(function(el, next, index) {
 									SET('common.progress', (index / arr.length) * 100);
 									AJAX('DELETE [url]api/{0}/'.format(exports.scope), { id: el.value }, next);

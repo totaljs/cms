@@ -1714,7 +1714,7 @@ COMPONENT('nosqlcounter', 'count:0;height:80', function(self, config) {
 	self.redraw = function(maxbars) {
 
 		var value = self.get();
-		if (!value)
+		if (!(value instanceof Array))
 			value = [];
 
 		var dt = new Date();

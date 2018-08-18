@@ -52,6 +52,7 @@
 
 	<div id="parts">
 		<div data-jc="part__common.page__if:dashboard;url:/admin/pages/dashboard.html;reload:dashboard/reload;hidden:dashboard/hidden;cleaner:10"></div>
+		<div data-jc="part__common.page__if:events;url:/admin/pages/events.html;reload:events/reload;hidden:events/hidden;cleaner:10"></div>
 		<div data-jc="part__common.page__if:posts;url:/admin/pages/posts.html;reload:posts/reload;cleaner:10"></div>
 		<div data-jc="part__common.page__if:notices;url:/admin/pages/notices.html;reload:notices/reload;cleaner:10"></div>
 		<div data-jc="part__common.page__if:pages;url:/admin/pages/pages.html;reload:pages/reload;cleaner:10"></div>
@@ -73,6 +74,7 @@
 
 		common.nav = [];
 		common.nav.push({ role: 'Dashboard', title: '@(Dashboard)', url: '@{sitemap_url('admin')}dashboard/', value: 'dashboard', icon: 'dashboard' });
+		common.nav.push({ role: 'Events', title: '@(Events)', url: '@{sitemap_url('admin')}events/', value: 'events', icon: 'clock-o' });
 		common.nav.push({ role: 'Pages', title: '@(Pages)', url: '@{sitemap_url('admin')}pages/', value: 'pages', icon: 'file-text-o' });
 		common.nav.push({ role: 'Widgets', title: '@(Widgets)', url: '@{sitemap_url('admin')}widgets/', value: 'widgets', icon: 'plug' });
 		common.nav.push({ role: 'Posts', title: '@(Posts)', url: '@{sitemap_url('admin')}posts/', value: 'posts', icon: 'newspaper-o' });

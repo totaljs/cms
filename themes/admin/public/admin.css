@@ -144,6 +144,7 @@ h3 .fa, h3 .far, h3 .fal { margin-right: 8px; }
 .tabmenu li:first-child { margin-left: 0; }
 .tabmenu .selected { background-color: white; color: black; }
 .tabmenu .fa, .tabmenu .fab, .tabmenu .fal, .tabmenu .far { margin-right: 8px; }
+.scroller { overflow-y: auto; overflow-x: hidden; position: relative; overflow-scrolling: touch; }
 
 .noticespreview { padding: 10px 20px 20px; border: 2px solid #E0E0E0; border-radius: 3px; font-size: 16px; }
 .noticespreview p { margin: 10px 0 0; }

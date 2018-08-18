@@ -167,7 +167,7 @@
 			!model.name && (model.name = 'Test email');
 			com.hide();
 
-			SETTER('loading', 'show', 'envelope-o')('loading', 'hide', 1000);
+			SETTER('loading', 'show')('loading', 'hide', 1000);
 			AJAX('POST [url]api/newsletters/test/?email=' + encodeURIComponent(newsletters.test.email), model, function() {
 				SETTER('snackbar', 'success', '@(Newsletter has been sent successfully.)');
 			});
