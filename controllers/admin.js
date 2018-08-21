@@ -247,7 +247,7 @@ function login() {
 	var key = (self.body.name + ':' + self.body.password).hash();
 
 	if (F.global.config.users[key]) {
-		$SAVE('Event', { type: 'system/login', user: self.body.name, admin: true }, NOOP, $);
+		$SAVE('Event', { type: 'system/login', user: self.body.name, admin: true }, NOOP, self);
 		self.cookie(F.config['admin-cookie'], key, '1 month');
 		self.success();
 	} else
