@@ -802,7 +802,7 @@
 						return;
 
 					FIND('#cmseditor.crop', function(com) {
-						com.reconfigure('width:{0};height:{1}'.format(w, h));
+						com.reconfigure('width:{0};height:{1};background:'.format(w, h, el.attrd('cms-bg')));
 						SET('cmseditor.crop.url', el.attrd('cms-src') || el.attr('src'), 100);
 						setTimeout(function() {
 							com.load(files[0]);
