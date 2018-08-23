@@ -1260,7 +1260,7 @@
 							}
 
 							FIND('#cmseditor.crop', function(com) {
-								com.reconfigure('width:{0};height:{1}'.format(w, h));
+								com.reconfigure('width:{0};height:{1};background:'.format(w, h, target.attrd('cms-bg') || ''));
 								SET('cmseditor.crop.url', target.attrd('cms-src') || target.attr('src'), 100);
 							});
 
