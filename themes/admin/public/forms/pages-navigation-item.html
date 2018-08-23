@@ -1,6 +1,6 @@
 <div data-jc="form__common.form2__icon:sitemap;if:pages-navigation-item;title:@(Navigation);width:650;autofocus:true;submit:pagesnavigationitem/submit" class="hidden">
 	<div class="padding bg-smoke">
-		<div data-jc="dropdown__pages.navigationitem.url__datasource:pages.list;if:n => n.ispartial === false;empty:;icon:sitemap;value:url">@(URL according to the sitemap)</div>
+		<div data-jc="dropdown__pages.navigationitem.url2__datasource:pages.list;if:n => n.ispartial === false;empty:;icon:sitemap;value:url">@(URL according to the sitemap)</div>
 		<div class="help m"><i class="fa fa-refresh"></i>@(CMS will synchronizes all information automatically according to the page settings.)</div>
 	</div>
 	<hr class="nmt" />
@@ -70,7 +70,16 @@
 			CHANGE('pages.navigation.children', true);
 		};
 
+		WATCH('pages.navigationitem.url2', function(path, value, type) {
+			value && type === 2 && SET('pages.navigationitem.url', value);
+		});
+
 		WATCH('pages.navigationitem.url', function(path, value, type) {
+
+			SET('pages.navigationitem.url2', value);
+			if (type === 2 && pages.navigationitem.target !== '_blank' && (/^(http|https)\:\/\//i).test(value))
+				SET('cmseditor.link.target', '_blank');
+
 			if (type === 2) {
 				var item = pages.grid.items.findItem('url', value);
 				if (item) {

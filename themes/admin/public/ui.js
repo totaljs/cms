@@ -734,7 +734,7 @@ COMPONENT('contextmenu', function(self) {
 
 COMPONENT('textbox', function(self, config) {
 
-	var input, container, content = null;
+	var input, content = null;
 
 	self.validate = function(value) {
 
@@ -757,6 +757,8 @@ COMPONENT('textbox', function(self, config) {
 		switch (self.type) {
 			case 'email':
 				return value.isEmail();
+			case 'phone':
+				return value.isPhone();
 			case 'url':
 				return value.isURL();
 			case 'currency':
@@ -775,9 +777,7 @@ COMPONENT('textbox', function(self, config) {
 		self.format = config.format;
 
 		self.event('click', '.fa-calendar', function(e) {
-			if (config.disabled)
-				return;
-			if (config.type === 'date') {
+			if (!config.disabled && !config.readonly && config.type === 'date') {
 				e.preventDefault();
 				SETTER('calendar', 'toggle', self.element, self.get(), function(date) {
 					self.change(true);
@@ -787,9 +787,7 @@ COMPONENT('textbox', function(self, config) {
 		});
 
 		self.event('click', '.fa-caret-up,.fa-caret-down', function() {
-			if (config.disabled)
-				return;
-			if (config.increment) {
+			if (!config.disabled && !config.readonly && config.increment) {
 				var el = $(this);
 				var inc = el.hclass('fa-caret-up') ? 1 : -1;
 				self.change(true);
@@ -798,7 +796,7 @@ COMPONENT('textbox', function(self, config) {
 		});
 
 		self.event('click', '.ui-textbox-control-icon', function() {
-			if (config.disabled)
+			if (config.disabled || config.readonly)
 				return;
 			if (self.type === 'search') {
 				self.$stateremoved = false;
@@ -809,7 +807,8 @@ COMPONENT('textbox', function(self, config) {
 		});
 
 		self.event('focus', 'input', function() {
-			config.autocomplete && EXEC(config.autocomplete, self);
+			if (!config.disabled && !config.readonly && config.autocomplete)
+				EXEC(config.autocomplete, self);
 		});
 
 		self.redraw();
@@ -826,11 +825,13 @@ COMPONENT('textbox', function(self, config) {
 				tmp = config.type;
 				break;
 			case 'number':
+			case 'phone':
 				isMOBILE && (tmp = 'tel');
 				break;
 		}
 
 		self.tclass('ui-disabled', config.disabled === true);
+		self.tclass('ui-textbox-required', config.required === true);
 		self.type = config.type;
 		attrs.attr('type', tmp);
 		config.placeholder && attrs.attr('placeholder', config.placeholder);
@@ -838,6 +839,7 @@ COMPONENT('textbox', function(self, config) {
 		config.keypress != null && attrs.attr('data-jc-keypress', config.keypress);
 		config.delay && attrs.attr('data-jc-keypress-delay', config.delay);
 		config.disabled && attrs.attr('disabled');
+		config.readonly && attrs.attr('readonly');
 		config.error && attrs.attr('error');
 		attrs.attr('data-jc-bind', '');
 
@@ -871,21 +873,19 @@ COMPONENT('textbox', function(self, config) {
 		if (content.length) {
 			var html = builder.join('');
 			builder = [];
-			builder.push('<div class="ui-textbox-label{0}">'.format(config.required ? ' ui-textbox-label-required' : ''));
+			builder.push('<div class="ui-textbox-label">');
 			icon && builder.push('<i class="fa fa-{0}"></i> '.format(icon));
-			builder.push('<span>' + content + (content.endsWith('?') ? '' : ':') + '</span>');
+			builder.push('<span>' + content + (content.substring(content.length - 1) === '?' ? '' : ':') + '</span>');
 			builder.push('</div><div class="ui-textbox">{0}</div>'.format(html));
 			config.error && builder.push('<div class="ui-textbox-helper"><i class="fa fa-warning" aria-hidden="true"></i> {0}</div>'.format(config.error));
 			self.html(builder.join(''));
 			self.aclass('ui-textbox-container');
 			input = self.find('input');
-			container = self.find('.ui-textbox');
 		} else {
 			config.error && builder.push('<div class="ui-textbox-helper"><i class="fa fa-warning" aria-hidden="true"></i> {0}</div>'.format(config.error));
 			self.aclass('ui-textbox ui-textbox-container');
 			self.html(builder.join(''));
 			input = self.find('input');
-			container = self.element;
 		}
 	};
 
@@ -897,6 +897,9 @@ COMPONENT('textbox', function(self, config) {
 		var redraw = false;
 
 		switch (key) {
+			case 'readonly':
+				self.find('input').prop('readonly', value);
+				break;
 			case 'disabled':
 				self.tclass('ui-disabled', value);
 				self.find('input').prop('disabled', value);
@@ -908,7 +911,7 @@ COMPONENT('textbox', function(self, config) {
 			case 'required':
 				self.noValid(!value);
 				!value && self.state(1, 1);
-				self.find('.ui-textbox-label').tclass('ui-textbox-label-required', value);
+				self.tclass('ui-textbox-required', value === true);
 				break;
 			case 'placeholder':
 				input.prop('placeholder', value || '');
@@ -963,6 +966,10 @@ COMPONENT('textbox', function(self, config) {
 		return config.type === 'date' ? (value ? value.format(config.format || 'yyyy-MM-dd') : value) : value;
 	});
 
+	self.parser(function(path, value) {
+		return value ? config.spaces === false ? value.replace(/\s/g, '') : value : value;
+	});
+
 	self.state = function(type) {
 		if (!type)
 			return;
@@ -970,7 +977,7 @@ COMPONENT('textbox', function(self, config) {
 		if (invalid === self.$oldstate)
 			return;
 		self.$oldstate = invalid;
-		container.tclass('ui-textbox-invalid', invalid);
+		self.tclass('ui-textbox-invalid', invalid);
 		config.error && self.find('.ui-textbox-helper').tclass('ui-textbox-helper-show', invalid);
 	};
 });
@@ -1140,7 +1147,7 @@ COMPONENT('form', function(self, config) {
 
 COMPONENT('dropdown', function(self, config) {
 
-	var select, container, condition, content = null;
+	var select, condition, content = null;
 	var render = '';
 
 	self.validate = function(value) {
@@ -1197,7 +1204,7 @@ COMPONENT('dropdown', function(self, config) {
 				condition = value ? FN(value) : null;
 				break;
 			case 'required':
-				self.find('.ui-dropdown-label').tclass('ui-dropdown-label-required', value);
+				self.tclass('ui-dropdown-required', value === true);
 				self.state(1, 1);
 				break;
 			case 'datasource':
@@ -1232,11 +1239,14 @@ COMPONENT('dropdown', function(self, config) {
 
 		config.empty !== undefined && builder.push('<option value="">{0}</option>'.format(config.empty));
 
+		var type = typeof(arr[0]);
+		var notObj = type === 'string' || type === 'number';
+
 		for (var i = 0, length = arr.length; i < length; i++) {
 			var item = arr[i];
 			if (condition && !condition(item))
 				continue;
-			if (item.length)
+			if (notObj)
 				builder.push(template.format(item, value === item ? ' selected="selected"' : '', item));
 			else
 				builder.push(template.format(item[propValue], value === item[propValue] ? ' selected="selected"' : '', item[propText]));
@@ -1251,7 +1261,7 @@ COMPONENT('dropdown', function(self, config) {
 		var builder = [];
 		var label = content || config.label;
 		if (label) {
-			builder.push('<div class="ui-dropdown-label{0}">{1}{2}:</div>'.format(config.required ? ' ui-dropdown-label-required' : '', config.icon ? '<span class="fa fa-{0}"></span> '.format(config.icon) : '', label));
+			builder.push('<div class="ui-dropdown-label">{0}{1}:</div>'.format(config.icon ? '<span class="fa fa-{0}"></span> '.format(config.icon) : '', label));
 			builder.push('<div class="ui-dropdown-values">{0}</div>'.format(html));
 			self.html(builder.join(''));
 		} else
@@ -1260,6 +1270,7 @@ COMPONENT('dropdown', function(self, config) {
 		container = self.find('.ui-dropdown');
 		render && self.refresh();
 		config.disabled && self.reconfigure('disabled:true');
+		self.tclass('ui-dropdown-required', config.required === true);
 	};
 
 	self.make = function() {
@@ -1279,7 +1290,7 @@ COMPONENT('dropdown', function(self, config) {
 		if (invalid === self.$oldstate)
 			return;
 		self.$oldstate = invalid;
-		container.tclass('ui-dropdown-invalid', invalid);
+		self.tclass('ui-dropdown-invalid', invalid);
 	};
 });
 
@@ -1328,10 +1339,10 @@ COMPONENT('validation', 'delay:100;flags:visible', function(self, config) {
 
 COMPONENT('textarea', function(self, config) {
 
-	var input, container, content = null;
+	var input, content = null;
 
 	self.validate = function(value) {
-		if (config.disabled || !config.required)
+		if (config.disabled || !config.required || config.readonly)
 			return true;
 		if (value == null)
 			value = '';
@@ -1347,14 +1358,17 @@ COMPONENT('textarea', function(self, config) {
 		var redraw = false;
 
 		switch (key) {
+			case 'readonly':
+				self.find('textarea').prop('readonly', value);
+				break;
 			case 'disabled':
 				self.tclass('ui-disabled', value);
-				self.find('input').prop('disabled', value);
+				self.find('textarea').prop('disabled', value);
 				break;
 			case 'required':
 				self.noValid(!value);
 				!value && self.state(1, 1);
-				self.find('.ui-textarea-label').tclass('ui-textarea-label-required', value);
+				self.tclass('ui-textarea-required', value);
 				break;
 			case 'placeholder':
 				input.prop('placeholder', value || '');
@@ -1378,6 +1392,9 @@ COMPONENT('textarea', function(self, config) {
 				self.format = value;
 				self.refresh();
 				break;
+			case 'height':
+				self.find('textarea').css('height', (value > 0 ? value + 'px' : value));
+				break;
 		}
 
 		redraw && setTimeout2('redraw' + self.id, function() {
@@ -1393,6 +1410,7 @@ COMPONENT('textarea', function(self, config) {
 
 		self.tclass('ui-disabled', config.disabled === true);
 		self.tclass('ui-textarea-monospace', config.monospace === true);
+		self.tclass('ui-textarea-required', config.required === true);
 
 		config.placeholder && attrs.attr('placeholder', config.placeholder);
 		config.maxlength && attrs.attr('maxlength', config.maxlength);
@@ -1401,6 +1419,7 @@ COMPONENT('textarea', function(self, config) {
 		config.height && attrs.attr('style', 'height:{0}px'.format(config.height));
 		config.autofocus === 'true' && attrs.attr('autofocus');
 		config.disabled && attrs.attr('disabled');
+		config.readonly && attrs.attr('readonly');
 		builder.push('<textarea {0}></textarea>'.format(attrs.join(' ')));
 
 		var label = config.label || content;
@@ -1410,14 +1429,13 @@ COMPONENT('textarea', function(self, config) {
 			self.aclass('ui-textarea ui-textarea-container');
 			self.html(builder.join(''));
 			input = self.find('textarea');
-			container = self.element;
 			return;
 		}
 
 		var html = builder.join('');
 
 		builder = [];
-		builder.push('<div class="ui-textarea-label{0}">'.format(config.required ? ' ui-textarea-label-required' : ''));
+		builder.push('<div class="ui-textarea-label">');
 		config.icon && builder.push('<i class="fa fa-{0}"></i>'.format(config.icon));
 		builder.push(label);
 		builder.push(':</div><div class="ui-textarea">{0}</div>'.format(html));
@@ -1427,7 +1445,6 @@ COMPONENT('textarea', function(self, config) {
 		self.rclass('ui-textarea');
 		self.aclass('ui-textarea-container');
 		input = self.find('textarea');
-		container = self.find('.ui-textarea');
 	};
 
 	self.make = function() {
@@ -1444,10 +1461,11 @@ COMPONENT('textarea', function(self, config) {
 		if (invalid === self.$oldstate)
 			return;
 		self.$oldstate = invalid;
-		container.tclass('ui-textarea-invalid', invalid);
+		self.tclass('ui-textarea-invalid', invalid);
 		config.error && self.find('.ui-textarea-helper').tclass('ui-textarea-helper-show', invalid);
 	};
 });
+
 
 COMPONENT('checkbox', function(self, config) {
 
@@ -2214,7 +2232,7 @@ COMPONENT('dropdowncheckbox', 'checkicon:check;visible:0;alltext:All selected;li
 				break;
 
 			case 'required':
-				self.find('.ui-dropdowncheckbox-label').tclass('ui-dropdowncheckbox-required', config.required);
+				self.tclass('ui-dropdowncheckbox-required', config.required);
 				break;
 
 			case 'label':
@@ -2266,9 +2284,9 @@ COMPONENT('dropdowncheckbox', 'checkicon:check;visible:0;alltext:All selected;li
 
 	self.redraw = function() {
 
-		var html = '<div class="ui-dropdowncheckbox"><span class="fa fa-sort"></span><div class="ui-dropdowncheckbox-selected"></div></div><div class="ui-dropdowncheckbox-values hidden">{0}</div>'.format(render);
+		var html = '<div class="ui-dropdowncheckbox"><span class="fa fa-caret-down"></span><div class="ui-dropdowncheckbox-selected"></div></div><div class="ui-dropdowncheckbox-values hidden">{0}</div>'.format(render);
 		if (content.length)
-			self.html('<div class="ui-dropdowncheckbox-label{0}">{1}{2}:</div>'.format(config.required ? ' ui-dropdowncheckbox-required' : '', config.icon ? ('<i class="fa fa-' + config.icon + '"></i>') : '', content) + html);
+			self.html('<div class="ui-dropdowncheckbox-label">{0}{1}:</div>'.format(config.icon ? ('<i class="fa fa-' + config.icon + '"></i>') : '', content) + html);
 		else
 			self.html(html);
 
@@ -2276,6 +2294,7 @@ COMPONENT('dropdowncheckbox', 'checkicon:check;visible:0;alltext:All selected;li
 		values = self.find('.ui-dropdowncheckbox-selected');
 		prepared && self.refresh();
 		self.tclass('ui-disabled', config.disabled === true);
+		self.tclass('ui-dropdowncheckbox-required', config.required === true);
 	};
 
 	self.make = function() {
@@ -2305,7 +2324,7 @@ COMPONENT('dropdowncheckbox', 'checkicon:check;visible:0;alltext:All selected;li
 				W.$dropdowncheckboxelement = null;
 			}
 
-			!container.hasClass('hidden') && (W.$dropdowncheckboxelement = container);
+			!container.hclass('hidden') && (W.$dropdowncheckboxelement = container);
 			e.stopPropagation();
 		});
 
@@ -2317,7 +2336,7 @@ COMPONENT('dropdowncheckbox', 'checkicon:check;visible:0;alltext:All selected;li
 				return;
 
 			var el = $(this);
-			var is = !el.hasClass('ui-dropdowncheckbox-checked');
+			var is = !el.hclass('ui-dropdowncheckbox-checked');
 			var index = +el.attrd('index');
 			var value = data[index];
 
@@ -2465,7 +2484,7 @@ COMPONENT('dropdowncheckbox', 'checkicon:check;visible:0;alltext:All selected;li
 		if (invalid === self.$oldstate)
 			return;
 		self.$oldstate = invalid;
-		self.find('.ui-dropdowncheckbox').tclass('ui-dropdowncheckbox-invalid', invalid);
+		self.tclass('ui-dropdowncheckbox-invalid', invalid);
 	};
 
 	if (W.$dropdowncheckboxevent)
@@ -3546,8 +3565,8 @@ COMPONENT('fileupload', function(self, config) {
 
 COMPONENT('suggestion', function(self, config) {
 
-	var container, arrow, timeout, input = null;
-	var is = false;
+	var container, arrow, timeout, icon, input = null;
+	var is = false, selectedindex = 0, resultscount = 0;
 
 	self.items = null;
 	self.template = Tangular.compile('<li data-index="{{ $.index }}"{{ if selected }} class="selected"{{ fi }}>{{ name | raw }}</li>');
@@ -3568,12 +3587,32 @@ COMPONENT('suggestion', function(self, config) {
 	self.make = function() {
 
 		self.aclass('ui-suggestion hidden');
-		self.append('<span class="ui-suggestion-arrow"></span><div class="ui-suggestion-search"><span><i class="fa fa-search"></i></span><div><input type="text" placeholder="{0}" class="ui-suggestion-search-input" /></div></div><div class="ui-suggestion-container"><ul></ul></div>'.format(config.placeholder));
+		self.append('<span class="ui-suggestion-arrow"></span><div class="ui-suggestion-search"><span class="ui-suggestion-button"><i class="fa fa-search"></i></span><div><input type="text" placeholder="{0}" class="ui-suggestion-search-input" /></div></div><div class="ui-suggestion-container"><ul></ul></div>'.format(config.placeholder));
 		container = self.find('ul');
 		arrow = self.find('.ui-suggestion-arrow');
 		input = self.find('input');
+		icon = self.find('.ui-suggestion-button').find('.fa');
 
-		self.event('click', 'li', function(e) {
+		self.event('mouseenter mouseleave', 'li', function() {
+			container.find('li.selected').rclass('selected');
+			$(this).aclass('selected');
+			var arr = container.find('li:visible');
+			for (var i = 0; i < arr.length; i++) {
+				if ($(arr[i]).hclass('selected')) {
+					selectedindex = i;
+					break;
+				}
+			}
+		});
+
+		self.event('click', '.ui-suggestion-button', function(e) {
+			input.val('');
+			self.search();
+			e.stopPropagation();
+			e.preventDefault();
+		});
+
+		self.event('touchstart mousedown', 'li', function(e) {
 			self.callback && self.callback(self.items[+this.getAttribute('data-index')], $(self.target));
 			self.hide();
 			e.preventDefault();
@@ -3588,12 +3627,51 @@ COMPONENT('suggestion', function(self, config) {
 			is && self.hide(0);
 		});
 
-		self.on('scroll', function() {
-			is && self.hide(1);
+		self.event('keydown', 'input', function(e) {
+			var o = false;
+			switch (e.which) {
+				case 27:
+					o = true;
+					self.hide();
+					break;
+				case 13:
+					o = true;
+					var sel = self.find('li.selected');
+					if (sel.length && self.callback)
+						self.callback(self.items[+sel.attrd('index')]);
+					self.hide();
+					break;
+				case 38: // up
+					o = true;
+					selectedindex--;
+					if (selectedindex < 0)
+						selectedindex = 0;
+					else
+						self.move();
+					break;
+				case 40: // down
+					o = true;
+					selectedindex++ ;
+					if (selectedindex >= resultscount)
+						selectedindex = resultscount;
+					else
+						self.move();
+					break;
+			}
+
+			if (o) {
+				e.preventDefault();
+				e.stopPropagation();
+			}
+
 		});
 
-		self.event('keyup', 'input', function() {
-			setTimeout2(self.id, self.search, 100, null, this.value);
+		self.event('input', 'input', function() {
+			setTimeout2(self.ID, self.search, 100, null, this.value);
+		});
+
+		self.event('scroll', function() {
+			is && self.hide(1);
 		});
 
 		$(window).on('scroll', function() {
@@ -3601,19 +3679,57 @@ COMPONENT('suggestion', function(self, config) {
 		});
 	};
 
+	self.move = function() {
+		var counter = 0;
+		var scroller = container.parent();
+		var h = scroller.height();
+		container.find('li').each(function() {
+			var el = $(this);
+
+			if (el.hclass('hidden')) {
+				el.rclass('selected');
+				return;
+			}
+
+			var is = selectedindex === counter;
+			el.tclass('selected', is);
+			if (is) {
+				var t = (h * counter) - h;
+				if ((t + h * 4) > h)
+					scroller.scrollTop(t - h);
+				else
+					scroller.scrollTop(0);
+			}
+			counter++;
+		});
+	};
+
 	self.search = function(value) {
+
+		icon.tclass('fa-times', !!value).tclass('fa-search', !value);
 
 		if (!value) {
 			container.find('li').rclass('hidden');
+			resultscount = self.items.length;
+			selectedindex = 0;
+			self.move();
 			return;
 		}
+
+		resultscount = 0;
+		selectedindex = 0;
 
 		value = value.toSearch();
 		container.find('li').each(function() {
 			var el = $(this);
 			var val = this.innerHTML.toSearch();
-			el.tclass('hidden', val.indexOf(value) === -1);
+			var is = val.indexOf(value) === -1;
+			el.tclass('hidden', is);
+			if (!is)
+				resultscount++;
 		});
+
+		self.move();
 	};
 
 	self.show = function(orientation, target, items, callback) {
@@ -3681,11 +3797,16 @@ COMPONENT('suggestion', function(self, config) {
 				break;
 		}
 
-		var options = { left: orientation === 'center' ? Math.ceil((offset.left - self.element.width() / 2) + (target.innerWidth() / 2)) : orientation === 'left' ? offset.left - 8 : (offset.left - self.element.width()) + target.innerWidth(), top: offset.top + target.innerHeight() + 15 };
+		var options = { left: orientation === 'center' ? Math.ceil((offset.left - self.element.width() / 2) + (target.innerWidth() / 2)) : orientation === 'left' ? offset.left - 8 : (offset.left - self.element.width()) + target.innerWidth(), top: offset.top + target.innerHeight() + 10 };
 		self.css(options);
 
 		if (is)
 			return;
+
+		selectedindex = 0;
+		resultscount = items.length;
+		self.move();
+		self.search();
 
 		self.rclass('hidden');
 		setTimeout(function() {
@@ -3697,7 +3818,9 @@ COMPONENT('suggestion', function(self, config) {
 			input.focus();
 		}, 500);
 
-		is = true;
+		setTimeout(function() {
+			is = true;
+		}, 50);
 	};
 
 	self.hide = function(sleep) {
@@ -5690,18 +5813,20 @@ COMPONENT('autocomplete', 'height:200', function(self, config) {
 
 		var current = container.find('.selected');
 		if (c === 13) {
-			prev = null;
-			self.visible(false);
-			if (current.length) {
-				if (onCallback) {
-					var val = datasource[+current.attrd('index')];
-					if (typeof(onCallback) === 'string')
-						SET(onCallback, val.value === undefined ? val.name : val.value);
-					else
-						onCallback(val, old);
+			if (prev) {
+				prev = null;
+				self.visible(false);
+				if (current.length) {
+					if (onCallback) {
+						var val = datasource[+current.attrd('index')];
+						if (typeof(onCallback) === 'string')
+							SET(onCallback, val.value === undefined ? val.name : val.value);
+						else
+							onCallback(val, old);
+					}
+					e.preventDefault();
+					e.stopPropagation();
 				}
-				e.preventDefault();
-				e.stopPropagation();
 			}
 			return;
 		}
@@ -5759,11 +5884,11 @@ COMPONENT('autocomplete', 'height:200', function(self, config) {
 		self.css(offset);
 	};
 
-	self.attach = function(input, search, callback, top, left, width) {
-		self.attachelement(input, input, search, callback, top, left, width);
+	self.attach = function(input, search, callback, left, top, width) {
+		self.attachelement(input, input, search, callback, left, top, width);
 	};
 
-	self.attachelement = function(element, input, search, callback, top, left, width) {
+	self.attachelement = function(element, input, search, callback, left, top, width) {
 
 		if (typeof(callback) === 'number') {
 			width = left;
