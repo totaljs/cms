@@ -304,7 +304,7 @@
 				var item = data[i];
 
 				if (search) {
-					if (item.name.toSearch().indexOf(search) === -1)
+					if (item.id.indexOf(search) === -1 && item.name.toSearch().indexOf(search) === -1)
 						continue;
 				}
 
