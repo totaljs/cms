@@ -43,7 +43,7 @@ NEWSCHEMA('Post').make(function(schema) {
 		if (opt.sort)
 			filter.adminSort(opt.sort);
 		else
-			filter.sort('datecreated', true);
+			filter.sort('date', true);
 
 		filter.callback((err, docs, count) => $.callback(filter.adminOutput(docs, count)));
 	});
