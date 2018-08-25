@@ -190,7 +190,6 @@
 
 			var msg = '';
 			var t = common.notifications.template;
-
 			switch (item.type) {
 				case 'navigation.save':
 					msg = t.format('@(Navigation has been saved)', item.message);
@@ -203,7 +202,7 @@
 				case 'widgets/edit':
 
 					if (user.name !== item.user) {
-						var t = item.type.substring(0, item.type.indexOf('.'));
+						var t = item.type.substring(0, item.type.indexOf('/'));
 						if (t === 'navigations')
 							t = 'pages-navigation';
 						else
