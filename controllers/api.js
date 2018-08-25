@@ -11,6 +11,7 @@ exports.install = function() {
 
 	// Newsletter view
 	FILE('/newsletter.gif', file_newsletterviewstats);
+	FILE('/sitemap.xml', file_sitemap);
 };
 
 function file_newsletterviewstats(req, res) {
@@ -22,4 +23,18 @@ function file_newsletterviewstats(req, res) {
 function unsubscribe() {
 	var self = this;
 	self.$workflow('unsubscribe', () => self.plain(TRANSLATOR(self.language, '@(You have been successfully unsubscribed.\nThank you)')));
+}
+
+function file_sitemap(req, res) {
+
+	var arr = F.global.pages;
+	var builder = ['<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'];
+
+	for (var i = 0; i < arr.length; i++) {
+		var item = arr[i];
+		builder.push('<url><loc>{0}</loc><lastmod>{1}</lastmod></url>'.format(F.config.url + item.url, (item.dateupdated ? item.dateupdated : item.datecreated).format('yyyy-MM-dd')));
+	}
+
+	builder.push('</urlset>');
+	res.content(200, builder.join(''), 'text/xml');
 }

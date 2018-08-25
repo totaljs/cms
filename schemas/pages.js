@@ -385,7 +385,7 @@ function refresh_redirects() {
 // Refreshes internal information (sitemap)
 function refresh() {
 
-	NOSQL('pages').find().fields('id', 'url', 'name', 'title', 'parent', 'icon', 'language', 'ispartial').callback(function(err, response) {
+	NOSQL('pages').find().fields('id', 'url', 'name', 'title', 'parent', 'icon', 'language', 'ispartial', 'datecreated', 'dateupdated').callback(function(err, response) {
 
 		var sitemap = {};
 		var helper = {};
@@ -402,7 +402,7 @@ function refresh() {
 			}
 
 			var key = doc.url;
-			var obj = { id: doc.id, url: doc.url, name: doc.name, title: doc.title, parent: doc.parent, icon: doc.icon, links: [], language: doc.language };
+			var obj = { id: doc.id, url: doc.url, name: doc.name, title: doc.title, parent: doc.parent, icon: doc.icon, links: [], language: doc.language, datecreated: doc.datecreated, dateupdated: doc.dateupdated };
 
 			helper[doc.id] = key;
 			sitemap[key] = obj;
