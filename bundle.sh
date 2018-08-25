@@ -13,13 +13,13 @@ rm controllers/default.js
 
 echo "ZXhwb3J0cy5pbnN0YWxsID0gZnVuY3Rpb24oKSB7CglST1VURSgnLyonLCBmdW5jdGlvbigpIHsKCQl0aGlzLkNNU3BhZ2UoKTsKCX0pOwp9Owo=" | base64 --decode > controllers/cms-default.js
 
-cd definitions
-for f in *.js; do mv "$f" "`echo cms-$f`"; done
+# cd definitions
+# for f in *.js; do mv "$f" "`echo cms-$f`"; done
 
-cd ../schemas
-for f in *.js; do mv "$f" "`echo cms-$f`"; done
+# cd ../schemas
+# for f in *.js; do mv "$f" "`echo cms-$f`"; done
 
-cd ..
+# cd ..
 tpm create cms.package
 cp cms.package ../cms.bundle
 

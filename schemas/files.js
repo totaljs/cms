@@ -8,7 +8,7 @@ NEWSCHEMA('File').make(function(schema) {
 
 	schema.addWorkflow('clear', function($) {
 
-		var databases = [F.path.databases('posts.nosql'), F.path.databases('notices.nosql'), F.path.databases('pages.nosql'), F.path.databases('widgets.nosql'), F.path.databases('navigations.nosql'), F.path.databases('newsletters.nosql')];
+		var databases = [F.path.databases('posts.nosql'), F.path.databases('notices.nosql'), F.path.databases('pages.nosql'), F.path.databases('widgets.nosql'), F.path.databases('navigations.nosql'), F.path.databases('newsletters.nosql'), F.path.databases('pagesdata.table'), F.path.databases('postsdata.table'), F.path.databases('newslettersdata.table'), F.path.databases('partsdata.table')];
 		var remove = [];
 		var storage = FILESTORAGE('files');
 		var db = {};
