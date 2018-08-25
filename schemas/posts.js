@@ -38,7 +38,7 @@ NEWSCHEMA('Post').make(function(schema) {
 			filter.fields('description');
 		}
 
-		filter.fields('id', 'idcategory', 'category', 'name', 'datecreated', 'date', 'linker', 'linker_category', 'pictures', 'summary', 'ispublished', 'signals', 'author');
+		filter.fields('id', 'idcategory', 'category', 'name', 'datecreated', 'date', 'linker', 'linker_category', 'pictures', 'summary', 'ispublished', 'signals', 'author', 'template');
 
 		if (opt.sort)
 			filter.adminSort(opt.sort);
