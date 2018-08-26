@@ -95,7 +95,7 @@
 			} else if (type === 'function') {
 				obj.target(url, text);
 			} else {
-				if (/\.(jpg|png|gif|svg|jpeg)$/.test(url))
+				if (/\.(jpg|png|gif|svg|jpeg)$/i.test(url))
 					$(obj.target).attr('src', url);
 				else {
 					SETTER('snackbar', 'warning', '@(You need to choose an image.)');
