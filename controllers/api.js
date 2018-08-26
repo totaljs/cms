@@ -35,6 +35,8 @@ function file_sitemap(req, res) {
 		builder.push('<url><loc>{0}</loc><lastmod>{1}</lastmod></url>'.format(F.config.url + item.url, (item.dateupdated ? item.dateupdated : item.datecreated).format('yyyy-MM-dd')));
 	}
 
-	builder.push('</urlset>');
-	res.content(200, builder.join(''), 'text/xml');
+	OPERATION('sitemap.xml', builder, function() {
+		builder.push('</urlset>');
+		res.content(200, builder.join(''), 'text/xml');
+	});
 }
