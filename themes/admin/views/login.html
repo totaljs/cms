@@ -18,12 +18,12 @@
 	<style type="text/css">
 		/*auto*/
 		html,body { overflow: hidden; height: 100%; }
-		body { background-color: #E6E9ED; }
-		.panel { max-width: 320px; width: 100%; position: absolute; left: 50%; top: 50%; margin: -300px 0 0 -140px; background-color: white; box-shadow: 0 5px 10px rgba(0,0,0,0.1); border-radius: 4px; transition: all 0.5s; transform: scale(1.5); }
+		body { background-color: white; }
+		.panel { max-width: 320px; width: 100%; position: absolute; left: 50%; top: 50%; margin: -300px 0 0 -140px; background-color: white; border: 1px solid #E0E0E0; border-radius: 3px; transition: all 0.5s; transform: scale(1.5); }
 		.padding { padding: 20px; }
 		.panelshow { transform: scale(1); }
 
-		h1 { color: black; margin: 0; padding: 30px 0 20px; font-family: Arial; text-align: center; background-color: #F8F8F8; background: repeating-linear-gradient(45deg,#F0F0F0,#F0F0F0 10px,#F9F9F9 10px,#F9F9F9 20px); border-radius: 4px 4px 0 0; }
+		h1 { color: black; margin: 0; padding: 20px 0 15px; font-family: Arial; text-align: center; border-bottom: 1px solid #E0E0E0; border-radius: 4px 4px 0 0; font-size: 18px; }
 		h1 .fa { margin-right: 10px; }
 		input:-ms-input-placeholder, input:-webkit-input-placeholder, input:-moz-input-placeholder { color: silver; }
 		input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { background-color: #F0F0F0; cursor: not-allowed; color: silver; }
@@ -48,14 +48,14 @@
 		.hidden { display: none; }
 		.m { margin-bottom: 15px; }
 
-		button { background-color: #4285F4; border: 0; color: white; cursor: pointer; outline: 0; width: 100%; border-radius: 4px; height: 50px; text-transform: uppercase; }
+		button { background-color: #4285F4; border: 0; color: white; cursor: pointer; outline: 0; width: 100%; border-radius: 4px; height: 50px; text-transform: uppercase; font-weight: bold; }
 		button:hover { box-shadow: 0 2px 5px rgba(0,0,0,0.1); opacity: 0.9; }
 		button:disabled { background-color: #F0F0F0; color: silver; cursor: not-allowed; box-shadow: none; opacity: 1; }
 		button .fa { margin-right: 5px; }
 		footer { font-size: 11px; text-align: center; color: #A0A0A0; margin: 20px 0 0 0; }
 
 		@media(max-width: 768px) {
-			.panel { margin-top: -200px; }
+			.panel { margin: 20px; left: 0; position: relative; top: 0; width: auto; max-width: 1000px; }
 		}
 
 	</style>
