@@ -95,7 +95,7 @@
 			obj.notifications.ui = { el: tmp, icon: tmp.find('> .fa'), body: tmp.find('.header-message-cell') };
 			obj.notifications.messages = []; // messages from notifications
 			obj.notifications.running = false;
-			obj.notifications.template = '<b>{0}</b><br />{1}';
+			obj.notifications.template = '<b>{0}</b>{1}';
 
 			obj.componentator = @{if G.config.componentator !== false}true@{else}false@{fi};
 
@@ -202,16 +202,16 @@
 				case 'widgets/edit':
 
 					if (user.name !== item.user) {
-						var t = item.type.substring(0, item.type.indexOf('/'));
-						if (t === 'navigations')
-							t = 'pages-navigation';
+						var tmp = item.type.substring(0, item.type.indexOf('/'));
+						if (tmp === 'navigations')
+							tmp = 'pages-navigation';
 						else
-							t += '-form';
-						if (t === common.form)
+							tmp += '-form';
+						if (tmp === common.form)
 							SETTER('snackbar', 'warning', '@(<b>IMPORTANT:</b> The user called "<b>{0}</b>" is editing same item.)'.format(user.name));
 					}
 
-					break;
+					return;
 				case 'newsletters/save':
 					msg = t.format('@(Nesletter has been saved)', item.message);
 					break;

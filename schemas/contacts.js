@@ -25,7 +25,7 @@ NEWSCHEMA('Contact').make(function(schema) {
 		MAIL(F.global.config.emailcontactform, '@(Contact form #{0})'.format(model.id), '=?/mails/contact', model, $.language).reply(model.email, true);
 
 		// Events
-		$SAVE('Event', { type: 'contacts/add', user: $.user ? $.user.name : '', body: model.firstname + ' ' + model.lastname, id: model.id }, NOOP, $);
+		$SAVE('Event', { type: 'contactforms/add', user: $.user ? $.user.name : '', body: model.firstname + ' ' + model.lastname, id: model.id }, NOOP, $);
 	});
 
 	// Stats

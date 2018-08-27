@@ -19,7 +19,8 @@ header .title .fa, header .title .fal { margin-right: 8px; }
 .header-message .fa { width: 40px; border-right: 1px solid #E6E4CB; height: 40px; vertical-align: middle; font-size: 20px; padding: 10px 0 0 2px; text-align: center; float: left; color: #E6C752; }
 .header-message > div { display: block; margin-left: 50px; line-height: 14px; }
 .header-message-table { display: table; width: 100%; table-layout: fixed; height: 40px; }
-.header-message-cell { display: table-cell; vertical-align: middle; }
+.header-message-cell { display: table-cell; vertical-align: middle; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.header-message-cell b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .header-empty { height: 60px; }
 
