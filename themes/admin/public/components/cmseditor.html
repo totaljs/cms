@@ -1162,7 +1162,9 @@
 
 							cattr.datawidth = tw;
 							cattr.dataheight = th;
-							cattr.datasize = targettmp.attrd('size');
+							cattr.datasize = targettmp.attrd('cms-size');
+							if (cattr.datasize)
+								cattr.datasize += '%';
 							cattr.alt = targettmp.attr('alt') || '';
 						}
 

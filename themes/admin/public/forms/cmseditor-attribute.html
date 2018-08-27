@@ -32,7 +32,7 @@
 	<div data-bind="cmseditor.attribute.isimage__show:value" class="hidden">
 		<hr class="nmb" />
 		<div class="padding">
-			<div class="b m black"><i class="fa fa-photo mr5"></i>@(Image settings)</div>
+			<div class="b m black"><i class="fa fa-camera mr5"></i>@(Image settings)</div>
 
 			<div class="row">
 				<div class="col-md-12">
@@ -137,18 +137,22 @@
 
 			if (attr.isimage) {
 				if (attr.imgdefined) {
+
 					if (attr.datawidth)
-						target.attrd('width', attr.datawidth);
+						target.attrd('cms-width', attr.datawidth);
 					else
-						target.rattrd('width');
+						target.rattrd('cms-width');
+
 					if (attr.dataheight)
-						target.attrd('height', attr.dataheight);
+						target.attrd('cms-height', attr.dataheight);
 					else
-						target.rattrd('width');
+						target.rattrd('cms-width');
+
 					if (attr.datasize)
-						target.attrd('size', attr.datasize + (attr.datasize.lastIndexOf('%') === -1 ? '%' : ''));
+						target.attrd('cms-size', attr.datasize.replace('%', ''));
 					else
-						target.rattrd('size');
+						target.rattrd('cms-size');
+
 				} else {
 					if (attr.datawidth)
 						target.attr('width', attr.datawidth);
