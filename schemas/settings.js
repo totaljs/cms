@@ -113,7 +113,7 @@ NEWSCHEMA('Settings').make(function(schema) {
 			var users = {};
 			for (var i = 0, length = settings.users.length; i < length; i++) {
 				var user = settings.users[i];
-				var key = (user.login + ':' + user.password).hash();
+				var key = (user.login + ':' + user.password + ':' + F.config.secret + (user.login + ':' + user.password).hash()).md5();
 				users[key] = user;
 			}
 

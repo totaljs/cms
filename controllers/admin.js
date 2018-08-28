@@ -188,7 +188,7 @@ ON('controller', function(controller, name) {
 		return;
 	}
 
-	var user = F.global.config.users[+cookie];
+	var user = F.global.config.users[cookie];
 	if (user == null) {
 		DDOS[controller.ip] = ddos ? ddos + 1 : 1;
 		controller.cancel();
@@ -242,10 +242,8 @@ function socket() {
 }
 
 function login() {
-
 	var self = this;
-	var key = (self.body.name + ':' + self.body.password).hash();
-
+	var key = (self.body.name + ':' + self.body.password + ':' + F.config.secret + (self.body.name + ':' + self.body.password).hash()).md5();
 	if (F.global.config.users[key]) {
 		$SAVE('Event', { type: 'system/login', user: self.body.name, admin: true }, NOOP, self);
 		self.cookie(F.config['admin-cookie'], key, '1 month');
