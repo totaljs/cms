@@ -8,7 +8,7 @@ exports.install = function() {
 // URL: /download/*.*
 function file_read(req, res) {
 
-	var id = req.split[1].toLowerCase().replace('.' + req.extension, '');
+	var id = req.split[1].replace('.' + req.extension, '');
 
 	if (!req.query.s || (req.extension !== 'jpg' && req.extension !== 'gif' && req.extension !== 'png')) {
 		res.filefs('files', id);
