@@ -71,7 +71,7 @@
 		};
 
 		WATCH('pages.navigationitem.url2', function(path, value, type) {
-			value && type === 2 && SET('pages.navigationitem.url', value);
+			value && type === 2 && SET('pages.navigationitem.url', value, 2);
 		});
 
 		WATCH('pages.navigationitem.url', function(path, value, type) {
