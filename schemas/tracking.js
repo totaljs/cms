@@ -6,12 +6,7 @@ NEWSCHEMA('Tracking').make(function(schema) {
 	schema.addWorkflow('exec', function($) {
 		var db = NOSQL('tracking');
 		var tracking = db.meta('keys');
-
-		if (tracking && tracking[$.id]) {
-			$SAVE('Event', { type: 'tracking/add', user: $.user ? $.user.name : '', id: $.id, body: tracking[$.id] }, NOOP, $);
-			db.counter.hit($.id);
-		}
-
+		tracking && tracking[$.id] && db.counter.hit($.id);
 		$.success();
 	});
 
