@@ -72,9 +72,16 @@ NEWSCHEMA('Settings').make(function(schema) {
 		});
 	});
 
-	schema.addWorkflow('dependencies', function($) {
+	schema.addHook('dependencies', function($) {
+
 		var config = F.global.config;
-		var obj = {};
+		var obj = $.model;
+		var keys = Object.keys(obj);
+
+		// Clean default values in model
+		for (var i = 0; i < keys.length; i++)
+			obj[keys[i]] = undefined;
+
 		obj.templatespages = config.templates;
 		obj.navigations = config.navigations;
 		obj.signals = config.signals;
@@ -83,7 +90,8 @@ NEWSCHEMA('Settings').make(function(schema) {
 		obj.posts = config.posts;
 		obj.notices = config.notices;
 		obj.languages = config.languages || EMPTYARRAY;
-		$.callback(obj);
+
+		$.callback();
 	});
 
 	// Tests SMTP
