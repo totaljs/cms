@@ -191,9 +191,11 @@
 			var msg = '';
 			var t = common.notifications.template;
 			switch (item.type) {
+
 				case 'navigation.save':
 					msg = t.format('@(Navigation has been saved)', item.message);
 					break;
+
 				case 'navigations/edit':
 				case 'pages/edit':
 				case 'posts/edit':
@@ -262,10 +264,13 @@
 					break;
 			}
 
-			if (msg) {
+			msg = { type: item.type, body: msg };
+			EMIT('notification', msg);
+
+			if (msg && msg.body) {
 				!common.notifications.running && common.notifications.ui.el.aclass('header-message-visible');
 				common.notifications.running = true;
-				msg && common.notifications.ui.body.html(msg);
+				msg && common.notifications.ui.body.html(msg.body);
 			}
 
 			setTimeout(refresh_notifications, item.delay || 3000);
@@ -344,6 +349,7 @@
 
 	</script>
 
+	@{section('admin')}
 	@{components('admin')}
 
 </body>
