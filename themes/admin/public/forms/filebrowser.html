@@ -120,10 +120,8 @@
 
 			var obj = filebrowser;
 			var url = value[0].download;
-
-			console.log(value);
-
 			var type = typeof(obj.target);
+
 			if (type === 'string') {
 				SET(obj.target, url);
 				CHANGE(obj.target, true);
