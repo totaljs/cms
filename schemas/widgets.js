@@ -447,7 +447,7 @@ function refresh(callback, force) {
 
 function replaceContent(arr) {
 	var options = {};
-	arr.waitFor(function(item, next) {
+	arr.wait(function(item, next) {
 		options.id = item;
 		$WORKFLOW('Widget', 'replace', options, next);
 	});

@@ -1901,7 +1901,7 @@ COMPONENT('keyvalue', 'maxlength:100', function(self, config) {
 			parent.remove();
 			delete obj[key];
 
-			self.set(self.path, obj, 2);
+			self.set(obj, 2);
 			self.change(true);
 		});
 
@@ -1946,7 +1946,7 @@ COMPONENT('keyvalue', 'maxlength:100', function(self, config) {
 			});
 
 			skip = true;
-			self.set(self.path, keyvalue, 2);
+			self.set(keyvalue, 2);
 			self.change(true);
 		});
 	};
@@ -2135,7 +2135,7 @@ COMPONENT('textboxlist', 'maxlength:100', function(self, config) {
 			self.tclass(cempty, arr.length === 0);
 
 			skip = true;
-			self.set(self.path, arr, 2);
+			self.set(arr, 2);
 			self.change(true);
 		});
 
@@ -2173,7 +2173,7 @@ COMPONENT('textboxlist', 'maxlength:100', function(self, config) {
 			});
 
 			skip = true;
-			self.set(self.path, arr, 2);
+			self.set(arr, 2);
 			self.change(true);
 		});
 	};
@@ -4622,7 +4622,7 @@ COMPONENT('websocket', 'reconnect:3000', function(self, config) {
 
 		sending = true;
 		var async = queue.splice(0, 3);
-		async.waitFor(function(item, next) {
+		async.wait(function(item, next) {
 			ws.send(item);
 			setTimeout(next, 5);
 		}, function() {
@@ -4831,7 +4831,7 @@ COMPONENT('donutchart', 'format:{{ value | format(0) }};size:0;tooltip:true;pres
 			pieces.push(g.asvg('path').attr('data-index', i).attr('data-beg', item.beg).attr('data-end', item.end).attr('stroke-width', strokew).attr('class', 'piece piece' + (i + 1)).attr('d', arc(half, half, midpoint, item.beg, animate ? item.beg : item.end)));
 		}
 
-		animate && pieces.waitFor(function(item, next) {
+		animate && pieces.wait(function(item, next) {
 			var beg = +item.attrd('beg');
 			var end = +item.attrd('end');
 			var diff = end - beg;

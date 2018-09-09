@@ -95,7 +95,7 @@
 								return;
 							SETTER('loading', 'show');
 							var arr = FIND('.{0}.grid'.format(exports.scope)).checked().toArray();
-							arr.waitFor(function(el, next, index) {
+							arr.wait(function(el, next, index) {
 								SET('common.progress', (index / arr.length) * 100);
 								AJAX('DELETE [url]api/{0}/'.format(exports.scope), { id: el.value }, next);
 							}, function() {
