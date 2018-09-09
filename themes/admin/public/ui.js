@@ -4886,7 +4886,7 @@ COMPONENT('tabmenu', 'class:selected', function(self, config) {
 	self.make = function() {
 		self.event('click', 'li', function() {
 			var el = $(this);
-			!el.hclass(config.class) && self.set(el.attr('data-value'));
+			!el.hclass(config.class) && self.set(el.attrd('value'));
 		});
 	};
 

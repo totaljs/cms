@@ -25,77 +25,64 @@
 	<br />
 	<br />
 
-	<div class="bg-white" data-bind="user__show:value.sa">
-		<br />
-		<br />
+	<div data-bind="user__show:value.sa">
+
 		<div class="container">
-			<div class="row">
-				<div class="col-md-3 col-sm-4 m">
-					<h3><i class="fa fa-file-text-o"></i>@(Templates)</h3>
-				</div>
-				<div class="col-md-9 col-sm-8 m">
-					<div data-jc="keyvalue__form.templates__icon:file-text-o;placeholderkey:@(A template name);placeholdervalue:@(Type a view name)__{}">@(Page templates)</div>
+
+			<div class="tabmenu-container">
+				<ul data-jc="tabmenu__tab" data-jc-value="'templates'" class="tabmenu">
+					<li data-value="templates">@(Templates)</li>
+					<li data-value="categories">@(Categories)</li>
+					<li data-value="misc">@(Miscellaneous)</li>
+					<li data-value="smtp"><i class="fa fa-envelope"></i>@(SMTP)</li>
+				</ul>
+			</div>
+
+			<div class="panel" style="border-radius:0 0 3px 3px;border-top:0">
+				<div class="hidden panelbody" data-bind="settings.tab__show:value==='templates'">
+					<div data-jc="keyvalue__form.templates__placeholderkey:@(A template name);placeholdervalue:@(Type a view name)__{}">@(Page templates)</div>
 					<br />
-					<div data-jc="keyvalue__form.templatesposts__icon:file-text-o;placeholderkey:@(A template name);placeholdervalue:@(Type a view name)__{}">@(Post templates)</div>
+					<div data-jc="keyvalue__form.templatesposts__placeholderkey:@(A template name);placeholdervalue:@(Type a view name)__{}">@(Post templates)</div>
 					<br />
-					<div data-jc="keyvalue__form.templatesnewsletters__icon:file-text-o;placeholderkey:@(A template name);placeholdervalue:@(Type a view name)__{}">@(Newsletter templates)</div>
+					<div data-jc="keyvalue__form.templatesnewsletters__placeholderkey:@(A template name);placeholdervalue:@(Type a view name)__{}">@(Newsletter templates)</div>
 					<br />
 					<div class="help nmt"><i class="fa fa-warning"></i>@(All templates need to be created manually in <code>/themes/THEME_NAME/views/cms/</code> directory.)</div>
 				</div>
-			</div>
-		</div>
-		<hr />
-		<div class="container">
-			<div class="row">
-				<div class="col-md-3 col-sm-4 m">
-					<h3><i class="fa fa-folder-o"></i>@(Categories)</h3>
-				</div>
-				<div class="col-md-9 col-sm-8 m">
-					<div data-jc="keyvalue__form.posts__icon:folder-o;placeholderkey:@(A category name);placeholdervalue:@(Type an identificator and press enter)">@(Posts categories)</div>
+
+				<div class="hidden panelbody" data-bind="settings.tab__show:value==='categories'">
+					<div data-jc="keyvalue__form.posts__placeholderkey:@(A category name);placeholdervalue:@(Type an identificator and press enter)">@(Posts categories)</div>
 					<div class="help">@(Global variable: <code>G.posts</code>)</div>
 					<br />
-					<div data-jc="keyvalue__form.notices__icon:folder-o;placeholderkey:@(A category name);placeholdervalue:@(Type an identificator and press enter)">@(Notices categories)</div>
+					<div data-jc="keyvalue__form.notices__placeholderkey:@(A category name);placeholdervalue:@(Type an identificator and press enter)">@(Notices categories)</div>
 					<div class="help">@(Global variable: <code>G.notices</code>)</div>
 				</div>
-			</div>
-		</div>
-		<hr />
-		<div class="container">
-			<div class="row">
-				<div class="col-md-3 col-sm-4 m">
-					<h3><i class="fa fa-folder-o"></i>@(Miscellaneous)</h3>
-				</div>
-				<div class="col-md-9 col-sm-8 m">
-					<div data-jc="keyvalue__form.navigations__icon:sitemap;placeholderkey:@(A navigation name);placeholdervalue:@(Type an identificator and press enter)">@(Navigations)</div>
+
+				<div class="hidden panelbody" data-bind="settings.tab__show:value==='misc'">
+					<div data-jc="keyvalue__form.navigations__placeholderkey:@(A navigation name);placeholdervalue:@(Type an identificator and press enter)">@(Navigations)</div>
 					<div class="help">@(Global variable: <code>G.navigations.IDENTIFICATOR</code>)</div>
 					<br />
-					<div data-jc="keyvalue__form.languages__icon:sitemap;placeholderkey:@(A language name);placeholdervalue:@(Type an identificator (e.g. en, de, fr) and press enter)">@(Languages)</div>
+					<div data-jc="keyvalue__form.languages__placeholderkey:@(A language name);placeholdervalue:@(Type an identificator (e.g. en, de, fr) and press enter)">@(Languages)</div>
 					<br />
-					<div data-jc="keyvalue__form.signals__icon:dot-circle-o;placeholderkey:@(A signal name);placeholdervalue:@(Type an identificator and press enter)">@(Signals)</div>
+					<div data-jc="keyvalue__form.signals__placeholderkey:@(A signal name);placeholdervalue:@(Type an identificator and press enter)">@(Signals)</div>
 					<div class="help">@(Signals can affect a behaviour in pages or posts.)</div>
 				</div>
-			</div>
-		</div>
-		<br />
-		<br />
-	</div>
-	<div class="bg-yellow" data-bind="user__show:value.sa">
-		<br />
-		<div class="container">
-			<h3><i class="fa fa-envelope-o"></i>@(SMTP settings)</h3>
-			<div class="row">
-				<div class="col-md-6 m">
-					<div data-jc="textbox__form.smtp__icon:server;placeholder:@(smtp.yourdomain.com)">@(SMTP server)</div>
-					<div class="help">@(IP address or hostname.)</div>
-				</div>
-				<div class="col-md-6 m">
-					<div data-jc="textbox__form.smtpoptions__icon:code;placeholder:@(SMTP options)">@(SMTP options)</div>
-					<div class="help">@(Options need to be defined in JSON format according.) <a href="https://docs.totaljs.com/latest/en.html#api~FrameworkConfiguration~mail-smtp-options" target="_blank">Total.js specification</a></div>
+
+				<div class="hidden panelbody" data-bind="settings.tab__show:value==='smtp'">
+					<div class="row">
+						<div class="col-md-6 m">
+							<div data-jc="textbox__form.smtp__icon:server;placeholder:@(smtp.yourdomain.com)">@(SMTP server)</div>
+							<div class="help">@(IP address or hostname.)</div>
+						</div>
+						<div class="col-md-6 m">
+							<div data-jc="textbox__form.smtpoptions__icon:code;placeholder:@(SMTP options)">@(SMTP options)</div>
+							<div class="help">@(Options need to be defined in JSON format according.) <a href="https://docs.totaljs.com/latest/en.html#api~FrameworkConfiguration~mail-smtp-options" target="_blank">Total.js specification</a></div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
-		<br />
 	</div>
+
 	<br />
 
 	<div class="container">
