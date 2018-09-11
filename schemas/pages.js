@@ -708,6 +708,9 @@ Controller.prototype.CMSpage = function(callback, cache) {
 	if (self.query.DRAFT)
 		cache = false;
 
+	if (self.query.DEBUG && DEBUG)
+		cache = false;
+
 	self.memorize('cachecms' + self.url, cache || '1 minute', cache === false, function() {
 
 		var nosql = NOSQL('pages');
