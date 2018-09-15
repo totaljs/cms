@@ -73,8 +73,8 @@ input { border-radius: 0; }
 
 td.active { background-color: rgba(236,228,162,0.2) !important; }
 
-.ui-table-grid { font-size: 12px; background-color: white; table-layout: fixed; }
-.ui-table-grid td { vertical-align: middle; }
+.ui-table-grid { font-size: 13px; background-color: white; table-layout: fixed; }
+.ui-table-grid td { vertical-align: middle !important; }
 .ui-table-grid button { border: 0; background-color: #F0F0F0; color: black; border: 0; margin: 0 3px; border-radius: 3px; height: 18px; width: 18px; font-size: 11px; padding: 0; text-align: center; outline: 0; }
 .ui-table-grid button:hover { background-color: #E0E0E0; }
 .ui-table-grid button.btn-remove { background-color: #FF6068; color: white; }
