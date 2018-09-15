@@ -19,8 +19,9 @@ function refresh_height() {
 	setTimeout2('resize', function() {
 
 		el.length && el.each(function() {
-			var t = $(this).offset().top;
-			t && el.css('height', h - (t + 20));
+			var el = $(this);
+			var t = el.offset().top;
+			t && el.css('height', h - (t + 20 + (+(el.attrd('margin') || ''))));
 		});
 
 		EMIT('resize');
