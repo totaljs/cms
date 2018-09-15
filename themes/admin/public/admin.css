@@ -1,5 +1,9 @@
 /*auto*/
 
+@media(min-width:992px) {
+	html,body { overflow: hidden; }
+}
+
 body { background-color: #F0F0F0; }
 
 header { height: 41px; background-color: white; position: fixed; left: 0; top: 0; right: 0; box-shadow: 0 5px 10px rgba(0,0,0,.03);  border-bottom: 1px solid #E0E0E0; z-index: 10; }
@@ -22,7 +26,7 @@ header .title .fa, header .title .fal { margin-right: 8px; }
 .header-message-cell { display: table-cell; vertical-align: middle; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .header-message-cell b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-.header-empty { height: 60px; }
+.header-empty { height: 40px; }
 
 .backups { border-bottom: 1px solid #E0E0E0; padding: 10px 20px; font-size: 12px; height: 37px; }
 .backups > div { margin: -1px 18px 0 0; float: left; border-right: 1px solid #E0E0E0; padding-right: 20px }
@@ -30,7 +34,7 @@ header .title .fa, header .title .fal { margin-right: 8px; }
 .backups > div a:last-child { padding-right: 0; margin-right: 0; border-right: 0; }
 
 .toolbar2 { background-color: #F0F0F0; padding: 12px 20px; margin-bottom: 15px; }
-.toolbar { margin-bottom: 20px; }
+.toolbar { margin: 20px 0; }
 .toolbar button { outline: 0; background-color: transparent; border: 1px solid transparent; border-radius: 4px; font-size: 12px; height: 24px; padding: 0 5px; margin: 0; color: black; margin-right: 5px; }
 .toolbar button .fa, .toolbar button .fal, .toolbar button .far { margin-right: 5px; }
 .toolbar button:hover { background-color: white; box-shadow: 0 2px 3px rgba(0,0,0,0.05); }
@@ -100,7 +104,7 @@ h3 .fa, h3 .far, h3 .fal { margin-right: 8px; }
 .cmseditor iframe { width: 100%; min-height: 300px; border: 0; margin: 0; padding: 0; background-color: #F0F0F0 }
 .cmseditor-widget { border-bottom: 1px solid #F0F0F0; padding: 4px 5px; cursor: pointer; }
 .cmseditor-widget:hover { background-color: #F0F0F0; }
-.cmseditor-help { font-size: 11px; color: #909090; margin-top: 7px; line-height: 13px; margin-bottom: 8px; padding: 0 20px 0; height: 22px; border-bottom: 1px solid #E0E0E0; }
+.cmseditor-help { font-size: 11px; color: #909090; margin-top: 7px; line-height: 13px; padding: 0 20px 0; height: 22px; border-bottom: 1px solid #E0E0E0; }
 .cmseditor-help nav { float: left; }
 .cmseditor-help nav a { margin-right: 8px; padding-right: 8px; border-right: 1px solid #E0E0E0; }
 .cmseditor-help > div { float: right; }
@@ -125,7 +129,7 @@ h3 .fa, h3 .far, h3 .fal { margin-right: 8px; }
 .button .fa, .button .fal, .button .far { margin-right: 5px; }
 .button-small { height: 32px; font-size: 12px; }
 
-.panel { background-color: white; border-radius: 3px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
+.panel { background-color: white; border-radius: 3px; border: 1px solid #E9E9E9; }
 .panel > label { display: block; padding: 10px 20px; border-bottom: 1px solid #E0E0E0; font-size: 14px; font-weight: bold; }
 .panel > label .fa, .panel > label .fal, .panel > label .far { margin-right: 5px; }
 .panelbody { padding: 20px; position: relative; }
@@ -141,7 +145,7 @@ h3 .fa, h3 .far, h3 .fal { margin-right: 8px; }
 
 .tabmenu-container { height: 33px; overflow-y: hidden; overflow-x: auto; position: relative; overflow-scrolling: touch; }
 .tabmenu { padding: 0; margin: 0; display: block; font-size: 12px; position: absolute; white-space: nowrap; }
-.tabmenu li { position: relative; display: inline-block; border-bottom: 0; margin: 0 0 0 10px; border: 1px solid #E0E0E0; border-bottom: 0; padding: 0; border-radius: 3px 3px 0 0; background-color: #E5E5E5; text-align: center; padding: 8px 10px; color: #505050; cursor: pointer; min-width: 90px; }
+.tabmenu li { position: relative; display: inline-block; border-bottom: 0; margin: 0 0 0 10px; padding: 0; border-radius: 3px 3px 0 0; background-color: #E5E5E5; text-align: center; padding: 8px 10px; color: #505050; cursor: pointer; min-width: 90px; }
 .tabmenu li:first-child { margin-left: 0; }
 .tabmenu .selected { background-color: white; color: black; }
 .tabmenu .fa, .tabmenu .fab, .tabmenu .fal, .tabmenu .far { margin-right: 8px; }

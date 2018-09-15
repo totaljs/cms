@@ -903,6 +903,7 @@ COMPONENT('textbox', function(self, config) {
 			case 'disabled':
 				self.tclass('ui-disabled', value);
 				self.find('input').prop('disabled', value);
+				self.reset();
 				break;
 			case 'format':
 				self.format = value;
@@ -1220,6 +1221,7 @@ COMPONENT('dropdown', function(self, config) {
 			case 'disabled':
 				self.tclass('ui-disabled', value);
 				self.find('select').prop('disabled', value);
+				self.reset();
 				break;
 		}
 
@@ -1267,7 +1269,6 @@ COMPONENT('dropdown', function(self, config) {
 		} else
 			self.html(html).aclass('ui-dropdown-values');
 		select = self.find('select');
-		container = self.find('.ui-dropdown');
 		render && self.refresh();
 		config.disabled && self.reconfigure('disabled:true');
 		self.tclass('ui-dropdown-required', config.required === true);
@@ -1364,6 +1365,7 @@ COMPONENT('textarea', function(self, config) {
 			case 'disabled':
 				self.tclass('ui-disabled', value);
 				self.find('textarea').prop('disabled', value);
+				self.reset();
 				break;
 			case 'required':
 				self.noValid(!value);
@@ -1465,7 +1467,6 @@ COMPONENT('textarea', function(self, config) {
 		config.error && self.find('.ui-textarea-helper').tclass('ui-textarea-helper-show', invalid);
 	};
 });
-
 
 COMPONENT('checkbox', function(self, config) {
 
@@ -2242,6 +2243,7 @@ COMPONENT('dropdowncheckbox', 'checkicon:check;visible:0;alltext:All selected;li
 
 			case 'disabled':
 				self.tclass('ui-disabled', value);
+				self.reset();
 				break;
 
 			case 'checkicon':
