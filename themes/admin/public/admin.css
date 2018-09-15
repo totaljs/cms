@@ -125,7 +125,7 @@ h3 .fa, h3 .far, h3 .fal { margin-right: 8px; }
 .button .fa, .button .fal, .button .far { margin-right: 5px; }
 .button-small { height: 32px; font-size: 12px; }
 
-.panel { background-color: white; border-radius: 3px; box-shadow: 0 3px 10px rgba(0,0,0,0.03); border: 1px solid #E0E0E0; }
+.panel { background-color: white; border-radius: 3px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
 .panel > label { display: block; padding: 10px 20px; border-bottom: 1px solid #E0E0E0; font-size: 14px; font-weight: bold; }
 .panel > label .fa, .panel > label .fal, .panel > label .far { margin-right: 5px; }
 .panelbody { padding: 20px; position: relative; }
