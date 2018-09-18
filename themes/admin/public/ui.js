@@ -78,10 +78,10 @@ COMPONENT('grid', 'filter:true;external:false;fillcount:50;filterlabel:Filtering
 		self.html('<div class="ui-grid"><table class="ui-grid-header"><thead></thead></table><div class="ui-grid-scroller"><table class="ui-grid-data"><thead></thead><tbody></tbody></table></div></div>' + (config.pagination ? '<div class="ui-grid-footer hidden"><div class="ui-grid-meta"></div><div class="ui-grid-pagination"><button class="ui-grid-button" name="first"><i class="fa fa-angle-double-left"></i></button><button class="ui-grid-button" name="prev"><i class="fa fa-angle-left"></i></button><div class="page"><input type="text" maxlength="5" class="ui-grid-input" /></div><button class="ui-grid-button" name="next"><i class="fa fa-angle-right"></i></button><button class="ui-grid-button" name="last"><i class="fa fa-angle-double-right"></i></button></div><div class="ui-grid-pages"></div></div></div>' : ''));
 
 		var body = self.find('.ui-grid-data');
-		tbody = $(body.find('tbody').get(0));
-		tbodyhead = $(body.find('thead').get(0));
-		thead = $(self.find('.ui-grid-header').find('thead').get(0));
-		container = $(self.find('.ui-grid-scroller').get(0));
+		tbody = $(body.find('tbody')[0]);
+		tbodyhead = $(body.find('thead')[0]);
+		thead = $(self.find('.ui-grid-header').find('thead')[0]);
+		container = $(self.find('.ui-grid-scroller')[0]);
 
 		if (config.pagination) {
 			var el = self.find('.ui-grid-footer');
@@ -504,19 +504,19 @@ COMPONENT('grid', 'filter:true;external:false;fillcount:50;filterlabel:Filtering
 		var index = val.indexOf('.');
 		if (index === -1) {
 			if ((/[a-z]+/).test(val)) {
-				var dt = DATETIME.add(val);
-				return dt > DATETIME ? [DATETIME, dt] : [dt, DATETIME];
+				var dt = NOW.add(val);
+				return dt > NOW ? [NOW, dt] : [dt, NOW];
 			}
 			if (val.length === 4)
 				return [new Date(+val, 0, 1), new Date(+val + 1, 0	, 1)];
 		} else if (val.indexOf('.', index + 1) === -1) {
 			var a = val.split('.');
-			return new Date(DATETIME.getFullYear(), +a[1] - 1, +a[0]);
+			return new Date(NOW.getFullYear(), +a[1] - 1, +a[0]);
 		}
 		index = val.indexOf('-');
 		if (index !== -1 && val.indexOf('-', index + 1) === -1) {
 			var a = val.split('-');
-			return new Date(DATETIME.getFullYear(), +a[0] - 1, +a[1]);
+			return new Date(NOW.getFullYear(), +a[0] - 1, +a[1]);
 		}
 		return val.parseDate();
 	};
