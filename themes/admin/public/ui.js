@@ -78,10 +78,10 @@ COMPONENT('grid', 'filter:true;external:false;fillcount:50;filterlabel:Filtering
 		self.html('<div class="ui-grid"><table class="ui-grid-header"><thead></thead></table><div class="ui-grid-scroller"><table class="ui-grid-data"><thead></thead><tbody></tbody></table></div></div>' + (config.pagination ? '<div class="ui-grid-footer hidden"><div class="ui-grid-meta"></div><div class="ui-grid-pagination"><button class="ui-grid-button" name="first"><i class="fa fa-angle-double-left"></i></button><button class="ui-grid-button" name="prev"><i class="fa fa-angle-left"></i></button><div class="page"><input type="text" maxlength="5" class="ui-grid-input" /></div><button class="ui-grid-button" name="next"><i class="fa fa-angle-right"></i></button><button class="ui-grid-button" name="last"><i class="fa fa-angle-double-right"></i></button></div><div class="ui-grid-pages"></div></div></div>' : ''));
 
 		var body = self.find('.ui-grid-data');
-		tbody = $(body.find('tbody')[0]);
-		tbodyhead = $(body.find('thead')[0]);
-		thead = $(self.find('.ui-grid-header').find('thead')[0]);
-		container = $(self.find('.ui-grid-scroller')[0]);
+		tbody = $(body.find('tbody').get(0));
+		tbodyhead = $(body.find('thead').get(0));
+		thead = $(self.find('.ui-grid-header').find('thead').get(0));
+		container = $(self.find('.ui-grid-scroller').get(0));
 
 		if (config.pagination) {
 			var el = self.find('.ui-grid-footer');
@@ -101,7 +101,7 @@ COMPONENT('grid', 'filter:true;external:false;fillcount:50;filterlabel:Filtering
 		self.event('click', '.ui-grid-columnsort', function() {
 			var obj = {};
 			obj.columns = options.columns;
-			obj.column = options.columns[+$(this).attr('data-index')];
+			obj.column = options.columns[+$(this).attrd('index')];
 			self.sort(obj);
 		});
 
@@ -117,7 +117,11 @@ COMPONENT('grid', 'filter:true;external:false;fillcount:50;filterlabel:Filtering
 		});
 
 		self.event('change', 'input', function() {
-			this.type === 'checkbox' && config.checked && EXEC(config.checked, this, self);
+			var el = this;
+			if (el.type === 'checkbox') {
+				el && !el.value && self.checked(el.checked);
+				config.checked && EXEC(config.checked, el, self);
+			}
 		});
 
 		self.event('click', '.ui-grid-button', function() {
@@ -160,6 +164,12 @@ COMPONENT('grid', 'filter:true;external:false;fillcount:50;filterlabel:Filtering
 			config.button && EXEC(config.button, btn, options.items[+tr.attrd('index')], self);
 		});
 
+		var ALLOWED = { INPUT: 1, SELECT: 1 };
+
+		tbody.on('click', '.ui-grid-row', function(e) {
+			!ALLOWED[e.target.nodeName] && config.click && EXEC(config.click, options.items[+$(this).attrd('index')], self);
+		});
+
 		self.on('resize', self.resize);
 		config.init && EXEC(config.init);
 		wheight = WH;
@@ -173,6 +183,7 @@ COMPONENT('grid', 'filter:true;external:false;fillcount:50;filterlabel:Filtering
 	};
 
 	self.meta = function(html) {
+
 		switch (typeof(html)) {
 			case 'string':
 				options.columns = new Function('return ' + html.trim())();
@@ -185,14 +196,25 @@ COMPONENT('grid', 'filter:true;external:false;fillcount:50;filterlabel:Filtering
 				break;
 		}
 
+		options.columns = options.columns.remove(function(column) {
+			return !!(column.remove && FN(column.remove)());
+		});
+
+		options.customsearch = false;
+
 		for (var i = 0; i < options.columns.length; i++) {
 			var column = options.columns[i];
 
-			if (typeof(column.header) === 'string' && column.header.indexOf('{{') !== -1)
-				column.header = Tangular.compile(column.header);
+			if (typeof(column.header) === 'string')
+				column.header = column.header.indexOf('{{') === -1 ? new Function('return \'' + column.header + '\'') : Tangular.compile(column.header);
 
 			if (typeof(column.template) === 'string')
 				column.template = column.template.indexOf('{{') === -1 ? new Function('a', 'b', 'return \'' + column.template + '\'') : Tangular.compile(column.template);
+
+			if (column.search) {
+				options.customsearch = true;
+				column.search = column.search === true ? column.template : Tangular.compile(column.search);
+			}
 		}
 
 		self.rebuild(true);
@@ -382,10 +404,11 @@ COMPONENT('grid', 'filter:true;external:false;fillcount:50;filterlabel:Filtering
 		for (var i = 0; i < keys.length; i++) {
 
 			var column = keys[i];
-			var val = row[column];
 			var filter = options.filter[column];
-			var type = typeof(val);
 			var val2 = filtercache[column];
+			var val = row['$' + column] || row[column];
+
+			var type = typeof(val);
 
 			if (val instanceof Array) {
 				val = val.join(' ');
@@ -481,19 +504,19 @@ COMPONENT('grid', 'filter:true;external:false;fillcount:50;filterlabel:Filtering
 		var index = val.indexOf('.');
 		if (index === -1) {
 			if ((/[a-z]+/).test(val)) {
-				var dt = NOW.add(val);
-				return dt > NOW ? [NOW, dt] : [dt, NOW];
+				var dt = DATETIME.add(val);
+				return dt > DATETIME ? [DATETIME, dt] : [dt, DATETIME];
 			}
 			if (val.length === 4)
 				return [new Date(+val, 0, 1), new Date(+val + 1, 0	, 1)];
 		} else if (val.indexOf('.', index + 1) === -1) {
 			var a = val.split('.');
-			return new Date(NOW.getFullYear(), +a[1] - 1, +a[0]);
+			return new Date(DATETIME.getFullYear(), +a[1] - 1, +a[0]);
 		}
 		index = val.indexOf('-');
 		if (index !== -1 && val.indexOf('-', index + 1) === -1) {
 			var a = val.split('-');
-			return new Date(NOW.getFullYear(), +a[0] - 1, +a[1]);
+			return new Date(DATETIME.getFullYear(), +a[0] - 1, +a[1]);
 		}
 		return val.parseDate();
 	};
@@ -578,15 +601,27 @@ COMPONENT('grid', 'filter:true;external:false;fillcount:50;filterlabel:Filtering
 			pagination.pages.html(value.pages.pluralize.apply(value.pages, ppages));
 		}
 
+		if (options.customsearch) {
+			for (var i = 0, length = value.items.length; i < length; i++) {
+				var item = value.items[i];
+				for (var j = 0; j < options.columns.length; j++) {
+					var col = options.columns[j];
+					if (col.search)
+						item['$' + col.name] = col.search(item);
+				}
+			}
+		}
+
 		if (config.external) {
 			options.items = value.items;
 		} else {
 			options.items = [];
 			filtercache = {};
 			for (var i = 0, length = value.items.length; i < length; i++) {
-				if (isFilter && !self.can(value.items[i]))
+				var item = value.items[i];
+				if (isFilter && !self.can(item))
 					continue;
-				options.items.push(value.items[i]);
+				options.items.push(item);
 			}
 			options.lastsort && options.items.quicksort(options.lastsort.name, options.lastsort.sorting === 'asc');
 		}
