@@ -144,6 +144,7 @@ h3 .fa, h3 .far, h3 .fal { margin-right: 8px; }
 .blink { animation: blink 0.4s infinite linear alternate; }
 
 .tabmenu-container { height: 33px; overflow-y: hidden; overflow-x: auto; position: relative; overflow-scrolling: touch; }
+.tabmenu-bordered li { border: 1px solid #E9E9E9; border-bottom: 0; }
 .tabmenu { padding: 0; margin: 0; display: block; font-size: 12px; position: absolute; white-space: nowrap; }
 .tabmenu li { position: relative; display: inline-block; border-bottom: 0; margin: 0 0 0 10px; padding: 0; border-radius: 3px 3px 0 0; background-color: #E5E5E5; text-align: center; padding: 8px 10px; color: #505050; cursor: pointer; min-width: 90px; }
 .tabmenu li:first-child { margin-left: 0; }

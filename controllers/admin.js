@@ -365,7 +365,9 @@ function json_dashboard_referrers() {
 
 function view_notices_preview() {
 	var self = this;
-	$WORKFLOW('Notice', 'preview', self.body.body || '', function(err, response) {
-		self.content(response, 'text/html');
-	});
+	var body = self.body.body;
+	if (body)
+		$WORKFLOW('Notice', 'preview', body, (err, response) => self.content(response, 'text/html'));
+	else
+		self.content('', 'text/html');
 }
