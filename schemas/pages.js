@@ -670,18 +670,16 @@ function loadpartial(page, callback, controller) {
 
 	var nosql = NOSQL('pages');
 	nosql.find().in('id', page.partial).callback(function(err, response) {
-
 		response.wait(function(item, next) {
-
 			nosql.counter.hit(item.id);
 			output[item.id] = item;
 			output[item.url] = item;
-
-			item.body.CMSrender(item.widgets, function(body) {
-				item.body = body;
-				next();
-			}, controller);
-
+			F.functions.read('pages', item.id, function(err, body) {
+				body.CMSrender(item.widgets, function(body) {
+					item.body = body;
+					next();
+				}, controller);
+			});
 		}, () => callback(output));
 	});
 }
