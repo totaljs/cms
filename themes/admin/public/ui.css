@@ -149,7 +149,7 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .ui-dropdown-values { position: relative; display: block; height: 32px; text-align: left; }
 .ui-dropdown { border: 1px solid #E0E0E0; padding: 0 5px 0 10px; border-radius: 2px; outline: 0; height: 32px; overflow: hidden; float: left; width: 100%; background-color: white; position: relative; }
 .ui-dropdown:after { border-left: 1px solid #E0E0E0; width: 1px; position: absolute; height: 30px; content: ' '; margin-left: -23px; }
-.ui-dropdown select { width: 100%; outline: 0; border: 0; height: 24px; background: white url(data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTc5MiAxNzkyIiB2ZXJzaW9uPSIxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2UtbWl0ZXJsaW1pdD0iMSI+PHBhdGggZD0iTTE1MzkgNjE1YzAgMjEtOCA0MC0yNCA1NmwtNjE4IDYyNy02MjAtNjI3YTc3IDc3IDAgMCAxLTI0LTU2YzAtMjIgOC00MSAyNC01N3MzNS0yNCA1Ni0yNGgxMTI2YzIxIDAgNDAgOCA1NiAyNHMyNCAzNSAyNCA1N3oiIGZpbGwtcnVsZT0ibm9uemVybyIvPjwvc3ZnPg==) no-repeat 100% 50%; background-size: 14px; font-size: 14px; float: left; cursor: pointer; padding: 0; margin: 3px 0 0 -4px; color: black; appearance: none; }
+.ui-dropdown select { width: 100%; outline: 0; border: 0; height: 24px; background: white url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAMAAAC7IEhfAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAABmUExURUdwTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAItlF7YAAAAhdFJOUwBhOmj+UgEV/fwRZQ5ea3L1WKdZcG9tW31VeVd1Y1ymVGqm2I8AAACOSURBVDjL7dNHDoAgEAVQCypgwd4b97+kMcYIyKBr41+/hMzMx7L+fCRRACSSmJ9jDgQvvgAdbogjQJrCLqXi2x6BHPHkYVZAkk4de9COg7P7ggqNxI1ulTNSHYr1S49VaUPnsWUZwoecROeaTh5eLjGXwz1d9VSj5HDsuXD17sY31Sw579+VmLX/R/5iNk59I2Ux5kcjAAAAAElFTkSuQmCC) no-repeat 100% 50%; background-size: 14px; font-size: 14px; float: left; cursor: pointer; padding: 0; margin: 3px 0 0 -4px; color: black; appearance: none; }
 .ui-dropdown-label { margin-bottom: 5px; font-size: 12px; }
 .ui-dropdown-label .fa { width: 14px; }
 .ui-dropdown-required .ui-dropdown-label { font-weight: bold; }
@@ -162,6 +162,7 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .ui-disabled select { background-color: #F0F0F0; cursor: not-allowed; color: #A0A0A0; }
 .ui-disabled .ui-dropdown { background-color: #F0F0F0; cursor: not-allowed; }
 .ui-disabled .ui-dropdown .fa { color: #A0A0A0; }
+.ui-dropdown select::-ms-expand { display: none; }
 
 .ui-textarea { border: 1px solid #E0E0E0; padding: 4px 5px; border-radius: 2px; position: relative; display: block; width: 100%; background-color: white; }
 .ui-textarea textarea { border: 0; width: 100%; height: 100%; outline: 0; font: normal 14px Arial; color: black; resize: none; min-height: 50px; background-color: white; padding: 0; }
@@ -354,6 +355,7 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .ui-calendar-today .fa { margin-right: 6px; }
 .ui-calendar-header select { background-color: white; border: 1px solid #E0E0E0; height: 23px; outline: 0; cursor: pointer; appearance: none; padding: 0 10px; border-radius: 3px; }
 .ui-calendar-today a:first-child { float: right; color: #B7292E; font-weight: bold; }
+.ui-calendar select::-ms-expand { display: none; }
 
 .ui-multioptions { background-color: white; padding: 0 0 15px; }
 .ui-multioptions-item { height: 36px; padding: 0 10px; background-color: #F5F7FA; border-top: 1px solid #E0E0E0; }
