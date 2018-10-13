@@ -213,7 +213,9 @@
 							SETTER('snackbar', 'warning', '@(<b>IMPORTANT:</b> The user called "<b>{0}</b>" is editing same item.)'.format(user.name));
 					}
 
+					refresh_notifications();
 					return;
+
 				case 'newsletters/save':
 					msg = t.format('@(Nesletter has been saved)', item.message);
 					break;
