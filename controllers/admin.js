@@ -41,7 +41,7 @@ exports.install = function() {
 	// Internal
 	ROUTE('GET     #admin', '=admin/index');
 	ROUTE('POST    /api/login/admin/',                        login);
-	ROUTE('POST    #admin/api/upload/',                       upload, ['upload', 10000], 3084); // 3 MB
+	ROUTE('POST    #admin/api/upload/',                       upload, ['upload', 10000], 5120); // 5 MB
 	ROUTE('POST    #admin/api/upload/base64/',                upload_base64, [10000], 2048); // 2 MB
 	ROUTE('GET     #admin/api/dependencies/                   *Settings --> @dependencies');
 
