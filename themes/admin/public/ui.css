@@ -247,6 +247,7 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .ui-textboxlist-base > div:first-child { display: none; }
 .empty .ui-textboxlist-base { border-radius: 2px; }
 
+.ui-dropdowncheckbox-container * { box-sizing: border-box; }
 .ui-dropdowncheckbox-container { display: block; text-align: left; position: relative; font-size:14px; }
 .ui-dropdowncheckbox { border: 1px solid #E0E0E0; padding: 0 10px; border-radius: 2px; outline: 0; overflow: hidden; width: 100%; background-color: white; height: 32px; cursor: pointer; }
 .ui-dropdowncheckbox div { padding: 5px 0 0 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: black; }
@@ -258,12 +259,12 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .ui-dropdowncheckbox-required .ui-dropdowncheckbox-label:before { color: red; content: '***'; margin-right: 5px; }
 .ui-dropdowncheckbox-required .ui-dropdowncheckbox-label { font-weight: bold; }
 .ui-dropdowncheckbox-required .ui-dropdowncheckbox .fa { border-left-color: #D0D0D0; }
-.ui-dropdowncheckbox-values { position: absolute; width: 100%; z-index: 2; background-color: white; border: 1px solid #E0E0E0; padding: 5px 10px; border-radius: 0 0 3px 3px; line-height: 18px; margin-top: -1px; box-shadow: 0 3px 5px rgba(0,0,0,0.08); overflow: auto; max-height: 250px; font-size: 12px; }
+.ui-dropdowncheckbox-values { position: absolute; width: 100%; z-index: 2; background-color: white; border: 1px solid #D0D0D0; padding: 5px 10px; border-radius: 0 0 3px 3px; line-height: 18px; margin-top: -1px; box-shadow: 0 3px 5px rgba(0,0,0,0.08); overflow: auto; max-height: 250px; font-size: 12px; }
 .ui-dropdowncheckbox-item { cursor: pointer; padding-bottom: 2px; }
 .ui-dropdowncheckbox-item span { cursor: pointer; vertical-align: middle; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; margin-left: 20px; }
-.ui-dropdowncheckbox-item div { float: left; width: 16px; height: 16px; border: 2px solid #E0E0E0; margin: 1px 6px 0 0; vertical-align: middle; cursor: pointer; color: white; font-size: 11px; text-align: center; padding: 1px 0 0 1px; background-color: white; border-radius: 3px; }
+.ui-dropdowncheckbox-item div { float: left; width: 16px; height: 16px; border: 1px solid #E0E0E0; margin: 1px 6px 0 0; vertical-align: middle; cursor: pointer; color: white; font-size: 11px; text-align: center; padding: 1px 0 0 1px; background-color: white; border-radius: 2px; }
 .ui-dropdowncheckbox-item .fa { display: none; }
-.ui-dropdowncheckbox-checked div { background-color: #017CCA; border-color: #017CCA; }
+.ui-dropdowncheckbox-checked div { background-color: #4285F4; border-color: #4285F4; }
 .ui-dropdowncheckbox-checked .fa { display: block !important; }
 .ui-dropdowncheckbox-invalid .ui-dropdowncheckbox { border: 1px solid #E1A1A1 !important; background-color: #FFF3F3 !important; }
 .ui-dropdowncheckbox-invalid .ui-dropdowncheckbox .fa { border-left-color: #E1A1A1 !important; }

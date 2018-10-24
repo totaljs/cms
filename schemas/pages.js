@@ -402,10 +402,17 @@ function refresh() {
 			}
 
 			var key = doc.url;
+			var lng = doc.language;
 			var obj = { id: doc.id, url: doc.url, name: doc.name, title: doc.title, parent: doc.parent, icon: doc.icon, links: [], language: doc.language, datecreated: doc.datecreated, dateupdated: doc.dateupdated };
 
 			helper[doc.id] = key;
 			sitemap[key] = obj;
+
+			if (lng) {
+				key = lng + ' ' + key;
+				sitemap[key] = obj;
+			}
+
 			pages.push(obj);
 		}
 
@@ -687,7 +694,14 @@ function loadpartial(page, callback, controller) {
 Controller.prototype.CMSpage = function(callback, cache) {
 
 	var self = this;
-	var page = F.global.sitemap[self.url];
+	var page;
+
+	if (self.language) {
+		page = F.global.sitemap[self.language + ' ' + self.url];
+		if (!page)
+			page = F.global.sitemap[self.url];
+	} else
+		page = F.global.sitemap[self.url];
 
 	if (!page) {
 		if (F.global.redirects && F.global.redirects[self.url]) {
@@ -709,7 +723,7 @@ Controller.prototype.CMSpage = function(callback, cache) {
 	if (self.query.DEBUG && DEBUG)
 		cache = false;
 
-	self.memorize('cachecms' + self.url, cache || '1 minute', cache === false, function() {
+	self.memorize('cachecms' + self.language + '_' + self.url, cache || '1 minute', cache === false, function() {
 
 		var nosql = NOSQL('pages');
 		nosql.one().where('id', page.id).callback(function(err, response) {
