@@ -9,7 +9,7 @@ input { border-radius: 0; }
 .hidden { display: none; }
 .avatar { overflow: hidden; }
 
-.badge { font-size: 11px; padding: 1px 6px 2px; border-radius: 3px; background-color: #F0F0F0; line-height: 12px; vertical-align: middle; margin-top: -2px; position: relative; display: inline-block; color: white; }
+.badge { font-size: 11px; padding: 1px 6px 2px; border-radius: 2px; background-color: #F0F0F0; line-height: 12px; vertical-align: middle; margin-top: -2px; position: relative; display: inline-block; color: white; }
 .badge .fa { margin-right: 3px; }
 .badge-blue { background-color: #4CC1E9; }
 .badge-red { background-color: #DA4453; }

@@ -26,13 +26,15 @@
 	.ui-navigation-item .icon { width: 38px; border-right: 1px solid #F5F1A3; text-align: center; height: 42px; padding: 13px 0 0 4px; float: left; font-size: 16px; }
 	.ui-navigation-empty { padding: 50px 0; text-align: center; color: #A0A0A0; }
 	.ui-navigation-empty .fa { margin-right: 5px; }
+	.ui-navigation-language { margin-top: 20px; }
+	.ui-navigation-language:first-child { margin-top: 0; }
 </style>
 
 <script>
 
 	COMPONENT('navigation', function(self) {
 
-		var dragdrop;
+		var dragdrop, language;
 
 		self.template = Tangular.compile('<div data-id="{{ id }}" class="ui-navigation-itemcontainer" draggable="true"><div class="ui-navigation-item"><i class="fa fa-times remove"></i><i class="fa fa-pencil edit"></i><i class="fa fa-plus-circle plus"></i><i class="icon{{ if icon }} fa fa-{{ icon }}{{ fi }}"></i><span class="language">{{ language }}</span><div class="name">{{ name }}<span><i class="fa fa-globe mr5"></i>{{ url }}</span></div></div>{{ if children && children.length }}<div class="ui-navigation-children">{{ children | navigationchildren($.template) }}</div>{{ fi }}</div>');
 		self.noValid();
@@ -69,25 +71,24 @@
 			});
 
 			self.event('dragover dragenter dragstart drag drop', '.ui-navigation-itemcontainer', function(e) {
-
 				var cls = 'ui-navigation-itemcontainer';
-
 				switch (e.type) {
 					case 'dragstart':
 						dragdrop = $(e.target);
 						if (!dragdrop.hclass(cls))
 							dragdrop = dragdrop.closest('.' + cls);
 						dragdrop.aclass('ui-navigation-drag');
+						language = dragdrop.closest('.ui-navigation-language').attrd('language');
 						e.originalEvent.dataTransfer.setData('text', '1');
 						return;
-
 					case 'drop':
 						dragdrop.rclass('ui-navigation-drag');
 						var el = $(e.target);
+
 						if (!el.hclass(cls))
 							el = el.closest('.' + cls);
 
-						if (!el.length || el.closest(dragdrop).length || el[0] === dragdrop[0])
+						if (!el.length || el.closest(dragdrop).length || el[0] === dragdrop[0] || el.closest('.ui-navigation-language').attrd('language') !== language)
 							return;
 
 						setTimeout2(self.id, function() {
@@ -95,7 +96,6 @@
 						}, 50);
 						break;
 				}
-
 				e.preventDefault();
 			});
 		};
@@ -151,11 +151,24 @@
 			if (!value)
 				value = EMPTYARRAY;
 
-			var builder = [];
+			var items = {};
 			for (var i = 0, length = value.length; i < length; i++) {
 				var item = value[i];
-				builder.push(self.template(item, { template: self.template }));
+				var key = item.language || '0';
+				var val = self.template(item, { template: self.template });
+				if (items[key])
+					items[key].push(val);
+				else
+					items[key] = [val];
 			}
+
+			var keys = Object.keys(items);
+			var builder = [];
+
+			keys.quicksort();
+
+			for (var i = 0; i < keys.length; i++)
+				builder.push('<div class="ui-navigation-language" data-language="{0}">{1}</div>'.format(keys[i], items[keys[i]].join('')));
 
 			self.html(builder.length ? builder : '<div class="ui-navigation-empty"><i class="fa fa-ban"></i>@(No items in this navigation)</div>');
 		};

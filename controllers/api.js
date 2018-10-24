@@ -29,10 +29,12 @@ function file_sitemap(req, res) {
 
 	var arr = F.global.pages;
 	var builder = ['<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'];
+	var lng = F.onLocale(req, res);
 
 	for (var i = 0; i < arr.length; i++) {
 		var item = arr[i];
-		builder.push('<url><loc>{0}</loc><lastmod>{1}</lastmod></url>'.format(F.config.url + item.url, (item.dateupdated ? item.dateupdated : item.datecreated).format('yyyy-MM-dd')));
+		if (!lng || item.language === lng)
+			builder.push('<url><loc>{0}</loc><lastmod>{1}</lastmod></url>'.format(F.config.url + item.url, (item.dateupdated ? item.dateupdated : item.datecreated).format('yyyy-MM-dd')));
 	}
 
 	OPERATION('sitemap.xml', builder, function() {

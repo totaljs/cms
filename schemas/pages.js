@@ -698,8 +698,7 @@ Controller.prototype.CMSpage = function(callback, cache) {
 
 	if (self.language) {
 		page = F.global.sitemap[self.language + ' ' + self.url];
-		if (!page)
-			page = F.global.sitemap[self.url];
+		!page && (page = F.global.sitemap[self.url]);
 	} else
 		page = F.global.sitemap[self.url];
 
@@ -784,7 +783,13 @@ Controller.prototype.CMSpage = function(callback, cache) {
 Controller.prototype.CMSrender = function(url, callback) {
 
 	var self = this;
-	var page = F.global.sitemap[url];
+	var page;
+
+	if (self.language) {
+		page = F.global.sitemap[self.language + ' ' + url];
+		!page && (page = F.global.sitemap[url]);
+	} else
+		page = F.global.sitemap[url];
 
 	if (!page) {
 		callback('404');
@@ -829,7 +834,10 @@ Controller.prototype.CMSrender = function(url, callback) {
 Controller.prototype.CMSpartial = function(url, callback) {
 
 	var self = this;
-	var page = F.global.partial.findItem(url.isUID() ? 'id' : 'url', url);
+	var prop = url.isUID() ? 'id' : 'url';
+	var page = F.global.partial.findItem(function(item) {
+		return item[prop] === url && (!self.language || self.language === item.language);
+	});
 
 	if (!page) {
 		callback('404');

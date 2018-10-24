@@ -12,7 +12,7 @@
 					<script type="text/plain">
 					[
 						{ name: 'id', text: '', template: '<input type="checkbox" value="{{ id }}" />', size: '36px', header: '<input type="checkbox" value="{{ id }}" />', filter: false, sort: false, title: '@(Options)', align: 'center' },
-						{ name: 'path', text: '@(Name)', size: 2, template: '{{ if icon }}<i class="fa fa-{{ icon }} mr5"></i>{{ fi }}{{ path | pagespath }}{{ if draft }}<span class="badge badge-red ml5">@(draft)</span>{{ fi }}{{ if ispartial }}<span class="badge badge-green ml5">@(partial)</span>{{ fi }}', classth: 'left', classfilter: 'left' },
+						{ name: 'path', text: '@(Name)', size: 2, template: '{{ language | pageslanguage }}{{ if icon }}<i class="fa fa-{{ icon }} mr5"></i>{{ fi }}{{ path | pagespath }}{{ if draft }}<span class="badge badge-red ml5">@(draft)</span>{{ fi }}{{ if ispartial }}<span class="badge badge-green ml5">@(partial)</span>{{ fi }}', classth: 'left', classfilter: 'left' },
 						{ name: 'url', text: '@(URL address)',  template: '{{ if ispartial }}<span class="silver">{{ url }}</span>{{ else }}{{ url }}{{ fi }}', size: 1, class: 'hidden-xs' },
 						{ name: 'language', text: '<i class="fa fa-flag" style="margin-right:0"></i>', size: '40px', title: '@(Language)', sort: false, align: 'center', filter: ' ', classtd: 'fs11' },
 						{ name: '@(Options)', filter: false, align: 'right', sort: false, size: '140px', template: '{{ if !ispartial }}<a href="{{ url }}" class="fs11 mr5" target="_blank">@(show)</a>{{ fi }}<button title="@(Duplicate)" name="duplicate"><i class="fa fa-copy"></i></button><button name="update" title="@(Edit)"><i class="fa fa-pencil"></i></button><button class="btn-remove" name="remove" title="@(Remove)"><i class="fa fa-trash-o"></i></button>' }
@@ -93,7 +93,7 @@
 				}
 
 				var cdl = response.items.slice(0).map(function(item) {
-					return { id: item.id, ispartial: item.ispartial, name: item.path, url: item.url };
+					return { id: item.id, ispartial: item.ispartial, name: (item.language ? (item.language + ': ') : '') + item.path, url: item.url };
 				});
 
 				cdl.quicksort('name');
@@ -219,7 +219,7 @@
 
 	});
 
-	Tangular.register('pagespath', function(value) {
+	Thelpers.pagespath = function(value) {
 		var arr = value.split('/');
 		var builder = [];
 
@@ -229,6 +229,18 @@
 		}
 
 		return (builder.length ? (builder.join('')) : '') + arr.last();
-	});
+	};
+
+	Thelpers.pageslanguage = function(value) {
+
+		if (!value)
+			return '';
+
+		var colors = ['#1abc9c','#2ecc71','#3498db','#9b59b6','#34495e','#16a085','#2980b9','#8e44ad','#2c3e50','#f1c40f','#e67e22','#e74c3c','#d35400','#c0392b'];
+		var num = 0;
+		for (var i = 0; i < value.length; i++)
+			num += value.charCodeAt(i);
+		return '<span class="badge badge-small mr5" style="background-color:{0}">{1}</span>'.format(colors[num % colors.length], value);
+	};
 
 </script>
