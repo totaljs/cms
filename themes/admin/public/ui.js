@@ -3280,6 +3280,7 @@ COMPONENT('multioptions', function(self) {
 		var t = (type || '').toLowerCase();
 		switch (t) {
 			case 'posts':
+			case 'languages':
 			case 'signals':
 			case 'notices':
 			case 'navigations':
