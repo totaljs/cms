@@ -29,7 +29,7 @@ function file_sitemap(req, res) {
 
 	var arr = F.global.pages;
 	var builder = ['<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'];
-	var lng = F.onLocale(req, res);
+	var lng = F.onLocale ? F.onLocale(req, res) : null;
 
 	for (var i = 0; i < arr.length; i++) {
 		var item = arr[i];
