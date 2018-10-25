@@ -130,9 +130,16 @@
 					SETTER('loading', 'show');
 					AJAX('GET [url]api/{0}/{1}/'.format(exports.scope, row.id), function(response) {
 
-						if (name === 'duplicate')
+						if (name === 'duplicate') {
+
 							response.id = '';
-						else
+
+							// Clear existing parts
+							setTimeout(function() {
+								SETTER('cmseditor', 'clearParts');
+							}, 1000);
+
+						} else
 							SKIP(exports.path('.form.stats'));
 
 						response.bodycurrent = response.body;

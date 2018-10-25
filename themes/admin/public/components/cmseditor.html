@@ -326,6 +326,13 @@
 			return { settings: widgets, widgets: Object.keys(unique) };
 		};
 
+		self.clearParts = function() {
+			self.doFind('.CMS_part').each(function() {
+				var el = $(this);
+				el.rattr('data-cms-part').rclass('CMS_part');
+			});
+		};
+
 		self.getParts = function() {
 
 			var parts = [];
