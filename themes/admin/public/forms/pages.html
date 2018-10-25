@@ -291,19 +291,11 @@
 			});
 		};
 
-		WATCH('pages.form.draft', function(path, value) {
-
-
-
-		}, true);
-
 		WATCH('pages.form.template', function(path, value, type) {
-
 			if (type === 2) {
 				cmseditor.instance.reconfigure('template:' + value);
 				cmseditor.instance.set('');
 			}
-
 		}, true);
 	});
 
