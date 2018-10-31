@@ -51,7 +51,7 @@ exports.install = function() {
 	ROUTE('GET     #admin/api/dashboard/online/',             json_dashboard_online);
 	ROUTE('GET     #admin/api/dashboard/tracking/             *Tracking --> @stats');
 
-	// MODEL: /models/widgets.js
+	// MODEL: /schema/widgets.js
 	ROUTE('GET     #admin/api/widgets/                        *Widget --> @query');
 	ROUTE('GET     #admin/api/widgets/{id}/                   *Widget --> @read');
 	ROUTE('POST    #admin/api/widgets/                        *Widget --> @save');
@@ -61,11 +61,11 @@ exports.install = function() {
 	ROUTE('GET     #admin/api/widgets/{id}/settings/          *Widget', json_widget_settings);
 	ROUTE('GET     #admin/api/widgets/{id}/backups/           *Common --> @backup');
 
-	// MODEL: /models/widgets.js
+	// MODEL: /schema/widgets.js
 	ROUTE('GET     #admin/api/widgets/globals/                *WidgetGlobals --> @read');
 	ROUTE('POST    #admin/api/widgets/globals/                *WidgetGlobals --> @save', 30);
 
-	// MODEL: /models/pages.js
+	// MODEL: /schema/pages.js
 	ROUTE('GET     #admin/api/pages/                          *Page --> @query');
 	ROUTE('GET     #admin/api/pages/{id}/                     *Page --> @read');
 	ROUTE('POST    #admin/api/pages/                          *Page --> @url @save (response)');
@@ -83,17 +83,17 @@ exports.install = function() {
 	ROUTE('GET     #admin/api/tracking/{id}/                  *Tracking --> @stats');
 	ROUTE('DELETE  #admin/api/tracking/{id}/                  *Tracking --> @remove');
 
-	// MODEL: /models/pages.js
+	// MODEL: /schema/pages.js
 	ROUTE('GET     #admin/api/pages/globals/                  *Globals --> @read');
 	ROUTE('POST    #admin/api/pages/globals/                  *Globals --> @save', 30);
 	ROUTE('GET     #admin/api/pages/redirects/                *Redirects --> @read');
 	ROUTE('POST    #admin/api/pages/redirects/                *Redirects --> @save', 30);
 
-	// MODEL: /models/events.js
+	// MODEL: /schema/events.js
 	ROUTE('GET     #admin/api/events/                         *Event --> @query');
 	ROUTE('GET     #admin/api/events/clear/                   *Event --> @clear');
 
-	// MODEL: /models/posts.js
+	// MODEL: /schema/posts.js
 	ROUTE('GET     #admin/api/posts/                          *Post --> @query');
 	ROUTE('GET     #admin/api/posts/{id}/                     *Post --> @read');
 	ROUTE('POST    #admin/api/posts/                          *Post --> @save');
@@ -103,7 +103,7 @@ exports.install = function() {
 	ROUTE('GET     #admin/api/posts/{id}/stats/               *Post --> @stats');
 	ROUTE('GET     #admin/api/posts/{id}/backups/             *Common --> @backup');
 
-	// MODEL: /models/notices.js
+	// MODEL: /schema/notices.js
 	ROUTE('GET     #admin/api/notices/                        *Notice --> @query');
 	ROUTE('GET     #admin/api/notices/{id}/                   *Notice --> @read');
 	ROUTE('POST    #admin/api/notices/                        *Notice --> @save');
@@ -111,7 +111,7 @@ exports.install = function() {
 	ROUTE('GET     #admin/api/notices/toggle/                 *Notice --> @toggle');
 	ROUTE('POST    #admin/api/notices/preview/',              view_notices_preview, ['json']);
 
-	// MODEL: /models/subscribers.js
+	// MODEL: /schema/subscribers.js
 	ROUTE('GET     #admin/api/subscribers/                    *Subscriber --> @query');
 	ROUTE('GET     #admin/api/subscribers/{id}/               *Subscriber --> @read');
 	ROUTE('POST    #admin/api/subscribers/                    *Subscriber --> @save');
@@ -119,7 +119,7 @@ exports.install = function() {
 	ROUTE('GET     #admin/api/subscribers/stats/              *Subscriber --> @stats');
 	ROUTE('GET     #admin/api/subscribers/toggle/             *Subscriber --> @toggle');
 
-	// MODEL: /models/newsletters.js
+	// MODEL: /schema/newsletters.js
 	ROUTE('GET     #admin/api/newsletters/                    *Newsletter --> @query');
 	ROUTE('GET     #admin/api/newsletters/{id}/               *Newsletter --> @read');
 	ROUTE('POST    #admin/api/newsletters/                    *Newsletter --> @save');
@@ -131,21 +131,24 @@ exports.install = function() {
 	ROUTE('GET     #admin/api/newsletters/{id}/backups/       *Common --> @backup');
 	ROUTE('GET     #admin/api/newsletters/state/',            json_newsletter_state);
 
-	// MODEL: /models/navigations.js
+	// MODEL: /schema/navigations.js
 	ROUTE('GET     #admin/api/nav/{id}/                       *Navigation --> @read');
 	ROUTE('POST    #admin/api/nav/                            *Navigation --> @save');
 
-	// MODEL: /models/navigations.js
+	// MODEL: /schema/navigations.js
 	ROUTE('GET     #admin/api/redirects/{id}/                 *Redirect --> @read');
 	ROUTE('POST    #admin/api/redirects/                      *Redirect --> @save');
 
-	// MODEL: /models/settings.js
+	// MODEL: /schema/settings.js
 	ROUTE('GET     #admin/api/settings/                       *Settings --> @read');
 	ROUTE('POST    #admin/api/settings/                       *Settings --> @smtp @save (response) @load');
 
+	// MODEL: /schema/common.js
+	ROUTE('GET    #admin/api/backups/clear/                   *Common   --> @backup_clear');
+
 	// Files
-	ROUTE('GET     #admin/api/files/                          *File --> @query');
-	ROUTE('GET     #admin/api/files/clear/                    *File --> @clear');
+	ROUTE('GET     #admin/api/files/                          *File     --> @query');
+	ROUTE('GET     #admin/api/files/clear/                    *File     --> @clear');
 
 	// Others
 	ROUTE('GET     #admin/api/contactforms/stats/             *Contact --> stats');

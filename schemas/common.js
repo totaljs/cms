@@ -14,4 +14,25 @@ NEWSCHEMA('Common', function(schema) {
 		});
 	});
 
+	schema.addWorkflow('backup_clear', function($) {
+
+		var clean = function(name) {
+			return function(next) {
+				TABLE(name).remove().like('id', '_').callback(function() {
+					TABLE(name).clean();
+					next();
+				});
+			};
+		};
+
+		var arr = [];
+		arr.push(clean('pagesdata'));
+		arr.push(clean('postsdata'));
+		arr.push(clean('partsdata'));
+		arr.push(clean('newslettersdata'));
+		arr.async();
+
+		$.success();
+	});
+
 });

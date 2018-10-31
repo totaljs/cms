@@ -35,6 +35,7 @@
 					<li data-value="categories">@(Categories)</li>
 					<li data-value="misc">@(Miscellaneous)</li>
 					<li data-value="smtp"><i class="fa fa-envelope"></i>@(SMTP)</li>
+					<li data-value="services"><i class="fa fa-cogs"></i>@(Services)</li>
 				</ul>
 			</div>
 
@@ -68,6 +69,7 @@
 				</div>
 
 				<div class="hidden panelbody" data-bind="settings.tab__show:value==='smtp'">
+					<br />
 					<div class="row">
 						<div class="col-md-6 m">
 							<div data-jc="textbox__form.smtp__icon:server;placeholder:@(smtp.yourdomain.com)">@(SMTP server)</div>
@@ -76,6 +78,34 @@
 						<div class="col-md-6 m">
 							<div data-jc="textbox__form.smtpoptions__icon:code;placeholder:@(SMTP options)">@(SMTP options)</div>
 							<div class="help">@(Options need to be defined in JSON format according.) <a href="https://docs.totaljs.com/latest/en.html#api~FrameworkConfiguration~mail-smtp-options" target="_blank">Total.js specification</a></div>
+						</div>
+					</div>
+				</div>
+
+				<div class="hidden panelbody" data-bind="settings.tab__show:value==='services'">
+					<div class="padding npb">
+						<div class="row">
+							<div class="col-sm-3 m">
+								<div class="padding bg-smoke">
+									<h3 class="nmb">@(Backups)</h3>
+									<p>@(This operation will remove all backed up records from all database.)</p>
+									<button class="button button-small b exec" data-exec="settings/operation" data-name="backups"><i class="fa fa-trash-o mr5"></i>@(Clear backups)</button>
+								</div>
+							</div>
+							<div class="col-sm-3 m">
+								<div class="padding bg-smoke">
+									<h3 class="nmb">@(Files)</h3>
+									<p>@(This operation will remove all files which aren't used in the content.)</p>
+									<button class="button button-small b exec" data-exec="settings/operation" data-name="files"><i class="fa fa-trash-o mr5"></i>@(Clear files)</button>
+								</div>
+							</div>
+							<div class="col-sm-3 m">
+								<div class="padding bg-smoke">
+									<h3 class="nmb">@(Events)</h3>
+									<p>@(This operation will remove all recorded events in <b>Events section</b>.)</p>
+									<button class="button button-small b exec" data-exec="settings/operation" data-name="events"><i class="fa fa-trash-o mr5"></i>@(Clear events)</button>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -272,6 +302,17 @@
 				SET(exports.scope + '.form', response, true);
 			});
 
+		};
+
+		exports.operation = function(el) {
+			var type = el.attrd('name');
+			SETTER('confirm', 'show', '@(Are you sure you want to perform selected operation?)', ['@(Yes)', '@(Cancel)'], function(index) {
+				if (index)
+					return;
+				AJAX('GET [url]api/{0}/clear/'.format(type), function() {
+					SETTER('snackbar', 'success', '@(Done, operation has been completed.)');
+				});
+			})
 		};
 
 		exports.create = function() {
