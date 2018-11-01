@@ -14,6 +14,8 @@ NEWSCHEMA('File').make(function(schema) {
 		var db = {};
 		var count = 0;
 
+		EMIT('files.clear', databases);
+
 		// This can be a longer operation, therefore respond
 		$.success();
 
