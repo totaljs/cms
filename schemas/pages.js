@@ -601,6 +601,17 @@ String.prototype.CMStidy = function() {
 		body = body.substring(0, beg) + body.substring(index + 1);
 	}
 
+	b = ' data-cms-info="';
+	while (true) {
+		beg = body.indexOf(b, beg);
+		if (beg === -1)
+			break;
+		index = body.indexOf('"', beg + b.length);
+		if (index === -1)
+			break;
+		body = body.substring(0, beg) + body.substring(index + 1);
+	}
+
 	while (true) {
 		beg = body.indexOf(c, beg);
 		if (beg === -1)
