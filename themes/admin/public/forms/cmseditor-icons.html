@@ -12,7 +12,7 @@
 	PLUGIN('cmseditoricons', function(exports) {
 		exports.submit = function(icon) {
 			var obj = cmseditor.icons;
-			obj.prev && obj.el.rclass(obj.prev);
+			obj.prev && obj.el.rclass('fa').rclass('fab').rclass('far').rclass('fal').rclass(obj.prev);
 			obj.el.aclass(icon);
 			cmseditor.instance.change(true);
 			SET('cmseditor.form', '');

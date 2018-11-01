@@ -23,10 +23,8 @@
 
 	// A shared info about CMS editor
 	MAKE('cmseditor', function(obj) {
-
 		// Current form
 		obj.form = '';
-
 		obj.filebrowser = {};
 		obj.link = {};
 		obj.attribute = {};
@@ -1247,7 +1245,7 @@
 							return;
 						}
 
-						if (target.hclass('fa') || target.hclass('far') || target.hclass('fal')) {
+						if (target.hclass('fa') || target.hclass('far') || target.hclass('fal') || target.hclass('fab')) {
 							var fa = target.attr('class').match(/fa-[a-z0-9\-]+/i);
 							fa = fa ? fa.toString() : '';
 							SET('cmseditor.icons.icon', fa);

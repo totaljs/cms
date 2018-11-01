@@ -25,7 +25,7 @@
 				<a href="/" class="logo"><img src="@{'logo.png'}" border="0" class="img-responsive" /></a>
 				<nav>
 					@{foreach m in global.navigations.mainmenu.children}
-						<a href="@{m.url}"@{if m.contains(url)} class="selected"@{fi}>@{if m.icon}<i class="fa fa-@{m.icon}"></i>@{fi}@{m.name}</a>
+						<a href="@{m.url}"@{if m.contains(url)} class="selected"@{fi}>@{if m.icon}<i class="@{m.icon}"></i>@{fi}@{m.name}</a>
 					@{end}
 				</nav>
 			</div>

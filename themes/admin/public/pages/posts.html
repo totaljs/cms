@@ -10,7 +10,7 @@
 			<script type="text/plain">
 			[
 				{ name: 'id', text: '', template: '<input type="checkbox" value="{{ id }}" />', size: '42px', header: '<input type="checkbox" value="{{ id }}" />', filter: false, sort: false, title: '@(Options)', align: 'center' },
-				{ name: 'name', text: '@(Name)', size: 2, template: '{{ if !ispublished }}<span class="badge badge-gray mr5">@(unpublished)</span>{{ fi }}{{ if icon }}<i class="fa fa-{{ icon }} mr5"></i>{{ fi }}{{ name }}', classth: 'left', classfilter: 'left' },
+				{ name: 'name', text: '@(Name)', size: 2, template: '{{ if !ispublished }}<span class="badge badge-gray mr5">@(unpublished)</span>{{ fi }}{{ if icon }}<i class="{{ icon }} mr5"></i>{{ fi }}{{ name }}', classth: 'left', classfilter: 'left' },
 				{ name: 'category', text: '@(Category)', size: '130px', class: 'hidden-xs' },
 				{ name: 'author', text: '@(Author)', size: '130px', class: 'hidden-xs' },
 				{ name: 'date', text: '@(From)', size: 1, class: 'hidden-xs', template: '{{ date | format(\'@(yyyy-MM-dd)\') }}', size: '130px', class: 'center' },
