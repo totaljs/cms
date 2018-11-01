@@ -7,7 +7,7 @@ NEWSCHEMA('Notice').make(function(schema) {
 	schema.define('body', String, true);
 	schema.define('date', Date);
 	schema.define('event', Date);
-	schema.define('icon', 'Lower(20)');
+	schema.define('icon', 'Lower(40)');
 	schema.define('ispinned', Boolean);
 	schema.define('url', 'String(500)');
 

@@ -19,7 +19,7 @@ NEWSCHEMA('Widget').make(function(schema) {
 	schema.define('category', 'String(50)');
 	schema.define('body', String);
 	schema.define('picture', 'String(50)'); // A preview
-	schema.define('icon', 'Lower(20)');
+	schema.define('icon', 'Lower(40)');
 	schema.define('reference', 'String(50)');
 	schema.define('replace', Boolean);
 

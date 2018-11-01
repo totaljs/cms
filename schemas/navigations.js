@@ -4,7 +4,7 @@ NEWSCHEMA('NavigationItem').make(function(schema) {
 	schema.define('name', 'String(50)', true);
 	schema.define('url', 'String(500)', true);
 	schema.define('title', 'String(100)');
-	schema.define('icon', 'Lower(20)');
+	schema.define('icon', 'Lower(40)');
 	schema.define('language', 'Lower(2)');
 	schema.define('target', ['_self', '_blank']);
 	schema.define('children', '[NavigationItem]');
