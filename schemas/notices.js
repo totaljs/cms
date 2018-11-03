@@ -134,9 +134,64 @@ function markdown(md) {
 	var lines = md.split('\n');
 	var builder = [];
 	var ul = false;
+	var table = false;
+	var code = false;
 
 	for (var i = 0, length = lines.length; i < length; i++) {
+
+		if (lines[i].substring(0, 3) === '```') {
+
+			if (code) {
+				builder.push('</code></pre>');
+				code = false;
+				continue;
+			}
+
+			code = true;
+			builder.push('<pre><code class="' + lines[i].substring(3) + '">');
+			continue;
+		}
+
+		if (code) {
+			builder.push(lines[i]);
+			continue;
+		}
+
 		var line = lines[i].replace(imagelinks, markdown_imagelinks).replace(links, markdown_links).replace(format, markdown_format).replace(code, markdown_code);
+
+		if (!line) {
+			if (table) {
+				table = null;
+				builder.push('</table>');
+			}
+		}
+
+		if (line === '' && lines[i - 1] === '') {
+			builder.push('<br />');
+			continue;
+		}
+
+		if (line[0] === '|') {
+			if (!table) {
+				var next = lines[i + 1];
+				if (next[0] === '|') {
+					table = [];
+					var columns = next.substring(1, next.length - 1).split('|');
+					for (var j = 0; j < columns.length; j++) {
+						var column = columns[j].trim();
+						var align = 'left';
+						if (column[column.length - 1] === ':')
+							align = column[0] === ':' ? 'center' : 'right';
+						table.push(align);
+					}
+					builder.push('<table class="table table-bordered">');
+					i++;
+				} else
+					continue;
+			}
+			builder.push(markdown_table(line, table));
+			continue;
+		}
 
 		if (line[0] === '#') {
 
@@ -182,7 +237,10 @@ function markdown(md) {
 	}
 
 	ul && builder.push('</ul>');
-	return U.minifyHTML(builder.join('\n'));
+	table && builder.push('</table>');
+	code && builder.push('</code></pre>');
+
+	return U.minifyHTML('<div class="markdown">' + builder.join('\n') + '</div>');
 }
 
 function markdown_code(value) {
@@ -193,6 +251,22 @@ function markdown_imagelinks(value) {
 	var end = value.indexOf(')') + 1;
 	var img = value.substring(1, end);
 	return '<a href="' + value.substring(end + 2, value.length - 1) + '">' + markdown_links(img) + '</a>';
+}
+
+function markdown_table(value, align) {
+
+	var columns = value.substring(1, value.length - 1).split('|');
+	var builder = '';
+
+	for (var i = 0; i < columns.length; i++) {
+		var column = columns[i].trim();
+		if (column[0] == '-')
+			continue;
+		var a = align[i];
+		builder += '<td' + (a && a !== 'left' ? (' class="' + a + '"') : '') + '>' + column + '</td>';
+	}
+
+	return '<tr>' + builder + '</tr>';
 }
 
 function markdown_links(value) {
