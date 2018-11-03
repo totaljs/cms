@@ -9,6 +9,7 @@ NEWSCHEMA('Post').make(function(schema) {
 	schema.define('description', 'String(300)');
 	schema.define('summary', 'String(500)');
 	schema.define('keywords', 'String(200)');
+	schema.define('language', 'String');            // Only information
 	schema.define('search', 'String(1000)');
 	schema.define('pictures', '[String]');  		// URL addresses for first 5 pictures
 	schema.define('body', String);
@@ -32,15 +33,17 @@ NEWSCHEMA('Post').make(function(schema) {
 			opt.author && filter.adminFilter('author', opt, String);
 			opt.name && filter.adminFilter('name', opt, String);
 			opt.type && filter.adminFilter('type', opt, String);
+			opt.language && filter.adminFilter('language', opt, String);
 		} else {
 			opt.category && filter.where('linker_category', opt.category);
 			opt.author && filter.where('author', opt.author);
+			opt.language && filter.where('language', opt.language);
 			opt.published && filter.where('ispublished', true).where('date', '<=', F.datetime);
 			opt.search && filter.like('search', opt.search.keywords(true, true));
 			filter.fields('description');
 		}
 
-		filter.fields('id', 'idcategory', 'category', 'name', 'datecreated', 'date', 'linker', 'linker_category', 'pictures', 'summary', 'ispublished', 'signals', 'author', 'template', 'type');
+		filter.fields('id', 'idcategory', 'category', 'name', 'datecreated', 'date', 'linker', 'linker_category', 'pictures', 'summary', 'ispublished', 'signals', 'author', 'template', 'type', 'language');
 
 		if (opt.sort)
 			filter.adminSort(opt.sort);

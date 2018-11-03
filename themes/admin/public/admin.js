@@ -60,13 +60,13 @@ function refresh_filebrowser(target, type, clear) {
 $(window).on('resize', refresh_height);
 
 // Tangular helpers
-Tangular.register('join', function(value, delimiter) {
+Thelpers.join = function(value, delimiter) {
 	return value instanceof Array ? value.join(delimiter || ', ') : '';
-});
+};
 
-Tangular.register('filesize', function(value, decimals, type) {
+Thelpers.filesize = function(value, decimals, type) {
 	return value ? value.filesize(decimals, type) : '...';
-});
+};
 
 Number.prototype.filesize = function(decimals, type) {
 
@@ -136,14 +136,24 @@ function filesizehelper(number, count) {
 	return number;
 }
 
-Tangular.register('counter', function(value) {
+Thelpers.counter = function(value) {
 	if (value > 999999)
 		return (value / 1000000).format(2) + ' M';
 	if (value > 9999)
 		return (value / 10000).format(2) + ' K';
 	return value.format(0);
-});
+};
 
-Tangular.register('default', function(value, def) {
+Thelpers.default = function(value, def) {
 	return value == null || value === '' ? def : value;
-});
+};
+
+Thelpers.language = function(value) {
+	if (!value)
+		return '';
+	var colors = ['#1abc9c','#2ecc71','#3498db','#9b59b6','#34495e','#16a085','#2980b9','#8e44ad','#2c3e50','#f1c40f','#e67e22','#e74c3c','#d35400','#c0392b'];
+	var num = 0;
+	for (var i = 0; i < value.length; i++)
+		num += value.charCodeAt(i);
+	return '<span class="badge badge-small mr5" style="background-color:{0}">{1}</span>'.format(colors[num % colors.length], value);
+};

@@ -60,6 +60,9 @@
 					<div class="col-md-4 m">
 						<div data-jc="textbox__posts.form.author__maxlength:30;icon:user">@(Author)</div>
 					</div>
+					<div class="col-md-3 m">
+						<div data-jc="dropdown__posts.form.language__icon:flag;datasource:common.dependencies.languages;empty:">@(Language)</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -101,7 +104,7 @@
 </div>
 
 <div data-jc="window__common.window___if:posts-preview;title:@(Preview);reload:postsform/initpreview">
-	<iframe src="about:blank" frameborder="0" style="width:100%;height:100%"></iframe>
+	<iframe src="about:blank" frameborder="0" style="width:100%"></iframe>
 </div>
 
 <script>
@@ -127,7 +130,7 @@
 			var frm = $frm[0].contentWindow;
 			var doc = frm.document;
 
-			$frm.css('height', el.find('.ui-window-body').height());
+			$frm.css('height', el.find('.ui-window-body').height() - 5);
 			SETTER('loading', 'show');
 
 			AJAX('POST [url]api/posts/preview/', posts.form, function(response) {
@@ -179,15 +182,33 @@
 
 			} else {
 				var pictures = model.body.match(/\(.*?\.(jpg|png|jpeg|gif|svg)\)/g);
+
 				model.pictures = [];
+				model.search = '';
+				model.summary = '';
 
 				if (pictures) {
 					for (var i = 0; i < pictures.length; i++)
 						model.pictures.push(pictures[i].replace(/\(|\)/g, '').trim());
 				}
 
-				model.summary = null;
-				model.search = null;
+				var lines = model.body.split('\n');
+				for (var i = 0; i < lines.length; i++) {
+					var line = lines[i].trim();
+					var c = line.substring(0, 1);
+					if (c === '#') {
+						// title
+						model.search += (model.search ? ' ' : '') + line.substring(line.lastIndexOf('#') + 2).trim();
+					} else if (c === '-') {
+						// ul
+					} else if (c === '`') {
+						// code
+					} else if (c === '|') {
+						// table
+					} else if (!model.summary && c !== '!' && c !== '[')
+						model.summary = line;
+				}
+
 				model.widgets = null;
 				model.bodywidgets = null;
 			}
@@ -201,8 +222,8 @@
 
 				if (response.success) {
 
-					SETTER('snackbar', 'success', '@(Post has been saved successfully.)');
 					com.hide();
+					SETTER('snackbar', 'success', '@(Post has been saved successfully.)');
 					EXEC('posts/refresh');
 
 					// Updates parts
