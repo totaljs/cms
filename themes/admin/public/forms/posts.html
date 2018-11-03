@@ -126,6 +126,13 @@
 
 		exports.initpreview = function(el) {
 
+			var model = posts.form;
+
+			if (!model.template) {
+				SETTER('snackbar', 'warning', '@(You must choose a template)');
+				return;
+			}
+
 			var $frm = el.find('iframe');
 			var frm = $frm[0].contentWindow;
 			var doc = frm.document;
@@ -133,7 +140,7 @@
 			$frm.css('height', el.find('.ui-window-body').height() - 5);
 			SETTER('loading', 'show');
 
-			AJAX('POST [url]api/posts/preview/', posts.form, function(response) {
+			AJAX('POST [url]api/posts/preview/', model, function(response) {
 				SETTER('loading', 'hide', 500);
 				doc.open('text/html', 'replace');
 				doc.write(response);
