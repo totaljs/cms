@@ -102,6 +102,7 @@ exports.install = function() {
 	ROUTE('GET     #admin/api/posts/stats/                    *Post --> @stats');
 	ROUTE('GET     #admin/api/posts/{id}/stats/               *Post --> @stats');
 	ROUTE('GET     #admin/api/posts/{id}/backups/             *Common --> @backup');
+	ROUTE('POST    #admin/api/posts/preview/',                view_posts_preview, ['json'], 512);
 
 	// MODEL: /schema/notices.js
 	ROUTE('GET     #admin/api/notices/                        *Notice --> @query');
@@ -373,4 +374,19 @@ function view_notices_preview() {
 		$WORKFLOW('Notice', 'preview', body, (err, response) => self.content(response, 'text/html'));
 	else
 		self.content('', 'text/html');
+}
+
+// Creates a preview
+function view_posts_preview() {
+	var self = this;
+	self.layout('layout-preview');
+	self.repository.preview = true;
+
+	if (typeof(self.body.body) === 'string')
+		self.body.body = self.body.body.markdown();
+	else
+		self.body.body = '';
+
+	self.repository.page = self.body;
+	self.view('~cms/' + self.body.template);
 }
