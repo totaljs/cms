@@ -6,7 +6,6 @@ input { border-radius: 0; }
 .left { text-align: left !important; }
 .right { text-align: right; }
 .center { text-align: center !important; }
-.hidden { display: none; }
 .avatar { overflow: hidden; }
 
 .badge { font-size: 11px; padding: 1px 6px 2px; border-radius: 2px; background-color: #F0F0F0; line-height: 12px; vertical-align: middle; margin-top: -2px; position: relative; display: inline-block; color: white; }
@@ -503,6 +502,18 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .ui-textboxtags-container.ui-disabled .ui-textboxtags { background-color: #F0F0F0; }
 .ui-textboxtags-container.ui-disabled input { display: none; }
 .ui-textboxtags-container.ui-disabled .ui-textboxtags-tag .fa { display: none; }
+
+.ui-window-noscroll, .ui-window-noscroll body { overflow: hidden; }
+.ui-window-container { width: 100%; position: fixed; left: 0; top: 0; bottom: 0; right: 0; background-color: rgba(230,233,237,0.8); z-index: 5; overflow: none; transform-style: preserve-3d; height: 100%; }
+.ui-window { background-color: white; margin: 0 auto 30px; transform: scale(0.8); transition: all 0.2s; opacity: 0; }
+.ui-window-header { height: 60px; }
+.ui-window-body { overflow-scrolling: touch; overflow-y: auto; }
+.ui-window-animate { transform: scale(1); opacity: 1; }
+.ui-window-title { padding: 18px 20px; font-size: 16px; user-select: none; color: black; background-color: white; border-bottom: 1px solid #F0F0F0; position: absolute; left: 0; right: 0; top: 0; height: 60px; }
+.ui-window-title .ui-window-button-close { float: right; cursor: pointer; font-size: 18px; transition: all 0.2s; background: none; border: 0; outline: 0; height: auto; color: red; text-align: right !important; padding: 0; width: auto; }
+.ui-window-title .ui-window-button-close:hover { transform: rotate(-90deg); }
+.ui-window-title > span { font-weight: bold; }
+.ui-window-title > .fa { margin-right: 7px; }
 
 @media(max-width: 768px) {
 	.ui-grid td { font-size: 12px; height: 30px; }

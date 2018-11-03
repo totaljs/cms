@@ -3,7 +3,6 @@
 		<div class="row">
 			<div class="col-md-4 m">
 				<div data-jc="textbox__posts.form.name__required:true;maxlength:100">@(Name)</div>
-				<div data-jc="checkbox__posts.form.ispublished" class="b mt10">@(Is published)</div>
 			</div>
 			<div class="col-md-8">
 				<div class="row">
@@ -11,29 +10,57 @@
 						<div data-jc="dropdown__posts.form.idcategory__datasource:common.dependencies.posts;icon:folder-o;empty:;required:true">@(Category)</div>
 					</div>
 					<div class="col-md-4 m">
-						<div data-jc="dropdown__posts.form.template__datasource:common.dependencies.templatesposts;empty:;icon:paint-brush">@(Template)</div>
+						<div data-jc="dropdown__posts.form.template__datasource:common.dependencies.templatesposts;icon:paint-brush;required:true;empty:">@(Template)</div>
 					</div>
 					<div class="col-md-4 m">
-						<div data-jc="textbox__posts.form.date__type:date;icon:clock-o;placeholder:@(yyyy-MM-dd);align:center">@(Date)</div>
-						<div class="help">@(You can specify a publish date.)</div>
+						<div data-jc="textbox__posts.form.date__type:date;icon:clock-o;placeholder:@(yyyy-MM-dd);align:center">@(Publish date)</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	<div class="cmseditor" data-jc="cmseditor__posts.form.body" data-jc-import="[url]components/cmseditor.html"></div>
+
+	<div class="padding bg-smoke npb">
+		<div class="tabmenu-container">
+			<ul data-jc="tabmenu__posts.form.type__null__'html'" class="tabmenu right" style="width:100%">
+				<li data-value="html"><i class="fa fa-paint-brush"></i>@(Designer)</li>
+				<li data-value="markdown"><i class="fab fa-markdown"></i>@(Markdown)</li>
+			</ul>
+			<div data-jc="checkbox__posts.form.ispublished" class="b">@(Is published)</div>
+		</div>
+	</div>
+	<div data-bind="posts.form.type__show:value==='html'">
+		<div class="cmseditor" data-jc="cmseditor__posts.form.body" data-jc-import="[url]components/cmseditor.html" style="border-top:0;padding-top:8px"></div>
+	</div>
+	<div data-bind="posts.form.type__show:value==='markdown'__delay:500">
+
+		<div class="toolbar toolbar3">
+			<button class="exec" data-exec="postsform/toolbar" name="preview"><i class="fa fa-search"></i>@(Preview)</button>
+			<span></span>
+			<button class="exec" data-exec="postsform/toolbar" name="file"><i class="far fa-folder"></i>@(Browse file)</button>
+		</div>
+
+		<div class="padding npt">
+			<div data-jc="codemirror__posts.form.body__type:markdown;height:auto"></div>
+		</div>
+		<hr class="nmt nmb" />
+	</div>
 	<div class="backups hidden" data-bind="posts.form.id__show:!!value"><a href="javascript:void(0)" class="exec" data-exec="postsform/backups"><i class="fa fa-clock-o mr5"></i>@(Restore a backup)</a></div>
 	<div class="padding bg-yellow">
-		<div class="row">
+		<div class="row mt10">
 			<div class="col-md-4 m">
 				<div data-jc="textbox__posts.form.description__maxlength:300">@(Description)</div>
 			</div>
-			<div class="col-md-4 m">
-				<div data-jc="dropdowncheckbox__posts.form.signals__alltext:null;datasource:signals;empty:@(Doesn't contain any signals.);icon:dot-circle-o">@(Signals)</div>
-				<div class="help">@(Signals can start special actions when the page is displayed.)</div>
-			</div>
-			<div class="col-md-4 m">
-				<div data-jc="textbox__posts.form.author__maxlength:30;icon:user">@(Author)</div>
+			<div class="col-md-8">
+				<div class="row">
+					<div class="col-md-4 m">
+						<div data-jc="dropdowncheckbox__posts.form.signals__alltext:null;datasource:signals;empty:@(Doesn't contain any signals.);icon:dot-circle-o">@(Signals)</div>
+						<div class="help">@(Signals can start a special action for visitors.)</div>
+					</div>
+					<div class="col-md-4 m">
+						<div data-jc="textbox__posts.form.author__maxlength:30;icon:user">@(Author)</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -73,10 +100,15 @@
 	</div>
 </div>
 
+<div data-jc="window__common.window___if:posts-preview;title:@(Preview);reload:postsform/initpreview">
+	<iframe src="about:blank" frameborder="0" style="width:100%;height:100%"></iframe>
+</div>
+
 <script>
 
 	PLUGIN('postsform', function(exports) {
 
+		exports.body = '';
 		exports.scope = 'posts';
 
 		exports.show = function(com) {
@@ -89,6 +121,41 @@
 			});
 		};
 
+		exports.initpreview = function(el) {
+
+			var $frm = el.find('iframe');
+			var frm = $frm[0].contentWindow;
+			var doc = frm.document;
+
+			$frm.css('height', el.find('.ui-window-body').height());
+			SETTER('loading', 'show');
+
+			AJAX('POST [url]api/posts/preview/', posts.form, function(response) {
+				SETTER('loading', 'hide', 500);
+				doc.open('text/html', 'replace');
+				doc.write(response);
+				doc.close();
+			});
+		};
+
+		exports.toolbar = function(el) {
+			switch (el[0].name) {
+				case 'file':
+					refresh_filebrowser(function(file, name) {
+						name = name.replace(/\.[a-z]+$/i, '');
+						if ((/\.(jpg|png|gif|jpeg|svg)$/i).test(file))
+							file = '![{0}]({1})'.format(name, file);
+						else
+							file = '[{0}]({1})'.format(name, file);
+						SETTER('.posts.form.body', 'insert', file);
+					});
+					break;
+				case 'preview':
+					SET('common.window', 'posts-preview');
+					break;
+			}
+		};
+
 		exports.submit = function(com) {
 
 			SETTER('loading', 'show');
@@ -96,14 +163,35 @@
 			var model = CLONE(posts.form);
 			var editor = cmseditor.instance;
 
-			model.pictures = editor.getPictures();
-			model.summary = editor.getSummary();
-			model.body = editor.getContent().replace(/\n[\s\t]+\n/g, '\n');
-			model.search = editor.getKeywords();
+			// Clears cache
+			exports.markdown = '';
+			exports.html = '';
 
-			var w = editor.getWidgets();
-			model.widgets = w.settings;
-			model.bodywidgets = w.widgets;
+			if (model.type === 'html') {
+				model.pictures = editor.getPictures();
+				model.summary = editor.getSummary();
+				model.body = editor.getContent().replace(/\n[\s\t]+\n/g, '\n');
+				model.search = editor.getKeywords();
+
+				var w = editor.getWidgets();
+				model.widgets = w.settings;
+				model.bodywidgets = w.widgets;
+
+			} else {
+				var pictures = model.body.match(/\(.*?\.(jpg|png|jpeg|gif|svg)\)/g);
+				model.pictures = [];
+
+				if (pictures) {
+					for (var i = 0; i < pictures.length; i++)
+						model.pictures.push(pictures[i].replace(/\(|\)/g, '').trim());
+				}
+
+				model.summary = null;
+				model.search = null;
+				model.widgets = null;
+				model.bodywidgets = null;
+			}
+
 			model.stats = undefined;
 
 			var parts = { type: 'post', items: editor.getParts() };
@@ -112,6 +200,7 @@
 				SETTER('loading', 'hide', 1000);
 
 				if (response.success) {
+
 					SETTER('snackbar', 'success', '@(Post has been saved successfully.)');
 					com.hide();
 					EXEC('posts/refresh');
@@ -141,7 +230,12 @@
 				SETTER('suggestion', 'show', 'left', el, response, function(value) {
 					SETTER('loading', 'show');
 					setTimeout(function() {
-						cmseditor.instance.replace(value.data.body);
+
+						if (posts.form.type === 'html')
+							cmseditor.instance.replace(value.data.body);
+						else
+							SET('posts.form.body', value.data.body);
+
 						SETTER('loading', 'hide', 1000);
 					}, 100);
 				});
@@ -157,6 +251,21 @@
 
 		}, true);
 
+		WATCH(exports.scope + '.form.type', function(path, value, type) {
+
+			if (value === 'html' && (type === 2 || type === 0) && window.cmseditor && window.cmseditor.instance) {
+				exports.markdown = GET(exports.scope + '.form.body');
+				cmseditor.instance.reconfigure('template:' + GET(exports.scope + '.form.template'));
+				cmseditor.instance.set('');
+				cmseditor.instance.autoresize();
+			}
+
+			if (value === 'markdown' && type === 2) {
+				exports.html = GET(exports.scope + '.form.body');
+				SET(exports.scope + '.form.body', exports.markdown);
+			}
+
+		}, true);
 	});
 
 </script>

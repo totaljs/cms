@@ -3,6 +3,7 @@ NEWSCHEMA('Post').make(function(schema) {
 	schema.define('id', 'UID');
 	schema.define('idcategory', 'String(50)');
 	schema.define('template', 'String(30)', true);
+	schema.define('type', ['html', 'markdown']);
 	schema.define('name', 'String(100)', true);
 	schema.define('author', 'String(30)', true);
 	schema.define('description', 'String(300)');
@@ -30,6 +31,7 @@ NEWSCHEMA('Post').make(function(schema) {
 			opt.category && filter.adminFilter('category', opt, String);
 			opt.author && filter.adminFilter('author', opt, String);
 			opt.name && filter.adminFilter('name', opt, String);
+			opt.type && filter.adminFilter('type', opt, String);
 		} else {
 			opt.category && filter.where('linker_category', opt.category);
 			opt.author && filter.where('author', opt.author);
@@ -38,7 +40,7 @@ NEWSCHEMA('Post').make(function(schema) {
 			filter.fields('description');
 		}
 
-		filter.fields('id', 'idcategory', 'category', 'name', 'datecreated', 'date', 'linker', 'linker_category', 'pictures', 'summary', 'ispublished', 'signals', 'author', 'template');
+		filter.fields('id', 'idcategory', 'category', 'name', 'datecreated', 'date', 'linker', 'linker_category', 'pictures', 'summary', 'ispublished', 'signals', 'author', 'template', 'type');
 
 		if (opt.sort)
 			filter.adminSort(opt.sort);
@@ -91,12 +93,19 @@ NEWSCHEMA('Post').make(function(schema) {
 			if (response) {
 				$.controller && ($.controller.repository.post = $.controller.repository.page = response);
 				F.functions.read('posts', response.id, function(err, body) {
-					response.body = body;
-					response.body = response.body.CMSrender(response.widgets, function(body) {
-						response.body = body;
+
+					if (response.type === 'markdown') {
+						response.body = body.markdown();
 						nosql.counter.hit('all').hit(response.id);
 						$.callback(response);
-					}, $.controller);
+					} else {
+						response.body = body;
+						response.body = response.body.CMSrender(response.widgets, function(body) {
+							response.body = body;
+							nosql.counter.hit('all').hit(response.id);
+							$.callback(response);
+						}, $.controller);
+					}
 				});
 			} else
 				$.invalid('error-posts-404');
@@ -146,7 +155,9 @@ NEWSCHEMA('Post').make(function(schema) {
 
 		model.search = ((model.name || '') + ' ' + (model.keywords || '') + ' ' + (model.search || '')).keywords(true, true).join(' ').max(1000);
 
-		model.body = U.minifyHTML(model.body);
+		if (model.type === 'html')
+			model.body = U.minifyHTML(model.body);
+
 		F.functions.write('posts', model.id + '_' + model.stamp, model.body); // backup
 		F.functions.write('posts', model.id, model.body, isUpdate);
 

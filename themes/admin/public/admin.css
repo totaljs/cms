@@ -34,10 +34,12 @@ header .title .fa, header .title .fal { margin-right: 8px; }
 .backups > div a:last-child { padding-right: 0; margin-right: 0; border-right: 0; }
 
 .toolbar2 { background-color: #F0F0F0; padding: 12px 20px; margin-bottom: 15px; }
+.toolbar3 { padding: 5px 20px 0; margin-bottom: 15px; }
 .toolbar { margin: 20px 0; }
 .toolbar button { outline: 0; background-color: transparent; border: 1px solid transparent; border-radius: 4px; font-size: 12px; height: 24px; padding: 0 5px; margin: 0; color: black; margin-right: 5px; }
 .toolbar button .fa, .toolbar button .fal, .toolbar button .far { margin-right: 5px; }
 .toolbar button:hover { background-color: white; box-shadow: 0 2px 3px rgba(0,0,0,0.05); }
+.toolbar3 button:hover { background-color: #F0F0F0; box-shadow: none; }
 .toolbar button:disabled { color: silver; cursor: not-allowed; background-color: #E0E0E0; box-shadow: none; }
 .toolbar button:disabled .fa { color: silver; }
 .toolbar button.right { float: right; margin-left: 5px; margin-right: 0; }
@@ -148,7 +150,7 @@ h3 .fa, h3 .far, h3 .fal { margin-right: 8px; }
 .tabmenu { padding: 0; margin: 0; display: block; font-size: 12px; position: absolute; white-space: nowrap; }
 .tabmenu li { position: relative; display: inline-block; border-bottom: 0; margin: 0 0 0 10px; padding: 0; border-radius: 3px 3px 0 0; background-color: #E5E5E5; text-align: center; padding: 8px 10px; color: #505050; cursor: pointer; min-width: 90px; }
 .tabmenu li:first-child { margin-left: 0; }
-.tabmenu .selected { background-color: white; color: black; }
+.tabmenu .selected { background-color: white !important; color: black; }
 .tabmenu .fa, .tabmenu .fab, .tabmenu .fal, .tabmenu .far { margin-right: 8px; }
 .scroller { overflow-y: auto; overflow-x: hidden; position: relative; overflow-scrolling: touch; }
 
