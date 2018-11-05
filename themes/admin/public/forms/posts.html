@@ -258,13 +258,13 @@
 				SETTER('suggestion', 'show', 'left', el, response, function(value) {
 					SETTER('loading', 'show');
 					setTimeout(function() {
-
-						if (posts.form.type === 'html')
-							cmseditor.instance.replace(value.data.body);
-						else
-							SET('posts.form.body', value.data.body);
-
-						SETTER('loading', 'hide', 1000);
+						AJAX('GET [url]api/backups/posts/{id}_{stamp}/'.arg(value.data), function(body) {
+							if (posts.form.type === 'html')
+								cmseditor.instance.replace(body);
+							else
+								SET('posts.form.body', body);
+							SETTER('loading', 'hide', 1000);
+						});
 					}, 100);
 				});
 			});

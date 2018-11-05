@@ -146,6 +146,7 @@ exports.install = function() {
 
 	// MODEL: /schema/common.js
 	ROUTE('GET    #admin/api/backups/clear/                   *Common   --> @backup_clear');
+	ROUTE('GET    #admin/api/backups/{type}/{id}/             *Common   --> @backup_read');
 
 	// Files
 	ROUTE('GET     #admin/api/files/                          *File     --> @query');

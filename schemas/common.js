@@ -35,4 +35,8 @@ NEWSCHEMA('Common', function(schema) {
 		$.success();
 	});
 
+	schema.addWorkflow('backup_read', function($) {
+		F.functions.read($.params.type, $.params.id, $.callback);
+	});
+
 });

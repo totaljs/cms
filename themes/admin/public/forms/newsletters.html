@@ -145,10 +145,14 @@
 				SETTER('suggestion', 'show', 'left', el, response, function(value) {
 					SETTER('loading', 'show');
 					setTimeout(function() {
-						cmseditor.instance.replace(value.data.body);
-						SETTER('loading', 'hide', 1000);
+						AJAX('GET [url]api/backups/newsletters/{id}_{stamp}/'.arg(value.data), function(body) {
+							cmseditor.instance.replace(body);
+							SETTER('loading', 'hide', 1000);
+						});
 					}, 100);
 				});
+
+
 			});
 		};
 
