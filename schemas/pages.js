@@ -547,7 +547,7 @@ function widgetsettings(widget, settings) {
 
 function globalsreplacer(text) {
 	var val = F.global.variables[text.substring(1)];
-	return val ? val : text;
+	return val == null ? text : val;
 }
 
 String.prototype.CMSglobals = function() {
