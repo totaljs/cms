@@ -1299,9 +1299,17 @@
 							}
 						}
 
+						tmp = target.next();
+						if (!tmp.length)
+							tmp = target.prev();
+
 						target.remove();
 						self.getToolbar().hide();
 						self.change(true);
+
+						if (tmp.length && (tmp.hclass('CMS_edit') || tmp.hclass('CMS_remove')))
+							tmp.trigger('click');
+
 						break;
 
 					case 'repeat':
