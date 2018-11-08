@@ -50,6 +50,8 @@ COMPONENT('exec', function(self, config) {
 
 COMPONENT('checkbox', function(self, config) {
 
+	self.nocompile();
+
 	self.validate = function(value) {
 		return (config.disabled || !config.required) ? true : (value === true || value === 'true' || value === 'on');
 	};
@@ -93,6 +95,8 @@ COMPONENT('checkbox', function(self, config) {
 COMPONENT('textarea', function(self, config) {
 
 	var input, container, content = null;
+
+	self.nocompile();
 
 	self.validate = function(value) {
 		if (config.disabled || !config.required)
@@ -258,8 +262,10 @@ COMPONENT('validation', 'delay:100;flags:visible', function(self, config) {
 
 COMPONENT('dropdown', function(self, config) {
 
-	var select, container, condition, content = null;
+	var select, condition, content = null;
 	var render = '';
+
+	self.nocompile();
 
 	self.validate = function(value) {
 
@@ -315,7 +321,7 @@ COMPONENT('dropdown', function(self, config) {
 				condition = value ? FN(value) : null;
 				break;
 			case 'required':
-				self.find('.ui-dropdown-label').tclass('ui-dropdown-label-required', value);
+				self.tclass('ui-dropdown-required', value === true);
 				self.state(1, 1);
 				break;
 			case 'datasource':
@@ -331,6 +337,7 @@ COMPONENT('dropdown', function(self, config) {
 			case 'disabled':
 				self.tclass('ui-disabled', value);
 				self.find('select').prop('disabled', value);
+				self.reset();
 				break;
 		}
 
@@ -350,11 +357,14 @@ COMPONENT('dropdown', function(self, config) {
 
 		config.empty !== undefined && builder.push('<option value="">{0}</option>'.format(config.empty));
 
+		var type = typeof(arr[0]);
+		var notObj = type === 'string' || type === 'number';
+
 		for (var i = 0, length = arr.length; i < length; i++) {
 			var item = arr[i];
 			if (condition && !condition(item))
 				continue;
-			if (item.length)
+			if (notObj)
 				builder.push(template.format(item, value === item ? ' selected="selected"' : '', item));
 			else
 				builder.push(template.format(item[propValue], value === item[propValue] ? ' selected="selected"' : '', item[propText]));
@@ -369,15 +379,15 @@ COMPONENT('dropdown', function(self, config) {
 		var builder = [];
 		var label = content || config.label;
 		if (label) {
-			builder.push('<div class="ui-dropdown-label{0}">{1}{2}:</div>'.format(config.required ? ' ui-dropdown-label-required' : '', config.icon ? '<span class="fa fa-{0}"></span> '.format(config.icon) : '', label));
+			builder.push('<div class="ui-dropdown-label">{0}{1}:</div>'.format(config.icon ? '<span class="fa fa-{0}"></span> '.format(config.icon) : '', label));
 			builder.push('<div class="ui-dropdown-values">{0}</div>'.format(html));
 			self.html(builder.join(''));
 		} else
 			self.html(html).aclass('ui-dropdown-values');
 		select = self.find('select');
-		container = self.find('.ui-dropdown');
 		render && self.refresh();
 		config.disabled && self.reconfigure('disabled:true');
+		self.tclass('ui-dropdown-required', config.required === true);
 	};
 
 	self.make = function() {
@@ -397,13 +407,15 @@ COMPONENT('dropdown', function(self, config) {
 		if (invalid === self.$oldstate)
 			return;
 		self.$oldstate = invalid;
-		container.tclass('ui-dropdown-invalid', invalid);
+		self.tclass('ui-dropdown-invalid', invalid);
 	};
 });
 
 COMPONENT('textbox', function(self, config) {
 
 	var input, container, content = null;
+
+	self.nocompile();
 
 	self.validate = function(value) {
 
@@ -637,6 +649,7 @@ COMPONENT('textbox', function(self, config) {
 COMPONENT('error', function(self, config) {
 
 	self.readonly();
+	self.nocompile();
 
 	self.make = function() {
 		self.aclass('ui-error hidden');
@@ -664,6 +677,7 @@ COMPONENT('loading', function(self) {
 
 	self.readonly();
 	self.singleton();
+	self.nocompile();
 
 	self.make = function() {
 		self.aclass('ui-loading');
@@ -723,6 +737,7 @@ COMPONENT('message', function(self, config) {
 
 	self.readonly();
 	self.singleton();
+	self.nocompile();
 
 	self.make = function() {
 		self.aclass('ui-message hidden');

@@ -151,6 +151,7 @@
 		var pages = { prev: self.find(psel + ' button[name="prev"]'), next: self.find(psel + ' button[name="next"]'), info: self.find(psel + ' div') };
 
 		self.readonly();
+		self.nocompile();
 		self.datasource = EMPTYARRAY;
 		self.template = Tangular.compile('<li data-index="{{ index }}"><a href="/download/{{ value }}" target="_blank" class="ui-filelistbox-preview"><i class="fa fa-search"></i></a><span class="ui-filelistbox-size">{{ size | filesize }}</span><span class="ui-filelistbox-dimension">{{ if width }}{{ width }}x{{ height }}{{ else }}{{ fi }}</span><span class="ui-filelistbox-date">{{ mtime | format(\'@(yyyy-MM-dd)\') }}</span>{{ if icon }}<i class="fa fa-{{ icon }}"></i>{{ fi }}<span class="ui-filelistbox-name">{{ text }}</span></li>');
 

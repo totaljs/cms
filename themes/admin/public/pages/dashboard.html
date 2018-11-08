@@ -497,6 +497,7 @@
 		var container, counter = 0, Tempty;
 
 		self.singleton();
+		self.nocompile();
 		self.readonly();
 		self.blind();
 
@@ -571,6 +572,7 @@
 		var binded = false;
 
 		self.readonly();
+		self.nocompile();
 
 		self.make = function() {
 			self.aclass('ui-stats24');

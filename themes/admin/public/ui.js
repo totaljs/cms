@@ -39,6 +39,7 @@ COMPONENT('loading', function(self) {
 
 	self.readonly();
 	self.singleton();
+	self.nocompile();
 
 	self.make = function() {
 		self.aclass('ui-loading');
@@ -70,6 +71,7 @@ COMPONENT('grid', 'filter:true;external:false;fillcount:50;filterlabel:Filtering
 	self.template = Tangular.compile('<td data-index="{{ index }}"{{ if $.cls }} class="{{ $.cls }}"{{ fi }}><div class="wrap{{ if align }} {{ align }}{{ fi }}"{{ if background }} style="background-color:{{ background }}"{{ fi }}>{{ value | raw }}</div></td>');
 	self.options = options;
 	self.readonly();
+	self.nocompile();
 
 	self.make = function() {
 
@@ -771,6 +773,8 @@ COMPONENT('textbox', function(self, config) {
 
 	var input, content = null;
 
+	self.nocompile();
+
 	self.validate = function(value) {
 
 		if (!config.required || config.disabled)
@@ -1186,6 +1190,8 @@ COMPONENT('dropdown', function(self, config) {
 	var select, condition, content = null;
 	var render = '';
 
+	self.nocompile();
+
 	self.validate = function(value) {
 
 		if (!config.required || config.disabled)
@@ -1377,6 +1383,8 @@ COMPONENT('textarea', function(self, config) {
 
 	var input, content = null;
 
+	self.nocompile();
+
 	self.validate = function(value) {
 		if (config.disabled || !config.required || config.readonly)
 			return true;
@@ -1505,6 +1513,8 @@ COMPONENT('textarea', function(self, config) {
 
 COMPONENT('checkbox', function(self, config) {
 
+	self.nocompile();
+
 	self.validate = function(value) {
 		return (config.disabled || !config.required) ? true : (value === true || value === 'true' || value === 'on');
 	};
@@ -1550,6 +1560,7 @@ COMPONENT('codemirror', 'linenumbers:false;required:false;trim:false;tabs:false'
 
 	self.getter = null;
 	self.bindvisible();
+	self.nocompile();
 
 	self.reload = function() {
 		editor.refresh();
@@ -1746,6 +1757,7 @@ COMPONENT('nosqlcounter', 'count:0;height:80', function(self, config) {
 
 	self.bindvisible();
 	self.readonly();
+	self.nocompile();
 
 	self.make = function() {
 		self.aclass('ui-nosqlcounter');
@@ -1851,6 +1863,7 @@ COMPONENT('keyvalue', 'maxlength:100', function(self, config) {
 	var empty = {};
 
 	self.template = Tangular.compile('<div class="ui-keyvalue-item"><div class="ui-keyvalue-item-remove"><i class="fa fa-times"></i></div><div class="ui-keyvalue-item-key"><input type="text" name="key" maxlength="{{ max }}"{{ if disabled }} disabled="disabled"{{ fi }} placeholder="{{ placeholder_key }}" value="{{ key }}" /></div><div class="ui-keyvalue-item-value"><input type="text" maxlength="{{ max }}" placeholder="{{ placeholder_value }}" value="{{ value }}" /></div></div>');
+	self.nocompile();
 
 	self.binder = function(type, value) {
 		return value;
@@ -2084,6 +2097,7 @@ COMPONENT('textboxlist', 'maxlength:100', function(self, config) {
 	var cempty = 'empty';
 
 	self.readonly();
+	self.nocompile();
 	self.template = Tangular.compile('<div class="ui-textboxlist-item"><div><i class="fa fa-times"></i></div><div><input type="text" maxlength="{{ max }}" placeholder="{{ placeholder }}"{{ if disabled}} disabled="disabled"{{ fi }} value="{{ value }}" /></div></div>');
 
 	self.configure = function(key, value, init, prev) {
@@ -2249,6 +2263,8 @@ COMPONENT('dropdowncheckbox', 'checkicon:check;visible:0;alltext:All selected;li
 
 	!W.$dropdowncheckboxtemplate && (W.$dropdowncheckboxtemplate = Tangular.compile('<div class="ui-dropdowncheckbox-item" data-index="{{ index }}"><div><i class="fa fa-{{ $.checkicon }}"></i></div><span>{{ text }}</span></div>'));
 	var template = W.$dropdowncheckboxtemplate;
+
+	self.nocompile();
 
 	self.validate = function(value) {
 		return config.disabled || !config.required ? true : value && value.length > 0;
@@ -2543,6 +2559,8 @@ COMPONENT('snackbar', 'timeout:3000;button:Dismiss', function(self, config) {
 
 	self.readonly();
 	self.blind();
+	self.nocompile();
+
 	self.make = function() {
 		self.aclass('ui-snackbar hidden');
 		self.append('<div><a href="javasc' + 'ript:void(0)" class="ui-snackbar-dismiss"></a><div class="ui-snackbar-body"></div></div>');
@@ -2658,6 +2676,7 @@ COMPONENT('confirm', function(self) {
 
 	self.readonly();
 	self.singleton();
+	self.nocompile();
 
 	self.make = function() {
 
@@ -2745,7 +2764,8 @@ COMPONENT('crop', 'dragdrop:true;format:{0}', function(self, config) {
 	var samesize = '';
 
 	self.bindvisible();
-	self.noValid();
+	self.novalidate();
+	self.nocompile();
 	self.getter = null;
 
 	img.crossOrigin = 'anonymous';
@@ -2995,6 +3015,7 @@ COMPONENT('fontawesomebox', 'height:300', function(self, config) {
 	};
 
 	self.readonly();
+	self.nocompile();
 
 	self.make = function() {
 
@@ -3115,6 +3136,7 @@ COMPONENT('multioptions', function(self) {
 
 	self.getter = null;
 	self.novalidate();
+	self.nocompile();
 
 	self.init = function() {
 		window.Tmultioptionscolor = Tangular.compile('<div class="ui-moi-value-colors ui-moi-save" data-name="{{ name }}" data-value="{{ value }}">{0}</div>'.format(['#ED5565', '#DA4453', '#FC6E51', '#E9573F', '#FFCE54', '#F6BB42', '#A0D468', '#8CC152', '#48CFAD', '#37BC9B', '#4FC1E9', '#3BAFDA', '#5D9CEC', '#4A89DC', '#AC92EC', '#967ADC', '#EC87C0', '#D770AD', '#F5F7FA', '#E6E9ED', '#CCD1D9', '#AAB2BD', '#656D78', '#434A54', '#000000'].map(function(n) { return '<span data-value="{0}" data-type="color" class="multioptions-operation" style="background-color:{0}"><i class="fa fa-check-circle"></i></span>'.format(n); }).join('')));
@@ -3532,6 +3554,8 @@ COMPONENT('fileupload', function(self, config) {
 	var input = null;
 
 	self.readonly();
+	self.nocompile();
+
 	self.configure = function(key, value, init) {
 		if (init)
 			return;
@@ -3620,8 +3644,10 @@ COMPONENT('suggestion', function(self, config) {
 	self.items = null;
 	self.template = Tangular.compile('<li data-index="{{ $.index }}"{{ if selected }} class="selected"{{ fi }}>{{ name | raw }}</li>');
 	self.callback = null;
+
 	self.readonly();
 	self.singleton();
+	self.nocompile();
 
 	self.configure = function(key, value, init) {
 		if (init)
@@ -3898,6 +3924,8 @@ COMPONENT('calendar', 'today:Set today;firstday:0;close:Close;yearselect:true;mo
 	self.months_short = EMPTYARRAY;
 	self.years_from;
 	self.years_to;
+
+	self.nocompile();
 
 	self.configure = function(key, value) {
 		switch (key) {
@@ -4283,6 +4311,7 @@ COMPONENT('mainprogress', function(self) {
 
 	self.singleton();
 	self.readonly();
+	self.nocompile();
 
 	self.make = function() {
 		self.aclass('ui-mainprogress hidden');
@@ -4311,6 +4340,7 @@ COMPONENT('progress', 'animate:true', function(self, config) {
 	var container, old = null;
 
 	self.readonly();
+	self.nocompile();
 
 	self.make = function() {
 		self.aclass('ui-progress');
@@ -4344,6 +4374,7 @@ COMPONENT('pictures', function() {
 
 	self.skip = false;
 	self.readonly();
+	self.nocompile();
 
 	self.make = function() {
 		self.aclass('ui-pictures');
@@ -4439,6 +4470,8 @@ COMPONENT('textboxtags', function(self, config) {
 
 	if (!W.$textboxtagstemplate)
 		W.$textboxtagstemplate = Tangular.compile('<div class="ui-textboxtags-tag" data-name="{{ name }}">{{ name }}<i class="fa fa-times-circle ui-textboxtags-remove"></i></div>');
+
+	self.nocompile();
 
 	var template = W.$textboxtagstemplate;
 
@@ -4647,6 +4680,7 @@ COMPONENT('websocket', 'reconnect:3000', function(self, config) {
 
 	self.online = false;
 	self.readonly();
+	self.nocompile();
 
 	self.make = function() {
 		url = (config.url || '').env(true);
@@ -4738,6 +4772,8 @@ COMPONENT('donutchart', 'format:{{ value | format(0) }};size:0;tooltip:true;pres
 	var W = $(window);
 
 	self.readonly();
+	self.nocompile();
+
 	self.make = function() {
 		self.aclass('ui-donutchart');
 		self.append('<div class="ui-donutchart-tooltip"></div><svg></svg>');
@@ -4931,6 +4967,7 @@ COMPONENT('tabmenu', 'class:selected', function(self, config) {
 	var old, oldtab;
 
 	self.readonly();
+	self.nocompile();
 
 	self.make = function() {
 		self.event('click', 'li', function() {
@@ -4951,6 +4988,7 @@ COMPONENT('tabmenu', 'class:selected', function(self, config) {
 COMPONENT('error', function(self, config) {
 
 	self.readonly();
+	self.nocompile();
 
 	self.make = function() {
 		self.aclass('ui-error hidden');
@@ -4979,6 +5017,8 @@ COMPONENT('barchart', 'pl:20;pt:10;pb:25;prselected:0;axisX:true;axisY:true;padd
 	var W = $(window);
 
 	self.readonly();
+	self.nocompile();
+
 	self.make = function() {
 		self.aclass('ui-barchart');
 		self.empty().append('<svg></svg>');
@@ -5141,6 +5181,7 @@ COMPONENT('shortcuts', function(self) {
 	self.singleton();
 	self.readonly();
 	self.blind();
+	self.nocompile();
 
 	self.make = function() {
 		$(window).on('keydown', function(e) {
@@ -5253,6 +5294,7 @@ COMPONENT('preview', 'width:200;height:100;background:#FFFFFF;quality:90;schema:
 	var empty, img, canvas, name, content = null;
 
 	self.readonly();
+	self.nocompile();
 
 	self.configure = function(key, value, init) {
 
@@ -5421,6 +5463,7 @@ COMPONENT('features', 'height:37', function(self, config) {
 	self.callback = null;
 	self.readonly();
 	self.singleton();
+	self.nocompile();
 
 	self.configure = function(key, value, init) {
 		if (init)
@@ -5650,6 +5693,7 @@ COMPONENT('listing', 'pages:3;count:20', function(self, config) {
 	var layout;
 
 	self.readonly();
+	self.nocompile();
 
 	self.make = function() {
 
@@ -5787,6 +5831,7 @@ COMPONENT('autocomplete', 'height:200', function(self, config) {
 	self.template = Tangular.compile('<li{{ if index === 0 }} class="selected"{{ fi }} data-index="{{ index }}"><span>{{ name }}</span><span>{{ type }}</span></li>');
 	self.readonly();
 	self.singleton();
+	self.nocompile();
 
 	self.make = function() {
 		self.aclass('ui-autocomplete-container hidden');

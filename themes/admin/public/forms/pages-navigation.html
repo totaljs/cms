@@ -37,7 +37,8 @@
 		var dragdrop, language;
 
 		self.template = Tangular.compile('<div data-id="{{ id }}" class="ui-navigation-itemcontainer" draggable="true"><div class="ui-navigation-item"><i class="fa fa-times remove"></i><i class="fa fa-pencil edit"></i><i class="fa fa-plus-circle plus"></i><i class="icon{{ if icon }} {{ icon }}{{ fi }}"></i><span class="language">{{ language }}</span><div class="name">{{ name }}<span><i class="fa fa-globe mr5"></i>{{ url }}</span></div></div>{{ if children && children.length }}<div class="ui-navigation-children">{{ children | navigationchildren($.template) }}</div>{{ fi }}</div>');
-		self.noValid();
+		self.novalidate();
+		self.nocompile();
 		self.getter = null;
 
 		self.make = function() {

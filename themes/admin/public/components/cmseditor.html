@@ -76,6 +76,7 @@
 		var locked = false;
 
 		self.readonly();
+		self.nocompile();
 
 		self.released = function(is) {
 			is && iframe.attr('src', 'about:blank');
