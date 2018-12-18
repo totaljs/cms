@@ -204,7 +204,6 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .ui-nosqlcounter-cell > div:first-child { border-left: 0; }
 .ui-nosqlcounter-cell > div:first-child div { border-radius: 3px 0 0 3px; }
 .ui-nosqlcounter-cell > div:last-child div { border-radius: 0px 3px 3px 0; }
-.ui-nosqlcounter-cell > div:hover { opacity: 0.8; }
 .ui-nosqlcounter-labels { margin-top: 5px; }
 .ui-nosqlcounter-labels > div { position: relative; display: inline-block; vertical-align: top; text-align: center; font-size: 8px; width: 8.333%; overflow: hidden; color: #A0A0A0; }
 

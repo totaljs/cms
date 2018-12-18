@@ -61,7 +61,7 @@ COMPONENT('loading', function(self) {
 	};
 });
 
-COMPONENT('grid', 'filter:true;external:false;fillcount:50;filterlabel:Filtering values ...;boolean:true|on|yes;pluralizepages:# pages,# page,# pages,# pages;pluralizeitems:# items,# item,# items,# items;pagination:false;rowheight:30', function(self, config) {
+COMPONENT('grid', 'filter:true;external:false;fillcount:50;filterlabel:Filtering values ...;boolean:true|on|yes;pluralizepages:# pages,# page,# pages,# pages;pluralizeitems:# items,# item,# items,# items;pagination:false;rowheight:32', function(self, config) {
 
 	var tbody, thead, tbodyhead, container, pagination;
 	var options = { columns: {}, items: [], indexer: 0, filter: {} };
