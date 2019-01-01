@@ -135,24 +135,24 @@ function markdown(md) {
 	var builder = [];
 	var ul = false;
 	var table = false;
-	var code = false;
+	var iscode = false;
 
 	for (var i = 0, length = lines.length; i < length; i++) {
 
 		if (lines[i].substring(0, 3) === '```') {
 
-			if (code) {
+			if (iscode) {
 				builder.push('</code></pre>');
-				code = false;
+				iscode = false;
 				continue;
 			}
 
-			code = true;
+			iscode = true;
 			builder.push('<pre><code class="' + lines[i].substring(3) + '">');
 			continue;
 		}
 
-		if (code) {
+		if (iscode) {
 			builder.push(lines[i]);
 			continue;
 		}
@@ -238,7 +238,7 @@ function markdown(md) {
 
 	ul && builder.push('</ul>');
 	table && builder.push('</table>');
-	code && builder.push('</code></pre>');
+	iscode && builder.push('</code></pre>');
 
 	return U.minifyHTML('<div class="markdown">' + builder.join('\n') + '</div>');
 }
