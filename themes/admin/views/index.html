@@ -190,6 +190,10 @@
 
 			var msg = '';
 			var t = common.notifications.template;
+
+			if (item.message)
+				item.message = Thelpers.encode(item.message);
+
 			switch (item.type) {
 
 				case 'navigation.save':
