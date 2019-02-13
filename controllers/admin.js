@@ -251,7 +251,7 @@ function login() {
 	var key = (self.body.name + ':' + self.body.password + ':' + F.config.secret + (self.body.name + ':' + self.body.password).hash()).md5();
 	if (F.global.config.users[key]) {
 		$SAVE('Event', { type: 'system/login', user: self.body.name, admin: true }, NOOP, self);
-		self.cookie(F.config['admin-cookie'], key, '1 month');
+		self.cookie(F.config['admin-cookie'], key, '1 month', { security: 'strict' });
 		self.success();
 	} else
 		self.invalid('error-users-credentials');
