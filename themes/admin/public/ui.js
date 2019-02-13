@@ -559,7 +559,7 @@ COMPONENT('grid', 'filter:true;external:false;fillcount:50;filterlabel:Filtering
 			for (var j = 0, jl = columns.length; j < jl; j++) {
 				var column = columns[j];
 				var val = items[i][column.name];
-				m.value = column.template ? column.template(items[i], column) : column.render ? column.render(val, column, items[i]) : val == null ? '' : (column.format ? val.format(column.format) : val);
+				m.value = column.template ? column.template(items[i], column) : column.render ? column.render(val, column, items[i]) : val == null ? '' : Thelpers.encode((column.format ? val.format(column.format) : val));
 				m.index = j;
 				m.align = column.align;
 				m.background = column.background;
