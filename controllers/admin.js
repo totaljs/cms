@@ -2,7 +2,7 @@ const MSG_NOTIFY = { TYPE: 'notify' };
 const MSG_ALERT = { TYPE: 'alert' };
 const ALLOW = ['/api/dependencies/', '/api/pages/preview/', '/api/upload/', '/api/nav/', '/api/files/', '/stats/', '/live/', '/api/widgets/'];
 const SYSUSER = {};
-const COOKIE = { security: 'strict', httponly: true };
+const COOKIE_OPTIONS = { security: 'strict', httponly: true };
 
 var DDOS = {};
 var WS = null;
@@ -259,7 +259,7 @@ function login() {
 	var key = (self.body.name + ':' + self.body.password + ':' + F.config.secret + (self.body.name + ':' + self.body.password).hash()).md5();
 	if (F.global.config.users[key]) {
 		$SAVE('Event', { type: 'system/login', user: self.body.name, admin: true }, NOOP, self);
-		self.cookie(F.config['admin-cookie'], key, '1 month', COOKIE);
+		self.cookie(F.config['admin-cookie'], key, '1 month', COOKIE_OPTIONS);
 		self.success();
 	} else
 		self.invalid('error-users-credentials');
