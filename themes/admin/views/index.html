@@ -124,10 +124,9 @@
 			items.push({ name: '@(Sign out)', icon: 'power-off', signout: true });
 
 			SETTER('contextmenu', 'show', 'left', el, items, function(item) {
-				if (item.signout) {
-					COOKIES.rem('@{'%admin-cookie'}');
-					location.reload(true);
-				} else
+				if (item.signout)
+					location.href = '[url]logout/'.env();
+				else
 					REDIRECT(item.url);
 			}, 8, 5);
 
@@ -323,8 +322,7 @@
 
 			SETTER('features', 'show', items, function(item) {
 				if (item.signout) {
-					COOKIES.rem('@{'%admin-cookie'}');
-					location.reload(true);
+					location.href = '[url]logout/'.env();
 				} else {
 					window.cmseditor && cmseditor.form && SET('cmseditor.form', '');
 					common.form3 && SET('common.form3', '');

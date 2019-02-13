@@ -2,6 +2,7 @@ const MSG_NOTIFY = { TYPE: 'notify' };
 const MSG_ALERT = { TYPE: 'alert' };
 const ALLOW = ['/api/dependencies/', '/api/pages/preview/', '/api/upload/', '/api/nav/', '/api/files/', '/stats/', '/live/', '/api/widgets/'];
 const SYSUSER = {};
+const COOKIE = { security: 'strict', httponly: true };
 
 var DDOS = {};
 var WS = null;
@@ -40,6 +41,7 @@ exports.install = function() {
 
 	// Internal
 	ROUTE('GET     #admin', '=admin/index');
+	ROUTE('GET     #admin/logout/',                           logout);
 	ROUTE('POST    /api/login/admin/',                        login);
 	ROUTE('POST    #admin/api/upload/',                       upload, ['upload', 10000], 5120); // 5 MB
 	ROUTE('POST    #admin/api/upload/base64/',                upload_base64, [10000], 2048); // 2 MB
@@ -246,12 +248,18 @@ function socket() {
 	self.autodestroy(() => WS = null);
 }
 
+function logout() {
+	var self = this;
+	self.cookie(F.config['admin-cookie'], '', '-1 day');
+	self.redirect(self.sitemap_url('admin'));
+}
+
 function login() {
 	var self = this;
 	var key = (self.body.name + ':' + self.body.password + ':' + F.config.secret + (self.body.name + ':' + self.body.password).hash()).md5();
 	if (F.global.config.users[key]) {
 		$SAVE('Event', { type: 'system/login', user: self.body.name, admin: true }, NOOP, self);
-		self.cookie(F.config['admin-cookie'], key, '1 month', { security: 'strict' });
+		self.cookie(F.config['admin-cookie'], key, '1 month', COOKIE);
 		self.success();
 	} else
 		self.invalid('error-users-credentials');
