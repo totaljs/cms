@@ -706,16 +706,17 @@ Controller.prototype.CMSpage = function(callback, cache) {
 
 	var self = this;
 	var page;
+	var url = self.url.toLowerCase();
 
 	if (self.language) {
-		page = F.global.sitemap[self.language + ' ' + self.url];
-		!page && (page = F.global.sitemap[self.url]);
+		page = F.global.sitemap[self.language + ' ' + url];
+		!page && (page = F.global.sitemap[url]);
 	} else
-		page = F.global.sitemap[self.url];
+		page = F.global.sitemap[url];
 
 	if (!page) {
-		if (F.global.redirects && F.global.redirects[self.url]) {
-			self.redirect(F.global.redirects[self.url], RELEASE);
+		if (F.global.redirects && F.global.redirects[url]) {
+			self.redirect(F.global.redirects[url], RELEASE);
 			NOSQL('pages').counter.hit('redirect');
 		} else
 			self.throw404();
@@ -733,7 +734,7 @@ Controller.prototype.CMSpage = function(callback, cache) {
 	if (self.query.DEBUG && DEBUG)
 		cache = false;
 
-	self.memorize('cachecms' + self.language + '_' + self.url, cache || '1 minute', cache === false, function() {
+	self.memorize('cachecms' + self.language + '_' + url, cache || '1 minute', cache === false, function() {
 
 		var nosql = NOSQL('pages');
 		nosql.one().where('id', page.id).callback(function(err, response) {
