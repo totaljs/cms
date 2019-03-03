@@ -161,7 +161,12 @@ NEWSCHEMA('Page').make(function(schema) {
 
 		// Sanitizes URL
 		if (!model.ispartial && !model.url.startsWith('http:') && !model.url.startsWith('https:')) {
-			model.url = U.path(model.url);
+			var pageurl = model.url.split('/');
+			for (var i = 0, len = pageurl.length; i < len; i++) {
+				pageurl[i] = pageurl[i].slug();
+			}
+
+			model.url = U.path(pageurl.join('/'));
 			if (model.url[0] !== '/')
 				model.url = '/' + model.url;
 		}
