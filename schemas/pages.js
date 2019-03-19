@@ -699,11 +699,18 @@ function loadpartial(page, callback, controller) {
 			output[item.url] = item;
 			F.functions.read('pages', item.id, function(err, body) {
 				body.CMSrender(item.widgets, function(body) {
-					item.body = body;
+					item.body = dynamicvalues(body, item);
 					next();
 				}, controller);
 			});
 		}, () => callback(output));
+	});
+}
+
+function dynamicvalues(body, obj) {
+	return body.replace(REGEXP_GLOBAL, function(text) {
+		var val = obj[text.substring(1)];
+		return typeof(val) === 'string' ? val : text;
 	});
 }
 
@@ -769,7 +776,7 @@ Controller.prototype.CMSpage = function(callback, cache) {
 			F.functions.read('pages', response.id + (DRAFT ? '_draft' : ''), function(err, body) {
 				response.body = body;
 				response.body.CMSrender(DRAFT ? response.dwidgets : response.widgets, function(body) {
-					response.body = body;
+					response.body = dynamicvalues(body, response);
 					loadpartial(repo.page, function(partial) {
 						repo.page.partial = partial;
 						if (callback) {

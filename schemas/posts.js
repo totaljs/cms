@@ -1,3 +1,5 @@
+const REGEXP_GLOBAL = /\$[0-9a-z-_]+/gi;
+
 NEWSCHEMA('Post').make(function(schema) {
 
 	schema.define('id', 'UID');
@@ -75,7 +77,7 @@ NEWSCHEMA('Post').make(function(schema) {
 			ADMIN.alert($.user, 'posts/edit', response.id);
 
 			F.functions.read('posts', response.id, function(err, body) {
-				response.body = body;
+				response.body = dynamicvalues(body, response);
 				$.callback(response);
 			});
 
@@ -98,13 +100,13 @@ NEWSCHEMA('Post').make(function(schema) {
 				F.functions.read('posts', response.id, function(err, body) {
 
 					if (response.type === 'markdown') {
-						response.body = body.markdown();
+						response.body = dynamicvalues(body.markdown(), response);
 						nosql.counter.hit('all').hit(response.id);
 						$.callback(response);
 					} else {
 						response.body = body;
 						response.body = response.body.CMSrender(response.widgets, function(body) {
-							response.body = body;
+							response.body = dynamicvalues(body, response);
 							nosql.counter.hit('all').hit(response.id);
 							$.callback(response);
 						}, $.controller);
@@ -205,6 +207,13 @@ NEWSCHEMA('Post').make(function(schema) {
 	});
 
 });
+
+function dynamicvalues(body, obj) {
+	return body.replace(REGEXP_GLOBAL, function(text) {
+		var val = obj[text.substring(1)];
+		return typeof(val) === 'string' ? val : text;
+	});
+}
 
 // Refreshes internal informations (sitemap and navigations)
 function refresh() {
