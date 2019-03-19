@@ -51,21 +51,10 @@
 	<div class="header-empty"></div>
 
 	<div id="parts">
-		<div data-jc="part__common.page__if:dashboard;url:/admin/pages/dashboard.html;reload:dashboard/reload;hidden:dashboard/hidden;cleaner:10"></div>
-		<div data-jc="part__common.page__if:events;url:/admin/pages/events.html;reload:events/reload;hidden:events/hidden;cleaner:10"></div>
-		<div data-jc="part__common.page__if:posts;url:/admin/pages/posts.html;reload:posts/reload;cleaner:10"></div>
-		<div data-jc="part__common.page__if:notices;url:/admin/pages/notices.html;reload:notices/reload;cleaner:10"></div>
-		<div data-jc="part__common.page__if:pages;url:/admin/pages/pages.html;reload:pages/reload;cleaner:10"></div>
-		<div data-jc="part__common.page__if:widgets;url:/admin/pages/widgets.html;reload:widgets/reload;cleaner:10"></div>
-		<div data-jc="part__common.page__if:newsletters;url:/admin/pages/newsletters.html;reload:newsletters/reload;cleaner:10"></div>
-		<div data-jc="part__common.page__if:subscribers;url:/admin/pages/subscribers.html;reload:subscribers/reload;cleaner:10"></div>
-		<div data-jc="part__common.page__if:settings;url:/admin/pages/settings.html;reload:settings/reload;cleaner:10"></div>
+		@{view('/partials/pages')}
 	</div>
 
-	<div data-jc="importer__common.form3__if:filebrowser;url:[url]forms/filebrowser.html"></div>
-	<div data-jc="importer__common.form3__if:widgets-import;url:[url]forms/widgets-import.html;cleaner:5"></div>
-	<div data-jc="importer__common.form__if:widgets-globals;url:[url]forms/widgets-globals.html;cleaner:5"></div>
-	<div data-jc="importer__common.form__if:pages-globals;url:[url]forms/pages-globals.html;cleaner:5"></div>
+	@{view('/partials/forms')}
 
 	<script>
 
