@@ -48,10 +48,10 @@ NEWSCHEMA('Page').make(function(schema) {
 
 	// Gets listing
 	schema.setQuery(function($) {
-		var filter = NOSQL('pages').find();
+		var filter = NOSQL('pages').listing();
 		filter.fields('id', 'name', 'title', 'url', 'ispartial', 'icon', 'parent', 'language', 'draft');
 		filter.sort('datecreated', true);
-		filter.callback((err, docs, count) => $.callback(filter.adminOutput(docs, count)));
+		filter.callback($.callback);
 	});
 
 	// Gets a specific page
@@ -161,12 +161,7 @@ NEWSCHEMA('Page').make(function(schema) {
 
 		// Sanitizes URL
 		if (!model.ispartial && !model.url.startsWith('http:') && !model.url.startsWith('https:')) {
-			var pageurl = model.url.split('/');
-			for (var i = 0, len = pageurl.length; i < len; i++) {
-				pageurl[i] = pageurl[i].slug();
-			}
-
-			model.url = U.path(pageurl.join('/'));
+			model.url = U.path(model.url);
 			if (model.url[0] !== '/')
 				model.url = '/' + model.url;
 		}
@@ -699,7 +694,7 @@ function loadpartial(page, callback, controller) {
 			output[item.url] = item;
 			F.functions.read('pages', item.id, function(err, body) {
 				body.CMSrender(item.widgets, function(body) {
-					item.body = dynamicvalues(body, item);
+					item.body = body;
 					next();
 				}, controller);
 			});
@@ -707,28 +702,20 @@ function loadpartial(page, callback, controller) {
 	});
 }
 
-function dynamicvalues(body, obj) {
-	return body.replace(REGEXP_GLOBAL, function(text) {
-		var val = obj[text.substring(1)];
-		return typeof(val) === 'string' ? val : text;
-	});
-}
-
 Controller.prototype.CMSpage = function(callback, cache) {
 
 	var self = this;
 	var page;
-	var url = self.url.toLowerCase();
 
 	if (self.language) {
-		page = F.global.sitemap[self.language + ' ' + url];
-		!page && (page = F.global.sitemap[url]);
+		page = F.global.sitemap[self.language + ' ' + self.url];
+		!page && (page = F.global.sitemap[self.url]);
 	} else
-		page = F.global.sitemap[url];
+		page = F.global.sitemap[self.url];
 
 	if (!page) {
-		if (F.global.redirects && F.global.redirects[url]) {
-			self.redirect(F.global.redirects[url], RELEASE);
+		if (F.global.redirects && F.global.redirects[self.url]) {
+			self.redirect(F.global.redirects[self.url], RELEASE);
 			NOSQL('pages').counter.hit('redirect');
 		} else
 			self.throw404();
@@ -746,7 +733,7 @@ Controller.prototype.CMSpage = function(callback, cache) {
 	if (self.query.DEBUG && DEBUG)
 		cache = false;
 
-	self.memorize('cachecms' + self.language + '_' + url, cache || '1 minute', cache === false, function() {
+	self.memorize('cachecms' + self.language + '_' + self.url, cache || '1 minute', cache === false, function() {
 
 		var nosql = NOSQL('pages');
 		nosql.one().where('id', page.id).callback(function(err, response) {
@@ -776,7 +763,7 @@ Controller.prototype.CMSpage = function(callback, cache) {
 			F.functions.read('pages', response.id + (DRAFT ? '_draft' : ''), function(err, body) {
 				response.body = body;
 				response.body.CMSrender(DRAFT ? response.dwidgets : response.widgets, function(body) {
-					response.body = dynamicvalues(body, response);
+					response.body = body;
 					loadpartial(repo.page, function(partial) {
 						repo.page.partial = partial;
 						if (callback) {

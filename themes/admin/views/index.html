@@ -9,26 +9,26 @@
 	<meta name="format-detection" content="telephone=no" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 	<meta name="robots" content="all,follow" />
-	<link rel="stylesheet" href="//cdn.componentator.com/spa.min@16.css" />
-	<script src="//cdn.componentator.com/spa.min@16.js"></script>
+	<link rel="stylesheet" href="//cdn.componentator.com/spa.min@17.css" />
+	<script src="//cdn.componentator.com/spa.min@17.js"></script>
 	@{import('head', '/admin.css', '/admin.js', 'favicon.ico')}
 </head>
-<body data-jc="exec,avatar">
+<body data---="exec,avatar">
 
 	@{json(user, 'userprofile', (k,v) => k === 'password' ? undefined : v)}
 
-	<div data-jc="LAZY autocomplete"></div>
-	<div data-jc="LAZY calendar" data-jc-config="days:@(SU,MO,TU,WE,TH,FR,SO);months:@(January,February,March,April,May,June,July,August,September,October,November,December);today:@(Set date to today);firstday:0"></div>
-	<div data-jc="LAZY confirm"></div>
-	<div data-jc="LAZY features" data-jc-config="placeholder:@(Search ...)"></div>
-	<div data-jc="LAZY snackbar" data-jc-config="button:@(Close);timeout:5500"></div>
-	<div data-jc="LAZY suggestion" data-jc-config="placeholder:@(Search)"></div>
-
-	<div data-jc="contextmenu"></div>
-	<div data-jc="loading" class="hidden"></div>
-	<div data-jc="mainprogress__common.progress"></div>
-	<div data-jc="shortcuts"></div>
-	<div data-jc="websocket" data-jc-config="reconnect:5000;url:[url]live/"></div>
+	<div data---="LAZY autocomplete"></div>
+	<div data---="LAZY calendar__null__days:@(SU,MO,TU,WE,TH,FR,SO);months:@(January,February,March,April,May,June,July,August,September,October,November,December);today:@(Set date to today);firstday:0"></div>
+	<div data---="LAZY confirm"></div>
+	<div data---="LAZY features__null__placeholder:@(Search ...)"></div>
+	<div data---="LAZY snackbar__null__button:@(Close);timeout:5500"></div>
+	<div data---="LAZY suggestion__null__placeholder:@(Search)"></div>
+	<div data---="LAZY menu"></div>
+	<div data---="contextmenu"></div>
+	<div data---="loading" class="hidden"></div>
+	<div data---="mainprogress__common.progress"></div>
+	<div data---="shortcuts"></div>
+	<div data---="websocket__null__reconnect:5000;url:[url]live/"></div>
 
 	<header>
 		<nav>
@@ -51,21 +51,21 @@
 	<div class="header-empty"></div>
 
 	<div id="parts">
-		<div data-jc="part__common.page__if:dashboard;url:/admin/pages/dashboard.html;reload:dashboard/reload;hidden:dashboard/hidden;cleaner:10"></div>
-		<div data-jc="part__common.page__if:events;url:/admin/pages/events.html;reload:events/reload;hidden:events/hidden;cleaner:10"></div>
-		<div data-jc="part__common.page__if:posts;url:/admin/pages/posts.html;reload:posts/reload;cleaner:10"></div>
-		<div data-jc="part__common.page__if:notices;url:/admin/pages/notices.html;reload:notices/reload;cleaner:10"></div>
-		<div data-jc="part__common.page__if:pages;url:/admin/pages/pages.html;reload:pages/reload;cleaner:10"></div>
-		<div data-jc="part__common.page__if:widgets;url:/admin/pages/widgets.html;reload:widgets/reload;cleaner:10"></div>
-		<div data-jc="part__common.page__if:newsletters;url:/admin/pages/newsletters.html;reload:newsletters/reload;cleaner:10"></div>
-		<div data-jc="part__common.page__if:subscribers;url:/admin/pages/subscribers.html;reload:subscribers/reload;cleaner:10"></div>
-		<div data-jc="part__common.page__if:settings;url:/admin/pages/settings.html;reload:settings/reload;cleaner:10"></div>
+		<div data---="part__common.page__if:dashboard;url:/admin/pages/dashboard.html;reload:dashboard/reload;hidden:dashboard/hidden;cleaner:10"></div>
+		<div data---="part__common.page__if:events;url:/admin/pages/events.html;reload:events/reload;hidden:events/hidden;cleaner:10"></div>
+		<div data---="part__common.page__if:posts;url:/admin/pages/posts.html;reload:posts/reload;cleaner:10"></div>
+		<div data---="part__common.page__if:notices;url:/admin/pages/notices.html;reload:notices/reload;cleaner:10"></div>
+		<div data---="part__common.page__if:pages;url:/admin/pages/pages.html;reload:pages/reload;cleaner:10"></div>
+		<div data---="part__common.page__if:widgets;url:/admin/pages/widgets.html;reload:widgets/reload;cleaner:10"></div>
+		<div data---="part__common.page__if:newsletters;url:/admin/pages/newsletters.html;reload:newsletters/reload;cleaner:10"></div>
+		<div data---="part__common.page__if:subscribers;url:/admin/pages/subscribers.html;reload:subscribers/reload;cleaner:10"></div>
+		<div data---="part__common.page__if:settings;url:/admin/pages/settings.html;reload:settings/reload;cleaner:10"></div>
 	</div>
 
-	<div data-jc="importer__common.form3__if:filebrowser;url:[url]forms/filebrowser.html"></div>
-	<div data-jc="importer__common.form3__if:widgets-import;url:[url]forms/widgets-import.html;cleaner:5"></div>
-	<div data-jc="importer__common.form__if:widgets-globals;url:[url]forms/widgets-globals.html;cleaner:5"></div>
-	<div data-jc="importer__common.form__if:pages-globals;url:[url]forms/pages-globals.html;cleaner:5"></div>
+	<div data---="importer__common.form3__if:filebrowser;url:[url]forms/filebrowser.html"></div>
+	<div data---="importer__common.form3__if:widgets-import;url:[url]forms/widgets-import.html;cleaner:5"></div>
+	<div data---="importer__common.form__if:widgets-globals;url:[url]forms/widgets-globals.html;cleaner:5"></div>
+	<div data---="importer__common.form__if:pages-globals;url:[url]forms/pages-globals.html;cleaner:5"></div>
 
 	<script>
 
@@ -115,24 +115,30 @@
 
 		function navigation(el) {
 
+			var opt = {};
 			var items = [];
+
+			opt.element = el;
+			opt.items = items;
+			opt.callback = function(item) {
+				if (item.signout)
+					location.href = '[url]logout/'.env();
+				else
+					REDIRECT(item.url);
+			};
 
 			common.nav.forEach(function(item) {
 				(user.sa || !user.roles.length || user.roles.indexOf(item.role) !== -1) && items.push({ name: item.title, icon: item.icon, url: item.url });
 			});
 
-			items.push({ name: '@(Sign out)', icon: 'power-off', signout: true });
+			items.push('-');
+			items.push({ name: '@(Sign out)', icon: 'power-off red', signout: true });
 
-			SETTER('contextmenu', 'show', 'left', el, items, function(item) {
-				if (item.signout)
-					location.href = '[url]logout/'.env();
-				else
-					REDIRECT(item.url);
-			}, 8, 5);
+			SETTER('menu', 'show', opt);
 
 		}
 
-		Tangular.register('time', function(value) {
+		Thelpers.time = function(value) {
 
 			if (!value)
 				return;
@@ -163,7 +169,7 @@
 
 			var years = (months / 12) >> 0;
 			return @(years + ' ' + Tangular.helpers.pluralize(years, 'years', 'year', 'years', 'years') + ' ago');
-		});
+		};
 
 		ON('message', function(message) {
 			if (message.type === 'visitor') {

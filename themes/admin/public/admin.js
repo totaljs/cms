@@ -157,3 +157,7 @@ Thelpers.language = function(value) {
 		num += value.charCodeAt(i);
 	return '<span class="badge badge-small mr5" style="background-color:{0}">{1}</span>'.format(colors[num % colors.length], value);
 };
+
+FUNC.loading = function(show, timeout) {
+	SETTER('loading', show ? 'show' : 'hide', timeout);
+};

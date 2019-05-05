@@ -1,7 +1,7 @@
 <script type="text/html" id="cmseditortoolbar">
 	<div class="cmseditor-help">
 		<nav><i class="fa fa-desktop"></i> <a href="javascript:void(0)" class="exec" data-exec="cmseditor.instance.setDevice" data-device="lg">@(Device width)</a><a href="javascript:void(0)" class="exec" data-exec="cmseditor.instance.setDevice" data-device="md">@(Medium)</a><a href="javascript:void(0)" class="exec" data-exec="cmseditor.instance.setDevice" data-device="sm">@(Tablet)</a><a href="javascript:void(0)" class="exec" data-exec="cmseditor.instance.setDevice" data-device="xs">@(Mobile)</a></nav>
-		<div class="hidden-xs cmseditorsourcecode"><b>@(Formatting:)</b> @(bold) (&#8984+B), @(italic) (&#8984+I), @(underline) (&#8984+U), @(link) (&#8984+L), @(icon) (&#8984+P), @(non-breaking space) (&#8984+Spacebar). <a href="javascript:void(0)" data-exec="cmseditor.instance.sourcecode" class="exec black ml5"><i class="fa fa-code mr5"></i>@(Show Source-Code)</a></div>
+		<div class="hidden-xs cmseditorsourcecode"><b>@(Formatting:)</b> @(bold) (&#8984+B), @(italic) (&#8984+I), @(underline) (&#8984+U), @(link) (&#8984+L), @(icon) (&#8984+P). <a href="javascript:void(0)" data-exec="cmseditor.instance.sourcecode" class="exec black ml5"><i class="fa fa-code mr5"></i>@(Show Source-Code)</a></div>
 	</div>
 </script>
 
@@ -953,13 +953,6 @@
 				if (e.keyCode === 85) {
 					// underline
 					self.getDocument().execCommand('Underline', false, null);
-					e.preventDefault();
-					e.stopPropagation();
-					return;
-				}
-
-				if (e.keyCode === 32) {
-					self.getDocument().execCommand('insertHTML', false, '&nbsp;');
 					e.preventDefault();
 					e.stopPropagation();
 					return;

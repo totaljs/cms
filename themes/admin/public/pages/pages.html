@@ -1,4 +1,4 @@
-<div data-jc-scope="pages" class="container">
+<div data-scope="pages" class="container">
 	<div class="toolbar">
 		<button class="right exec highlight hidden-xs" data-exec="pages/create"><i class="fa fa-plus-circle"></i>@(Create)</button>
 		<button class="exec" data-exec="pages/options"><i class="fa fa-cogs"></i>@(Options)</button>
@@ -8,14 +8,13 @@
 	<div class="row">
 		<div class="col-md-9">
 			<div class="fullheight">
-				<div data-jc="grid__grid__padding:10;filterlabel:@(Search);checked:pages/checkbox;button:pages/operation">
+				<div data---="datagrid__?.grid__padding:10;filterlabel:@(Search);checked:pages/checkbox;button:pages/button">
 					<script type="text/plain">
 					[
-						{ name: 'id', text: '', template: '<input type="checkbox" value="{{ id }}" />', size: '36px', header: '<input type="checkbox" value="{{ id }}" />', filter: false, sort: false, title: '@(Options)', align: 'center' },
-						{ name: 'path', text: '@(Name)', size: 2, template: '{{ language | language }}{{ if icon }}<i class="{{ icon }} mr5"></i>{{ fi }}{{ path | pagespath }}{{ if draft }}<span class="badge badge-red ml5">@(draft)</span>{{ fi }}{{ if ispartial }}<span class="badge badge-green ml5">@(partial)</span>{{ fi }}', classth: 'left', classfilter: 'left' },
-						{ name: 'url', text: '@(URL address)',  template: '{{ if ispartial }}<span class="silver">{{ url }}</span>{{ else }}{{ url }}{{ fi }}', size: 1, class: 'hidden-xs' },
-						{ name: 'language', text: '<i class="fa fa-flag" style="margin-right:0"></i>', size: '40px', title: '@(Language)', sort: false, align: 'center', filter: ' ', classtd: 'fs11' },
-						{ name: '@(Options)', filter: false, align: 'right', sort: false, size: '140px', template: '{{ if !ispartial }}<a href="{{ url }}" class="fs11 mr5" target="_blank">@(show)</a>{{ fi }}<button title="@(Duplicate)" name="duplicate"><i class="far fa-copy"></i></button><button name="update" title="@(Edit)"><i class="fa fa-pencil"></i></button><button class="btn-remove" name="remove" title="@(Remove)"><i class="far fa-trash-o"></i></button>' }
+						{ name: 'path', text: '@(Name)', width: 250, template: '{{ language | language }}{{ if icon }}<i class="{{ icon }} mr5"></i>{{ fi }}{{ path | pagespath }}{{ if draft }}<span class="badge badge-red ml5">@(draft)</span>{{ fi }}{{ if ispartial }}<span class="badge badge-green ml5">@(partial)</span>{{ fi }}', classth: 'left', classfilter: 'left' },
+						{ name: 'url', text: '@(URL address)', width: 250,  template: '{{ if ispartial }}<span class="silver">{{ url }}</span>{{ else }}{{ url }}{{ fi }}', size: 1, class: 'hidden-xs' },
+						{ name: 'language', text: '<i class="fa fa-flag" style="margin-right:0"></i>', width: 50, title: '@(Language)', sort: false, align: 1, filter: ' ' },
+						{ name: '@(Options)', filter: false, align: 1, sort: false, width: 140, template: '{{ if !ispartial }}<a href="{{ url }}" class="fs11 mr5" target="_blank">@(show)</a>{{ fi }}<div class="inline"><button title="@(Duplicate)" name="duplicate"><i class="far fa-copy"></i></button><button name="update" title="@(Edit)"><i class="fa fa-pencil"></i></button><button class="btn-remove" name="remove" title="@(Remove)"><i class="far fa-trash-o"></i></button></div>' }
 					]
 					</script>
 				</div>
@@ -25,7 +24,7 @@
 			<div class="panel m" data-bind="common.dependencies.navigations__show:value && value.length">
 				<label><i class="fa fa-sitemap"></i>@(Navigations)</label>
 				<div class="panelbody">
-					<nav data-bind="common.dependencies.navigations__template:true" class="buttonmenu">
+					<nav data-bind="common.dependencies.navigations__template" class="buttonmenu">
 						<script type="text/html">
 							{{ if value }}
 								{{ foreach m in value }}
@@ -50,24 +49,23 @@
 		</div>
 	</div>
 </div>
-<div data-jc="importer__common.form__if:pages-form;url:[url]forms/pages.html;cleaner:5"></div>
-<div data-jc="importer__common.form__if:pages-navigation;url:[url]forms/pages-navigation.html;cleaner:5"></div>
-<div data-jc="importer__common.form2__if:pages-navigation-item;url:[url]forms/pages-navigation-item.html;cleaner:5"></div>
-<div data-jc="importer__common.form__if:pages-redirects;url:[url]forms/pages-redirects.html;cleaner:5"></div>
+<div data---="importer__common.form__if:pages-form;url:[url]forms/pages.html;cleaner:5"></div>
+<div data---="importer__common.form__if:pages-navigation;url:[url]forms/pages-navigation.html;cleaner:5"></div>
+<div data---="importer__common.form2__if:pages-navigation-item;url:[url]forms/pages-navigation-item.html;cleaner:5"></div>
+<div data---="importer__common.form__if:pages-redirects;url:[url]forms/pages-redirects.html;cleaner:5"></div>
 
 <script>
 	PLUGIN('pages', function(exports) {
 
-		exports.scope = 'pages';
 		exports.path = function(name) {
-			return exports.scope + name;
+			return 'pages' + name;
 		};
 
 		var toolbar = { btnChecked: exports.element.find('.toolbar button[name="checked"]') };
 
 		exports.refresh = function() {
-			SETTER('loading', 'show');
-			AJAX('GET [url]api/{0}/'.format(exports.scope), function(response) {
+			FUNC.loading(true);
+			AJAX('GET [url]api/pages/', function(response) {
 
 				for (var i = 0, length = response.items.length; i < length; i++) {
 					var item = response.items[i];
@@ -76,14 +74,9 @@
 					var is = false;
 
 					while (parent) {
-
 						var sub = response.items.findItem('id', parent);
-						if (!sub)
+						if (!sub || sub.url === '/')
 							break;
-
-						if (sub.url === '/')
-							break;
-
 						path = sub.name + ' / ' + path;
 						parent = sub.parent;
 						is = true;
@@ -97,9 +90,9 @@
 				});
 
 				cdl.quicksort('name');
-				SET(exports.path('.grid'), response);
-				SET(exports.path('.list'), cdl);
-				SETTER('loading', 'hide', 500);
+				SET('?.grid', response);
+				SET('?.list', cdl);
+				FUNC.loading(false, 500);
 			});
 		};
 
@@ -108,27 +101,20 @@
 			exports.refresh();
 		};
 
-		exports.operation = function(btn, row, grid) {
-			var name = btn.prop('name');
+		exports.button = function(name, row, grid) {
 			switch (name) {
 				case 'remove':
 					SETTER('confirm', 'show', '@(Are you sure you want to remove selected page?)', ['"trash"@(Remove)', '@(No)'], function(index) {
 						if (!index) {
-							SETTER('loading', 'show');
-							AJAX('DELETE [url]api/{0}/'.format(exports.scope), row, function(response) {
-								SETTER('loading', 'hide', 1000);
-								if (response.success) {
-									SETTER('snackbar', 'success', '@(Page has been removed successfully.)');
-									exports.refresh();
-								}
-							});
+							FUNC.loading(true);
+							AJAX('DELETE [url]api/pages/', row, AJAX('DELETE [url]api/pages/', row, FUNC.messageresponse('@(Pages has been removed successfully)', exports.refresh)));
 						}
 					});
 					break;
 				case 'update':
 				case 'duplicate':
-					SETTER('loading', 'show');
-					AJAX('GET [url]api/{0}/{1}/'.format(exports.scope, row.id), function(response) {
+					FUNC.loading(true);
+					AJAX('GET [url]api/pages/{id}/'.arg(row), function(response) {
 
 						if (name === 'duplicate') {
 
@@ -140,7 +126,7 @@
 							}, 1000);
 
 						} else
-							SKIP(exports.path('.form.stats'));
+							SKIP('pages.form.stats');
 
 						response.bodycurrent = response.body;
 
@@ -149,9 +135,11 @@
 
 						SET('cmseditor.css', response.css);
 						SET('cmseditor.template', response.template);
-						SET(exports.path('.form'), response, true);
+
+						SET('?.form', response, true);
 						SET('common.form', exports.path('-form'));
 					});
+
 					break;
 			}
 		};
