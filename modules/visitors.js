@@ -317,7 +317,7 @@ W.monthly = function(callback) {
 	W.statistics(function(arr) {
 
 		if (!arr.length)
-			return callback(EMPTYOBJECT);
+			return callback(null, EMPTYOBJECT);
 
 		var stats = {};
 
@@ -338,7 +338,7 @@ W.monthly = function(callback) {
 				stats[key] = value;
 		}
 
-		callback(stats);
+		callback(null, stats);
 	});
 	return W;
 };

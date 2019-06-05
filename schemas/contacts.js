@@ -22,7 +22,7 @@ NEWSCHEMA('Contact').make(function(schema) {
 		EMIT('contacts.save', model);
 
 		// Sends email
-		MAIL(F.global.config.emailcontactform, '@(Contact form)', '=?/mails/contact', model, $.language).reply(model.email, true);
+		MAIL(F.global.config.emailcontactform, '@(Contact form) - {0}: {1}'.format(F.config.name, model.firstname + ' ' + model.lastname), '=?/mails/contact', model, $.language).reply(model.email, true);
 
 		// Events
 		$SAVE('Event', { type: 'contactforms/add', user: $.user ? $.user.name : '', body: model.firstname + ' ' + model.lastname, id: model.id }, NOOP, $);
