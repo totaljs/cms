@@ -1,0 +1,55 @@
+@{notranslate}
+@{nocompress html}
+
+@{if repository.preview}
+	<!-- ALL CMS CONTENT (FOR EDITOR) MUST BE WRAPPED IN <div id="CMS"> -->
+	<div class="row">
+		<div class="col-md-3">
+			<div class="wp">
+				<br />
+				<div class="totaljs">Menu</div>
+				<br />
+			</div>
+		</div>
+		<div class="col-md-9 menulayoutborder">
+			<div id="CMS">
+				@{if repository.page && repository.page.body}
+					<!-- RENDER UPDATED CONTENT -->
+					@{!repository.page.body}
+				@{else}
+					<!-- DEFAULT CONTENT FOR NEW PAGES FO THIS TEMPLATE -->
+					<div class="CMS_widgets" data-cms-category="Content,Columns"></div>
+				@{fi}
+			</div>
+		</div>
+	</div>
+@{else}
+	<!-- RENDERING FOR VISITORS -->
+	@{if repository.page && repository.page.body}
+	<div class="row">
+		<div class="col-md-3 hidden-xs">
+			<div class="wp">
+				<br />
+				@{if repository.page.navigations}
+					@{foreach m in repository.page.navigations}
+					 	<div class="sidemenu">
+							<nav>
+							@{foreach n in global.navigations[m].children}
+								<a href="@{n.url}"@{if n.contains(url, true)} class="selected"@{fi}>@{n.name}</a>
+							@{end}
+							</nav>
+						</div>
+					@{end}
+				@{fi}
+                <hr />
+                <div class="adv">Advertisement</div>
+				<div ref="codefund" id="codefund_ad"></div>
+			</div>
+		</div>
+		<div class="col-md-9 menulayoutborder">
+			<br />
+			@{!repository.page.body}
+		</div>
+	</div>
+	@{fi}
+@{fi}

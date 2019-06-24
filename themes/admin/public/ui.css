@@ -648,7 +648,7 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .ui-window-title > .fa { margin-right: 7px; }
 
 .ui-modal-noscroll, .ui-modal-noscroll body { overflow: hidden; }
-.ui-modal-container { position: fixed; left: 0; right: 0; top: 0; }
+.ui-modal-container { position: fixed; left: 0; right: 0; bottom: 0; }
 .ui-modal-bg { background-color: rgba(250,250,250,0.8); left: 0; top: 0; right: 0; bottom: 0; }
 .ui-modal { background-color: white; margin: 0 auto; border-radius: 3px; box-shadow: 0 0 30px rgba(0,0,0,0.05); transform: scale(0); transition: transform 0.2s; position: absolute; left: 50%; overflow: hidden; border: 1px solid #E0E0E0; }
 .ui-modal-visible .ui-modal { transform: scale(1); }
@@ -665,10 +665,14 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .ui-modal-footer .link { font-size: 12px; vertical-align: middle; position: relative; display: inline-block; margin: 0 10px; }
 .ui-modal-footer i { margin-right: 5px; }
 .ui-modal .padding { padding: 15px; }
-.ui-modal-align-1 { left: auto; right: 25px; bottom: 25px; top: auto; }
-.ui-modal-align-2 { left: 25px; bottom: 25px; top: auto; }
-.ui-modal-align-3 { left: 25px; top: 25px; }
-.ui-modal-align-4 { left: auto; right: 25px; top: 25px; }
+.ui-modal-align-1 { bottom: 0; }
+.ui-modal-align-2 { bottom: 0; }
+.ui-modal-align-3 { top: 0; }
+.ui-modal-align-4 { top: 0; }
+.ui-modal-align-1 .ui-modal { left: auto; right: 25px; bottom: 25px; top: auto; }
+.ui-modal-align-2 .ui-modal { left: 25px; bottom: 25px; top: auto; }
+.ui-modal-align-3 .ui-modal { left: 25px; top: 25px; }
+.ui-modal-align-4 .ui-modal { left: auto; right: 25px; top: 25px; }
 .ui-dark .ui-modal { background-color: #202020; border-color: #404040; }
 .ui-dark .ui-modal-bg { background-color: rgba(100,100,100,0.1); }
 .ui-dark .ui-modal-footer { border-top-color: #303030; }
@@ -680,3 +684,80 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 @media(max-width: 768px) {
 	.ui-modal { width: 90%; left: 50%; right: auto; bottom: auto; }
 }
+
+.ui-menu { position: absolute; z-index: 100; transform-origin: top left; }
+.ui-menu-items { background-color: white; padding: 5px 0; border-radius: 3px; box-shadow: 2px 5px 10px rgba(0,0,0,0.05); border: 1px solid #E0E0E0; position: relative; }
+.ui-menu-submenu { position: absolute; z-index: 101; background-color: white; padding: 5px 0; border-radius: 3px; box-shadow: 2px 5px 10px rgba(0,0,0,0.05); border: 1px solid #E0E0E0; }
+.ui-menu-visible {}
+.ui-menu ul { margin: 0; padding: 0; }
+.ui-menu li { margin: 0; padding: 5px; list-style-type: none; font-size: 12px; cursor: pointer; max-width: 220px; }
+.ui-menu-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 15px; }
+.ui-menu-note { font-size: 10px; margin: 0 10px 3px 35px; color: #A0A0A0; line-height: 11px; }
+.ui-menu-nofa .ui-menu-note { margin-left: 0; }
+.ui-menu li:hover, .ui-menu-selected { background-color: #F0F0F0; }
+.ui-menu-nofa { padding-left: 12px !important; }
+.ui-menu .pull-right { margin: 1px 5px 0 0; width: 20px; text-align: right; font-size: 10px; }
+.ui-menu-name i { width: 30px; margin: 0 5px 0 0; text-align: center; color: black; }
+.ui-menu-name b { position: absolute; right: 10px; font-size: 11px; color: gray; margin: 1px 5px 0; }
+.ui-menu-divider { padding: 0 !important; background: transparent !important; cursor: default !important; color: gray; font-size: 11px !important; }
+.ui-menu-divider span { display: block; margin: 5px 12px; }
+.ui-menu-divider hr { margin: 5px 0; border-color: #E0E0E0; }
+
+.ui-dark .ui-menu b { color: #505050; }
+.ui-dark .ui-menu-items, .ui-dark .ui-menu-submenu { background-color: #303030; border-color: #353535; box-shadow: 1px 5px 10px rgba(0,0,0,0.2); }
+.ui-dark .ui-menu-name i { color: white; }
+.ui-dark .ui-menu li:hover, .ui-dark .ui-menu-selected { background-color: #202020; }
+.ui-dark .ui-menu-divider hr { border-color: #404040; }
+.ui-dark .ui-menu-note { color: #777777; }
+
+.ui-input { position: relative; font-size: 13px; }
+.ui-input-required .ui-input-control { border-color: #D0D0D0; }
+.ui-input-label { margin-bottom: 3px; font-size: 12px; }
+.ui-input-label i { margin-right: 4px; }
+.ui-input-required .ui-input-label:before { content: '***'; color: red; margin-right: 3px; }
+.ui-input-control { border: 1px solid #E0E0E0; border-radius: 3px; height: 32px; background-color: white; }
+.ui-input-input { padding: 6px 2px 0 6px; position: relative; line-height: 20px; }
+.ui-input-placeholder { position: absolute; color: gray; margin: 0; user-select: none; cursor: text; width: 100%; text-align: left; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+.ui-input-control input { border: 0; outline: 0; background-color: white; width: 100%; padding: 0; margin: 0; line-height: 15px; font-size: 13px; color: black; font-family: Arial; }
+.ui-input-control input::-ms-expand { display: none; }
+.ui-input-icon-left { width: 32px; height: 30px; line-height: 32px; float: left; text-align: center; border-right: 1px solid #E0E0E0; }
+.ui-input-icon-right { width: 32px; height: 30px; line-height: 32px; float: right; border-left: 1px solid #E0E0E0; text-align: center; }
+.ui-input-required .ui-input-icon-left { border-color: #D0D0D0; }
+.ui-input-required .ui-input-icon-right { border-color: #D0D0D0; }
+.ui-input-ricon .ui-input-input { margin-right: 35px; }
+.ui-input-licon .ui-input-input { margin-left: 32px; }
+.ui-input-ricon .fa-times, .ui-input-licon .fa-times { color: red; }
+.ui-input-click { cursor: pointer; }
+.ui-input-error { margin-top: 7px; font-size: 11px; color: red; }
+.ui-input .right input, .ui-input .right .ui-input-placeholder { text-align: right; }
+.ui-input .center input, .ui-input .center .ui-input-placeholder { text-align: center; }
+.ui-input-dropdown, .ui-input-dropdown input, .ui-input-dropdown .ui-input-placeholder { cursor: pointer; }
+.ui-input-invalid .ui-input-control, .ui-input-invalid .ui-input-icon-left, .ui-input-invalid .ui-input-icon-right { border-color: red; }
+.ui-input.ui-disabled .ui-input-control { background-color: #F0F0F0; }
+.ui-input.ui-disabled input { background-color: #F0F0F0; color: #A0A0A0; }
+.ui-input.ui-disabled .ui-input-placeholder { color: #A0A0A0; }
+.ui-input.ui-disabled .ui-input-icon-left, .ui-input.ui-disabled .ui-input-icon-right { color: gray; }
+.ui-input-increment { padding: 5px 0 0; }
+.ui-input-increment i { display: block; line-height: 10px; font-size: 15px; cursor: pointer; }
+.ui-input-inner { line-height: 17px; }
+.ui-input-inner .ui-input-label { position: absolute; z-index: 1; margin: 11px 0 0 7px; font-size: 13px; }
+.ui-input-inner.ui-input-binded .ui-input-label { font-size: 11px; margin-top: 3px; color: gray; }
+.ui-input-inner .ui-input-input { padding-top: 9px; }
+.ui-input-binded.ui-input-inner .ui-input-input { padding-top: 15px; }
+.ui-input-inner .ui-input-control { height: 38px; }
+.ui-input-inner .ui-input-icon-left, .ui-input-inner .ui-input-icon-right { height: 37px; line-height: 37px; }
+.ui-input-inner.ui-input-required .ui-input-label:before { content: '*'; }
+.ui-input-inner .ui-input-increment { padding: 8px 0 0; }
+.ui-input-inner .ui-input-increment i { line-height: 10px; }
+.ui-input-masked input { letter-spacing: 1px; font-family: Menlo,Consolas,monospace; }
+
+.ui-dark .ui-input-required .ui-input-control { border-color: #404040; }
+.ui-dark .ui-input-control { border-color: #303030; background-color: #202020; }
+.ui-dark .ui-input-required .ui-input-icon-left { border-color: #404040; }
+.ui-dark .ui-input-required .ui-input-icon-right { border-color: #404040; }
+.ui-dark .ui-input-control input { background-color: #202020; color: white; }
+.ui-dark .ui-input-control { background-color: #202020; }
+.ui-dark .ui-input-icon-left, .ui-dark .ui-input-icon-right { border-color: #303030; color: gray; }
+.ui-dark .ui-input.ui-disabled .ui-input-control { background-color: #282828; }
+.ui-dark .ui-input.ui-disabled input { background-color: #282828; color: #777777; }
+.ui-dark .ui-input.ui-disabled .ui-input-placeholder { color: #777777; }
