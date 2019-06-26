@@ -1,4 +1,4 @@
-NEWSCHEMA('Notice').make(function(schema) {
+NEWSCHEMA('Notice', function(schema) {
 
 	schema.define('id', 'UID');
 	schema.define('idcategory', 'String(50)', true);
@@ -55,7 +55,7 @@ NEWSCHEMA('Notice').make(function(schema) {
 		var id = options.id || $.id;
 		filter.where('id', id);
 		filter.callback($.callback, 'error-notices-404');
-		ADMIN.alert($.user, 'notices/edit', id);
+		FUNC.alert($.user, 'notices/edit', id);
 	});
 
 	// Removes a specific post

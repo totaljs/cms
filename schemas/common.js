@@ -6,7 +6,7 @@ NEWSCHEMA('Common', function(schema) {
 		var name = req.split[req.split.length - 3];
 		NOSQL(name).backups(n => n.data.id === $.id, function(err, response) {
 			response.wait(function(item, next) {
-				F.functions.read(name, item.data.id + '_' + item.data.stamp, function(err, body) {
+				FUNC.read(name, item.data.id + '_' + item.data.stamp, function(err, body) {
 					item.data.body = body;
 					next();
 				});
@@ -36,7 +36,7 @@ NEWSCHEMA('Common', function(schema) {
 	});
 
 	schema.addWorkflow('backup_read', function($) {
-		F.functions.read($.params.type, $.params.id, $.callback);
+		FUNC.read($.params.type, $.params.id, $.callback);
 	});
 
 });

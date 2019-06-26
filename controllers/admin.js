@@ -7,8 +7,7 @@ const COOKIE_OPTIONS = { security: 'strict', httponly: true };
 var DDOS = {};
 var WS = null;
 
-global.ADMIN = {};
-global.ADMIN.notify = function(value) {
+FUNC.notify = function(value) {
 	if (WS) {
 		MSG_NOTIFY.type = value instanceof Object ? value.type : value;
 		MSG_NOTIFY.message = value instanceof Object ? value.message : '';
@@ -16,11 +15,11 @@ global.ADMIN.notify = function(value) {
 	}
 };
 
-global.ADMIN.send = function(value) {
+FUNC.send = function(value) {
 	WS && WS.send(value);
 };
 
-global.ADMIN.alert = function(user, type, value) {
+FUNC.alert = function(user, type, value) {
 	if (user && WS) {
 		MSG_ALERT.type = type;
 		MSG_ALERT.message = value;
@@ -29,7 +28,7 @@ global.ADMIN.alert = function(user, type, value) {
 	}
 };
 
-F.config['admin-tracking'] && ON('visitor', function(obj) {
+CONF.admin_tracking && ON('visitor', function(obj) {
 	if (WS) {
 		MSG_NOTIFY.type = 'visitor';
 		MSG_NOTIFY.message = obj;

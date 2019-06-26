@@ -46,7 +46,7 @@ NEWSCHEMA('Newsletter').make(function(schema) {
 				return;
 			}
 
-			F.functions.read('newsletters', response.id, function(err, body) {
+			FUNC.read('newsletters', response.id, function(err, body) {
 				response.body = body;
 				$.callback(response);
 			});
@@ -58,7 +58,7 @@ NEWSCHEMA('Newsletter').make(function(schema) {
 	schema.setRemove(function($) {
 		var id = $.body.id;
 		var user = $.user.name;
-		F.functions.remove('newsletters', id);
+		FUNC.remove('newsletters', id);
 		NOSQL('newsletters').remove().backup(user).log('Remove: ' + id, user).where('id', id).callback(() => $.success());
 		NOSQL('parts').remove().where('idowner', id).where('type', 'newsletter');
 	});
@@ -87,8 +87,8 @@ NEWSCHEMA('Newsletter').make(function(schema) {
 		model.linker = model.datecreated.format('yyyyMMdd') + '-' + model.name.slug();
 		model.search = ((model.name || '') + ' ' + (model.search || '')).keywords(true, true).join(' ').max(1000);
 
-		F.functions.write('newsletters', model.id + '_' + model.stamp, body); // backup
-		F.functions.write('newsletters', model.id, body, isUpdate);
+		FUNC.write('newsletters', model.id + '_' + model.stamp, body); // backup
+		FUNC.write('newsletters', model.id, body, isUpdate);
 
 		model.body = undefined;
 
@@ -107,7 +107,7 @@ NEWSCHEMA('Newsletter').make(function(schema) {
 
 	// Clears database
 	schema.addWorkflow('clear', function($) {
-		F.functions.remove('newsletters');
+		FUNC.remove('newsletters');
 		NOSQL('newsletters').remove().callback(NOOP);
 		$.success();
 	});

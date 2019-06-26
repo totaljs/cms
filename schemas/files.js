@@ -130,7 +130,7 @@ NEWSCHEMA('File').make(function(schema) {
 					});
 
 				}, function() {
-					remove.wait((item, next) => storage.remove(item.id, next), () => ADMIN.notify({ type: 'files/clear', message: count + '' }));
+					remove.wait((item, next) => storage.remove(item.id, next), () => FUNC.notify({ type: 'files/clear', message: count + '' }));
 				});
 			});
 		});

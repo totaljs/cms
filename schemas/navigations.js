@@ -1,4 +1,4 @@
-NEWSCHEMA('NavigationItem').make(function(schema) {
+NEWSCHEMA('NavigationItem', function(schema) {
 	schema.define('id', 'String(20)');
 	schema.define('idpage', 'UID'); // Page ID
 	schema.define('name', 'String(50)', true);
@@ -11,12 +11,12 @@ NEWSCHEMA('NavigationItem').make(function(schema) {
 	schema.define('behaviour', ['default', 'info', 'warn', 'highlight', 'special']);
 });
 
-NEWSCHEMA('Navigation').make(function(schema) {
+NEWSCHEMA('Navigation', function(schema) {
 	schema.define('id', 'String(50)', true);
 	schema.define('children', '[NavigationItem]');
 
 	schema.setGet(function($) {
-		ADMIN.alert($.user, 'navigations/edit', $.controller.id);
+		FUNC.alert($.user, 'navigations/edit', $.controller.id);
 		NOSQL('navigations').one().where('id', $.controller.id).callback(function(err, response) {
 			if (response) {
 				$.callback(response);

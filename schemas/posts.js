@@ -74,9 +74,9 @@ NEWSCHEMA('Post').make(function(schema) {
 				return;
 			}
 
-			ADMIN.alert($.user, 'posts/edit', response.id);
+			FUNC.alert($.user, 'posts/edit', response.id);
 
-			F.functions.read('posts', response.id, function(err, body) {
+			FUNC.read('posts', response.id, function(err, body) {
 				response.body = dynamicvalues(body, response);
 				$.callback(response);
 			});
@@ -97,7 +97,7 @@ NEWSCHEMA('Post').make(function(schema) {
 		filter.callback(function(err, response) {
 			if (response) {
 				$.controller && ($.controller.repository.post = $.controller.repository.page = response);
-				F.functions.read('posts', response.id, function(err, body) {
+				FUNC.read('posts', response.id, function(err, body) {
 
 					if (response.type === 'markdown') {
 						response.body = dynamicvalues(body.markdown(), response);
@@ -123,7 +123,7 @@ NEWSCHEMA('Post').make(function(schema) {
 		var user = $.user.name;
 
 		NOSQL('posts').remove().backup(user).log('Remove: ' + id, user).where('id', id).callback(function() {
-			F.functions.remove('posts', id);
+			FUNC.remove('posts', id);
 			$.success();
 			refresh_cache();
 		});
@@ -163,8 +163,8 @@ NEWSCHEMA('Post').make(function(schema) {
 		if (model.type === 'html')
 			model.body = U.minifyHTML(model.body);
 
-		F.functions.write('posts', model.id + '_' + model.stamp, model.body); // backup
-		F.functions.write('posts', model.id, model.body, isUpdate);
+		FUNC.write('posts', model.id + '_' + model.stamp, model.body); // backup
+		FUNC.write('posts', model.id, model.body, isUpdate);
 
 		model.body = undefined;
 
@@ -195,7 +195,7 @@ NEWSCHEMA('Post').make(function(schema) {
 	schema.addWorkflow('clear', function($) {
 		var user = $.user.name;
 		NOSQL('posts').remove().backup(user).log('Clear all posts', user).callback(function() {
-			F.functions.remove('posts');
+			FUNC.remove('posts');
 			$.success();
 			refresh_cache();
 		});

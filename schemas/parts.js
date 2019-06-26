@@ -33,7 +33,7 @@ NEWSCHEMA('Part').make(function(schema) {
 				var item = model.items[i];
 				item.idowner = model.idowner;
 				item.type = model.type;
-				F.functions.write('parts', item.id, U.minifyHTML(item.body), true);
+				FUNC.write('parts', item.id, U.minifyHTML(item.body), true);
 				item.body = undefined;
 				NOSQL('parts').update(item, true).where('id', item.id);
 			}
@@ -44,7 +44,7 @@ NEWSCHEMA('Part').make(function(schema) {
 	schema.addWorkflow('render', function($) {
 		NOSQL('parts').find().where('id', $.options.id).first().callback(function(err, response) {
 			if (response) {
-				F.functions.read('parts', response.id, function(err, body) {
+				FUNC.read('parts', response.id, function(err, body) {
 					response.body = body;
 					response.body.CMSrender(response.widgets, $.callback, $.controller);
 				});

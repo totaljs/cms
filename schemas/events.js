@@ -35,7 +35,7 @@ NEWSCHEMA('Event', function(schema) {
 		WSDATA.message = model.body;
 		WSDATA.type = model.type;
 
-		ADMIN.send(WSDATA);
+		FUNC.send(WSDATA);
 		$.success();
 	});
 

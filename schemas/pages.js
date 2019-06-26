@@ -69,7 +69,7 @@ NEWSCHEMA('Page').make(function(schema) {
 				return;
 			}
 
-			ADMIN.alert($.user, 'pages/edit', response.id);
+			FUNC.alert($.user, 'pages/edit', response.id);
 
 			var redirects = Object.keys(F.global.redirects);
 			response.redirects = [];
@@ -80,10 +80,10 @@ NEWSCHEMA('Page').make(function(schema) {
 					response.redirects.push(key);
 			}
 
-			F.functions.read('pages', response.id, function(err, body) {
+			FUNC.read('pages', response.id, function(err, body) {
 				response.body = body;
 				if (response.draft) {
-					F.functions.read('pages', response.id + '_draft', function(err, body) {
+					FUNC.read('pages', response.id + '_draft', function(err, body) {
 						response.bodydraft = body;
 						$.callback(response);
 					});
@@ -103,7 +103,7 @@ NEWSCHEMA('Page').make(function(schema) {
 		db.remove().where('id', id).backup(user).log('Remove: ' + id, user).callback(function(err, count) {
 			$.success();
 			if (count) {
-				F.functions.remove('pages', id);
+				FUNC.remove('pages', id);
 				db.counter.remove(id);
 				setTimeout2('pages', refresh, 1000);
 			}
@@ -175,13 +175,13 @@ NEWSCHEMA('Page').make(function(schema) {
 			model.dbodywidgets = model.widgets;
 			model.widgets = undefined;
 			model.bodywidgets = undefined;
-			F.functions.write('pages', model.id + '_draft', model.body, isUpdate);
+			FUNC.write('pages', model.id + '_draft', model.body, isUpdate);
 		} else {
 			// Removes helper values
 			model.dwidgets = null;
 			model.dbodywidgets = null;
-			F.functions.write('pages', model.id + '_' + model.stamp, model.body); // backup
-			F.functions.write('pages', model.id, model.body, isUpdate);
+			FUNC.write('pages', model.id + '_' + model.stamp, model.body); // backup
+			FUNC.write('pages', model.id, model.body, isUpdate);
 		}
 
 		model.body = undefined;
@@ -236,9 +236,9 @@ NEWSCHEMA('Page').make(function(schema) {
 			// Updates files
 			// doc.body.replace(reg, opt.url);
 			docs.wait(function(item, next) {
-				F.functions.read('pages', item.id, function(err, body) {
+				FUNC.read('pages', item.id, function(err, body) {
 					if (body)
-						F.functions.write('pages', item.id, body.replace(reg, opt.url), next, true);
+						FUNC.write('pages', item.id, body.replace(reg, opt.url), next, true);
 					else
 						next();
 				});
@@ -692,7 +692,7 @@ function loadpartial(page, callback, controller) {
 			nosql.counter.hit(item.id);
 			output[item.id] = item;
 			output[item.url] = item;
-			F.functions.read('pages', item.id, function(err, body) {
+			FUNC.read('pages', item.id, function(err, body) {
 				body.CMSrender(item.widgets, function(body) {
 					item.body = body;
 					next();
@@ -760,7 +760,7 @@ Controller.prototype.CMSpage = function(callback, cache) {
 
 			repo.page = response;
 
-			F.functions.read('pages', response.id + (DRAFT ? '_draft' : ''), function(err, body) {
+			FUNC.read('pages', response.id + (DRAFT ? '_draft' : ''), function(err, body) {
 				response.body = body;
 				response.body.CMSrender(DRAFT ? response.dwidgets : response.widgets, function(body) {
 					response.body = body;
@@ -827,7 +827,7 @@ Controller.prototype.CMSrender = function(url, callback) {
 
 		repo.page = response;
 
-		F.functions.read('pages', response.id, function(err, body) {
+		FUNC.read('pages', response.id, function(err, body) {
 			response.body = body;
 			response.body.CMSrender(response.widgets, function(body) {
 				response.body = body;
@@ -864,7 +864,7 @@ Controller.prototype.CMSpartial = function(url, callback) {
 			self.head('<style type="text/css">' + response.css + '</style>');
 		}
 
-		F.functions.read('pages', response.id, function(err, body) {
+		FUNC.read('pages', response.id, function(err, body) {
 			response.body = body;
 			response.body.CMSrender(response.widgets, function(body) {
 				response.body = body;

@@ -39,7 +39,7 @@ NEWSCHEMA('Widget').make(function(schema) {
 		opt.url && filter.where('url', opt.url);
 		filter.where('id', id);
 		filter.callback($.callback, 'error-widgets-404');
-		ADMIN.alert($.user, 'widgets/edit', id);
+		FUNC.alert($.user, 'widgets/edit', id);
 	});
 
 	schema.setSave(function($) {
@@ -155,14 +155,14 @@ NEWSCHEMA('Widget').make(function(schema) {
 			NOSQL(name).find().in('bodywidgets', id).fields('id', 'widgets', 'bodywidgets').callback(function(err, response) {
 				response.wait(function(item, next) {
 					var is = false;
-					F.functions.read(name, item.id, function(err, body) {
+					FUNC.read(name, item.id, function(err, body) {
 						response.body = body;
 						response.body && findwidget(id, body, function(content, html) {
 							response.body = response.body.replace(html, html.replace(content, widgetbody));
 							count++;
 							is = true;
 						});
-						is && F.functions.write(name, item.id, U.minifyHTML(response.body), true);
+						is && FUNC.write(name, item.id, U.minifyHTML(response.body), true);
 						next();
 					});
 				}, next);
@@ -354,7 +354,7 @@ function refresh(callback, force) {
 						(new Function('exports', obj.total))(o);
 					} catch (e) {
 						WARNING.message = 'Widget <b>{0}</b> exception: <b>{1}</b>'.format(item.name, e.message);
-						ADMIN.notify(WARNING);
+						FUNC.notify(WARNING);
 					}
 					obj.total = o;
 					rebuild = true;
