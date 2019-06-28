@@ -1,6 +1,5 @@
 <div data---="modal__common.form__icon:file-text-o;if:pages-form;width:1500;reload:pagesform/show;submit:pagesform/submit;autofocus:true;scrollbar:1" class="hidden">
 
-
 	<!-- HEADER -->
 	<div>
 		<span class="link cancel"><i class="fa fa-times"></i></span>
@@ -44,12 +43,12 @@
 				<div data---="checkbox__pages.form.usedefault" class="nmb b">@(DEFAULT CONTENT)</div>
 			</div>
 			<div class="hidden" data-bind="pages.form.lockedcontent__hide">
-				<a href="javascript:void(0)" class="exec inline green" data-exec="cmseditor.instance.editCSS"><i class="fa fa-paint-brush mr5"></i>@(Edit page styles)</a>
+				<span class="link exec inline green" data-exec="cmseditor.instance.editCSS"><i class="fa fa-paint-brush mr5"></i>@(Edit page styles)</span>
 			</div>
 			<div class="hidden" data-bind="pages.form.lockedcontent__hide">
-				<a href="javascript:void(0)" class="exec inline" data-exec="pagesform/backups"><i class="fa fa-clock-o mr5"></i>@(Restore a backup)</a>
+				<span class="link exec inline" data-exec="pagesform/backups"><i class="fa fa-clock-o mr5"></i>@(Restore a backup)</span>
 			</div>
-			<a href="javascript:void(0)" class="exec red" data-exec="pagesform/submit" style="float:right"><i class="fa fa-floppy-o mr5"></i>@(Save settings)</a>
+			<span class="link exec red" data-exec="pagesform/submit" style="float:right"><i class="fa fa-floppy-o mr5"></i>@(Save settings)</span>
 			<a href="javascript:void(0)" data-bind="pages.form.url__href:pagesform/preview" target="_blank" class="mr10" style="float:right" title="@(Preview saved content)"><i class="fa fa-search mr5"></i>@(Preview)</a>
 		</div>
 		<div class="padding">

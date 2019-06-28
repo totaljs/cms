@@ -1,21 +1,21 @@
 <script type="text/html" id="cmseditortoolbar">
 	<div class="cmseditor-help">
-		<nav><i class="fa fa-desktop"></i> <a href="javascript:void(0)" class="exec" data-exec="cmseditor.instance.setDevice" data-device="lg">@(Device width)</a><a href="javascript:void(0)" class="exec" data-exec="cmseditor.instance.setDevice" data-device="md">@(Medium)</a><a href="javascript:void(0)" class="exec" data-exec="cmseditor.instance.setDevice" data-device="sm">@(Tablet)</a><a href="javascript:void(0)" class="exec" data-exec="cmseditor.instance.setDevice" data-device="xs">@(Mobile)</a></nav>
-		<div class="hidden-xs cmseditorsourcecode"><b>@(Formatting:)</b> @(bold) (&#8984+B), @(italic) (&#8984+I), @(underline) (&#8984+U), @(link) (&#8984+L), @(icon) (&#8984+P). <a href="javascript:void(0)" data-exec="cmseditor.instance.sourcecode" class="exec black ml5"><i class="fa fa-code mr5"></i>@(Show Source-Code)</a></div>
+		<nav><i class="fa fa-desktop"></i> <span class="exec link" data-exec="cmseditor.instance.setDevice" data-device="lg">@(Device width)</span><span class="exec link" data-exec="cmseditor.instance.setDevice" data-device="md">@(Medium)</span><span class="exec link" data-exec="cmseditor.instance.setDevice" data-device="sm">@(Tablet)</span><span class="exec link" data-exec="cmseditor.instance.setDevice" data-device="xs">@(Mobile)</span></nav>
+		<div class="hidden-xs cmseditorsourcecode"><b>@(Formatting:)</b> @(bold) (&#8984+B), @(italic) (&#8984+I), @(underline) (&#8984+U), @(link) (&#8984+L), @(icon) (&#8984+P). <span data-exec="cmseditor.instance.sourcecode" class="exec link black ml5"><i class="fa fa-code mr5"></i>@(Show Source-Code)</span></div>
 	</div>
 </script>
 
-<div data-jc="importer__cmseditor.form__if:sourcecode;url:[url]forms/cmseditor-sourcecode.html;cleaner:5"></div>
-<div data-jc="importer__cmseditor.form__if:link;url:[url]forms/cmseditor-link.html;cleaner:5"></div>
-<div data-jc="importer__cmseditor.form__if:attribute;url:[url]forms/cmseditor-attribute.html;cleaner:5"></div>
-<div data-jc="importer__cmseditor.form__if:picture;url:[url]forms/cmseditor-picture.html;cleaner:5"></div>
-<div data-jc="importer__cmseditor.form__if:widgets;url:[url]forms/cmseditor-widgets.html;cleaner:5"></div>
-<div data-jc="importer__cmseditor.form__if:icons;url:[url]forms/cmseditor-icons.html;cleaner:5"></div>
-<div data-jc="importer__cmseditor.form__if:styles;url:[url]forms/cmseditor-styles.html;cleaner:5"></div>
-<div data-jc="importer__cmseditor.form__if:settings;url:[url]forms/cmseditor-settings.html;cleaner:5"></div>
-<div data-jc="importer__cmseditor.form__if:part;url:[url]forms/cmseditor-part.html;cleaner:5"></div>
-<div data-jc="importer__cmseditor.form__if:inject;url:[url]forms/cmseditor-inject.html;cleaner:5"></div>
-<div data-jc="importer__common.form2__if:tracking;url:[url]forms/cmseditor-tracking.html;cleaner:5"></div>
+<div data---="importer__cmseditor.form__if:sourcecode;url:[url]forms/cmseditor-sourcecode.html;cleaner:5"></div>
+<div data---="importer__cmseditor.form__if:link;url:[url]forms/cmseditor-link.html;cleaner:5"></div>
+<div data---="importer__cmseditor.form__if:attribute;url:[url]forms/cmseditor-attribute.html;cleaner:5"></div>
+<div data---="importer__cmseditor.form__if:picture;url:[url]forms/cmseditor-picture.html;cleaner:5"></div>
+<div data---="importer__cmseditor.form__if:widgets;url:[url]forms/cmseditor-widgets.html;cleaner:5"></div>
+<div data---="importer__cmseditor.form__if:icons;url:[url]forms/cmseditor-icons.html;cleaner:5"></div>
+<div data---="importer__cmseditor.form__if:styles;url:[url]forms/cmseditor-styles.html;cleaner:5"></div>
+<div data---="importer__cmseditor.form__if:settings;url:[url]forms/cmseditor-settings.html;cleaner:5"></div>
+<div data---="importer__cmseditor.form__if:part;url:[url]forms/cmseditor-part.html;cleaner:5"></div>
+<div data---="importer__cmseditor.form__if:inject;url:[url]forms/cmseditor-inject.html;cleaner:5"></div>
+<div data---="importer__common.form2__if:tracking;url:[url]forms/cmseditor-tracking.html;cleaner:5"></div>
 
 <input type="file" class="hidden" id="cmseditor_inlineupload" accept="image/*" />
 
