@@ -956,6 +956,9 @@ COMPONENT('textbox', function(self, config) {
 			case 'placeholder':
 				input.prop('placeholder', value || '');
 				break;
+			case 'autocomplete':
+				input.prop('autocomplete', 'false');
+				break;
 			case 'maxlength':
 				input.prop('maxlength', value || 1000);
 				break;

@@ -1,32 +1,44 @@
-<div data-jc="form__common.form__icon:user;if:settings-admin;title:@(Administrator);width:500;submit:settingsform/submit;autofocus:true" class="hidden">
-	<div class="padding npb">
-		<div class="row">
-			<div class="col-md-12 m">
-				<div data-jc="textbox__settings.formuser.name__placeholder:@(Peter Sirka);required:true">@(User name)</div>
+<div data---="modal__common.form__if:settings-admin;width:500;submit:settingsform/submit;autofocus:true" class="hidden">
+
+	<div>
+		<span class="link cancel"><i class="fa fa-times"></i></span>
+		<label><i class="fa fa-user"></i>@(Administrator)</label>
+	</div>
+
+	<div>
+		<div class="padding npb">
+			<div class="row">
+				<div class="col-md-12 m">
+					<div data---="input__settings.formuser.name__placeholder:@(Peter Sirka);required:true">@(User name)</div>
+				</div>
 			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-12 m">
-				<div data-jc="textbox__settings.formuser.login__required:true;placeholder:@(petersirka)">@(Login name)</div>
+			<div class="row">
+				<div class="col-md-12 m">
+					<div data---="input__settings.formuser.login__required:true;placeholder:@(petersirka)">@(Login name)</div>
+				</div>
 			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-12 m">
-				<div data-jc="textbox__settings.formuser.password__required:true">@(Login password)</div>
-				<div class="help"><a href="javascript:void(0)" class="exec" data-exec="settingsform/password">@(Generate password)</a></div>
+			<div class="row">
+				<div class="col-md-12 m">
+					<div data---="input__settings.formuser.password__required:true">@(Login password)</div>
+					<div class="help"><a href="javascript:void(0)" class="exec" data-exec="settingsform/password">@(Generate password)</a></div>
+				</div>
 			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-12 m">
-				<div data-jc="dropdowncheckbox__settings.formuser.roles__alltext:null;items:[roles]">@(Roles)</div>
-				<div class="help">@(If the user roles will be empty then the user will be access to all functionality.)</div>
+			<div class="row">
+				<div class="col-md-12 m">
+					<div data---="dropdowncheckbox__settings.formuser.roles__alltext:null;items:[roles]">@(Roles)</div>
+					<div class="help">@(If the user roles will be empty then the user will be access to all functionality.)</div>
+				</div>
 			</div>
 		</div>
 	</div>
-	<div class="ui-form-buttons center" data-jc="validation__settings.formuser">
-		<button name="cancel">@(Cancel)</button>
-		<button name="submit">@(SAVE)</button>
+
+	<div>
+		<div data---="validation__settings.formuser">
+			<span class="link cancel">@(Cancel)</span>
+			<button name="submit">@(SAVE)</button>
+		</div>
 	</div>
+
 </div>
 
 <script>
@@ -37,9 +49,9 @@
 			SET('settings.formuser.password', GUID(10));
 		};
 
-		exports.submit = function(com) {
+		exports.submit = function(hide) {
 
-			com.hide();
+			hide();
 
 			var frm = settings.formuser;
 

@@ -1,18 +1,30 @@
-<div data-jc="form__cmseditor.form__icon:cofg;if:settings;title:@(Widget settings);width:500;submit:cmseditorsettings/submit" class="hidden">
-	<div class="padding">
-		<div data-jc="multioptions__cmseditor.settings.options" data-jc-id="cmseditor.settings"></div>
+<div data---="modal__cmseditor.form__if:settings;width:500;submit:cmseditorsettings/submit" class="hidden">
+
+	<div>
+		<span class="link cancel"><i class="fa fa-times"></i></span>
+		<label><i class="fa fa-cofg"></i>@(Widget settings)</label>
 	</div>
-	<div class="ui-form-buttons" data-jc="validation__cmseditor.settings">
-		<button name="cancel">@(Cancel)</button>
-		<button name="submit">@(APPLY)</button>
+
+	<div>
+		<div class="padding">
+			<div data---="multioptions__cmseditor.settings.options__$id:cmseditor.settings"></div>
+		</div>
 	</div>
+
+	<div>
+		<div data---="validation__cmseditor.settings">
+			<span class="link cancel">@(Cancel)</span>
+			<button name="submit">@(APPLY)</button>
+		</div>
+	</div>
+
 </div>
 
 <script>
 
 	PLUGIN('cmseditorsettings', function(exports) {
-		exports.submit = function(com) {
-			com.hide();
+		exports.submit = function(hide) {
+			hide();
 			setTimeout(function() {
 
 				var form = cmseditor.settings;

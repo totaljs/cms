@@ -1,23 +1,35 @@
-<div data-jc="form__common.form__icon:address-book-o;if:subscribers-import;title:@(Import subscribers);width:600;submit:subscribersform/submit;autofocus:true" class="hidden">
-	<div class="padding">
-		<div data-bind="subscribers.import.importing__show:!value">
-			<div data-jc="textarea__subscribers.import.body__required:true;height:200;placeholder:@(Put all new email addresses)">@(Email addresses)</div>
-		</div>
-		<div data-bind="subscribers.import.importing__show:value">
-			<div data-jc="progress__subscribers.import.progress"></div>
-			<div class="help"><i class="fa fa-spin fa-refresh mr5"></i>@(Importing ...)</div>
+<div data---="modal__common.form__if:subscribers-import;width:600;submit:subscribersform/submit;autofocus:true" class="hidden">
+
+	<div>
+		<span class="link cancel"><i class="fa fa-times"></i></span>
+		<label><i class="fa fa-address-book-o"></i>@(Import subscribers)</label>
+	</div>
+
+	<div>
+		<div class="padding">
+			<div data-bind="subscribers.import.importing__show:!value">
+				<div data---="textarea__subscribers.import.body__required:true;height:200;placeholder:@(Put all new email addresses)">@(Email addresses)</div>
+			</div>
+			<div data-bind="subscribers.import.importing__show:value">
+				<div data---="progress__subscribers.import.progress"></div>
+				<div class="help"><i class="fa fa-spin fa-refresh mr5"></i>@(Importing ...)</div>
+			</div>
 		</div>
 	</div>
-	<div class="ui-form-buttons" data-bind="subscribers.import.importing__show:!value" data-jc="validation__subscribers.import">
-		<button name="cancel">@(Cancel)</button>
-		<button name="submit">@(IMPORT)</button>
+
+	<div>
+		<div data---="validation__subscribers.import">
+			<span class="link cancel">@(Cancel)</span>
+			<button name="submit">@(IMPORT)</button>
+		</div>
 	</div>
+
 </div>
 
 <script>
 	PLUGIN('subscribersform', function(exports) {
 
-		exports.submit = function(com) {
+		exports.submit = function(hide) {
 
 			SET('subscribers.import.progress', 0);
 			SET('subscribers.import.importing', true);
@@ -38,7 +50,7 @@
 				setTimeout(function() {
 					SET('subscribers.import.importing', false);
 					EXEC('subscribers/refresh');
-					com.hide();
+					hide();
 				}, 1000);
 			});
 		};

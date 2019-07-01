@@ -1,40 +1,3 @@
-<div data-jc="form__common.form3__icon:plug;if:widgets-import;title:@(Download existing widgets);width:800;reload:widgetsimport/show" class="hidden">
-	<div class="padding">
-
-		<div class="tabmenu-container">
-			<ul data-jc="tabmenu__widgets.externaltab__null__'all'" class="tabmenu tabmenu-bordered">
-				<li data-value="all">@(All)</li>
-				<li data-value="Layouts">@(Layouts)</li>
-				<li data-value="Columns">@(Columns)</li>
-				<li data-value="Content">@(Content)</li>
-				<li data-value="Inline">@(Inline)</li>
-			</ul>
-		</div>
-		<br />
-
-		<div data-jc="listing__widgets.external -> widgetsimport/filter(value)">
-			<script type="text/html">
-				<div class="col-xs-4 col-sm-3 m">
-					<div class="widgetext exec{{ id | widgetsinstalled }}" data-id="{{ id }}" data-exec="widgetsimport/submit">
-						<i class="fa fa-check-circle green"></i>
-						<div><img src="{{ picture }}" border="0" class="img-responsive" /></div>
-						<div class="widgetext-name">{{ name }}</div>
-						<div class="widgetext-category"><i class="fa fa-folder-o"></i>{{ category }}</div>
-					</div>
-				</div>
-			</script>
-			<script type="text/html">
-				<div class="row">
-					{{ body | raw }}
-				</div>
-			</script>
-		</div>
-	</div>
-	<div class="ui-form-buttons">
-		<button name="cancel" style="width:100%">@(Cancel)</button>
-	</div>
-</div>
-
 <style>
 	.widgetext { cursor: pointer; position: relative; }
 	.widgetext img { border: 1px solid #E0E0E0; border-radius: 3px; }
@@ -45,6 +8,53 @@
 	.widgetextinstalled .fa-check-circle { display: block; position: absolute; font-size: 40px; right: 10px; bottom: 50px; background-color: white; border-radius: 100px; padding: 0 2px 0; }
 	.widgetextinstalled img { border-color: #79AF65; }
 </style>
+
+<div data---="modal__common.form3__if:widgets-import;width:800;reload:widgetsimport/show;scrollbar:true" class="hidden">
+
+	<div>
+		<span class="link cancel"><i class="fa fa-times"></i></span>
+		<label><i class="fa fa-plug"></i>@(Download existing widgets)</label>
+	</div>
+
+	<div>
+		<div class="padding">
+
+			<div class="tabmenu-container">
+				<ul data---="tabmenu__widgets.externaltab__null__'all'" class="tabmenu tabmenu-bordered">
+					<li data-value="all">@(All)</li>
+					<li data-value="Layouts">@(Layouts)</li>
+					<li data-value="Columns">@(Columns)</li>
+					<li data-value="Content">@(Content)</li>
+					<li data-value="Inline">@(Inline)</li>
+				</ul>
+			</div>
+			<br />
+
+			<div data---="listing__widgets.external -> widgetsimport/filter(value)">
+				<script type="text/html">
+					<div class="col-xs-4 col-sm-3 m">
+						<div class="widgetext exec{{ id | widgetsinstalled }}" data-id="{{ id }}" data-exec="widgetsimport/submit">
+							<i class="fa fa-check-circle green"></i>
+							<div><img src="{{ picture }}" border="0" class="img-responsive" /></div>
+							<div class="widgetext-name">{{ name }}</div>
+							<div class="widgetext-category"><i class="fa fa-folder-o"></i>{{ category }}</div>
+						</div>
+					</div>
+				</script>
+				<script type="text/html">
+					<div class="row">
+						{{ body | raw }}
+					</div>
+				</script>
+			</div>
+		</div>
+	</div>
+
+	<div>
+		<button name="cancel" style="width:100%">@(Cancel)</button>
+	</div>
+
+</div>
 
 <script>
 	PLUGIN('widgetsimport', function(exports) {

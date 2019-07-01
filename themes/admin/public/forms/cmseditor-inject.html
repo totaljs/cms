@@ -1,12 +1,24 @@
-<div data-jc="form__cmseditor.form__icon:code;if:inject;title:@(Inject HTML);width:800;submit:cmseditorinject/submit;reload:cmseditorinject/reload" class="hidden">
-	<div class="padding">
-		<div data-jc="codemirror__cmseditor.inject__height:300;required:true;tabs:true;trim:true">@(HTML)</div>
-		<div class="help">@(You can inject custom HTML.)</div>
+<div data---="modal__cmseditor.form__if:inject;width:800;submit:cmseditorinject/submit;reload:cmseditorinject/reload" class="hidden">
+
+	<div>
+		<span class="link cancel"><i class="fa fa-times"></i></span>
+		<label><i class="fa fa-code"></i>@(Inject HTML)</label>
 	</div>
-	<div class="ui-form-buttons" data-jc="validation__cmseditor.inject">
-		<button name="cancel">@(Cancel)</button>
-		<button name="submit">@(APPLY)</button>
+
+	<div>
+		<div class="padding">
+			<div data---="codemirror__cmseditor.inject__height:300;required:true;tabs:true;trim:true">@(HTML)</div>
+			<div class="help">@(You can inject custom HTML.)</div>
+		</div>
 	</div>
+
+	<div>
+		<div data---="validation__cmseditor.inject">
+			<span class="link cancel">@(Cancel)</span>
+			<button name="submit">@(APPLY)</button>
+		</div>
+	</div>
+
 </div>
 
 <script>
@@ -17,9 +29,7 @@
 			SET('cmseditor.inject', '', true);
 		};
 
-		exports.submit = function(com) {
-
-			com.hide();
+		exports.submit = function(hide) {
 
 			var editor = cmseditor.instance;
 			var target = editor.getTarget();
@@ -40,6 +50,8 @@
 
 			editor.change(true);
 			editor.resize();
+
+			hide();
 		};
 	});
 

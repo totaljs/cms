@@ -1,13 +1,24 @@
-<div data-jc="form__cmseditor.form__icon:object-ungroup;if:part;title:@(Edit part);width:500;autofocus:true;submit:cmseditorpart/submit" class="hidden">
-	<div class="padding bg-yellow">
-		<div data-jc="textbox__cmseditor.part.name__required:true;maxlength:30" class="m">@(Name)</div>
-		<div class="hidden" data-bind="cmseditor.part.isnew__show:!value">
-			<a href="javascript:void(0)" class="b red exec" data-exec="cmseditorpart/remove"><i class="fa fa-times-circle mr5"></i>@(Remove part)</a>
+<div data---="modal__cmseditor.form__if:part;width:500;autofocus:true;submit:cmseditorpart/submit" class="hidden">
+
+	<div>
+		<span class="link cancel"><i class="fa fa-times"></i></span>
+		<label><i class="fa fa-object-ungroup"></i>@(Edit part)</label>
+	</div>
+
+	<div>
+		<div class="padding bg-yellow">
+			<div data---="input__cmseditor.part.name__required:true;maxlength:30" class="m">@(Name)</div>
+			<div class="hidden" data-bind="cmseditor.part.isnew__show:!value">
+				<span class="link b red exec" data-exec="cmseditorpart/remove"><i class="fa fa-times-circle mr5"></i>@(Remove part)</span>
+			</div>
 		</div>
 	</div>
-	<div class="ui-form-buttons" data-jc="validation__cmseditor.part">
-		<button name="cancel">@(Cancel)</button>
-		<button name="submit">@(APPLY)</button>
+
+	<div>
+		<div data---="validation__cmseditor.part">
+			<span class="link cancel">@(Cancel)</span>
+			<button name="submit">@(APPLY)</button>
+		</div>
 	</div>
 </div>
 
@@ -26,14 +37,14 @@
 			});
 		};
 
-		exports.submit = function(com) {
+		exports.submit = function(hide) {
 			var editor = cmseditor.instance;
 			var target = editor.getTarget();
 			var form = cmseditor.part;
 			form.target.attrd('cms-part', form.name);
 			form.target.aclass('CMS_part');
 			editor.change(true);
-			com.hide();
+			hide();
 		};
 	});
 

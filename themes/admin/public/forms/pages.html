@@ -3,7 +3,7 @@
 	<!-- HEADER -->
 	<div>
 		<span class="link cancel"><i class="fa fa-times"></i></span>
-		<label>Your title</label>
+		<label></label>
 	</div>
 
 	<div>
@@ -30,7 +30,7 @@
 				</div>
 			</div>
 		</div>
-		<div data-bind="pages.form.draft__show" class="hidden fs11" style="padding:8px 20px;background-color:red;color:white"><a href="javascript:void(0)" style="color:white;float:right" class="exec" data-exec="pagesform/removedraft"><i class="fa fa-times-circle mr5"></i>@(Remove draft)</a><i class="fa fa-warning mr5"></i>@(Page <b>content</b> is in draft mode).</div>
+		<div data-bind="pages.form.draft__show" class="hidden fs11" style="padding:8px 20px;background-color:red;color:white"><span style="color:white;float:right" class="link exec" data-exec="pagesform/removedraft"><i class="fa fa-times-circle mr5"></i>@(Remove draft)</span><i class="fa fa-warning mr5"></i>@(Page <b>content</b> is in draft mode).</div>
 		<div class="cmseditor" data---="cmseditor__pages.form.body" data-jc-import="[url]components/cmseditor.html"></div>
 		<div class="backups hidden hidden-xs bg-smoke" data-bind="pages.form.id__show:!!value">
 			<div class="hidden" data-bind="pages.form.id__show">
@@ -139,9 +139,11 @@
 		<div data---="error__pages.form.response"></div>
 	</div>
 
-	<div data---="validation__pages.form">
-		<button name="cancel">@(Cancel)</button>
-		<button name="submit">@(SAVE)</button>
+	<div>
+		<div data---="validation__pages.form">
+			<span class="link cancel">@(Cancel)</span>
+			<button name="submit">@(SAVE)</button>
+		</div>
 	</div>
 
 </div>
