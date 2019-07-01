@@ -1,24 +1,36 @@
-<div data-jc="form__common.form__icon:clone;if:pages-globals;title:@(Edit global variables);width:800;reload:pagesglobals/reload;submit:pagesglobals/submit" class="hidden">
-	<div class="padding npt">
-		<p>@(Globals variables can contain preddefined values for the page content. In other words: you can define some keys with the content onetime and use them in different pages.)</p>
-		<div class="help">@(System replaces all <code>$key</code> for a value in all pages which are rendered.)</div>
+<div data---="modal__common.form__if:pages-globals;width:800;reload:pagesglobals/reload;submit:pagesglobals/submit" class="hidden">
+
+	<div>
+		<span class="link cancel"><i class="fa fa-times"></i></span>
+		<label><i class="fa fa-clone"></i>@(Edit global variables)</label>
 	</div>
-	<div class="padding bg-yellow">
-		<div data-jc="codemirror__pages.formglobals.body__height:300;icon:keyboard-o;type:totaljsresources;tabs:true;trim:true">@(Global variables)</div>
-		<div class="row fs12 mt10">
-			<div class="col-xs-6">
-				<a href="javascript:void(0)" class="exec" data-exec="pagesglobals/upload"><i class="fa fa-folder-o mr5"></i>@(Browse files)</a>
-			</div>
-			<div class="col-xs-6 right">
-				<div class="help nmt">@(Variables are stored in <code>F.global.variables</code>)</div>
+
+	<div>
+		<div class="padding npt">
+			<p>@(Globals variables can contain preddefined values for the page content. In other words: you can define some keys with the content onetime and use them in different pages.)</p>
+			<div class="help">@(System replaces all <code>$key</code> for a value in all pages which are rendered.)</div>
+		</div>
+		<div class="padding bg-yellow">
+			<div data---="codemirror__pages.formglobals.body__height:300;icon:keyboard-o;type:totaljsresources;tabs:true;trim:true">@(Global variables)</div>
+			<div class="row fs12 mt10">
+				<div class="col-xs-6">
+					<span class="link exec" data-exec="pagesglobals/upload"><i class="fa fa-folder-o mr5"></i>@(Browse files)</span>
+				</div>
+				<div class="col-xs-6 right">
+					<div class="help nmt">@(Variables are stored in <code>F.global.variables</code>)</div>
+				</div>
 			</div>
 		</div>
+		<div data---="error__pages.formglobals.response"></div>
 	</div>
-	<div data-jc="error__pages.formglobals.response"></div>
-	<div class="ui-form-buttons" data-jc="validation__pages.formglobals">
-		<button name="cancel">@(Cancel)</button>
-		<button name="submit">@(SAVE)</button>
+
+	<div>
+		<div data---="validation__pages.formglobals">
+			<span class="link cancel">@(Cancel)</span>
+			<button name="submit">@(SAVE)</button>
+		</div>
 	</div>
+
 </div>
 
 <script>

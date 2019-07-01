@@ -108,7 +108,7 @@ h3 .fa, h3 .far, h3 .fal { margin-right: 8px; }
 .cmseditor-widget:hover { background-color: #F0F0F0; }
 .cmseditor-help { font-size: 11px; color: #909090; margin-top: 7px; line-height: 13px; padding: 0 20px 0; height: 22px; border-bottom: 1px solid #E0E0E0; }
 .cmseditor-help nav { float: left; }
-.cmseditor-help nav a { margin-right: 8px; padding-right: 8px; border-right: 1px solid #E0E0E0; }
+.cmseditor-help nav span { margin-right: 8px; padding-right: 8px; border-right: 1px solid #E0E0E0; }
 .cmseditor-help > div { float: right; }
 .cmseditor-help nav .far, .cmseditor-help nav .fa, .cmseditor-help nav .fal { margin-right: 5px; }
 

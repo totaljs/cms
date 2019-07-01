@@ -1,15 +1,27 @@
-<div data-jc="form__common.form2__icon:chart-bar;if:tracking;title:@(Tracking);width:450;autofocus:true;reload:cmseditortracking/reload;submit:cmseditortracking/submit" class="hidden">
-	<div class="padding">
-		<div data-jc="dropdown__cmseditor.tracking.id__datasource:%tracking;empty:@(New tracking)">@(Existing tracking)</div>
-		<div class="help">@(Choose existing tracking.)</div>
+<div data---="modal__common.form2__if:tracking;width:450;autofocus:true;reload:cmseditortracking/reload;submit:cmseditortracking/submit" class="hidden">
+
+	<div>
+		<span class="link cancel"><i class="fa fa-times"></i></span>
+		<label><i class="fa fa-chart-bar"></i>@(Tracking)</label>
 	</div>
-	<div class="padding bg-yellow hidden" data-bind="cmseditor.tracking.id__show:!value">
-		<div data-jc="textbox__cmseditor.tracking.name__required:true;maxlength:30;placeholder:@(A name for tracking)">@(Name)</div>
+
+	<div>
+		<div class="padding">
+			<div data---="dropdown__cmseditor.tracking.id__datasource:%tracking;empty:@(New tracking)">@(Existing tracking)</div>
+			<div class="help">@(Choose existing tracking.)</div>
+		</div>
+		<div class="padding bg-yellow hidden" data-bind="cmseditor.tracking.id__show:!value">
+			<div data---="input__cmseditor.tracking.name__required:true;maxlength:30;placeholder:@(A name for tracking)">@(Name)</div>
+		</div>
 	</div>
-	<div class="ui-form-buttons" data-jc="validation__cmseditor.tracking">
-		<button name="cancel">@(Cancel)</button>
-		<button name="submit">@(APPLY)</button>
+
+	<div>
+		<div data---="validation__cmseditor.tracking">
+			<span class="link cancel">@(Cancel)</span>
+			<button name="submit">@(APPLY)</button>
+		</div>
 	</div>
+
 </div>
 
 <script>
@@ -23,7 +35,7 @@
 			!cmseditor.link.idtracking && SET('cmseditor.tracking.name', '', true);
 		};
 
-		exports.submit = function(com) {
+		exports.submit = function(hide) {
 
 			var editor = cmseditor.instance;
 			var target = editor.getTarget();
@@ -44,7 +56,7 @@
 
 			EXEC('cmseditorlink/tracking', tracking.id);
 			editor.change(true);
-			com.hide();
+			hide();
 		};
 	});
 

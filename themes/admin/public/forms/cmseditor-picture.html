@@ -1,27 +1,39 @@
-<div data-jc="form__cmseditor.form__icon:picture-o;if:picture;title:@(Picture editor);width:900;submit:cmseditorpicture/submit" class="hidden">
-	<div class="padding">
-		<div data-jc="crop__cmseditor.crop.url__width:200;height:100" data-jc-id="cmseditor.crop"></div>
+<div data---="modal__cmseditor.form__if:picture;width:900;submit:cmseditorpicture/submit" class="hidden">
+
+	<div>
+		<span class="link cancel"><i class="fa fa-times"></i></span>
+		<label><i class="fa fa-picture-o"></i>@(Picture editor)</label>
 	</div>
-	<div class="padding">
-		<div data-jc="textbox__cmseditor.crop.alt">@(Alternate text)</div>
-	</div>
-	<div class="hidden" data-bind="cmseditor.crop.ishref__show:value">
-		<hr class="nmb nmt" />
+
+	<div>
 		<div class="padding">
-			<div class="row">
-				<div class="col-md-6 m">
-					<div data-jc="dropdown__cmseditor.crop.href2__datasource:%links;empty:;icon:sitemap;text:path;value:url">@(URL according to the sitemap)</div>
-				</div>
-				<div class="col-md-6 m">
-					<div data-jc="textbox__cmseditor.crop.href">@(URL address)</div>
+			<div data---="crop__cmseditor.crop.url__width:200;height:100;$id:cmseditor.crop"></div>
+		</div>
+		<div class="padding">
+			<div data---="input__cmseditor.crop.alt">@(Alternate text)</div>
+		</div>
+		<div class="hidden" data-bind="cmseditor.crop.ishref__show:value">
+			<hr class="nmb nmt" />
+			<div class="padding">
+				<div class="row">
+					<div class="col-md-6 m">
+						<div data---="dropdown__cmseditor.crop.href2__datasource:%links;empty:;icon:sitemap;text:path;value:url">@(URL according to the sitemap)</div>
+					</div>
+					<div class="col-md-6 m">
+						<div data---="input__cmseditor.crop.href">@(URL address)</div>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	<div class="ui-form-buttons" data-jc="validation__cmseditor.crop">
-		<button name="cancel">@(Cancel)</button>
-		<button name="submit">@(APPLY)</button>
+
+	<div>
+		<div data---="validation__cmseditor.crop">
+			<span class="link cancel">@(Cancel)</span>
+			<button name="submit">@(APPLY)</button>
+		</div>
 	</div>
+
 </div>
 
 <script>
@@ -37,7 +49,7 @@
 			SET('cmseditor.crop.href2', value);
 		}, true);
 
-		exports.submit = function(com) {
+		exports.submit = function(hide) {
 
 			var editor = cmseditor.instance;
 			var target = cmseditor.crop.target;
@@ -49,7 +61,7 @@
 
 			// Is the picture changed?
 			if (cropper.dirty()) {
-				com.hide();
+				hide();
 				return;
 			}
 
@@ -61,7 +73,7 @@
 					target.attr('src', url + '?s=' + size.replace('%', ''));
 				} else
 					target.attr('src', url);
-				com.hide();
+				hide();
 				return;
 			}
 
@@ -87,7 +99,7 @@
 					editor.autoresize();
 				}, 1000);
 
-				setTimeout(com.hide, 1000);
+				setTimeout(hide, 1000);
 			});
 		};
 	});

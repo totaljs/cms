@@ -15,71 +15,81 @@
 	.ui-style-color .selected .fa { display: block; font-size: 9px; }
 </style>
 
-<div data-jc="form__cmseditor.form__icon:quote-left;if:attribute;title:@(Attributes editor);width:540;autofocus:true;submit:cmseditorattribute/submit" class="hidden">
+<div data---="modal__cmseditor.form__if:attribute;width:540;autofocus:true;submit:cmseditorattribute/submit" class="hidden">
 
-	<div class="padding npb">
-		<div class="row">
-			<div class="col-md-6 m">
-				<div data-jc="textbox__cmseditor.attribute.cls">@(Class names)</div>
-			</div>
-			<div class="col-md-6 m">
-				<div data-jc="textbox__cmseditor.attribute.id">@(Element ID)</div>
-				<div class="help"><a href="javascript:void(0)" class="exec" data-exec="cmseditorattribute/id">@(Make ID from content)</a></div>
-			</div>
-		</div>
+	<div>
+		<span class="link cancel"><i class="fa fa-times"></i></span>
+		<label><i class="fa fa-quote-left"></i>@(Attributes editor)</label>
 	</div>
 
-	<div data-bind="cmseditor.attribute.isimage__show:value" class="hidden">
-		<hr class="nmb" />
-		<div class="padding">
-			<div class="b m black"><i class="fa fa-camera mr5"></i>@(Image settings)</div>
-
+	<div>
+		<div class="padding npb">
 			<div class="row">
-				<div class="col-md-12">
-					<div data-jc="textbox__cmseditor.attribute.alt" class="m">@(Alternate text)</div>
+				<div class="col-md-6 m">
+					<div data---="input__cmseditor.attribute.cls">@(Class names)</div>
 				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-md-4">
-					<div data-jc="textbox__cmseditor.attribute.datawidth__align:center;maxlength:4;placeholder:120" class="m">@(Width)</div>
-				</div>
-				<div class="col-md-4">
-					<div data-jc="textbox__cmseditor.attribute.dataheight__align:center;maxlength:4;placeholder:120" class="m">@(Height)</div>
-				</div>
-				<div class="col-md-4 hidden" data-bind="cmseditor.attribute.imgdefined__show:value">
-					<div data-jc="textbox__cmseditor.attribute.datasize__align:center;maxlength:4;placeholder:0%" class="m">@(Percentage)</div>
+				<div class="col-md-6 m">
+					<div data---="input__cmseditor.attribute.id">@(Element ID)</div>
+					<div class="help"><span class="link exec" data-exec="cmseditorattribute/id">@(Make ID from content)</span></div>
 				</div>
 			</div>
 		</div>
-	</div>
 
-	<div class="padding bg-yellow npb">
-		<div data-bind="cmseditor.attribute.themes__show:value && value.length">
-			<div data-jc="dropdown__cmseditor.attribute.theme__datasource:cmseditor.attribute.themes;icon:paint-brush" class="m b">@(Theme)</div>
+		<div data-bind="cmseditor.attribute.isimage__show:value" class="hidden">
+			<hr class="nmb" />
+			<div class="padding">
+				<div class="b m black"><i class="fa fa-camera mr5"></i>@(Image settings)</div>
+
+				<div class="row">
+					<div class="col-md-12">
+						<div data---="input__cmseditor.attribute.alt" class="m">@(Alternate text)</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-md-4">
+						<div data---="input__cmseditor.attribute.datawidth__align:center;maxlength:4;placeholder:120" class="m">@(Width)</div>
+					</div>
+					<div class="col-md-4">
+						<div data---="input__cmseditor.attribute.dataheight__align:center;maxlength:4;placeholder:120" class="m">@(Height)</div>
+					</div>
+					<div class="col-md-4 hidden" data-bind="cmseditor.attribute.imgdefined__show:value">
+						<div data---="input__cmseditor.attribute.datasize__align:center;maxlength:4;placeholder:0%" class="m">@(Percentage)</div>
+					</div>
+				</div>
+			</div>
 		</div>
-		<div data-jc="textbox__cmseditor.attribute.title" class="m">@(Tooltip)</div>
-		<div data-jc="textbox__cmseditor.attribute.css" class="m">@(Custom styles)</div>
-		<div data-jc="style__cmseditor.attribute.css"></div>
-	</div>
 
-	<div data-bind="cmseditor.attribute.isconfig__show:value" class="hidden padding">
-		<div data-jc="textbox__cmseditor.attribute.config__placeholder:@(keyA)\:@(valueA);@(keyB)\:@(valueB)">@(j-Configuration)</div>
-		<div class="help">@(Be careful with this item.)</div>
-	</div>
+		<div class="padding bg-yellow npb">
+			<div data-bind="cmseditor.attribute.themes__show:value && value.length">
+				<div data---="dropdown__cmseditor.attribute.theme__datasource:cmseditor.attribute.themes;icon:paint-brush" class="m b">@(Theme)</div>
+			</div>
+			<div data---="input__cmseditor.attribute.title" class="m">@(Tooltip)</div>
+			<div data---="input__cmseditor.attribute.css" class="m">@(Custom styles)</div>
+			<div data---="style__cmseditor.attribute.css"></div>
+		</div>
 
-	<div data-bind="cmseditor.attribute.isnone__show:!value">
-		<hr class="nmt" />
-		<div class="padding npt">
-			<div data-jc="textbox__cmseditor.attribute.src__icon:globe">@(Source URL)</div>
-			<div class="m mt10 fs12"><a href="javascript:void(0)" class="exec" data-exec="cmseditorattribute/files"><i class="fa fa-folder-o mr5"></i>@(Browse files)</a></div>
+		<div data-bind="cmseditor.attribute.isconfig__show:value" class="hidden padding">
+			<div data---="input__cmseditor.attribute.config__placeholder:@(keyA)\:@(valueA);@(keyB)\:@(valueB)">@(j-Configuration)</div>
+			<div class="help">@(Be careful with this item.)</div>
+		</div>
+
+		<div data-bind="cmseditor.attribute.isnone__show:!value">
+			<hr class="nmt" />
+			<div class="padding npt">
+				<div data---="input__cmseditor.attribute.src__icon:globe">@(Source URL)</div>
+				<div class="m mt10 fs12"><span class="link exec" data-exec="cmseditorattribute/files"><i class="fa fa-folder-o mr5"></i>@(Browse files)</span></div>
+			</div>
 		</div>
 	</div>
 
-	<div class="ui-form-buttons" data-jc="validation__cmseditor.attribute">
-		<button name="cancel">@(Cancel)</button>
-		<button name="submit">@(APPLY)</button>
+	<div>
+		<div data---="validation__cmseditor.attribute">
+			<span class="link cancel">@(Cancel)</span>
+			<button name="submit">@(APPLY)</button>
+		</div>
 	</div>
+
 </div>
 
 <script>
@@ -95,7 +105,7 @@
 			SET('cmseditor.attribute.id', target.text().slug());
 		};
 
-		exports.submit = function(com) {
+		exports.submit = function(hide) {
 
 			var instance = cmseditor.instance;
 			var target = instance.getTarget();
@@ -188,7 +198,7 @@
 			instance.change(true);
 			instance.autoresize();
 
-			com.hide();
+			hide();
 		};
 
 	});
