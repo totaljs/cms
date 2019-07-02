@@ -1,14 +1,14 @@
 <div data-scope="pages" class="container">
 	<div class="toolbar">
-		<button class="right exec highlight hidden-xs" data-exec="pages/create"><i class="fa fa-plus-circle"></i>@(Create)</button>
-		<button class="exec" data-exec="pages/options"><i class="fa fa-cogs"></i>@(Options)</button>
+		<button class="right exec highlight hidden-xs" data-exec="?/create"><i class="fa fa-plus-circle"></i>@(Create)</button>
+		<button class="exec" data-exec="?/options"><i class="fa fa-cogs"></i>@(Options)</button>
 		<span></span>
-		<button class="exec" data-exec="pages/checked" name="checked" disabled="disabled"><i class="fa fa-check-circle"></i>@(Checked)</button>
+		<button class="exec" data-exec="?/checked" name="checked" disabled="disabled"><i class="fa fa-check-circle"></i>@(Checked)</button>
 	</div>
 	<div class="row">
 		<div class="col-md-9">
 			<div class="fullheight">
-				<div data---="datagrid__?.grid__padding:10;filterlabel:@(Search);checked:pages/checkbox;button:pages/button">
+				<div data---="datagrid__?.grid__padding:10;filterlabel:@(Search);checked:?/checkbox;button:?/button">
 					<script type="text/plain">
 					[
 						{ name: 'path', text: '@(Name)', width: 300, template: '{{ language | language }}{{ if icon }}<i class="{{ icon }} mr5"></i>{{ fi }}{{ path | pagespath }}{{ if draft }}<span class="badge badge-red ml5">@(draft)</span>{{ fi }}{{ if ispartial }}<span class="badge badge-green ml5">@(partial)</span>{{ fi }}', classth: 'left', classfilter: 'left' },
@@ -28,7 +28,7 @@
 						<script type="text/html">
 							{{ if value }}
 								{{ foreach m in value }}
-									<button data-id="{{ m.id }}" class="exec" data-exec="pages/navigation"><i class="fa fa-chevron-right"></i>{{ m.name }}</button>
+									<button data-id="{{ m.id }}" class="exec" data-exec="?/navigation"><i class="fa fa-chevron-right"></i>{{ m.name }}</button>
 								{{ end }}
 							{{ fi }}
 						</script>
@@ -39,7 +39,7 @@
 				<label><i class="fa fa-clone"></i>@(Options)</label>
 				<div class="panelbody">
 					<nav class="buttonmenu">
-						<button class="exec b" data-exec="pages/create"><i class="fa fa-plus-circle"></i>@(Add new page)</button>
+						<button class="exec b" data-exec="?/create"><i class="fa fa-plus-circle"></i>@(Add new page)</button>
 						<button class="exec" data-path="common.form" data-value="'pages-globals'"><i class="fa fa-cog"></i>@(Variables)</button>
 						<button class="exec" data-path="common.form" data-value="'widgets-globals'"><i class="fa fa-paint-brush"></i>@(Global style/script)</button>
 						<button class="exec b" data-path="common.form" data-value="'pages-redirects'"><i class="fa fa-retweet"></i>@(Redirects)</button>
@@ -126,7 +126,7 @@
 							}, 1000);
 
 						} else
-							SKIP('pages.form.stats');
+							SKIP('?.form.stats');
 
 						response.bodycurrent = response.body;
 
@@ -199,7 +199,7 @@
 		};
 
 		exports.create = function() {
-			SET('pages.form', { widgets: [], ispartial: false, navicon: true, navname: true, replacelink: true, url: '---' }, true);
+			SET('?.form', { widgets: [], ispartial: false, navicon: true, navname: true, replacelink: true, url: '---' }, true);
 			SET('common.form', exports.path('-form'));
 		};
 
