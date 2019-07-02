@@ -8554,7 +8554,7 @@ COMPONENT('modal', 'zindex:12;width:800;bg:true;scrollbar:false', function(self,
 		var hh = eheader.height();
 		var hb = ebody.height();
 		var hf = efooter.height();
-		var h = Math.ceil((WH / 100) * (mobile ? 94 : 90));
+		var h = Math.ceil((WH / 100) * (mobile ? 94 : 98));
 		var hs = hh + hb + hf;
 
 		var top = ((WH - h) / 2.2) >> 0;
@@ -8578,9 +8578,9 @@ COMPONENT('modal', 'zindex:12;width:800;bg:true;scrollbar:false', function(self,
 			ml = '';
 			hh += 25;
 		} else {
-			if (top < 25) {
-				top = 25;
-				h -= 30;
+			if (top < 20) {
+				top = 20;
+				h -= 27;
 			}
 		}
 
