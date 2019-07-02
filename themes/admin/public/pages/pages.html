@@ -12,7 +12,7 @@
 					<script type="text/plain">
 					[
 						{ name: 'path', text: '@(Name)', width: 300, template: '{{ language | language }}{{ if icon }}<i class="{{ icon }} mr5"></i>{{ fi }}{{ path | pagespath }}{{ if draft }}<span class="badge badge-red ml5">@(draft)</span>{{ fi }}{{ if ispartial }}<span class="badge badge-green ml5">@(partial)</span>{{ fi }}', classth: 'left', classfilter: 'left' },
-						{ name: 'url', text: '@(URL address)', width: 230, template: '{{ if ispartial }}<span class="silver">{{ url }}</span>{{ else }}{{ url }}{{ fi }}', size: 1, class: 'hidden-xs' },
+						{ name: 'url', text: '@(URL address)', width: 230, template: '{{ if ispartial }}<span class="silver">{{ url }}</span>{{ else }}{{ url }}{{ fi }}', class: 'hidden-xs' },
 						{ name: 'language', text: '<i class="fa fa-flag" style="margin-right:0"></i>', width: 50, title: '@(Language)', sort: false, align: 1, filter: ' ' },
 						{ name: '@(Options)', filter: false, align: 2, sort: false, width: 150, template: '{{ if !ispartial }}<a href="{{ url }}" class="fs11 mr5" target="_blank">@(show)</a>{{ fi }}<div class="inline mr10"><button title="@(Duplicate)" name="duplicate"><i class="far fa-copy"></i></button><button name="update" title="@(Edit)"><i class="fa fa-pencil"></i></button><button class="btn-remove" name="remove" title="@(Remove)"><i class="far fa-trash-o"></i></button></div>' }
 					]
@@ -57,14 +57,12 @@
 <script>
 	PLUGIN('pages', function(exports) {
 
-		exports.path = function(name) {
-			return 'pages' + name;
-		};
-
 		var toolbar = { btnChecked: exports.element.find('.toolbar button[name="checked"]') };
 
 		exports.refresh = function() {
+
 			FUNC.loading(true);
+
 			AJAX('GET [url]api/pages/', function(response) {
 
 				for (var i = 0, length = response.items.length; i < length; i++) {
@@ -137,7 +135,7 @@
 						SET('cmseditor.template', response.template);
 
 						SET('?.form', response, true);
-						SET('common.form', exports.path('-form'));
+						SET('common.form', 'pages-form');
 					});
 
 					break;
@@ -159,14 +157,14 @@
 						SETTER('confirm', 'show', '@(Are you sure you want to remove all selected pages?)', ['"trash"@(Remove)', '@(No)'], function(index) {
 							if (index)
 								return;
-							SETTER('loading', 'show');
-							var arr = FIND('.{0}.grid'.format(exports.scope)).checked().toArray();
+							FUNC.loading(true);
+							var arr = FIND('.pages.grid').checked();
 							arr.wait(function(el, next, index) {
 								SET('common.progress', (index / arr.length) * 100);
-								AJAX('DELETE [url]api/{0}/'.format(exports.scope), { id: el.value }, next);
+								AJAX('DELETE [url]api/pages/', { id: el.id }, next);
 							}, function() {
 								exports.refresh();
-								SETTER('loading', 'hide', 1000);
+								FUNC.loading(false, 1000);
 								SETTER('snackbar', 'success', '@(Pages have been removed successfully.)');
 							});
 						});
@@ -186,21 +184,21 @@
 		};
 
 		exports.globals = function(el) {
-			SET(exports.path('.formglobals'), {}, true);
-			SET('common.form', exports.path('-globals'));
+			SET('?.formglobals', {}, true);
+			SET('common.form', 'pages-globals');
 		};
 
 		exports.navigation = function(el) {
 			AJAX('GET [url]api/nav/{0}/'.format(el.attrd('id')), function(response) {
-				SETTER('loading', 'hide', 1000);
-				SET(exports.path('.navigation'), response, true);
-				SET('common.form', exports.path('-navigation'));
+				FUNC.loading(false, 1000);
+				SET('?.navigation', response, true);
+				SET('common.form', 'pages-navigation');
 			});
 		};
 
 		exports.create = function() {
 			SET('?.form', { widgets: [], ispartial: false, navicon: true, navname: true, replacelink: true, url: '---' }, true);
-			SET('common.form', exports.path('-form'));
+			SET('common.form', 'pages-form');
 		};
 
 		exports.globals = function(el) {
