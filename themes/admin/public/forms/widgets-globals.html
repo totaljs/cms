@@ -39,14 +39,14 @@
 		exports.reload = function() {
 			AJAX('GET [url]api/widgets/globals/', function(response) {
 				SET('widgets.formglobals', response, true);
-				SETTER('loading', 'hide', 1000);
+				FUNC.loading(false, 1000);
 			});
 		};
 
 		exports.submit = function() {
-			SETTER('loading', 'show');
+			FUNC.loading(true);
 			AJAX('POST [url]api/widgets/globals/', GETR('widgets.formglobals'), function(response) {
-				SETTER('loading', 'hide', 1000);
+				FUNC.loading(false, 1000);
 				if (response.success) {
 					SETTER('snackbar', 'success', '@(Globals variables have been saved successfully.)');
 					SET('common.form', '');

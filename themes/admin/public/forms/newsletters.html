@@ -12,7 +12,7 @@
 					<div data---="input__newsletters.form.name__required:true;maxlength:100">@(Subject)</div>
 				</div>
 				<div class="col-md-4 m">
-					<div data---="dropdown__newsletters.form.template__datasource:common.dependencies.templatesnewsletters;empty:;icon:paint-brush">@(Template)</div>
+					<div data---="input__newsletters.form.template__dirsource:common.dependencies.templatesnewsletters;icon:paint-brush">@(Template)</div>
 				</div>
 				<div class="col-md-2 m">
 					<div data---="input__newsletters.form.limit__type:number;required:true;align:center;maxlength:9">@(Daily limit)</div>
@@ -95,13 +95,11 @@
 
 	PLUGIN('newslettersform', function(exports) {
 
-		exports.scope = 'newsletters';
-
 		exports.show = function(com) {
 
 			var model = newsletters.form;
 			com.reconfigure({ title: model.id ? '@(Edit newslettter)' : '@(New newslettter)' });
-			model.id && AJAX('GET [url]api/{0}/{1}/stats/'.format(exports.scope, model.id), exports.scope + '.form.stats');
+			model.id && AJAX('GET [url]api/newsletters/{1}/stats/'.arg(model), 'newsletters.form.stats');
 
 			WAIT('cmseditor.instance', function() {
 				cmseditor.instance.setWidgetOptions(model.widgets);
@@ -127,9 +125,9 @@
 			var parts = { type: 'newsletter', items: editor.getParts() };
 
 			var fn = function() {
-				SETTER('loading', 'show');
+				FUNC.loading(true);
 				AJAX('POST [url]api/newsletters/ REPEAT', model, function(response) {
-					SETTER('loading', 'hide', 1000);
+					FUNC.loading(false, 1000);
 					if (response.success) {
 						SETTER('snackbar', 'success', '@(Newsletter has been saved successfully.)');
 						hide();
@@ -153,10 +151,10 @@
 
 		exports.backups = function(el) {
 
-			SETTER('loading', 'show');
+			FUNC.loading(true);
 			AJAX('GET [url]api/newsletters/{0}/backups/'.format(GET('newsletters.form.id')), function(response) {
 
-				SETTER('loading', 'hide', 1000);
+				FUNC.loading(false, 1000);
 
 				for (var i = 0, length = response.length; i < length; i++) {
 					var item = response[i];
@@ -166,11 +164,11 @@
 				response.quicksort('date', false);
 
 				SETTER('suggestion', 'show', 'left', el, response, function(value) {
-					SETTER('loading', 'show');
+					FUNC.loading(true);
 					setTimeout(function() {
 						AJAX('GET [url]api/backups/newsletters/{id}_{stamp}/'.arg(value.data), function(body) {
 							cmseditor.instance.replace(body);
-							SETTER('loading', 'hide', 1000);
+							FUNC.loading(false, 1000);
 						});
 					}, 100);
 				});

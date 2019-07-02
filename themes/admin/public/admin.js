@@ -161,3 +161,25 @@ Thelpers.language = function(value) {
 FUNC.loading = function(show, timeout) {
 	SETTER('loading', show ? 'show' : 'hide', timeout);
 };
+
+FUNC.messageresponse = function(success, callback) {
+	return function(response, err) {
+		if (err || response instanceof Array) {
+
+			var msg = [];
+			var template = '{0}';
+
+			if (response instanceof Array) {
+				for (var i = 0; i < response.length; i++)
+					msg.push(template.format(response[i].error));
+				msg = msg.join('');
+			} else
+				msg = template.format(err.toString());
+
+			SETTER('snackbar', 'warning', msg);
+		} else {
+			SETTER('snackbar', 'success', 'Action successfully completed');
+			callback && callback(response);
+		}
+	};
+};

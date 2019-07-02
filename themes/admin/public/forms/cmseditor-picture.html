@@ -17,7 +17,7 @@
 			<div class="padding">
 				<div class="row">
 					<div class="col-md-6 m">
-						<div data---="dropdown__cmseditor.crop.href2__datasource:%links;empty:;icon:sitemap;text:path;value:url">@(URL according to the sitemap)</div>
+						<div data---="input__cmseditor.crop.href2__dirsource:%links;icon:sitemap;dirkey:path;dirvalue:url">@(URL according to the sitemap)</div>
 					</div>
 					<div class="col-md-6 m">
 						<div data---="input__cmseditor.crop.href">@(URL address)</div>
@@ -78,11 +78,11 @@
 			}
 
 			var data = cropper.output();
-			SETTER('loading', 'show');
+			FUNC.loading(true);
 
 			AJAX('POST [url]api/upload/base64/', { file: data, name: (cmseditor.crop.alt || 'base64').slug() }, function(response, err) {
 
-				SETTER('loading', 'hide', 500);
+				FUNC.loading(false, 500);
 
 				if (err) {
 					SETTER('snackbar', 'warning', err.toString());

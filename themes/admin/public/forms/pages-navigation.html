@@ -213,7 +213,7 @@
 		};
 
 		exports.submit = function(hide) {
-			SETTER('loading', 'show');
+			FUNC.loading(true);
 
 			function clean(arr) {
 				for (var i = 0, length = arr.length; i < length; i++) {
@@ -224,7 +224,7 @@
 
 			clean(pages.navigation.children);
 			AJAX('POST [url]api/nav/ REPEAT', pages.navigation, function(response) {
-				SETTER('loading', 'hide', 1000);
+				FUNC.loading(false, 1000);
 				hide();
 			});
 		};

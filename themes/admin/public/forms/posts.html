@@ -14,10 +14,10 @@
 				<div class="col-md-8">
 					<div class="row">
 						<div class="col-md-4 m">
-							<div data---="dropdown__posts.form.idcategory__datasource:common.dependencies.posts;icon:folder-o;empty:;required:true">@(Category)</div>
+							<div data---="input__posts.form.idcategory__dirsource:common.dependencies.posts;icon:folder-o;empty:;required:true">@(Category)</div>
 						</div>
 						<div class="col-md-4 m">
-							<div data---="dropdown__posts.form.template__datasource:common.dependencies.templatesposts;icon:paint-brush;required:true;empty:">@(Template)</div>
+							<div data---="input__posts.form.template__dirsource:common.dependencies.templatesposts;icon:paint-brush;required:true;empty:">@(Template)</div>
 						</div>
 						<div class="col-md-4 m">
 							<div data---="input__posts.form.date__type:date;icon:clock-o;placeholder:@(yyyy-MM-dd);align:center">@(Publish date)</div>
@@ -68,7 +68,7 @@
 							<div data---="input__posts.form.author__maxlength:30;icon:user">@(Author)</div>
 						</div>
 						<div class="col-md-3 m">
-							<div data---="dropdown__posts.form.language__icon:flag;datasource:common.dependencies.languages;empty:">@(Language)</div>
+							<div data---="input__posts.form.language__icon:flag;dirsource:common.dependencies.languages;empty:">@(Language)</div>
 						</div>
 					</div>
 				</div>
@@ -124,12 +124,11 @@
 	PLUGIN('postsform', function(exports) {
 
 		exports.body = '';
-		exports.scope = 'posts';
 
 		exports.show = function(com) {
 			var model = posts.form;
 			com.reconfigure({ title: model.id ? '@(Edit post)' : '@(New post)' });
-			model.id && AJAX('GET [url]api/{0}/{1}/stats/'.format(exports.scope, model.id), exports.scope + '.form.stats');
+			model.id && AJAX('GET [url]api/posts/{id}/stats/'.arg(model), 'posts.form.stats');
 			WAIT('cmseditor.instance', function() {
 				cmseditor.instance.setWidgetOptions(model.widgets);
 				cmseditor.instance.lock(false);
@@ -150,10 +149,10 @@
 			var doc = frm.document;
 
 			$frm.css('height', el.find('.ui-window-body').height() - 5);
-			SETTER('loading', 'show');
+			FUNC.loading(true);
 
 			AJAX('POST [url]api/posts/preview/', model, function(response) {
-				SETTER('loading', 'hide', 500);
+				FUNC.loading(false, 500);
 				doc.open('text/html', 'replace');
 				doc.write(response);
 				doc.close();
@@ -180,7 +179,7 @@
 
 		exports.submit = function(hide) {
 
-			SETTER('loading', 'show');
+			FUNC.loading(true);
 
 			var model = CLONE(posts.form);
 			var editor = cmseditor.instance;
@@ -237,7 +236,7 @@
 			var parts = { type: 'post', items: editor.getParts() };
 
 			AJAX('POST [url]api/posts/ REPEAT', model, function(response) {
-				SETTER('loading', 'hide', 1000);
+				FUNC.loading(false, 1000);
 
 				if (response.success) {
 
@@ -255,10 +254,10 @@
 
 		exports.backups = function(el) {
 
-			SETTER('loading', 'show');
-			AJAX('GET [url]api/posts/{0}/backups/'.format(GET(exports.scope + '.form.id')), function(response) {
+			FUNC.loading(true);
+			AJAX('GET [url]api/posts/{0}/backups/'.format(GET('posts.form.id')), function(response) {
 
-				SETTER('loading', 'hide', 1000);
+				FUNC.loading(false, 1000);
 
 				for (var i = 0, length = response.length; i < length; i++) {
 					var item = response[i];
@@ -268,21 +267,21 @@
 				response.quicksort('date', false);
 
 				SETTER('suggestion', 'show', 'left', el, response, function(value) {
-					SETTER('loading', 'show');
+					FUNC.loading(true);
 					setTimeout(function() {
 						AJAX('GET [url]api/backups/posts/{id}_{stamp}/'.arg(value.data), function(body) {
 							if (posts.form.type === 'html')
 								cmseditor.instance.replace(body);
 							else
 								SET('posts.form.body', body);
-							SETTER('loading', 'hide', 1000);
+							FUNC.loading(false, 1000);
 						});
 					}, 100);
 				});
 			});
 		};
 
-		WATCH(exports.scope + '.form.template', function(path, value, type) {
+		WATCH('posts.form.template', function(path, value, type) {
 
 			if (type === 2) {
 				cmseditor.instance.reconfigure('template:' + value);
@@ -291,18 +290,18 @@
 
 		}, true);
 
-		WATCH(exports.scope + '.form.type', function(path, value, type) {
+		WATCH('posts.form.type', function(path, value, type) {
 
 			if (value === 'html' && (type === 2 || type === 0) && window.cmseditor && window.cmseditor.instance) {
-				exports.markdown = GET(exports.scope + '.form.body');
-				cmseditor.instance.reconfigure('template:' + GET(exports.scope + '.form.template'));
+				exports.markdown = GET('posts.form.body');
+				cmseditor.instance.reconfigure('template:' + GET('posts.form.template'));
 				cmseditor.instance.set('');
 				cmseditor.instance.autoresize();
 			}
 
 			if (value === 'markdown' && type === 2) {
-				exports.html = GET(exports.scope + '.form.body');
-				SET(exports.scope + '.form.body', exports.markdown);
+				exports.html = GET('posts.form.body');
+				SET('posts.form.body', exports.markdown);
 			}
 
 		}, true);

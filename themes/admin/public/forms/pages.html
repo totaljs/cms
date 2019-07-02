@@ -152,8 +152,6 @@
 
 	PLUGIN('pagesform', function(exports) {
 
-		exports.scope = 'pages';
-
 		if (user.sa) {
 			WATCH('pages.form.lockedtemplate2', function(path, value, type) {
 				type === 2 && SET('pages.form.lockedtemplate', value);
@@ -211,11 +209,11 @@
 				cmseditor.instance.lock(!!model.lockedcontent);
 			});
 
-			model.id && AJAX('GET [url]api/{0}/{1}/stats/'.format(exports.scope, model.id), exports.scope + '.form.stats');
-			SETTER('loading', 'hide', 1000);
+			model.id && AJAX('GET [url]api/pages/{id}/stats/'.arg(model), 'pages.form.stats');
+			FUNC.loading(false, 1000);
 		};
 
-		exports.submit = function(com) {
+		exports.submit = function(hide) {
 
 			var model = CLONE(pages.form);
 			var editor = cmseditor.instance;
@@ -252,14 +250,14 @@
 
 			var submit = function() {
 				var parts = { type: 'page', items: editor.getParts() };
-				SETTER('loading', 'show');
-				AJAX('POST [url]api/{0}/ REPEAT'.format(exports.scope), model, function(response) {
-					SETTER('loading', 'hide', 1000);
+				FUNC.loading(true);
+				AJAX('POST [url]api/pages/ REPEAT', model, function(response) {
+					FUNC.loading(false, 1000);
 					if (response.success) {
 						SETTER('snackbar', 'success', '@(Page has been saved successfully.)');
 
-						if (com && !(com instanceof jQuery))
-							com.hide();
+						if (typeof hide === 'function')
+							hide();
 						else
 							SET('pages.form.lockedtemplate', locked);
 
@@ -282,10 +280,10 @@
 
 		exports.backups = function(el) {
 
-			SETTER('loading', 'show');
-			AJAX('GET [url]api/{0}/{1}/backups/'.format(exports.scope, GET('pages.form.id')), function(response) {
+			FUNC.loading(true);
+			AJAX('GET [url]api/pages/{1}/backups/'.format(GET('pages.form.id')), function(response) {
 
-				SETTER('loading', 'hide', 1000);
+				FUNC.loading(false, 1000);
 
 				for (var i = 0, length = response.length; i < length; i++) {
 					var item = response[i];
@@ -295,11 +293,11 @@
 				response.quicksort('date', false);
 
 				SETTER('suggestion', 'show', 'left', el, response, function(value) {
-					SETTER('loading', 'show');
+					FUNC.loading(true);
 					setTimeout(function() {
 						AJAX('GET [url]api/backups/pages/{id}_{stamp}/'.arg(value.data), function(body) {
 							cmseditor.instance.replace(body);
-							SETTER('loading', 'hide', 1000);
+							FUNC.loading(false, 1000);
 						});
 					}, 100);
 				});

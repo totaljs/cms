@@ -33,14 +33,14 @@
 					response.body = '// OLD URL      : NEW URL\n@(/products/)      : @(/company/products/)\n@(/services/)      : @(/company/services/)';
 
 				SET('pages.formredirects', response, true);
-				SETTER('loading', 'hide', 1000);
+				FUNC.loading(false, 1000);
 			});
 		};
 
 		exports.submit = function() {
-			SETTER('loading', 'show');
+			FUNC.loading(true);
 			AJAX('POST [url]api/pages/redirects/ REPEAT', GETR('pages.formredirects'), function(response) {
-				SETTER('loading', 'hide', 1000);
+				FUNC.loading(false, 1000);
 				if (response.success) {
 					SETTER('snackbar', 'success', '@(Redirects have been applied successfully.)');
 					SET('common.form', '');
