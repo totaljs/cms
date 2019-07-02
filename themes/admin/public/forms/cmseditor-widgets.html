@@ -88,7 +88,7 @@
 			}
 
 			var after = target.hclass('CMS_widget');
-			SETTER('loading', 'show');
+			FUNC.loading(true);
 			AJAX('GET [url]api/widgets/{0}/editor/'.format(id), function(response) {
 				var content = '<div class="CMS_widget CMS_remove" data-cms-id="{0}" data-cms-widget="{1}" data-cms-category="{3}">{2}</div>'.format(GUID(10), id, response.body, response.category);
 				if (after)
@@ -97,7 +97,7 @@
 					target.append(content);
 				editor.change(true);
 				editor.resize();
-				SETTER('loading', 'hide', 500);
+				FUNC.loading(false, 500);
 			});
 		};
 

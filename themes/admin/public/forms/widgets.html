@@ -10,7 +10,7 @@
 			<div class="row">
 				<div class="col-sm-9">
 					<div data---="input__widgets.form.name__required:true;maxlength:50" class="m">@(Name)</div>
-					<div data---="dropdown__widgets.form.category__items:,@(Layout)|Layouts,@(Columns)|Columns,@(Content)|Content,@(Inline)|Inline,@(Newsletter)|Newsletter;icon:folder-o;required:true">@(Select existing category)</div>
+					<div data---="input__widgets.form.category__dirsource:widgetsform.categories;icon:folder-o;required:true">@(Select existing category)</div>
 					<div class="fs11 mt10" data-bind="widgets.form.id__show:!!value"><span class="link exec" data-exec="widgetsform/backups"><i class="fa fa-clock-o mr5"></i>@(Restore a backup)</span></div>
 				</div>
 				<div class="col-sm-3">
@@ -111,9 +111,11 @@
 
 	PLUGIN('widgetsform', function(exports) {
 
+		SET('widgetsform.categories', [{ name: '@(Layout)', id: 'Layouts'},{ name: '@(Columns)', id: 'Columns' },{ name: '@(Content)', id: 'Content' },{ name: '@(Inline)', id: 'Inline' },{ name: '@(Newsletter)', id: 'Newsletter' }]);
+
 		exports.show = function(com) {
 			com.reconfigure({ title: GET('widgets.form.id') ? '@(Edit widget)' : '@(New widget)' });
-			SETTER('loading', 'hide', 1000);
+			FUNC.loading(false, 1000);
 		};
 
 		exports.upload = function(el) {
@@ -127,9 +129,9 @@
 		};
 
 		exports.submit = function(hide) {
-			SETTER('loading', 'show');
+			FUNC.loading(true);
 			AJAX('POST [url]api/widgets/ REPEAT', GETR('widgets.form'), function(response) {
-				SETTER('loading', 'hide', 1000);
+				FUNC.loading(false, 1000);
 				if (response.success) {
 					SETTER('snackbar', 'success', '@(Widget has been saved successfully.)');
 					EXEC('widgets/refresh');
@@ -140,10 +142,10 @@
 
 		exports.backups = function(el) {
 
-			SETTER('loading', 'show');
+			FUNC.loading(true);
 			AJAX('GET [url]api/widgets/{0}/backups/'.format(GET('widgets.form.id')), function(response) {
 
-				SETTER('loading', 'hide', 1000);
+				FUNC.loading(false, 1000);
 
 				for (var i = 0, length = response.length; i < length; i++) {
 					var item = response[i];
@@ -153,10 +155,10 @@
 				response.quicksort('date', false);
 
 				SETTER('suggestion', 'show', 'left', el, response, function(value) {
-					SETTER('loading', 'show');
+					FUNC.loading(true);
 					setTimeout(function() {
 						MODIFY('widgets.form.body', value.data.body);
-						SETTER('loading', 'hide', 1000);
+						FUNC.loading(false, 1000);
 					}, 100);
 				});
 			});

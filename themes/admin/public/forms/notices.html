@@ -21,7 +21,7 @@
 		<div class="padding bg-yellow">
 			<div class="row">
 				<div class="col-md-4 m">
-					<div data---="dropdown__notices.form.idcategory__datasource:common.dependencies.notices;icon:folder-o;empty:;required:true">@(Category)</div>
+					<div data---="input__notices.form.idcategory__dirsource:common.dependencies.notices;icon:folder-o;required:true">@(Category)</div>
 					<div class="help">@(Choose a category)</div>
 				</div>
 				<div class="col-md-4">
@@ -85,7 +85,7 @@
 		exports.show = function(com) {
 			SET('notices.formtab', 'editor');
 			com.reconfigure({ title: GET('notices.form.id') ? '@(Edit notice)' : '@(New notice)' });
-			SETTER('loading', 'hide', 1000);
+			FUNC.loading(false, 1000);
 		};
 
 		exports.upload = function(el) {
@@ -100,9 +100,9 @@
 		};
 
 		exports.submit = function(hide) {
-			SETTER('loading', 'show');
+			FUNC.loading(true);
 			AJAX('POST [url]api/notices/', GETR('notices.form'), function(response) {
-				SETTER('loading', 'hide', 1000);
+				FUNC.loading(false, 1000);
 				if (response.success) {
 					SETTER('snackbar', 'success', '@(Notice has been saved successfully.)');
 					EXEC('notices/refresh');

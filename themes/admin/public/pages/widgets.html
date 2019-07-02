@@ -106,6 +106,7 @@
 		};
 
 		exports.options = function(el) {
+			console.log('options');
 			var items = [];
 			items.push({ id: 'refresh', name: '@(Refresh)', icon: 'refresh' });
 			items.push({ id: 'create', name: '@(Create widget)', icon: 'plus-circle' });
@@ -133,6 +134,7 @@
 		};
 
 		exports.checked = function(el) {
+			console.log('wtf');
 			var items = [];
 			items.push({ id: 'remove', name: '@(Remove widgets)', icon: 'trash' });
 			SETTER('contextmenu', 'show', 'center', el, items, function(item) {

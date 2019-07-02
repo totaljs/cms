@@ -7,7 +7,7 @@
 
 	<div>
 		<div class="padding bg-smoke">
-			<div data---="dropdown__pages.navigationitem.url2__datasource:pages.list;if:n => n.ispartial === false;empty:;icon:sitemap;value:url">@(URL according to the sitemap)</div>
+			<div data---="input__pages.navigationitem.url2__dirsource:pages.list;icon:sitemap;dirvalue:url">@(URL according to the sitemap)</div>
 			<div class="help m"><i class="fa fa-refresh"></i>@(CMS will synchronizes all information automatically according to the page settings.)</div>
 		</div>
 		<hr class="nmt" />
@@ -17,7 +17,7 @@
 					<div data---="input__pages.navigationitem.name__required:true;maxlength:50">@(Name)</div>
 				</div>
 				<div class="col-md-4 m">
-					<div data---="dropdown__pages.navigationitem.language__datasource:common.dependencies.languages">@(Language)</div>
+					<div data---="input__pages.navigationitem.language__dirsource:common.dependencies.languages">@(Language)</div>
 				</div>
 			</div>
 			<div data---="input__pages.navigationitem.url__maxlength:500;required:true">@(URL address)</div>
@@ -27,10 +27,10 @@
 		<div class="padding npt npb">
 			<div class="row">
 				<div class="col-md-6 m">
-					<div data---="dropdown__pages.navigationitem.target__items:@(Current tab or window)|_self,@(New tab or window)|_blank;required:true__'_self'">@(Target)</div>
+					<div data---="input__pages.navigationitem.target__dirsource:pagesnavigationitem.target;required:true__'_self'">@(Target)</div>
 				</div>
 				<div class="col-md-6 m">
-					<div data---="dropdown__pages.navigationitem.behaviour__items:@(Default)|default,@(Highlight)|highlight,@(Info)|info,@(Warning)|warn,@(Special)|special__'default'">@(Behaviour)</div>
+					<div data---="input__pages.navigationitem.behaviour__dirsource:pagesnavigationitem.behaviour__'default'">@(Behaviour)</div>
 				</div>
 			</div>
 			<div data---="input__pages.navigationitem.title__maxlength:100">@(Tooltip)</div>
@@ -53,6 +53,9 @@
 <script>
 
 	PLUGIN('pagesnavigationitem', function(exports) {
+
+		SET('pagesnavigationitem.target', [{ name: '@(Current tab or window)', id: '_self' },{ name: '@(New tab or window)', id: '_blank' }]);
+		SET('pagesnavigationitem.behaviour', [{ name: '@(Default)', id: 'default' },{ name: '@(Highlight)', id: 'highlight' },{ name: '@(Info)', id: 'info' },{ name: '@(Warning)', id: 'warn' },{ name: '@(Special)', id: 'special' }]);
 
 		exports.reload = function() {
 			setTimeout2('pagesnavigationitem', function() {

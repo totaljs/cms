@@ -104,9 +104,9 @@
 					data.picture = 'https://componentator.com' + response.picture;
 					data.reference = response.id + '';
 
-					SETTER('loading', 'show');
+					FUNC.loading(true);
 					AJAX('POST [url]api/widgets/', data, function(response) {
-						SETTER('loading', 'hide', 1000);
+						FUNC.loading(false, 1000);
 						if (response.success) {
 							el.aclass('widgetextinstalled');
 							SETTER('snackbar', 'success', '@(Widget <b>{0}</b> has been imported successfully.)'.format(data.name));

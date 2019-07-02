@@ -44,7 +44,7 @@
 					response.body = '@(keyA)      : @(value)\n@(keyB)      : @(value)';
 
 				SET('pages.formglobals', response, true);
-				SETTER('loading', 'hide', 1000);
+				FUNC.loading(false, 1000);
 			});
 		};
 
@@ -55,9 +55,9 @@
 		};
 
 		exports.submit = function() {
-			SETTER('loading', 'show');
+			FUNC.loading(true);
 			AJAX('POST [url]api/pages/globals/ REPEAT', GETR('pages.formglobals'), function(response) {
-				SETTER('loading', 'hide', 1000);
+				FUNC.loading(false, 1000);
 				if (response.success) {
 					SETTER('snackbar', 'success', '@(Globals variables have been saved successfully.)');
 					SET('common.form', '');

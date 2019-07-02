@@ -564,6 +564,7 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .dg-col:first-child { border-left: 0; }
 .dg-col-changed { background-image: url(data:image/gif;base64,R0lGODdhBgAGAIAAAP8mAAAAACH5BAEAAAEALAAAAAAGAAYAAAIKhI8QGGvt4JKhAAA7); background-repeat: no-repeat; background-position: 0 0; }
 .dg-value { padding: 6px 5px 0; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; height: 28px; }
+.dg-value i { margin-right: 5px; }
 .dg-number { padding: 6px 5px 0; font-size: 11px; text-align: right; height: 28px; color: #A0A0A0; }
 .dg-col--1 { width: 40px; }
 .dg-col--1 .dg-label { text-overflow: clip; }
@@ -660,7 +661,7 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .ui-modal-header .cancel { float: right; line-height: 50px; width: 28px; color: red; transition: transform 0.2s; font-size: 16px; }
 .ui-modal-header .cancel:hover { transform: scale(1.2); }
 .ui-modal-footer { border-top: 1px solid #E0E0E0; height: 60px; padding: 0 15px; line-height: 58px; text-align: right; }
-.ui-modal-footer button { height: 33px; border: 0; background-color: #4285F4; color: white; border-radius: 2px; padding: 0 15px; margin: 0; line-height: 28px; font-weight: bold; }
+.ui-modal-footer button { height: 33px; border: 0; background-color: #4285F4; color: white; border-radius: 2px; padding: 0 35px; margin: 0; line-height: 28px; font-weight: bold; }
 .ui-modal-footer button:disabled { background-color: #E0E0E0; color: #A0A0A0; cursor: not-allowed; }
 .ui-modal-footer .link { font-size: 12px; vertical-align: middle; position: relative; display: inline-block; margin: 0 10px; }
 .ui-modal-footer i { margin-right: 5px; }
