@@ -7,19 +7,19 @@
 		<div class="fs12 red ml5" data-bind="newsletters.state.sending__show:value"><i class="fa fa-spin fa-refresh mr5"></i>@(Sending) (<b data-bind="newsletters.state.percentage__html:value + '%'"></b>)</div>
 	</div>
 	<div class="fullheight">
-		<div data-jc="datagrid__?.grid__padding:10;filterlabel:@(Search);checked:?/checkbox;button:?/button;pagination:true">
+		<div data---="datagrid__?.grid__padding:10;filterlabel:@(Search);checked:?/checkbox;button:?/button;pagination:true">
 			<script type="text/plain">
 			[
 				{ name: 'name', text: '@(Name)', width: 300, template: '{{ if issent }}<span class="badge badge-green mr5">@(send)</span>{{ fi }}{{ name }}', classth: 'left', classfilter: 'left' },
 				{ name: 'count', text: '@(Subscribers)', align: 2, width: 140, class: 'hidden-xs', template: '{{ count }}x<i class="fa fa-envelope-o ml5"></i>' },
 				{ name: 'datecreated', text: '@(Created)', width: 200, align: 1, class: 'hidden-xs', template: '{{ datecreated | format(\'yyyy-MM-dd HH:mm\') }}' },
-				{ name: '@(Options)', align: 2, filter: false, sort: false, width: 150, template: '<div class="inline mr10"><button title="@(Duplicate)" name="duplicate"><i class="far fa-copy"></i></button><button name="update" title="@(Edit)"><i class="fa fa-pencil"></i></button><button class="btn-remove" name="remove" title="@(Remove)"><i class="far fa-trash-o"></i></button></div>' }
+				{ name: '@(Options)', align: 1, filter: false, sort: false, width: 120, template: '<div class="inline"><button title="@(Duplicate)" name="duplicate"><i class="far fa-copy"></i></button><button name="update" title="@(Edit)"><i class="fa fa-pencil"></i></button><button class="btn-remove" name="remove" title="@(Remove)"><i class="far fa-trash-o"></i></button></div>' }
 			]
 			</script>
 		</div>
 	</div>
 </div>
-<div data-jc="importer__common.form__if:newsletters-form;url:[url]forms/newsletters.html;cleaner:5"></div>
+<div data---="importer__common.form__if:newsletters-form;url:[url]forms/newsletters.html;cleaner:5"></div>
 
 <script>
 
@@ -33,7 +33,7 @@
 
 			AJAX('GET [url]api/newsletters/', function(response) {
 				SET('?.grid', response);
-				FUNC.loading(false, 500);
+				FUNC.loading(false, 200);
 			});
 		};
 

@@ -1,49 +1,41 @@
-<div data-jc-scope="posts" class="container">
+<div data-scope="posts" class="container">
 	<div class="toolbar">
-		<button class="right exec highlight" data-exec="posts/create"><i class="fa fa-plus-circle"></i>@(Create)</button>
-		<button class="exec" data-exec="posts/options"><i class="fa fa-cogs"></i>@(Options)</button>
+		<button class="right exec highlight" data-exec="?/create"><i class="fa fa-plus-circle"></i>@(Create)</button>
+		<button class="exec" data-exec="?/options"><i class="fa fa-cogs"></i>@(Options)</button>
 		<span></span>
-		<button class="exec" data-exec="posts/checked" name="checked" disabled="disabled"><i class="fa fa-check-circle"></i>@(Checked)</button>
+		<button class="exec" data-exec="?/checked" name="checked" disabled="disabled"><i class="fa fa-check-circle"></i>@(Checked)</button>
 	</div>
 	<div class="fullheight">
-		<div data-jc="grid__grid__padding:10;filterlabel:@(Search);checked:posts/checkbox;button:posts/operation;pagination:true;exec:posts/filter;external:true">
+		<div data---="datagrid__?.grid__padding:10;filterlabel:@(Search);checked:?/checkbox;button:?/button">
 			<script type="text/plain">
 			[
-				{ name: 'id', text: '', template: '<input type="checkbox" value="{{ id }}" />', size: '42px', header: '<input type="checkbox" value="{{ id }}" />', filter: false, sort: false, title: '@(Options)', align: 'center' },
-				{ name: 'name', text: '@(Name)', size: 2, template: '{{ language | language }}{{ if !ispublished }}<span class="badge badge-gray mr5">@(unpublished)</span>{{ fi }}{{ name }}', classth: 'left', classfilter: 'left' },
-				{ name: 'category', text: '@(Category)', size: '150px', class: 'hidden-xs' },
-				{ name: 'author', text: '@(Author)', size: '130px', class: 'hidden-xs' },
-				{ name: 'type', text: '@(Type)', size: '100px', class: 'center hidden-xs silver' },
-				{ name: 'language', text: '<i class="fa fa-flag" style="margin-right:0"></i>', size: '40px', title: '@(Language)', sort: false, align: 'center', filter: ' ', classtd: 'fs11' },
-				{ name: 'date', text: '@(From)', size: 1, class: 'hidden-xs', template: '{{ date | format(\'@(yyyy-MM-dd)\') }}', size: '130px', class: 'center' },
-				{ name: '@(Options)', align: 'center', filter: false, sort: false, size: '100px', template: '<button title="@(Duplicate)" name="duplicate"><i class="far fa-copy"></i></button><button name="update" title="@(Edit)"><i class="fa fa-pencil"></i></button><button class="btn-remove" name="remove" title="@(Remove)"><i class="far fa-trash-o"></i></button>' }
+				{ name: 'name', text: '@(Name)', width: 300, template: '{{ language | language }}{{ if !ispublished }}<span class="badge badge-gray mr5">@(unpublished)</span>{{ fi }}{{ name }}' },
+				{ name: 'category', text: '@(Category)', width: 150, class: 'hidden-xs' },
+				{ name: 'author', text: '@(Author)', width: 150, class: 'hidden-xs' },
+				{ name: 'type', text: '@(Type)', width: 100, align: 1, class: 'hidden-xs silver' },
+				{ name: 'language', text: '<i class="fa fa-flag" style="margin-right:0"></i>', width: 40, title: '@(Language)', filter: false, sort: false, align: 1 },
+				{ name: 'date', text: '@(From)', align: 1, width: 130, class: 'hidden-xs', template: '{{ date | format(\'@(yyyy-MM-dd)\') }}' },
+				{ name: '@(Options)', align: 1, filter: false, sort: false, width: 100, template: '<button title="@(Duplicate)" name="duplicate"><i class="far fa-copy"></i></button><button name="update" title="@(Edit)"><i class="fa fa-pencil"></i></button><button class="btn-remove" name="remove" title="@(Remove)"><i class="far fa-trash-o"></i></button>' }
 			]
 			</script>
 		</div>
 	</div>
 </div>
-<div data-jc="importer__common.form__if:posts-form;url:[url]forms/posts.html;cleaner:5"></div>
+<div data---="importer__common.form__if:posts-form;url:[url]forms/posts.html;cleaner:5"></div>
 
 <script>
 
 	PLUGIN('posts', function(exports) {
 
-		exports.scope = 'posts';
-		exports.limit = 100; // Count of items per page
-
 		var toolbar = { btnChecked: exports.element.find('.toolbar button[name="checked"]') };
-		var filter; // A grid filter
 
 		exports.refresh = function() {
 
-			SETTER('loading', 'show');
+			FUNC.loading(true);
 
-			!filter && (filter = {});
-			filter.limit = exports.limit;
-
-			AJAX('GET [url]api/{0}/'.format(exports.scope), filter, function(response) {
-				SET(exports.scope + '.grid', response);
-				SETTER('loading', 'hide', 500);
+			AJAX('GET [url]api/posts/', function(response) {
+				SET('?.grid', response);
+				FUNC.loading(false, 200);
 			});
 		};
 
@@ -51,16 +43,15 @@
 			exports.refresh();
 		};
 
-		exports.operation = function(btn, row, grid) {
-			var name = btn.prop('name');
+		exports.button = function(name, row, grid) {
 			switch (name) {
 				case 'remove':
 					SETTER('confirm', 'show', '@(Are you sure you want to remove selected post?)', ['"trash"@(Remove)', '@(No)'], function(index) {
 						if (index)
 							return;
-						SETTER('loading', 'show');
-						AJAX('DELETE [url]api/{0}/'.format(exports.scope), row, function(response) {
-							SETTER('loading', 'hide', 1000);
+						FUNC.loading(true);
+						AJAX('DELETE [url]api/posts/', row, function(response) {
+							FUNC.loading(false, 1000);
 							if (response.success) {
 								SETTER('snackbar', 'success', '@(Post has been removed successfully.)');
 								exports.refresh();
@@ -70,20 +61,20 @@
 					break;
 				case 'update':
 				case 'duplicate':
-					SETTER('loading', 'show');
-					AJAX('GET [url]api/{0}/{1}/'.format(exports.scope, row.id), function(response) {
+					FUNC.loading(true);
+					AJAX('GET [url]api/posts/{id}/'.arg(row), function(response) {
 
 						if (name === 'duplicate')
 							response.id = '';
 						else
-							SKIP(exports.scope + '.form.stats');
+							SKIP('?.form.stats');
 
 						if (!response.type)
 							response.type = 'html';
 
 						SET('cmseditor.template', response.template);
-						SET(exports.scope + '.form', response, true);
-						SET('common.form', exports.scope + '-form');
+						SET('?.form', response, true);
+						SET('common.form', 'posts-form');
 					});
 					break;
 			}
@@ -103,23 +94,26 @@
 				switch (item.id) {
 					case 'toggle':
 						var arr = [];
-						FIND('.{0}.grid'.format(exports.scope)).checked().each(function() {
-							arr.push(this.value);
-						});
-						AJAX('GET [url]api/{0}/toggle/'.format(exports.scope), { id: arr.join(',') }, exports.refresh);
+						var items = FIND('.posts.grid').checked();
+
+						for (var i = 0; i < items.length; i++)
+							arr.push(items[i].id);
+
+						AJAX('GET [url]api/posts/toggle/', { id: arr.join(',') }, exports.refresh);
 						break;
 					case 'remove':
 						SETTER('confirm', 'show', '@(Are you sure you want to remove all selected posts?)', ['"trash"@(Remove)', '@(No)'], function(index) {
 							if (index)
 								return;
-							var arr = FIND('.{0}.grid'.format(exports.scope)).checked().toArray();
-							SETTER('loading', 'show');
+
+							var arr = FIND('.posts.grid').checked();
+							FUNC.loading(true);
 							arr.wait(function(el, next, index) {
 								SET('common.progress', (index / arr.length) * 100);
-								AJAX('DELETE [url]api/{0}/'.format(exports.scope), { id: el.value }, next);
+								AJAX('DELETE [url]api/posts/', { id: el.id }, next);
 							}, function() {
 								exports.refresh();
-								SETTER('loading', 'hide', 1000);
+								FUNC.loading(false, 1000);
 								SETTER('snackbar', 'success', '@(Posts have been removed successfully.)');
 							});
 						});
@@ -143,16 +137,10 @@
 		};
 
 		exports.create = function() {
-			SET(exports.scope + '.form', { type: 'html', author: user.name, widgets: [], ispublished: true }, true);
-			SET('common.form', exports.scope + '-form');
+			SET('?.form', { type: 'html', author: user.name, widgets: [], ispublished: true }, true);
+			SET('common.form', 'posts-form');
 		};
 
-		exports.filter = function(type, input, sort, page, grid) {
-			filter = input ? CLONE(input) : {};
-			sort && (filter.sort = sort.name + '_' + sort.sorting);
-			filter.page = page;
-			exports.refresh();
-		};
 	});
 
 </script>
