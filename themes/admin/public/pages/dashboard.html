@@ -147,7 +147,7 @@
 						</div>
 					</div>
 				</div>
-				<div data-jc="dashboardvisitors">
+				<div data---="dashboardvisitors">
 					<table>
 						<thead>
 							<tr>
@@ -203,10 +203,12 @@
 			<div class="row">
 				<div class="col-md-6 m">
 
-					<div style="float:right;margin-top:-3px" data-bind="dashboard.stats.history__template:true">
+					<div style="float:right;margin-top:-3px" data-bind="dashboard.stats.history__template">
+						<script type="text/html">
 						{{ foreach m in value }}
 							<a href="javascript:void(0)" class="exec fs12" style="margin-left:15px" data-exec="dashboard/history" data-year="{{ m }}"><i class="fa fa-calendar mr5"></i>{{ m }}</a>
 						{{ end }}
+						</script>
 					</div>
 
 					<div class="legend m fs12">
@@ -214,7 +216,7 @@
 						<i class="fa fa-square legend-2 mr5"></i><span class="mr10">@(Unique)</span>
 					</div>
 					<div data-jc="barchart__dashboard.stats.visitors__height:250"></div>
-					<div class="mt10" data-bind="dashboard.stats.visitorssum__template:true">
+					<div class="mt10" data-bind="dashboard.stats.visitorssum__template">
 						<script type="text/html">
 							<span class="fs11 gray" style="float:right"><b>{{ value.unique | format(0) }}</b> {{ value.unique | pluralize(@('uniques', 'unique', 'uniques', 'uniques')) }}</span>
 							<span class="fs11 gray"><b>{{ value.count | format(0) }}</b> {{ value.count | pluralize(@('visitors', 'visitor', 'visitors', 'visitors')) }}</span>
@@ -227,7 +229,7 @@
 						<i class="fa fa-square legend-2 mr5"></i><span class="mr10">@(Mobile)</span>
 					</div>
 					<div data-jc="barchart__dashboard.stats.devices__height:250"></div>
-					<div style="margin-top:8px" data-bind="dashboard.stats.devicessum__template:true">
+					<div style="margin-top:8px" data-bind="dashboard.stats.devicessum__template">
 						<script type="text/html">
 							<span class="fs11 gray" style="float:right">@(Mobile:) <b>{{ value.mobile | format(0) }}</b></span>
 							<span class="fs11 gray">@(Desktop:) <b>{{ value.desktop | format(0) }}</b></span>
@@ -236,7 +238,7 @@
 				</div>
 			</div>
 
-			<div data-bind="dashboard.stats.sourcessum__template:true">
+			<div data-bind="dashboard.stats.sourcessum__template">
 				<div class="dashboard-sources">
 					<div style="width:{{ value.social }}%;background-color:#649BD0" title="@(From social networks: {{ value.social }}%)"><span>@(Social {{ value.social }}%)</span></div>
 					<div style="width:{{ value.advert }}%;background-color:#EF914E" title="@(From adverts: {{ value.advert }}%)"><span>@(Adverts {{ value.advert }}%)</span></div>
@@ -250,7 +252,7 @@
 
 		<br />
 
-		<div data-bind="dashboard.stats.referrers__template:true">
+		<div data-bind="dashboard.stats.referrers__template">
 			<script type="text/html">
 				{{ if value && value.length }}
 				<div class="row">
@@ -274,7 +276,7 @@
 			</script>
 		</div>
 
-		<div data-bind="dashboard.stats.tracking__template:true__show:value && value.length">
+		<div data-bind="dashboard.stats.tracking__template__show:value && value.length">
 			<script type="text/html">
 				{{ if value && value.length }}
 				<div class="row">
@@ -363,7 +365,7 @@
 				return;
 
 			AJAX('GET [url]api/dashboard/online/', function(response) {
-				response.hoursavg = response.hours.filter(FN('n => n > 0')).scalar('median') >> 0;
+				//response.hoursavg = response.hours.filter(FN('n => n > 0')).scalar('median') >> 0;
 				SET('dashboard.stats.sources', [{ name: '@(Social networks)', value: response.social, id: 'social' }, { name: '@(Visitors from advert)', value: response.advert, id: 'advert' }, { name: '@(Organic search)', value: response.search, id: 'search' }, { name: '@(Direct visitors)', value: response.direct, id: 'direct' }, { name: '@(From unknown sources)', value: response.unknown, id: 'unknown' }]);
 				SET('dashboard.stats.today', response);
 			});
@@ -478,7 +480,7 @@
 		};
 
 		WATCH('dashboard.tab', function(path, value) {
-			AJAXCACHE('GET [url]api/{0}/stats/'.format(value), null, 'dashboard.stats.nosqlcounter', '5 minutes');
+			value && AJAXCACHE('GET [url]api/{0}/stats/'.format(value), null, 'dashboard.stats.nosqlcounter', '5 minutes');
 		}, true);
 
 		exports.selectSource = function(item) {
