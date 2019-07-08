@@ -6,6 +6,8 @@
 
 body { background-color: #F0F0F0; }
 
+.mb10 { margin-bottom: 10px; }
+
 header { height: 41px; background-color: white; position: fixed; left: 0; top: 0; right: 0; box-shadow: 0 5px 10px rgba(0,0,0,.03);  border-bottom: 1px solid #E0E0E0; z-index: 10; }
 header nav a { float: left; width: 40px; height: 40px; text-align: center; font-size: 16px; padding: 8px 0 0 0; color: white; background-color: #4584F1; }
 header nav a:hover { opacity: 0.8; }

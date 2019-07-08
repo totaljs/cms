@@ -9,7 +9,7 @@
 		<div data---="datagrid__?.grid__padding:10;checked:?/checkbox;button:?/button;pagination:true;exec:?/filter">
 			<script type="text/plain">
 			[
-				{ name: 'email', text: '@(Email address)', width: 400, template: '{{ if unsubscribed }}<span class="badge badge-red mr5">@(unsubscribed)</span>{{ fi }}{{ email }}' },
+				{ name: 'email', text: '@(Email address)', width: 720, template: '{{ if unsubscribed }}<span class="badge badge-red mr5">@(unsubscribed)</span>{{ fi }}{{ email }}' },
 				{ name: 'datecreated', text: '@(Registered)', width: 200, template: '{{ datecreated | format(\'@(yyyy-MM-dd HH:mm)\') }}', align: 1, class: 'hidden-xs' },
 				{ name: '@(Options)', align: 1, filter: false, sort: false, width: 100, template: '<button name="ban" title="@(Ban)"><i class="fa fa-ban"></i></button><button class="btn-remove" name="remove" title="@(Remove)"><i class="far fa-trash-o"></i></button>' }
 			]
