@@ -10,8 +10,8 @@
 		<div data---="datagrid__?.grid__padding:10;filterlabel:@(Search);checked:?/checkbox;button:?/button;pagination:true">
 			<script type="text/plain">
 			[
-				{ name: 'name', text: '@(Name)', width: 300, template: '{{ if issent }}<span class="badge badge-green mr5">@(send)</span>{{ fi }}{{ name }}', classth: 'left', classfilter: 'left' },
-				{ name: 'count', text: '@(Subscribers)', align: 2, width: 140, class: 'hidden-xs', template: '{{ count }}x<i class="fa fa-envelope-o ml5"></i>' },
+				{ name: 'name', text: '@(Name)', width: 550, template: '{{ if issent }}<span class="badge badge-green mr5">@(send)</span>{{ fi }}{{ name }}', classth: 'left', classfilter: 'left' },
+				{ name: 'count', text: '@(Subscribers)', align: 2, width: 150, class: 'hidden-xs', template: '{{ count }}x<i class="fa fa-envelope-o ml5"></i>' },
 				{ name: 'datecreated', text: '@(Created)', width: 200, align: 1, class: 'hidden-xs', template: '{{ datecreated | format(\'yyyy-MM-dd HH:mm\') }}' },
 				{ name: '@(Options)', align: 1, filter: false, sort: false, width: 120, template: '<div class="inline"><button title="@(Duplicate)" name="duplicate"><i class="far fa-copy"></i></button><button name="update" title="@(Edit)"><i class="fa fa-pencil"></i></button><button class="btn-remove" name="remove" title="@(Remove)"><i class="far fa-trash-o"></i></button></div>' }
 			]
