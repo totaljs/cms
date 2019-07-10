@@ -174,13 +174,23 @@
 		};
 
 		exports.options = function(el) {
-			var items = [];
-			items.push({ id: 'refresh', name: '@(Refresh)', icon: 'refresh' });
-			items.push({ id: 'create', name: '@(Create page)', icon: 'plus-circle' });
-			items.push({ id: 'globals', name: '@(Globals)', icon: 'clone' });
-			SETTER('contextmenu', 'show', 'left', el, items, function(item) {
-				exports[item.id]();
-			}, 2, 5);
+			var options = {};
+			options.items = [];
+			options.items.push({ id: 'create', name: '@(Create page)', icon: 'plus-circle', classname: 'b' });
+			options.items.push({ id: 'refresh', name: '@(Refresh)', icon: 'refresh' });
+			options.items.push('-');
+			options.items.push({ value: 'pages-globals', name: '@(Variables)', icon: 'cog' });
+			options.items.push({ value: 'widgets-globals', name: '@(Global style/script)', icon: 'paint-brush' });
+			options.element = el;
+
+			options.callback = function(item) {
+				if (item.id)
+					exports[item.id]();
+				else
+					SET('common.form', item.value);
+			};
+
+			SETTER('menu', 'show', options);
 		};
 
 		exports.globals = function(el) {
@@ -199,15 +209,6 @@
 		exports.create = function() {
 			SET('?.form', { widgets: [], ispartial: false, navicon: true, navname: true, replacelink: true, url: '---' }, true);
 			SET('common.form', 'pages-form');
-		};
-
-		exports.globals = function(el) {
-			var items = [];
-			items.push({ value: 'pages-globals', name: '@(Variables)', icon: 'cog' });
-			items.push({ value: 'widgets-globals', name: '@(Global style/script)', icon: 'paint-brush' });
-			SETTER('contextmenu', 'show', 'left', el, items, function(item) {
-				SET('common.form', item.value);
-			}, 8, 5);
 		};
 
 	});

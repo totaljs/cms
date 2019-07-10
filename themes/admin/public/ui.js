@@ -1598,6 +1598,7 @@ COMPONENT('codemirror', 'linenumbers:false;required:false;trim:false;tabs:false'
 
 	self.reload = function() {
 		editor.refresh();
+		editor.display.scrollbars.update(true);
 	};
 
 	self.validate = function(value) {
@@ -1631,6 +1632,167 @@ COMPONENT('codemirror', 'linenumbers:false;required:false;trim:false;tabs:false'
 	};
 
 	self.make = function() {
+
+		(function(mod) {
+			mod(CodeMirror);
+		})(function(CodeMirror) {
+
+			function Bar(cls, orientation, scroll) {
+				var self = this;
+				self.orientation = orientation;
+				self.scroll = scroll;
+				self.screen = self.total = self.size = 1;
+				self.pos = 0;
+
+				self.node = document.createElement('div');
+				self.node.className = cls + '-' + orientation;
+				self.inner = self.node.appendChild(document.createElement('div'));
+
+				CodeMirror.on(self.inner, 'mousedown', function(e) {
+
+					if (e.which != 1)
+						return;
+
+					CodeMirror.e_preventDefault(e);
+					var axis = self.orientation == 'horizontal' ? 'pageX' : 'pageY';
+					var start = e[axis], startpos = self.pos;
+
+					function done() {
+						CodeMirror.off(document, 'mousemove', move);
+						CodeMirror.off(document, 'mouseup', done);
+					}
+
+					function move(e) {
+						if (e.which != 1)
+							return done();
+						self.moveTo(startpos + (e[axis] - start) * (self.total / self.size));
+					}
+
+					CodeMirror.on(document, 'mousemove', move);
+					CodeMirror.on(document, 'mouseup', done);
+				});
+
+				CodeMirror.on(self.node, 'click', function(e) {
+					CodeMirror.e_preventDefault(e);
+					var innerBox = self.inner.getBoundingClientRect(), where;
+					if (self.orientation == 'horizontal')
+						where = e.clientX < innerBox.left ? -1 : e.clientX > innerBox.right ? 1 : 0;
+					else
+						where = e.clientY < innerBox.top ? -1 : e.clientY > innerBox.bottom ? 1 : 0;
+					self.moveTo(self.pos + where * self.screen);
+				});
+
+				function onWheel(e) {
+					var moved = CodeMirror.wheelEventPixels(e)[self.orientation == 'horizontal' ? 'x' : 'y'];
+					var oldPos = self.pos;
+					self.moveTo(self.pos + moved);
+					if (self.pos != oldPos) CodeMirror.e_preventDefault(e);
+				}
+				CodeMirror.on(self.node, 'mousewheel', onWheel);
+				CodeMirror.on(self.node, 'DOMMouseScroll', onWheel);
+			}
+
+			Bar.prototype.setPos = function(pos, force) {
+				var t = this;
+				if (pos < 0)
+					pos = 0;
+				if (pos > t.total - t.screen)
+					pos = t.total - t.screen;
+				if (!force && pos == t.pos)
+					return false;
+				t.pos = pos;
+				t.inner.style[t.orientation == 'horizontal' ? 'left' : 'top'] = (pos * (t.size / t.total)) + 'px';
+				return true;
+			};
+
+			Bar.prototype.moveTo = function(pos) {
+				var t = this;
+				t.setPos(pos) && t.scroll(pos, t.orientation);
+			};
+
+			var minButtonSize = 10;
+
+			Bar.prototype.update = function(scrollSize, clientSize, barSize) {
+				var t = this;
+				var sizeChanged = t.screen != clientSize || t.total != scrollSize || t.size != barSize;
+
+				if (sizeChanged) {
+					t.screen = clientSize;
+					t.total = scrollSize;
+					t.size = barSize;
+				}
+
+				var buttonSize = t.screen * (t.size / t.total);
+				if (buttonSize < minButtonSize) {
+					t.size -= minButtonSize - buttonSize;
+					buttonSize = minButtonSize;
+				}
+
+				t.inner.style[t.orientation == 'horizontal' ? 'width' : 'height'] = buttonSize + 'px';
+				t.setPos(t.pos, sizeChanged);
+			};
+
+			function SimpleScrollbars(cls, place, scroll) {
+				var t = this;
+				t.addClass = cls;
+				t.horiz = new Bar(cls, 'horizontal', scroll);
+				place(t.horiz.node);
+				t.vert = new Bar(cls, 'vertical', scroll);
+				place(t.vert.node);
+				t.width = null;
+			}
+
+			SimpleScrollbars.prototype.update = function(measure) {
+				var t = this;
+				if (t.width == null) {
+					var style = window.getComputedStyle ? window.getComputedStyle(t.horiz.node) : t.horiz.node.currentStyle;
+					if (style)
+						t.width = parseInt(style.height);
+				}
+
+				var width = t.width || 0;
+				var needsH = measure.scrollWidth > measure.clientWidth + 1;
+				var needsV = measure.scrollHeight > measure.clientHeight + 1;
+
+				t.vert.node.style.display = needsV ? 'block' : 'none';
+				t.horiz.node.style.display = needsH ? 'block' : 'none';
+
+				if (needsV) {
+					t.vert.update(measure.scrollHeight, measure.clientHeight, measure.viewHeight - (needsH ? width : 0));
+					t.vert.node.style.bottom = needsH ? width + 'px' : '0';
+				}
+
+				if (needsH) {
+					t.horiz.update(measure.scrollWidth, measure.clientWidth, measure.viewWidth - (needsV ? width : 0) - measure.barLeft);
+					t.horiz.node.style.right = needsV ? width + 'px' : '0';
+					t.horiz.node.style.left = measure.barLeft + 'px';
+				}
+
+				return {right: needsV ? width : 0, bottom: needsH ? width : 0};
+			};
+
+			SimpleScrollbars.prototype.setScrollTop = function(pos) {
+				this.vert.setPos(pos);
+			};
+
+			SimpleScrollbars.prototype.setScrollLeft = function(pos) {
+				this.horiz.setPos(pos);
+			};
+
+			SimpleScrollbars.prototype.clear = function() {
+				var parent = this.horiz.node.parentNode;
+				parent.removeChild(this.horiz.node);
+				parent.removeChild(this.vert.node);
+			};
+
+			CodeMirror.scrollbarModel.simple = function(place, scroll) {
+				return new SimpleScrollbars('CodeMirror-simplescroll', place, scroll);
+			};
+			CodeMirror.scrollbarModel.overlay = function(place, scroll) {
+				return new SimpleScrollbars('CodeMirror-overlayscroll', place, scroll);
+			};
+		});
+
 		var content = config.label || self.html();
 		self.html((content ? '<div class="ui-codemirror-label' + (config.required ? ' ui-codemirror-label-required' : '') + '">' + (config.icon ? '<i class="fa fa-' + config.icon + '"></i> ' : '') + content + ':</div>' : '') + '<div class="ui-codemirror"></div>');
 		var container = self.find('.ui-codemirror');
@@ -1639,6 +1801,7 @@ COMPONENT('codemirror', 'linenumbers:false;required:false;trim:false;tabs:false'
 		options.lineNumbers = config.linenumbers;
 		options.mode = config.type || 'htmlmixed';
 		options.indentUnit = 4;
+		options.scrollbarStyle = 'simple';
 
 		if (config.tabs)
 			options.indentWithTabs = true;
@@ -3125,6 +3288,8 @@ COMPONENT('crop', 'dragdrop:true;format:{0}', function(self, config) {
 
 COMPONENT('fontawesomebox', 'height:300', function(self, config) {
 
+	var cls = 'ui-fontawesomebox';
+	var cls2 = '.' + cls;
 	var container, input, icon, prev;
 	var template = '<li data-search="{0}"><i class="{1}"></i></li>';
 	var skip = false;
@@ -3139,12 +3304,12 @@ COMPONENT('fontawesomebox', 'height:300', function(self, config) {
 
 	self.make = function() {
 
-		self.aclass('ui-fontawesomebox');
+		self.aclass(cls);
 		self.css('height', config.height + 'px');
-		self.append('<div class="ui-fontawesomebox-search"><span><i class="fa fa-search clearsearch"></i></span><div><input type="text" maxlength="50" placeholder="{0}" /></div></div><div class="ui-fontawesomebox-search-empty"></div><div class="ui-fontawesomebox-icons"><ul style="height:{1}px"></ul></div>'.format(config.search, config.height - 40));
-		container = $(self.find('.ui-fontawesomebox-icons').find('ul')[0]);
+		self.append('<div class="{2}-search"><span><i class="fa fa-search clearsearch"></i></span><div><input type="text" maxlength="50" placeholder="{0}" /></div></div><div class="{2}-search-empty"></div><div class="{2}-icons"><ul style="height:{1}px" class="noscrollbar"></ul></div>'.format(config.search, config.height - 40, cls));
+		container = $(self.find(cls2 + '-icons').find('ul')[0]);
 		input = self.find('input');
-		icon = self.find('.ui-fontawesomebox-search').find('i');
+		icon = self.find(cls2 + '-search').find('i');
 
 		self.event('click', '.clearsearch', function() {
 			input.val('').trigger('keydown');
@@ -8591,7 +8756,16 @@ COMPONENT('modal', 'zindex:12;width:800;bg:true;scrollbar:false', function(self,
 		emodal.css(css);
 
 		if (config.scrollbar) {
-			earea.css({ height: h - hh - hf, width: width });
+			var nh = 0;
+			if (config.height && (hb - hh - hf) < config.height) {
+				if (config.height < (h - hh - hf))
+					nh = config.height;
+				else
+					nh = h - hh - hf;
+			} else
+				nh = h - hh - hf;
+
+			earea.css({ height: nh, width: width });
 			self.scrollbar && self.scrollbar.resize();
 		} else {
 			earea[0].$noscrollbarwidth = 0;
