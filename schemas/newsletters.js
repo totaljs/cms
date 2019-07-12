@@ -1,8 +1,8 @@
 const REG_URL = /href="\/|src="\//g;
 
-G.newsletter = { id: null, sending: false, percentage: 0 };
+MAIN.newsletter = { id: null, sending: false, percentage: 0 };
 
-NEWSCHEMA('Newsletter').make(function(schema) {
+NEWSCHEMA('Newsletter', function(schema) {
 
 	schema.define('id', 'UID');
 	schema.define('template', 'String(50)', true);
@@ -72,17 +72,17 @@ NEWSCHEMA('Newsletter').make(function(schema) {
 		var nosql = NOSQL('newsletters');
 
 		if (isUpdate) {
-			model.dateupdated = F.datetime;
+			model.dateupdated = NOW;
 			model.adminupdated = user;
 		} else {
 			model.id = UID();
 			model.admincreated = user;
-			model.datecreated = F.datetime;
+			model.datecreated = NOW;
 			model.count = 0;
 		}
 
 		var body = U.minifyHTML(model.body);
-		!model.datecreated && (model.datecreated = F.datetime);
+		!model.datecreated && (model.datecreated = NOW);
 		model.stamp = model.stamp = new Date().format('yyyyMMddHHmm');
 		model.linker = model.datecreated.format('yyyyMMdd') + '-' + model.name.slug();
 		model.search = ((model.name || '') + ' ' + (model.search || '')).keywords(true, true).join(' ').max(1000);
@@ -128,13 +128,13 @@ NEWSCHEMA('Newsletter').make(function(schema) {
 			repository.page.name = newsletter.name;
 			repository.page.body = body;
 			repository.preview = false;
-			newsletter.body = F.view('~/cms/' + newsletter.template, null, repository);
-			newsletter.unsubscribe = G.config.url + '/api/unsubscribe/?email=';
+			newsletter.body = VIEW('~/cms/' + newsletter.template, null, repository);
+			newsletter.unsubscribe = PREF.url + '/api/unsubscribe/?email=';
 
 			var message = new Mail.Message(newsletter.name, prepare_urladdress(newsletter.body.replace('@@@', $.query.email)));
 			message.to($.query.email);
-			message.from(G.config.emailsender, F.config.name);
-			message.reply(G.config.emailreply);
+			message.from(PREF.emailsender, CONF.name);
+			message.reply(PREF.emailreply);
 			message.unsubscribe(newsletter.unsubscribe + $.query.email);
 			message.callback = internal_notvalidaddress;
 			Mail.send2(message);
@@ -145,16 +145,16 @@ NEWSCHEMA('Newsletter').make(function(schema) {
 
 	schema.addWorkflow('send', function($) {
 
-		if (G.newsletter.sending) {
+		if (MAIN.newsletter.sending) {
 			$.invalid().push('error-newsletter-sending');
 			return;
 		}
 
 		var newsletter = $.model.$clean();
 
-		G.newsletter.sending = true;
-		G.newsletter.percentage = 0;
-		G.newsletter.id = $.model.id;
+		MAIN.newsletter.sending = true;
+		MAIN.newsletter.percentage = 0;
+		MAIN.newsletter.id = $.model.id;
 
 		$.success();
 
@@ -169,8 +169,8 @@ NEWSCHEMA('Newsletter').make(function(schema) {
 			repository.preview = false;
 			repository.page.body = body;
 
-			newsletter.body = F.view('~/cms/' + newsletter.template, null, repository);
-			newsletter.unsubscribe = G.config.url + '/api/unsubscribe/?email=';
+			newsletter.body = VIEW('~/cms/' + newsletter.template, null, repository);
+			newsletter.unsubscribe = PREF.url + '/api/unsubscribe/?email=';
 
 			NOSQL('subscribers').find().where('unsubscribed', false).skip(cache ? cache.count : 0).callback(function(err, response) {
 
@@ -185,23 +185,23 @@ NEWSCHEMA('Newsletter').make(function(schema) {
 					for (var i = 0, length = items.length; i < length; i++) {
 						var message = new Mail.Message(newsletter.name, prepare_urladdress(newsletter.body.replace('@@@', items[i].email)));
 						message.to(items[i].email);
-						message.from(G.config.emailsender, F.config.name);
-						message.reply(G.config.emailreply);
+						message.from(PREF.emailsender, CONF.name);
+						message.reply(PREF.emailreply);
 						message.unsubscribe(newsletter.unsubscribe + items[i].email);
 						message.callback = internal_notvalidaddress;
 						messages.push(message);
 					}
 
 					sum += items.length;
-					G.newsletter.percentage = ((sum / count) * 100) >> 0;
+					MAIN.newsletter.percentage = ((sum / count) * 100) >> 0;
 
 					// Updates cache
-					F.cache.set2('newsletters', { id: G.newsletter.id, count: sum }, '5 days');
+					F.cache.set2('newsletters', { id: MAIN.newsletter.id, count: sum }, '5 days');
 
-					if (G.newsletter.percentage !== old)
-						$SAVE('Event', { type: 'newsletters/percentage', body: G.newsletter.percentage.toString() + '%', admin: true }, NOOP, $);
+					if (MAIN.newsletter.percentage !== old)
+						$SAVE('Event', { type: 'newsletters/percentage', body: MAIN.newsletter.percentage.toString() + '%', admin: true }, NOOP, $);
 
-					old = G.newsletter.percentage;
+					old = MAIN.newsletter.percentage;
 
 					// Sends email
 					if (sum % newsletter.limit === 0) {
@@ -213,7 +213,7 @@ NEWSCHEMA('Newsletter').make(function(schema) {
 						setTimeout(() => Mail.send2(messages, next), 60000);
 
 						// Updates DB
-						NOSQL('newsletters').modify({ count: sum, datesent: F.datetime }).first().where('id', G.newsletter.id);
+						NOSQL('newsletters').modify({ count: sum, datesent: NOW }).first().where('id', MAIN.newsletter.id);
 
 					} else
 						Mail.send2(messages, () => setTimeout(next, 2000));
@@ -221,10 +221,10 @@ NEWSCHEMA('Newsletter').make(function(schema) {
 				}, function() {
 					F.cache.remove('newsletters');
 					$SAVE('Event', { type: 'newsletters/sent', body: repository.page.name, admin: true }, NOOP, $);
-					NOSQL('newsletters').modify({ count: sum, datesent: F.datetime }).first().where('id', G.newsletter.id);
-					G.newsletter.sending = false;
-					G.newsletter.percentage = 0;
-					G.newsletter.id = null;
+					NOSQL('newsletters').modify({ count: sum, datesent: NOW }).first().where('id', MAIN.newsletter.id);
+					MAIN.newsletter.sending = false;
+					MAIN.newsletter.percentage = 0;
+					MAIN.newsletter.id = null;
 
 				});
 			});
@@ -247,7 +247,7 @@ NEWSCHEMA('Newsletter').make(function(schema) {
 });
 
 function prepare_urladdress(body) {
-	return body.replace(REG_URL, (text) => text[0] === 'h' ? ('href="' + G.config.url + '/') : ('src="' + G.config.url + '/'));
+	return body.replace(REG_URL, (text) => text[0] === 'h' ? ('href="' + PREF.url + '/') : ('src="' + PREF.url + '/'));
 }
 
 function internal_notvalidaddress(err, message) {

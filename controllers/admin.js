@@ -160,7 +160,7 @@ exports.install = function() {
 	WEBSOCKET('#admin/live/', socket, ['json']);
 
 	// System user
-	SYSUSER.name = F.config['admin-superadmin'].split(':')[0];
+	SYSUSER.name = CONF.admin_superadmin.split(':')[0];
 	SYSUSER.token = true;
 };
 
@@ -180,12 +180,12 @@ ON('controller', function(controller, name) {
 		return;
 	}
 
-	if (F.config['admin–token'] && controller.req.headers['x-token'] === F.config['admin–token']) {
+	if (CONF.admin_token && controller.req.headers['x-token'] === CONF.admin_token) {
 		controller.user = SYSUSER;
 		return;
 	}
 
-	var cookie = controller.cookie(F.config['admin-cookie']);
+	var cookie = controller.cookie(CONF.admin_cookie);
 	if (cookie == null || !cookie.length) {
 		DDOS[controller.ip] = ddos ? ddos + 1 : 1;
 		controller.cancel();
@@ -194,7 +194,7 @@ ON('controller', function(controller, name) {
 		return;
 	}
 
-	var user = F.global.config.users[cookie];
+	var user = MAIN.users[cookie];
 	if (user == null) {
 		DDOS[controller.ip] = ddos ? ddos + 1 : 1;
 		controller.cancel();
@@ -249,16 +249,16 @@ function socket() {
 
 function logout() {
 	var self = this;
-	self.cookie(F.config['admin-cookie'], '', '-1 day');
+	self.cookie(CONF.admin_cookie, '', '-1 day');
 	self.redirect(self.sitemap_url('admin'));
 }
 
 function login() {
 	var self = this;
-	var key = (self.body.name + ':' + self.body.password + ':' + F.config.secret + (self.body.name + ':' + self.body.password).hash()).md5();
-	if (F.global.config.users[key]) {
+	var key = (self.body.name + ':' + self.body.password + ':' + CONF.secret + (self.body.name + ':' + self.body.password).hash()).md5();
+	if (MAIN.users[key]) {
 		$SAVE('Event', { type: 'system/login', user: self.body.name, admin: true }, NOOP, self);
-		self.cookie(F.config['admin-cookie'], key, '1 month', COOKIE_OPTIONS);
+		self.cookie(CONF.admin_cookie, key, '1 month', COOKIE_OPTIONS);
 		self.success();
 	} else
 		self.invalid('error-users-credentials');
@@ -277,7 +277,7 @@ function upload() {
 			file.extension = U.getExtension(file.filename).toLowerCase();
 
 			FILESTORAGE('files').insert(file.filename, data, function(err, ref) {
-				id.push({ id: ref, name: file.filename, size: file.length, width: file.width, height: file.height, type: file.type, ctime: F.datetime, mtime: F.datetime, extension: file.extension, download: '/download/' + ref + '.' + file.extension });
+				id.push({ id: ref, name: file.filename, size: file.length, width: file.width, height: file.height, type: file.type, ctime: NOW, mtime: NOW, extension: file.extension, download: '/download/' + ref + '.' + file.extension });
 				setImmediate(next);
 			});
 
@@ -333,12 +333,12 @@ function css_pages() {
 
 function json_widget_settings(id) {
 	var self = this;
-	var item = F.global.widgets[id];
+	var item = MAIN.widgets[id];
 	self.json(item ? item.editor : null);
 }
 
 function json_newsletter_state() {
-	this.json(F.global.newsletter);
+	this.json(MAIN.newsletter);
 }
 
 function json_dashboard_online() {
@@ -353,8 +353,8 @@ function json_pages_dependencies() {
 	var self = this;
 	var arr = [];
 
-	for (var i = 0, length = F.global.pages.length; i < length; i++) {
-		var item = F.global.pages[i];
+	for (var i = 0, length = MAIN.pages.length; i < length; i++) {
+		var item = MAIN.pages[i];
 		arr.push({ url: item.url, name: item.name, parent: item.parent });
 	}
 
@@ -372,7 +372,7 @@ function json_dashboard() {
 }
 
 function json_dashboard_referrers() {
-	NOSQL('visitors').counter.stats_sum(24, F.datetime.getFullYear(), this.callback());
+	NOSQL('visitors').counter.stats_sum(24, NOW.getFullYear(), this.callback());
 }
 
 function view_notices_preview() {

@@ -27,14 +27,14 @@ function unsubscribe() {
 
 function file_sitemap(req, res) {
 
-	var arr = F.global.pages;
+	var arr = MAIN.pages;
 	var builder = ['<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'];
 	var lng = F.onLocale ? F.onLocale(req, res) : null;
 
 	for (var i = 0; i < arr.length; i++) {
 		var item = arr[i];
 		if (!lng || item.language === lng)
-			builder.push('<url><loc>{0}</loc><lastmod>{1}</lastmod></url>'.format(F.config.url + item.url, (item.dateupdated ? item.dateupdated : item.datecreated).format('yyyy-MM-dd')));
+			builder.push('<url><loc>{0}</loc><lastmod>{1}</lastmod></url>'.format((PREF.url || CONF.url) + item.url, (item.dateupdated ? item.dateupdated : item.datecreated).format('yyyy-MM-dd')));
 	}
 
 	OPERATION('sitemap.xml', builder, function() {

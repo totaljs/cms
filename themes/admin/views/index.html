@@ -98,7 +98,7 @@
 			obj.notifications.running = false;
 			obj.notifications.template = '<b>{0}</b>{1}';
 
-			obj.componentator = @{if G.config.componentator !== false}true@{else}false@{fi};
+			obj.componentator = @{if PREF.componentator !== false}true@{else}false@{fi};
 
 			// Navigation
 			obj.page = '';

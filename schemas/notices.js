@@ -27,10 +27,10 @@ NEWSCHEMA('Notice', function(schema) {
 		} else {
 			opt.author && filter.where('author', opt.author);
 			opt.category && filter.where('idcategory', opt.category);
-			opt.published && filter.where('date', '<=', F.datetime);
+			opt.published && filter.where('date', '<=', NOW);
 			opt.search && filter.like('search', opt.search.keywords(true, true));
 			opt.ispinned != null && filter.where('ispinned', opt.ispinned);
-			opt.event && filter.where('event', '>', F.datetime.add('-1 day'));
+			opt.event && filter.where('event', '>', NOW.add('-1 day'));
 			filter.fields('body');
 		}
 
@@ -81,17 +81,17 @@ NEWSCHEMA('Notice', function(schema) {
 		var nosql = NOSQL('notices');
 
 		if (isUpdate) {
-			model.dateupdated = F.datetime;
+			model.dateupdated = NOW;
 			model.adminupdated = user;
 		} else {
 			model.id = UID();
 			model.admincreated = user;
-			model.datecreated = F.datetime;
+			model.datecreated = NOW;
 		}
 
-		!model.date && (model.date = F.datetime);
+		!model.date && (model.date = NOW);
 
-		var category = F.global.config.notices.findItem('id', model.idcategory);
+		var category = PREF.notices.findItem('id', model.idcategory);
 
 		model.category = category ? category.name : '';
 		model.search = ((model.name || '') + ' ' + (model.body || '')).keywords(true, true).join(' ').max(1000);

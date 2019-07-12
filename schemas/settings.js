@@ -1,12 +1,9 @@
-const Fs = require('fs');
-const filename = F.path.databases('settings.json');
-
-NEWSCHEMA('SettingsKeyValue').make(function(schema) {
+NEWSCHEMA('SettingsKeyValue', function(schema) {
 	schema.define('id', 'String(50)', true);
 	schema.define('name', 'String(50)', true);
 });
 
-NEWSCHEMA('SuperUser').make(function(schema) {
+NEWSCHEMA('SuperUser', function(schema) {
 	schema.define('id', 'String(15)');
 	schema.define('name', String, true);
 	schema.define('login', String, true);
@@ -14,7 +11,7 @@ NEWSCHEMA('SuperUser').make(function(schema) {
 	schema.define('roles', '[String]');
 });
 
-NEWSCHEMA('Settings').make(function(schema) {
+NEWSCHEMA('Settings', function(schema) {
 
 	schema.define('emailcontactform', 'Email', true);
 	schema.define('emailreply', 'Email', true);
@@ -33,48 +30,33 @@ NEWSCHEMA('Settings').make(function(schema) {
 	schema.define('smtpoptions', 'JSON');
 	schema.define('componentator', Boolean);
 
+	schema.setGet(function($) {
+		$.callback(PREF);
+	});
+
 	// Saves settings into the file
 	schema.setSave(function($) {
 
-		var model = $.model;
-		var settings = U.extend({}, model.$clean());
+		var model = $.clean();
+		var keys = Object.keys(model);
 
-		if (settings.url.endsWith('/'))
-			settings.url = settings.url.substring(0, settings.url.length - 1);
+		if (model.url.endsWith('/'))
+			model.url = model.url.substring(0, model.url.length - 1);
 
-		settings.datebackup = F.datetime;
+		for (var i = 0; i < keys.length; i++)
+			PREF.set(keys[i], model[keys[i]]);
 
-		NOSQL('settings_backup').insert(JSON.parse(JSON.stringify(settings)));
-		settings.datebackup = undefined;
+		model.datebackup = F.datetime;
+		NOSQL('settings_backup').insert(JSON.parse(JSON.stringify(model)));
+		model.datebackup = undefined;
 
-		// Writes settings into the file
-		Fs.writeFile(filename, JSON.stringify(settings), function() {
-			EMIT('settings.save', settings);
-			$SAVE('Event', { type: 'settings', id: model.id, user: $.user.name, admin: true }, NOOP, $);
-			$.success();
-		});
-	});
-
-	// Gets settings
-	schema.setGet(function($) {
-		Fs.readFile(filename, function(err, data) {
-
-			var settings = null;
-
-			if (err) {
-				settings = $.model;
-				settings.currency = 'EUR';
-				settings.currency_entity = '&euro;';
-			} else
-				settings = data.toString('utf8').parseJSON(true);
-
-			$.callback(settings);
-		});
+		EMIT('settings.save', PREF);
+		$SAVE('Event', { type: 'settings', id: model.id, user: $.user.name, admin: true }, NOOP, $);
+		$.success();
 	});
 
 	schema.addHook('dependencies', function($) {
 
-		var config = F.global.config;
 		var obj = $.model;
 		var keys = Object.keys(obj);
 
@@ -82,15 +64,14 @@ NEWSCHEMA('Settings').make(function(schema) {
 		for (var i = 0; i < keys.length; i++)
 			obj[keys[i]] = undefined;
 
-		obj.templatespages = config.templates;
-		obj.navigations = config.navigations;
-		obj.signals = config.signals;
-		obj.templatesposts = config.templatesposts;
-		obj.templatesnewsletters = config.templatesnewsletters;
-		obj.posts = config.posts;
-		obj.notices = config.notices;
-		obj.languages = config.languages || EMPTYARRAY;
-
+		obj.templatespages = PREF.templates;
+		obj.navigations = PREF.navigations;
+		obj.signals = PREF.signals;
+		obj.templatesposts = PREF.templatesposts;
+		obj.templatesnewsletters = PREF.templatesnewsletters;
+		obj.posts = PREF.posts;
+		obj.notices = PREF.notices;
+		obj.languages = PREF.languages || EMPTYARRAY;
 		$.callback();
 	});
 
@@ -105,45 +86,54 @@ NEWSCHEMA('Settings').make(function(schema) {
 
 	// Loads settings + rewrites framework configuration
 	schema.addWorkflow('load', function($) {
-		schema.get(null, function(err, settings) {
 
-			F.global.config = settings;
-			F.config.url = settings.url;
-
-			// Refreshes internal informations
-			!settings.users && (settings.users = []);
-
-			// Adds an admin (service) account
-			var sa = F.config['admin-superadmin'].split(':');
-			settings.users.push({ name: 'Administrator', login: sa[0], password: sa[1], roles: [], sa: true });
-
-			// Optimized for the performance
-			var users = {};
-			for (var i = 0, length = settings.users.length; i < length; i++) {
-				var user = settings.users[i];
-				var key = (user.login + ':' + user.password + ':' + F.config.secret + (user.login + ':' + user.password).hash()).md5();
-				users[key] = user;
+		if (!PREF.url) {
+			// tries to load older settings
+			try {
+				var data = require('fs').readFileSync(PATH.databases('settings.json')).toString('utf8').parseJSON(true);
+				var keys = Object.keys(data);
+				for (var i = 0; i < keys.length; i++)
+					PREF.set(keys[i], data[keys[i]]);
+			} catch (e) {
+				// empty
 			}
+		}
 
-			settings.users = users;
+		CONF.url = PREF.url;
+		MAIN.users = [];
 
-			// Rewrites internal framework settings
-			F.config['mail-address-from'] = settings.emailsender;
-			F.config['mail-address-reply'] = settings.emailreply;
+		// Refreshes internal informations
+		if (PREF.users && PREF.users.length)
+			MAIN.users.push.apply(MAIN.users, PREF.users);
 
-			!settings.signals && (settings.signals = []);
-			!settings.navigations && (settings.navigations = []);
-			!settings.posts && (settings.posts = []);
-			!settings.notices && (settings.notices = []);
-			!settings.templates && (settings.templates = []);
-			!settings.templatesnewsletters && (settings.templatesnewsletters = []);
-			!settings.templatesposts && (settings.templatesposts = []);
-			!settings.languages && (settings.languages = []);
+		// Adds an admin (service) account
+		var sa = (CONF.admin_superadmin || '').split(':');
+		MAIN.users.push({ name: 'Administrator', login: sa[0], password: sa[1], roles: [], sa: true });
 
-			settings.smtp && F.useSMTP(settings.smtp, settings.smtpoptions.parseJSON());
-			EMIT('settings', settings);
-			$.success();
+		// Optimized for the performance
+		var users = {};
+		for (var i = 0, length = MAIN.users.length; i < length; i++) {
+			var user = MAIN.users[i];
+			var key = (user.login + ':' + user.password + ':' + CONF.secret + (user.login + ':' + user.password).hash()).md5();
+			users[key] = user;
+		}
 
-		});
+		MAIN.users = users;
+
+		// Rewrites internal framework settings
+		CONF.mail_address_from = PREF.emailsender;
+		CONF.mail_address_reply = PREF.emailreply;
+
+		!PREF.signals && PREF.set('signals', []);
+		!PREF.navigations && PREF.set('navigations', []);
+		!PREF.notices && PREF.set('notices', []);
+		!PREF.templates && PREF.set('templates', []);
+		!PREF.templatesnewsletters && PREF.set('templatesnewsletters', []);
+		!PREF.templatesposts && PREF.set('templatesposts', []);
+		!PREF.languages && PREF.set('languages', []);
+		PREF.smtp && F.useSMTP(PREF.smtp, PREF.smtpoptions.parseJSON());
+
+		EMIT('settings', PREF);
+		$.success();
 	});
 });

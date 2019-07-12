@@ -1,6 +1,6 @@
 const Fs = require('fs');
 
-NEWSCHEMA('File').make(function(schema) {
+NEWSCHEMA('File', function(schema) {
 
 	schema.setQuery(function($) {
 		FILESTORAGE('files').all($.callback);
@@ -8,7 +8,7 @@ NEWSCHEMA('File').make(function(schema) {
 
 	schema.addWorkflow('clear', function($) {
 
-		var databases = [F.path.databases('posts.nosql'), F.path.databases('notices.nosql'), F.path.databases('pages.nosql'), F.path.databases('widgets.nosql'), F.path.databases('navigations.nosql'), F.path.databases('newsletters.nosql'), F.path.databases('pagesdata.table'), F.path.databases('postsdata.table'), F.path.databases('newslettersdata.table'), F.path.databases('partsdata.table')];
+		var databases = [PATH.databases('posts.nosql'), PATH.databases('notices.nosql'), PATH.databases('pages.nosql'), PATH.databases('widgets.nosql'), PATH.databases('navigations.nosql'), PATH.databases('newsletters.nosql'), PATH.databases('pagesdata.table'), PATH.databases('postsdata.table'), PATH.databases('newslettersdata.table'), PATH.databases('partsdata.table')];
 		var remove = [];
 		var storage = FILESTORAGE('files');
 		var db = {};
@@ -24,21 +24,21 @@ NEWSCHEMA('File').make(function(schema) {
 		var filter = (path) => reg.test(path);
 
 		async.push(function(next) {
-			U.ls(F.path.databases('pages'), function(files) {
+			U.ls(PATH.databases('pages'), function(files) {
 				files.length && databases.push.apply(databases, files);
 				next();
 			}, filter);
 		});
 
 		async.push(function(next) {
-			U.ls(F.path.databases('posts'), function(files) {
+			U.ls(PATH.databases('posts'), function(files) {
 				files.length && databases.push.apply(databases, files);
 				next();
 			}, filter);
 		});
 
 		async.push(function(next) {
-			U.ls(F.path.databases('newsletters'), function(files) {
+			U.ls(PATH.databases('newsletters'), function(files) {
 				files.length && databases.push.apply(databases, files);
 				next();
 			}, filter);
