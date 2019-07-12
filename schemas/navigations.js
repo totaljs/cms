@@ -131,13 +131,13 @@ function refresh() {
 		for (var i = 0, length = response.length; i < length; i++) {
 
 			var item = response[i];
-			var tmp = MAIN[item.id];
+			var tmp = MAIN.navigations[item.id];
 
 			// Navigation doesn't exist
 			if (!tmp)
 				continue;
 
-			MAIN[item.id] = item;
+			MAIN.navigations[item.id] = item;
 			item.name = tmp.name;
 			item.url = {};
 			item.stringify = function() {
