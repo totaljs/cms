@@ -96,11 +96,9 @@
 	PLUGIN('newslettersform', function(exports) {
 
 		exports.show = function(com) {
-
-			var model = newsletters.form;
+			var model = GET('newsletters.form');
 			com.reconfigure({ title: model.id ? '@(Edit newslettter)' : '@(New newslettter)' });
-			model.id && AJAX('GET [url]api/newsletters/{1}/stats/'.arg(model), 'newsletters.form.stats');
-
+			model.id && AJAX('GET [url]api/newsletters/{id}/stats/'.arg(model), 'newsletters.form.stats');
 			WAIT('cmseditor.instance', function() {
 				cmseditor.instance.setWidgetOptions(model.widgets);
 				cmseditor.instance.lock(false);
