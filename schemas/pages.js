@@ -6,12 +6,12 @@ const Fs = require('fs');
 
 var loaded = false;
 
-F.global.pages = [];
-F.global.sitemap = [];
-F.global.variables = {};
-F.global.redirects = {};
+MAIN.pages = [];
+MAIN.sitemap = [];
+MAIN.variables = {};
+MAIN.redirects = {};
 
-NEWSCHEMA('Page').make(function(schema) {
+NEWSCHEMA('Page', function(schema) {
 
 	schema.define('id', 'UID');
 	schema.define('body', String);                      // RAW html
@@ -71,12 +71,12 @@ NEWSCHEMA('Page').make(function(schema) {
 
 			FUNC.alert($.user, 'pages/edit', response.id);
 
-			var redirects = Object.keys(F.global.redirects);
+			var redirects = Object.keys(MAIN.redirects);
 			response.redirects = [];
 
 			for (var i = 0, length = redirects.length; i < length; i++) {
 				var key = redirects[i];
-				if (F.global.redirects[key] === response.url)
+				if (MAIN.redirects[key] === response.url)
 					response.redirects.push(key);
 			}
 
@@ -124,27 +124,27 @@ NEWSCHEMA('Page').make(function(schema) {
 		!model.title && (model.title = model.name);
 
 		if (isUpdate) {
-			model.dateupdated = F.datetime;
+			model.dateupdated = NOW;
 			model.adminupdated = user;
 		} else {
 			model.id = UID();
-			model.datecreated = F.datetime;
+			model.datecreated = NOW;
 			model.admincreated = user;
 		}
 
 		var redirectsmod = false;
-		var redirects = Object.keys(F.global.redirects);
+		var redirects = Object.keys(MAIN.redirects);
 		for (var i = 0, length = redirects.length; i < length; i++) {
 			var key = redirects[i];
-			if (F.global.redirects[key] === model.oldurl || F.global.redirects[key] === model.url) {
-				delete F.global.redirects[key];
+			if (MAIN.redirects[key] === model.oldurl || MAIN.redirects[key] === model.url) {
+				delete MAIN.redirects[key];
 				redirectsmod = true;
 			}
 		}
 
 		if (model.redirects && model.redirects.length) {
 			for (var i = 0, length = model.redirects.length; i < length; i++) {
-				F.global.redirects[model.redirects[i]] = model.url;
+				MAIN.redirects[model.redirects[i]] = model.url;
 				redirectsmod = true;
 			}
 		}
@@ -217,7 +217,7 @@ NEWSCHEMA('Page').make(function(schema) {
 
 		if (!model.url || model.url === '---') {
 			if (model.parent) {
-				var parent = F.global.pages.findItem('id', model.parent);
+				var parent = MAIN.pages.findItem('id', model.parent);
 				model.url = parent ? (parent.url + model.name.slug() + '/') : model.name.slug();
 			} else
 				model.url = model.name.slug();
@@ -258,21 +258,21 @@ NEWSCHEMA('Page').make(function(schema) {
 	});
 });
 
-NEWSCHEMA('Globals').make(function(schema) {
+NEWSCHEMA('Globals', function(schema) {
 
 	var pending = [];
 
 	schema.define('body', 'String');
 
 	schema.setSave(function($) {
-		Fs.writeFile(F.path.databases('pagesglobals.json'), JSON.stringify($.model.$clean()), function() {
+		Fs.writeFile(PATH.databases('pagesglobals.json'), JSON.stringify($.model.$clean()), function() {
 			refresh();
 			$.success();
 		});
 	});
 
 	schema.setGet(function($) {
-		Fs.readFile(F.path.databases('pagesglobals.json'), function(err, data) {
+		Fs.readFile(PATH.databases('pagesglobals.json'), function(err, data) {
 
 			if (data) {
 				data = data.toString('utf8').parseJSON(true);
@@ -285,7 +285,7 @@ NEWSCHEMA('Globals').make(function(schema) {
 
 	schema.addWorkflow('add', function($) {
 
-		if (F.global.variables[$.options.name]) {
+		if (MAIN.variables[$.options.name]) {
 			$.success();
 			return;
 		}
@@ -303,7 +303,7 @@ NEWSCHEMA('Globals').make(function(schema) {
 					var arr = pending.slice(0);
 					var is = false;
 					for (var i = 0, length = arr.length; i < length; i++) {
-						if (!F.global.variables[arr[i].name]) {
+						if (!MAIN.variables[arr[i].name]) {
 							response.body += '\n' + arr[i].name.padRight(25) + ': ' + arr[i].value;
 							is = true;
 						}
@@ -318,19 +318,19 @@ NEWSCHEMA('Globals').make(function(schema) {
 	});
 });
 
-NEWSCHEMA('Redirects').make(function(schema) {
+NEWSCHEMA('Redirects', function(schema) {
 
 	schema.define('body', 'String');
 
 	schema.setSave(function($) {
-		Fs.writeFile(F.path.databases('pagesredirects.json'), JSON.stringify($.model.$clean()), function() {
+		Fs.writeFile(PATH.databases('pagesredirects.json'), JSON.stringify($.model.$clean()), function() {
 			refresh_redirects();
 			$.success();
 		});
 	});
 
 	schema.setGet(function($) {
-		Fs.readFile(F.path.databases('pagesredirects.json'), function(err, data) {
+		Fs.readFile(PATH.databases('pagesredirects.json'), function(err, data) {
 
 			if (data) {
 				data = data.toString('utf8').parseJSON(true);
@@ -343,12 +343,12 @@ NEWSCHEMA('Redirects').make(function(schema) {
 
 	schema.addWorkflow('update', function($) {
 
-		var redirects = Object.keys(F.global.redirects);
+		var redirects = Object.keys(MAIN.redirects);
 		var builder = [];
 
 		for (var i = 0, length = redirects.length; i < length; i++) {
 			var key = redirects[i];
-			builder.push(key.padRight(40) + ' : ' + F.global.redirects[key]);
+			builder.push(key.padRight(40) + ' : ' + MAIN.redirects[key]);
 		}
 
 		var model = schema.create();
@@ -362,7 +362,7 @@ NEWSCHEMA('Redirects').make(function(schema) {
 function refresh_redirects() {
 	$GET('Redirects', function(err, response) {
 		var lines = response.body.split('\n');
-		F.global.redirects = {};
+		MAIN.redirects = {};
 		for (var i = 0, length = lines.length; i < length; i++) {
 			var line = lines[i].trim();
 			var beg = line.indexOf(':');
@@ -377,7 +377,7 @@ function refresh_redirects() {
 			if (b[0] !== '/' && b[0] !== 'h')
 				b = '/' + b;
 
-			F.global.redirects[a] = b;
+			MAIN.redirects[a] = b;
 		}
 	});
 }
@@ -425,9 +425,9 @@ function refresh() {
 			}
 		});
 
-		F.global.sitemap = sitemap;
-		F.global.partial = partial;
-		F.global.pages = pages;
+		MAIN.sitemap = sitemap;
+		MAIN.partial = partial;
+		MAIN.pages = pages;
 
 		$GET('Globals', function(err, response) {
 			parseGlobals(response.body);
@@ -439,7 +439,7 @@ function refresh() {
 }
 
 function parseGlobals(val) {
-	F.global.variables = {};
+	MAIN.variables = {};
 	var arr = val.split('\n');
 	for (var i = 0, length = arr.length; i < length; i++) {
 		var str = arr[i];
@@ -460,7 +460,7 @@ function parseGlobals(val) {
 
 		var value = str.substring(index + 2).trim();
 		if (name && value)
-			F.global.variables[name] = value;
+			MAIN.variables[name] = value;
 	}
 }
 
@@ -472,7 +472,7 @@ String.prototype.CMSrender = function(settings, callback, controller) {
 		return;
 	}
 
-	if (!F.global.widgets.$ready) {
+	if (!MAIN.widgets.$ready) {
 		// Widget are not ready
 		setTimeout((body, settings, callback) => body.CMSrender(settings, callback, controller), 500, body, settings, callback);
 		return;
@@ -480,7 +480,7 @@ String.prototype.CMSrender = function(settings, callback, controller) {
 
 	settings.wait(function(item, next) {
 
-		var widget = F.global.widgets[item.idwidget];
+		var widget = MAIN.widgets[item.idwidget];
 
 		var index = body.indexOf('data-cms-id="{0}"'.format(item.id));
 		if (index === -1)
@@ -546,7 +546,7 @@ function widgetsettings(widget, settings) {
 }
 
 function globalsreplacer(text) {
-	var val = F.global.variables[text.substring(1)];
+	var val = MAIN.variables[text.substring(1)];
 	return val == null ? text : val;
 }
 
@@ -708,14 +708,14 @@ Controller.prototype.CMSpage = function(callback, cache) {
 	var page;
 
 	if (self.language) {
-		page = F.global.sitemap[self.language + ' ' + self.url];
-		!page && (page = F.global.sitemap[self.url]);
+		page = MAIN.sitemap[self.language + ' ' + self.url];
+		!page && (page = MAIN.sitemap[self.url]);
 	} else
-		page = F.global.sitemap[self.url];
+		page = MAIN.sitemap[self.url];
 
 	if (!page) {
-		if (F.global.redirects && F.global.redirects[self.url]) {
-			self.redirect(F.global.redirects[self.url], RELEASE);
+		if (MAIN.redirects && MAIN.redirects[self.url]) {
+			self.redirect(MAIN.redirects[self.url], RELEASE);
 			NOSQL('pages').counter.hit('redirect');
 		} else
 			self.throw404();
@@ -746,7 +746,7 @@ Controller.prototype.CMSpage = function(callback, cache) {
 			var tmp = page;
 			while (tmp && tmp.url !== '/') {
 				self.sitemap_add('homepage', tmp.name, tmp.url);
-				tmp = F.global.sitemap[tmp.parent];
+				tmp = MAIN.sitemap[tmp.parent];
 			}
 
 			var counter = nosql.counter.hit('all').hit(response.id);
@@ -797,10 +797,10 @@ Controller.prototype.CMSrender = function(url, callback) {
 	var page;
 
 	if (self.language) {
-		page = F.global.sitemap[self.language + ' ' + url];
-		!page && (page = F.global.sitemap[url]);
+		page = MAIN.sitemap[self.language + ' ' + url];
+		!page && (page = MAIN.sitemap[url]);
 	} else
-		page = F.global.sitemap[url];
+		page = MAIN.sitemap[url];
 
 	if (!page) {
 		callback('404');
@@ -817,7 +817,7 @@ Controller.prototype.CMSrender = function(url, callback) {
 		var tmp = page;
 		while (tmp && tmp.url !== '/') {
 			self.sitemap_add('homepage', tmp.name, tmp.url);
-			tmp = F.global.sitemap[tmp.parent];
+			tmp = MAIN.sitemap[tmp.parent];
 		}
 
 		if (response.css) {
@@ -846,7 +846,7 @@ Controller.prototype.CMSpartial = function(url, callback) {
 
 	var self = this;
 	var prop = url.isUID() ? 'id' : 'url';
-	var page = F.global.partial.findItem(function(item) {
+	var page = MAIN.partial.findItem(function(item) {
 		return item[prop] === url && (!self.language || self.language === item.language);
 	});
 

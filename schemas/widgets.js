@@ -12,7 +12,7 @@ WidgetInstace.prototype.globals = function(name, value) {
 	$WORKFLOW('Globals', 'add', { name: name, value: value }, NOOP);
 };
 
-NEWSCHEMA('Widget').make(function(schema) {
+NEWSCHEMA('Widget', function(schema) {
 
 	schema.define('id', 'UID');
 	schema.define('name', 'String(50)', true);
@@ -51,9 +51,9 @@ NEWSCHEMA('Widget').make(function(schema) {
 		// Importing ...
 		// It tries to find existing widget according to the reference
 		if (model.reference && !model.id) {
-			var keys = Object.keys(F.global.widgets);
+			var keys = Object.keys(MAIN.widgets);
 			for (var i = 0; i < keys.length; i++) {
-				if (F.global.widgets[keys[i]].reference === model.reference)
+				if (MAIN.widgets[keys[i]].reference === model.reference)
 					model.id = keys[i];
 			}
 		}
@@ -61,10 +61,10 @@ NEWSCHEMA('Widget').make(function(schema) {
 		var isUpdate = !!model.id;
 
 		if (isUpdate) {
-			model.dateupdated = F.datetime;
+			model.dateupdated = NOW;
 		} else {
 			model.id = UID();
-			model.datecreated = F.datetime;
+			model.datecreated = NOW;
 		}
 
 		var replace = model.replace;
@@ -86,7 +86,7 @@ NEWSCHEMA('Widget').make(function(schema) {
 		NOSQL('widgets').remove().where('id', id).backup(user).log('Remove: ' + id, user).callback(function(err, count) {
 
 			if (INSTALLED[id]) {
-				var w = F.global.widgets[id];
+				var w = MAIN.widgets[id];
 				w && w.total && w.total.uninstall && w.total.uninstall();
 				delete INSTALLED[id];
 			}
@@ -99,14 +99,14 @@ NEWSCHEMA('Widget').make(function(schema) {
 	});
 
 	schema.addWorkflow('editor', function($) {
-		var body = F.global.widgets[$.controller.id];
+		var body = MAIN.widgets[$.controller.id];
 		$.callback({ body: body ? body.html : '', category: body.category });
 	});
 
 	schema.addWorkflow('import', function($) {
 
 		// $.options.filename;
-		var keys = Object.keys(F.global.widgets);
+		var keys = Object.keys(MAIN.widgets);
 		var meta = $.options.filename.match(/(\/|\\)(layouts|content|columns|inline|newsletter)(\/|\\)\w+.html$/gi);
 
 		if (meta)
@@ -119,13 +119,13 @@ NEWSCHEMA('Widget').make(function(schema) {
 		console.log('Updated widget --->', meta);
 
 		for (var i = 0, length = keys.length; i < length; i++) {
-			var widget = F.global.widgets[keys[i]];
+			var widget = MAIN.widgets[keys[i]];
 			if (widget.reference === meta) {
 
 				// updating
 				// loads file content
 				Fs.readFile($.options.filename, function(err, data) {
-					NOSQL('widgets').modify({ body: data.toString('utf8'), dateupdated: F.datetime }).where('id', widget.id).callback(function() {
+					NOSQL('widgets').modify({ body: data.toString('utf8'), dateupdated: NOW }).where('id', widget.id).callback(function() {
 						setTimeout2('widgets', refresh, 300);
 					});
 				});
@@ -137,7 +137,7 @@ NEWSCHEMA('Widget').make(function(schema) {
 
 		var category = meta.match(/\w+/).toString().capitalize();
 		Fs.readFile($.options.filename, function(err, data) {
-			NOSQL('widgets').insert({ id: UID(), name: U.getName(meta).replace('.' + U.getExtension(meta), '').capitalize(), reference: meta, body: data.toString('utf8'), datecreated: F.datetime, picture: '', icon: '', category: category }).callback(function() {
+			NOSQL('widgets').insert({ id: UID(), name: U.getName(meta).replace('.' + U.getExtension(meta), '').capitalize(), reference: meta, body: data.toString('utf8'), datecreated: NOW, picture: '', icon: '', category: category }).callback(function() {
 				setTimeout2('widgets', refresh, 300);
 			});
 		});
@@ -148,7 +148,7 @@ NEWSCHEMA('Widget').make(function(schema) {
 
 		var id = $.options.id;
 		var databases = ['pages', 'posts', 'newsletters'];
-		var widgetbody = F.global.widgets[id].html;
+		var widgetbody = MAIN.widgets[id].html;
 		var count = 0;
 
 		databases.wait(function(name, next) {
@@ -178,14 +178,14 @@ NEWSCHEMA('WidgetGlobals').make(function(schema) {
 	schema.define('js', 'String');
 
 	schema.setSave(function($) {
-		Fs.writeFile(F.path.databases('widgetsglobals.json'), JSON.stringify($.model.$clean()), function() {
+		Fs.writeFile(PATH.databases('widgetsglobals.json'), JSON.stringify($.model.$clean()), function() {
 			refresh(null, true);
 			$.success();
 		});
 	});
 
 	schema.setGet(function($) {
-		Fs.readFile(F.path.databases('widgetsglobals.json'), function(err, data) {
+		Fs.readFile(PATH.databases('widgetsglobals.json'), function(err, data) {
 
 			if (data) {
 				data = data.toString('utf8').parseJSON(true);
@@ -282,10 +282,10 @@ function refresh(callback, force) {
 		var js = [];
 		var jseditor = [];
 		var exports = {};
-		var old = F.global.widgets;
+		var old = MAIN.widgets;
 
-		F.global.widgets = {};
-		F.global.widgets.$ready = false;
+		MAIN.widgets = {};
+		MAIN.widgets.$ready = false;
 
 		var rebuildcss = !!force;
 		var rebuildjs = !!force;
@@ -364,19 +364,19 @@ function refresh(callback, force) {
 
 				// Widget exists but it was modified
 				if (type === 1) {
-					var e = F.global.widgets[obj.id];
+					var e = MAIN.widgets[obj.id];
 					e && e.total && e.total.uninstall && e.total.uninstall();
 				}
 			}
 
-			F.global.widgets[obj.id] = obj;
+			MAIN.widgets[obj.id] = obj;
 			INSTALLED[obj.id] = meta;
 
 			if (rebuild) {
 				try {
 					obj.total && obj.total.install && obj.total.install();
 				} catch (e) {
-					F.error(e, 'Widget {0}: install'.format(obj.name));
+					ERROR(e, 'Widget {0}: install'.format(obj.name));
 				}
 			} else if (prev)
 				obj.total = prev.total;
@@ -398,28 +398,28 @@ function refresh(callback, force) {
 				var version = U.GUID(5);
 
 				if (rebuildcss) {
-					Fs.writeFile(F.path.temp(CSS), U.minifyStyle('/*auto*/\n' + (response.css ? response.css + '\n' : '') + css.join('\n')), NOOP);
+					Fs.writeFile(PATH.temp(CSS), U.minifyStyle('/*auto*/\n' + (response.css ? response.css + '\n' : '') + css.join('\n')), NOOP);
 					F.touch('/' + CSS);
-					F.global.css = '/' + CSS + '?ts=' + version;
+					MAIN.css = '/' + CSS + '?ts=' + version;
 				}
 
 				if (rebuildjs) {
-					Fs.writeFile(F.path.temp(JS), U.minifyScript((response.js ? response.js + ';\n' : '') + js.join('\n')), NOOP);
+					Fs.writeFile(PATH.temp(JS), U.minifyScript((response.js ? response.js + ';\n' : '') + js.join('\n')), NOOP);
 					F.touch('/' + JS);
-					F.global.js = '/' + JS + '?ts=' + version;
+					MAIN.js = '/' + JS + '?ts=' + version;
 				}
 
 				if (rebuildeditor) {
-					Fs.writeFile(F.path.temp(JSEDITOR), U.minifyScript(jseditor.join('\n')), NOOP);
+					Fs.writeFile(PATH.temp(JSEDITOR), U.minifyScript(jseditor.join('\n')), NOOP);
 					F.touch('/' + JSEDITOR);
-					F.global.jseditor = '/' + JSEDITOR + '?ts=' + version;
+					MAIN.jseditor = '/' + JSEDITOR + '?ts=' + version;
 				}
 
 				if (typeof(callback) === 'function')
 					callback();
 
 				rebuildhtml && replace.length && replaceContent(replace);
-				F.global.widgets.$ready = true;
+				MAIN.widgets.$ready = true;
 				F.cache.removeAll('cachecms');
 
 				if (rebuildcss || rebuildjs)
@@ -432,14 +432,14 @@ function refresh(callback, force) {
 				callback();
 
 			rebuildhtml && replace.length && replaceContent(replace);
-			F.global.widgets.$ready = true;
+			MAIN.widgets.$ready = true;
 			F.cache.removeAll('cachecms');
 			F.temporary.views = {};
 		}
 
-		if (!F.global.css) {
-			F.global.css = '/' + CSS + '?ts=' + GUID(5);
-			Fs.writeFile(F.path.temp(CSS), '', NOOP);
+		if (!MAIN.css) {
+			MAIN.css = '/' + CSS + '?ts=' + GUID(5);
+			Fs.writeFile(PATH.temp(CSS), '', NOOP);
 		}
 
 	});
@@ -509,12 +509,12 @@ function watcher() {
 
 	var watch = function() {
 
-		if (!F.global.widgets.$ready) {
+		if (!MAIN.widgets.$ready) {
 			setTimeout(watch, 3500);
 			return;
 		}
 
-		var path = F.path.root('widgets');
+		var path = PATH.root('widgets');
 		var changes = [];
 		U.ls2(path, function(files) {
 			for (var i = 0, length = files.length; i < length; i++) {
@@ -545,8 +545,8 @@ function watcher() {
 
 DEBUG && watcher();
 
-FILE('/' + CSS, (req, res) => res.file(F.path.temp(CSS)));
-FILE('/' + JS, (req, res) => res.file(F.path.temp(JS)));
-FILE('/' + JSEDITOR, (req, res) => res.file(F.path.temp(JSEDITOR)));
+FILE('/' + CSS, (req, res) => res.file(PATH.temp(CSS)));
+FILE('/' + JS, (req, res) => res.file(PATH.temp(JS)));
+FILE('/' + JSEDITOR, (req, res) => res.file(PATH.temp(JSEDITOR)));
 
 ON('settings', refresh);

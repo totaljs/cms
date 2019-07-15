@@ -1,4 +1,4 @@
-NEWSCHEMA('PartData').make(function(schema) {
+NEWSCHEMA('PartData', function(schema) {
 
 	// Id generated on client-side
 	schema.define('id', 'String(20)');
@@ -14,7 +14,7 @@ NEWSCHEMA('PartData').make(function(schema) {
 	schema.define('category', 'Capitalize');
 });
 
-NEWSCHEMA('Part').make(function(schema) {
+NEWSCHEMA('Part', function(schema) {
 
 	// Owner
 	schema.define('idowner', 'UID');
@@ -27,7 +27,7 @@ NEWSCHEMA('Part').make(function(schema) {
 
 	schema.setSave(function($) {
 		var model = $.model;
-		model.dateupdated = F.datetime;
+		model.dateupdated = NOW;
 		NOSQL('parts').remove().where('idowner', model.idowner).callback(function() {
 			for (var i = 0; i < model.items.length; i++) {
 				var item = model.items[i];

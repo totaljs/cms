@@ -10,8 +10,8 @@
 		<div data---="datagrid__?.grid__padding:10;filterlabel:@(Search);checked:?/checkbox;button:?/button;pagination:true">
 			<script type="text/plain">
 			[
-				{ name: 'name', text: '@(Name)', width: 300, template: '{{ if issent }}<span class="badge badge-green mr5">@(send)</span>{{ fi }}{{ name }}', classth: 'left', classfilter: 'left' },
-				{ name: 'count', text: '@(Subscribers)', align: 2, width: 140, class: 'hidden-xs', template: '{{ count }}x<i class="fa fa-envelope-o ml5"></i>' },
+				{ name: 'name', text: '@(Name)', width: 550, template: '{{ if issent }}<span class="badge badge-green mr5">@(send)</span>{{ fi }}{{ name }}', classth: 'left', classfilter: 'left' },
+				{ name: 'count', text: '@(Subscribers)', align: 2, width: 150, class: 'hidden-xs', template: '{{ count }}x<i class="fa fa-envelope-o ml5"></i>' },
 				{ name: 'datecreated', text: '@(Created)', width: 200, align: 1, class: 'hidden-xs', template: '{{ datecreated | format(\'yyyy-MM-dd HH:mm\') }}' },
 				{ name: '@(Options)', align: 1, filter: false, sort: false, width: 120, template: '<div class="inline"><button title="@(Duplicate)" name="duplicate"><i class="far fa-copy"></i></button><button name="update" title="@(Edit)"><i class="fa fa-pencil"></i></button><button class="btn-remove" name="remove" title="@(Remove)"><i class="far fa-trash-o"></i></button></div>' }
 			]
@@ -93,9 +93,12 @@
 		};
 
 		exports.checked = function(el) {
-			var items = [];
-			items.push({ id: 'remove', name: '@(Remove newsletters)', icon: 'trash' });
-			SETTER('contextmenu', 'show', 'center', el, items, function(item) {
+			var options = {};
+			options.element = el;
+			options.items = [];
+			options.items.push({ id: 'remove', name: '@(Remove newsletters)', icon: 'trash' });
+
+			options.callback = function(item) {
 				switch (item.id) {
 					case 'remove':
 						SETTER('confirm', 'show', '@(Are you sure you want to remove all selected newsletters?)', ['"trash"@(Remove)', '@(No)'], function(index) {
@@ -114,21 +117,28 @@
 						});
 						break;
 				}
-			}, 0, 5);
+			};
+
+			SETTER('menu', 'show', options);
 		};
 
 		exports.options = function(el) {
-			var items = [];
-			items.push({ id: 'refresh', name: '@(Refresh)', icon: 'refresh' });
-			items.push({ id: 'create', name: '@(Create newsletter)', icon: 'plus-circle' });
-			SETTER('contextmenu', 'show', 'left', el, items, function(item) {
+			var options = {};
+			options.element = el;
+			options.items = [];
+			options.items.push({ id: 'refresh', name: '@(Refresh)', icon: 'refresh' });
+			options.items.push({ id: 'create', name: '@(Create newsletter)', icon: 'plus-circle' });
+
+			options.callback = function(item) {
 				switch (item.id) {
 					case 'refresh':
 					case 'create':
 						exports[item.id]();
 						break;
 				}
-			}, 2, 5);
+			};
+
+			SETTER('menu', 'show', options);
 		};
 
 		exports.create = function() {

@@ -1,4 +1,4 @@
-NEWSCHEMA('Subscriber').make(function(schema) {
+NEWSCHEMA('Subscriber', function(schema) {
 
 	schema.define('email', String, true);
 
@@ -15,7 +15,7 @@ NEWSCHEMA('Subscriber').make(function(schema) {
 				continue;
 
 			var obj = {};
-			obj.datecreated = F.datetime;
+			obj.datecreated = NOW;
 			obj.ip = $.ip;
 			obj.language = $.language;
 			obj.unsubscribed = false;
@@ -84,7 +84,7 @@ NEWSCHEMA('Subscriber').make(function(schema) {
 	});
 
 	schema.addWorkflow('unsubscribe', function($) {
-		NOSQL('subscribers').modify({ unsubscribed: true, dateupdated: F.datetime }).where('email', $.query.email);
+		NOSQL('subscribers').modify({ unsubscribed: true, dateupdated: NOW }).where('email', $.query.email);
 		$SAVE('Event', { type: 'subscribers/rem', user: $.user ? $.user.name : '', body: $.query.email }, NOOP, $);
 		$.success();
 	});

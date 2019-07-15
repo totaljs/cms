@@ -1,6 +1,6 @@
 const REGEXP_GLOBAL = /\$[0-9a-z-_]+/gi;
 
-NEWSCHEMA('Post').make(function(schema) {
+NEWSCHEMA('Post', function(schema) {
 
 	schema.define('id', 'UID');
 	schema.define('idcategory', 'String(50)');
@@ -40,7 +40,7 @@ NEWSCHEMA('Post').make(function(schema) {
 			opt.category && filter.where('linker_category', opt.category);
 			opt.author && filter.where('author', opt.author);
 			opt.language && filter.where('language', opt.language);
-			opt.published && filter.where('ispublished', true).where('date', '<=', F.datetime);
+			opt.published && filter.where('ispublished', true).where('date', '<=', NOW);
 			opt.search && filter.like('search', opt.search.keywords(true, true));
 			filter.fields('description');
 		}
@@ -140,19 +140,19 @@ NEWSCHEMA('Post').make(function(schema) {
 		var nosql = NOSQL('posts');
 
 		if (isUpdate) {
-			model.dateupdated = F.datetime;
+			model.dateupdated = NOW;
 			model.adminupdated = user;
 		} else {
 			model.id = UID();
 			model.admincreated = user;
-			model.datecreated = F.datetime;
+			model.datecreated = NOW;
 		}
 
-		!model.date && (model.date = F.datetime);
+		!model.date && (model.date = NOW);
 		model.linker = model.date.format('yyyyMMdd') + '-' + model.name.slug();
 		model.stamp = new Date().format('yyyyMMddHHmm');
 
-		var category = F.global.posts.find('id', model.idcategory);
+		var category = MAIN.posts.find('id', model.idcategory);
 		if (category) {
 			model.linker_category = category.linker;
 			model.category = category.name;
@@ -218,10 +218,9 @@ function dynamicvalues(body, obj) {
 // Refreshes internal informations (sitemap and navigations)
 function refresh() {
 
-	var config = F.global.config;
 	var categories = {};
 
-	config.posts && config.posts.forEach(item => categories[item.id] = 0);
+	PREF.posts && PREF.posts.forEach(item => categories[item.id] = 0);
 
 	NOSQL('posts').find().fields('ispublished', 'category').callback(function(err, response) {
 
@@ -233,11 +232,11 @@ function refresh() {
 
 		var output = [];
 		Object.keys(categories).forEach(function(key) {
-			var category = config.posts.findItem('id', key);
+			var category = PREF.posts.findItem('id', key);
 			category && output.push({ id: key, name: category.name, linker: key.slug(), count: categories[key] });
 		});
 
-		F.global.posts = output;
+		MAIN.posts = output;
 		F.cache.removeAll('cachecms');
 	});
 }

@@ -29,7 +29,7 @@
 									<div class="event-user"><span>{{ m.created | time }}<i class="fa fa-clock-o"></i></span>IP: {{ m.ip }}</div>
 								</div>
 							{{ end }}
-							{{ if !value.length }}
+							{{ if !value || !value.length }}
 								<div class="padding help center">@(No data)</div>
 							{{ fi }}
 						</script>
@@ -50,7 +50,7 @@
 									<div class="event-user"><span>{{ m.created | time }}<i class="fa fa-clock-o"></i></span>IP: {{ m.ip }}</div>
 								</div>
 							{{ end }}
-							{{ if !value.length }}
+							{{ if !value || !value.length }}
 								<div class="padding help center">@(No data)</div>
 							{{ fi }}
 						</script>
@@ -71,7 +71,7 @@
 									<div class="event-user"><span>{{ m.created | time }}<i class="fa fa-clock-o"></i></span>IP: {{ m.ip }}</div>
 								</div>
 							{{ end }}
-							{{ if !value.length }}
+							{{ if !value || !value.length }}
 								<div class="padding help center">@(No data)</div>
 							{{ fi }}
 						</script>

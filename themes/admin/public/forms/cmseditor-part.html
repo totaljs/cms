@@ -1,4 +1,4 @@
-<div data---="modal__cmseditor.form__if:part;width:500;autofocus:true;submit:cmseditorpart/submit" class="hidden">
+<div data---="modal__cmseditor.form__if:part;width:500;height:97;autofocus:true;submit:cmseditorpart/submit;scrollbar:true" class="hidden">
 
 	<div>
 		<span class="link cancel"><i class="fa fa-times"></i></span>
@@ -46,6 +46,13 @@
 			editor.change(true);
 			hide();
 		};
+	});
+
+	WATCH('cmseditor.part.isnew', function(path, value) {
+		if (value != null && !value)
+			SETTER(true, 'modal', 'reconfigure', 'height:117');
+		else
+			SETTER(true, 'modal', 'reconfigure', 'height:97');
 	});
 
 </script>

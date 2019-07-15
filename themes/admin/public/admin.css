@@ -6,6 +6,8 @@
 
 body { background-color: #F0F0F0; }
 
+.mb10 { margin-bottom: 10px; }
+
 header { height: 41px; background-color: white; position: fixed; left: 0; top: 0; right: 0; box-shadow: 0 5px 10px rgba(0,0,0,.03);  border-bottom: 1px solid #E0E0E0; z-index: 10; }
 header nav a { float: left; width: 40px; height: 40px; text-align: center; font-size: 16px; padding: 8px 0 0 0; color: white; background-color: #4584F1; }
 header nav a:hover { opacity: 0.8; }
@@ -138,6 +140,7 @@ h3 .fa, h3 .far, h3 .fal { margin-right: 8px; }
 
 .bg-white { background-color: white; }
 .bg-yellow { background-color: #FFFFD5; }
+.bg-yellow-fade { background: #FFFFD5 linear-gradient(#FFFFD5, white); }
 .bg-smoke { background-color: #F8F8F8; }
 
 .oauth2callback { font-size: 11px; white-space: pre-wrap; margin-bottom: 15px; color: silver; }
@@ -158,6 +161,8 @@ h3 .fa, h3 .far, h3 .fal { margin-right: 8px; }
 .noticespreview p { margin: 10px 0 0; }
 .noticespreview ul { margin: 10px 0 0; }
 .noticespreview img { display: block; margin: 10px 0 0; border-radius: 4px; }
+
+.ui-scrollbar-y { width: 8px; }
 
 @media(min-width:1200px) {
 	.header-message { display: block; }

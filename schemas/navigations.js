@@ -32,10 +32,10 @@ NEWSCHEMA('Navigation', function(schema) {
 		var db = NOSQL('navigations');
 		var model = $.model.$clean();
 
-		var nav = F.global.config.navigations.findItem('id', model.id);
+		var nav = PREF.navigations.findItem('id', model.id);
 		if (nav) {
 			model.name = nav.name;
-			model.dateupdated = F.datetime;
+			model.dateupdated = NOW;
 		} else {
 			$.invalid('error-navigations-404');
 			return;
@@ -63,7 +63,7 @@ NEWSCHEMA('Navigation', function(schema) {
 				var item = findByPage(page.id, nav.children);
 				if (item) {
 
-					nav.dateupdated = F.datetime;
+					nav.dateupdated = NOW;
 					item.url = page.url;
 					page.navicon && (item.icon = page.icon);
 
@@ -73,7 +73,7 @@ NEWSCHEMA('Navigation', function(schema) {
 						item.language = page.language;
 					}
 
-					item.dateupdated = F.datetime;
+					item.dateupdated = NOW;
 					db.update(nav).backup(user).log('Update menu item according to the page {0}: {1}'.format(page.id, page.name)).where('id', nav.id).callback(done);
 				}
 			}
@@ -122,22 +122,22 @@ function prepare(main, children, parent, level) {
 
 function refresh() {
 	NOSQL('navigations').find().callback(function(err, response) {
-		F.global.navigations = {};
+		MAIN.navigations = {};
 
-		var nav = F.global.config.navigations;
+		var nav = PREF.navigations;
 		for (var i = 0; i < nav.length; i++)
-			F.global.navigations[nav[i].id] = { url: {}, children: [], id: nav[i].id, name: nav[i].name };
+			MAIN.navigations[nav[i].id] = { url: {}, children: [], id: nav[i].id, name: nav[i].name };
 
 		for (var i = 0, length = response.length; i < length; i++) {
 
 			var item = response[i];
-			var tmp = F.global.navigations[item.id];
+			var tmp = MAIN.navigations[item.id];
 
 			// Navigation doesn't exist
 			if (!tmp)
 				continue;
 
-			F.global.navigations[item.id] = item;
+			MAIN.navigations[item.id] = item;
 			item.name = tmp.name;
 			item.url = {};
 			item.stringify = function() {
@@ -145,7 +145,7 @@ function refresh() {
 				return JSON.stringify(this, (k, v) => skip[k] ? undefined : v);
 			};
 
-			prepare(F.global.navigations[item.id], item.children, null, 0);
+			prepare(MAIN.navigations[item.id], item.children, null, 0);
 		}
 
 		F.cache.removeAll('cachecms');

@@ -38,13 +38,13 @@ W.clean = function() {
 	W.index++;
 	W.index % 2 === 0 && W.save();
 
-	F.datetime = new Date();
-	W.current = F.datetime.getTime();
+	NOW = new Date();
+	W.current = NOW.getTime();
 
 	var stats = W.stats;
-	var day = F.datetime.getDate();
-	var month = F.datetime.getMonth() + 1;
-	var year = F.datetime.getFullYear();
+	var day = NOW.getDate();
+	var month = NOW.getMonth() + 1;
+	var year = NOW.getFullYear();
 
 	if (stats.day !== day || stats.month !== month || stats.year !== year) {
 		if (stats.day || stats.month || stats.year) {
@@ -123,13 +123,13 @@ W.counter = function(req, res) {
 		return false;
 	}
 
-	F.datetime = new Date();
+	NOW = new Date();
 
 	var cookie = req.cookie(COOKIE);
 	req.idvisitor = cookie ? cookie.substring(cookie.length - 5) : Math.random().toString().substring(2, 7);
 
 	var user = cookie ? cookie.substring(0, cookie.length - 5).parseInt() : 0;
-	var ticks = F.datetime.getTime();
+	var ticks = NOW.getTime();
 	var sum = user ? (ticks - user) / 1000 : 1000;
 	var exists = sum < 91;
 
@@ -157,14 +157,14 @@ W.counter = function(req, res) {
 		// 20 minutes
 		if (sum < TIMEOUT_VISITORS) {
 			W.arr[1]++;
-			W.lastvisit = F.datetime;
-			res.cookie(COOKIE, ticks + req.idvisitor, F.datetime.add('5 days'));
+			W.lastvisit = NOW;
+			res.cookie(COOKIE, ticks + req.idvisitor, NOW.add('5 days'));
 			F.$events.visitor && W.emitvisitor('visitor', req);
 			return true;
 		}
 
 		var date = new Date(user);
-		if (date.getDate() !== F.datetime.getDate() || date.getMonth() !== F.datetime.getMonth() || date.getFullYear() !== F.datetime.getFullYear())
+		if (date.getDate() !== NOW.getDate() || date.getMonth() !== NOW.getMonth() || date.getFullYear() !== NOW.getFullYear())
 			VISITOR.unique = true;
 
 		date.diff('months') < 0 && (W.stats.uniquemonth++);
@@ -183,11 +183,11 @@ W.counter = function(req, res) {
 	}
 
 	W.arr[1]++;
-	W.lastvisit = F.datetime;
-	res.cookie(COOKIE, ticks + req.idvisitor, F.datetime.add('5 days'));
+	W.lastvisit = NOW;
+	res.cookie(COOKIE, ticks + req.idvisitor, NOW.add('5 days'));
 
 	var online = W.arr[0] + W.arr[1];
-	var hours = F.datetime.getHours();
+	var hours = NOW.getHours();
 
 	if (W.stats.hours[hours] < online)
 		W.stats.hours[hours] = online;
@@ -246,7 +246,7 @@ W.emitvisitor = function(type, req) {
 };
 
 W.save = function() {
-	var filename = F.path.databases(FILE_CACHE);
+	var filename = PATH.databases(FILE_CACHE);
 	var stats = U.copy(W.stats);
 	stats.pages = stats.hits && stats.count ? (stats.hits / stats.count).floor(2) : 0;
 	Fs.writeFile(filename, JSON.stringify(stats), NOOP);
@@ -257,7 +257,7 @@ W.load = function() {
 	if (F.isCluster && F.id)
 		FILE_CACHE = FILE_CACHE.replace('.', F.id + '.');
 
-	var filename = F.path.databases(FILE_CACHE);
+	var filename = PATH.databases(FILE_CACHE);
 
 	Fs.readFile(filename, function(err, data) {
 		if (err)
@@ -374,7 +374,7 @@ W.yearly = function(callback) {
 };
 
 W.statistics = function(callback) {
-	var filename = F.path.databases(DBNAME + '.nosql');
+	var filename = PATH.databases(DBNAME + '.nosql');
 	var stream = Fs.createReadStream(filename);
 	var data = U.createBufferSize();
 	stream.on('error', () => callback(EMPTYARRAY));
@@ -426,7 +426,7 @@ exports.instance = W;
 
 exports.install = function() {
 	setTimeout(refresh_hostname, 10000);
-	F.on('service', delegate_service);
+	ON('service', delegate_service);
 	ROUTE('/$visitors/', function() {
 		W.counter(this.req, this.res);
 		this.empty();
@@ -445,10 +445,8 @@ function isBlacklist(url) {
 }
 
 function refresh_hostname() {
-	var url;
-	F.global.config && (url = F.global.config.url);
-	!url && (url = F.config.url || F.config.hostname);
-	url && (W.hostname = getHostname(url));
+	var url = PREF.url || CONF.url || CONF.hostname;
+	W.hostname = getHostname(url);
 }
 
 exports.usage = function() {
@@ -494,6 +492,6 @@ W.interval = setInterval(W.clean, 45000);
 W.load();
 
 ON('settings', function() {
-	W.hostname = getHostname(F.global.config.url);
+	W.hostname = getHostname(PREF.url);
 	W.blacklist(F.sitemap('admin', true).url);
 });

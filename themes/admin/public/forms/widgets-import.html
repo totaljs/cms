@@ -9,7 +9,7 @@
 	.widgetextinstalled img { border-color: #79AF65; }
 </style>
 
-<div data---="modal__common.form3__if:widgets-import;width:800;reload:widgetsimport/show;scrollbar:true" class="hidden">
+<div data---="modal__common.form3__if:widgets-import;width:800;reload:widgetsimport/show;scroll:false" class="hidden">
 
 	<div>
 		<span class="link cancel"><i class="fa fa-times"></i></span>
@@ -17,8 +17,7 @@
 	</div>
 
 	<div>
-		<div class="padding">
-
+		<div class="padding npb mb10">
 			<div class="tabmenu-container">
 				<ul data---="tabmenu__widgets.externaltab__null__'all'" class="tabmenu tabmenu-bordered">
 					<li data-value="all">@(All)</li>
@@ -28,9 +27,10 @@
 					<li data-value="Inline">@(Inline)</li>
 				</ul>
 			</div>
-			<br />
+		</div>
 
-			<div data---="listing__widgets.external -> widgetsimport/filter(value)">
+		<div data---="viewbox__null__margin:48;minheight:600;height:100;scrollbar:true;parent:.ui-modal-body">
+			<div data---="listing__widgets.external -> widgetsimport/filter(value)" class="padding">
 				<script type="text/html">
 					<div class="col-xs-4 col-sm-3 m">
 						<div class="widgetext exec{{ id | widgetsinstalled }}" data-id="{{ id }}" data-exec="widgetsimport/submit">
@@ -48,6 +48,7 @@
 				</script>
 			</div>
 		</div>
+
 	</div>
 
 	<div>

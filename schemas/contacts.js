@@ -1,4 +1,4 @@
-NEWSCHEMA('Contact').make(function(schema) {
+NEWSCHEMA('Contact', function(schema) {
 
 	schema.define('firstname', 'Capitalize(40)', true);
 	schema.define('lastname', 'Capitalize(40)', true);
@@ -11,7 +11,7 @@ NEWSCHEMA('Contact').make(function(schema) {
 		var model = $.model;
 		model.id = UID();
 		model.ip = $.ip;
-		model.datecreated = F.datetime;
+		model.datecreated = NOW;
 
 		var nosql = NOSQL('contactforms');
 		nosql.insert(model.$clean());
@@ -22,7 +22,7 @@ NEWSCHEMA('Contact').make(function(schema) {
 		EMIT('contacts.save', model);
 
 		// Sends email
-		MAIL(F.global.config.emailcontactform, '@(Contact form)', '=?/mails/contact', model, $.language).reply(model.email, true);
+		MAIL(PREF.emailcontactform, '@(Contact form)', '=?/mails/contact', model, $.language).reply(model.email, true);
 
 		// Events
 		$SAVE('Event', { type: 'contactforms/add', user: $.user ? $.user.name : '', body: model.firstname + ' ' + model.lastname, id: model.id }, NOOP, $);

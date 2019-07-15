@@ -192,6 +192,21 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .ui-codemirror-invalid .CodeMirror { background-color: #FFF3F3 !important; border: 1px solid #E1A1A1 !important; }
 .CodeMirror { border: 1px solid #E0E0E0; border-radius: 3px; }
 .ui-disabled .ui-codemirror { cursor: not-allowed; }
+.CodeMirror-scrollbar-filler { background-color: #303030; }
+.CodeMirror-simplescroll-horizontal div, .CodeMirror-simplescroll-vertical div { position: absolute; background: #A0A0A0; }
+.CodeMirror-simplescroll-horizontal, .CodeMirror-simplescroll-vertical { position: absolute; z-index: 6; background: #D0D0D0; }
+.CodeMirror-simplescroll-horizontal { bottom: 0; left: 0; height: 8px; }
+.CodeMirror-simplescroll-horizontal div { bottom: 0; height: 100%; }
+.CodeMirror-simplescroll-vertical { right: 0; top: 0; width: 8px; }
+.CodeMirror-simplescroll-vertical div { right: 0; width: 100%; }
+.CodeMirror-overlayscroll .CodeMirror-scrollbar-filler, .CodeMirror-overlayscroll .CodeMirror-gutter-filler { display: none; }
+.CodeMirror-overlayscroll-horizontal div, .CodeMirror-overlayscroll-vertical div { position: absolute; background: #A0A0A0; }
+.CodeMirror-scrollbar-filler { background: #D0D0D0; }
+.CodeMirror-overlayscroll-horizontal, .CodeMirror-overlayscroll-vertical { position: absolute; z-index: 6; }
+.CodeMirror-overlayscroll-horizontal { bottom: 0; left: 0; height: 6px; }
+.CodeMirror-overlayscroll-horizontal div { bottom: 0; height: 100%; }
+.CodeMirror-overlayscroll-vertical { right: 0; top: 0; width: 6px; }
+.CodeMirror-overlayscroll-vertical div { right: 0; width: 100%; }
 
 .ui-nosqlcounter .last { border-radius: 0 3px 3px 0; }
 .ui-nosqlcounter span { border-bottom: 1px solid rgba(255,255,255,0.5); display: block; padding: 2px 0; overflow: hidden; white-space: nowrap; }
@@ -306,16 +321,21 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 
 .ui-fontawesomebox { border: 1px solid #E0E0E0; font-size: 14px; color: black; background-color: white; border-radius: 3px; position: relative; }
 .ui-fontawesomebox-icons { overflow: hidden; }
-.ui-fontawesomebox-icons ul { list-style-type: none; margin: 0; padding: 10px 15px 0 15px; overflow-y: scroll; overflow-scrolling: touch; }
+.ui-fontawesomebox-icons ul { list-style-type: none; margin: 0; padding: 10px 15px 0 15px; }
 .ui-fontawesomebox .selected { background-color: #3BAFDA !important; color: white; }
 .ui-fontawesomebox li { position: relative; display: inline-block; width: 28px; height: 25px; text-align: center; cursor: pointer; margin: 2px 1px 1px; padding: 4px 0 0 0; border-radius: 4px; color: black; }
 .ui-fontawesomebox li:hover { background-color: #F8F7DD; }
-.ui-fontawesomebox-search { border-bottom: 1px solid #E0E0E0; height: 30px; background-color: white; position: absolute; width: 100%; box-shadow: 0 5px 10px rgba(0,0,0,0.05); border-radius: 3px 3px 0 0; }
-.ui-fontawesomebox-search-empty { height: 30px; }
+.ui-fontawesomebox-search { border-bottom: 1px solid #E0E0E0; height: 34px; background-color: white; position: absolute; width: 100%; box-shadow: 0 5px 10px rgba(0,0,0,0.05); border-radius: 3px 3px 0 0; }
+.ui-fontawesomebox-search-empty { height: 34px; }
 .ui-fontawesomebox-search input { width: 100%; outline: 0; background-color: white; font: normal normal 12px Arial; border: 0; margin: 0; padding: 0; }
-.ui-fontawesomebox-search span { float: left; width: 30px; text-align: center; height: 28px; padding: 6px 0 0 0; font-size: 12px; color: #A0A0A0; }
+.ui-fontawesomebox-search span { float: left; width: 30px; text-align: center; height: 30px; padding: 8px 0 0 0; font-size: 12px; color: #A0A0A0; }
 .ui-fontawesomebox-search .fa-times { color: red; cursor: pointer; }
-.ui-fontawesomebox-search div { margin-left: 30px; padding: 4px 10px 0 0; }
+.ui-fontawesomebox-search div { margin-left: 30px; padding: 6px 10px 0 0; }
+
+@media(max-width: 767px) {
+	.ui-fontawesomebox { width: 90%; margin-left: 5%; }
+	.ui-fontawesomebox li { width: 10%; }
+}
 
 .ui-suggestion { position: absolute; opacity: 0; transition: 0.25s transform cubic-bezier(0.23, 1, 0.32, 1); left: -100; top: -100; z-index: 100; width: 240px; box-shadow: 0 1px 20px rgba(0,0,0,0.1); transform: translate(0px,20px); background-color: white; border-radius: 4px; border: 1px solid #E0E0E0; }
 .ui-suggestion-search { height: 31px; background: white; border-radius: 4px 4px 0 0; border-bottom: 1px solid #E0E0E0; }
@@ -663,7 +683,7 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .ui-modal-footer { border-top: 1px solid #E0E0E0; height: 60px; padding: 0 15px; line-height: 58px; text-align: right; }
 .ui-modal-footer button { height: 33px; border: 0; background-color: #4285F4; color: white; border-radius: 2px; padding: 0 35px; margin: 0; line-height: 28px; font-weight: bold; }
 .ui-modal-footer button:disabled { background-color: #E0E0E0; color: #A0A0A0; cursor: not-allowed; }
-.ui-modal-footer .link { font-size: 12px; vertical-align: middle; position: relative; display: inline-block; margin: 0 10px; }
+.ui-modal-footer .link { font-size: 12px; vertical-align: middle; position: relative; display: inline-block; margin: 0 10px; color: gray; }
 .ui-modal-footer i { margin-right: 5px; }
 .ui-modal .padding { padding: 15px; }
 .ui-modal-align-1 { bottom: 0; }

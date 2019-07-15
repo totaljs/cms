@@ -1,4 +1,4 @@
-NEWSCHEMA('Tracking').make(function(schema) {
+NEWSCHEMA('Tracking', function(schema) {
 
 	schema.define('id', 'String(10)', true);
 	schema.define('name', 'String(50)', true);
