@@ -1,4 +1,4 @@
-<div data---="modal__cmseditor.form__if:settings;width:500;submit:cmseditorsettings/submit;scrollbar:true" class="hidden">
+<div data---="modal__cmseditor.form__if:settings;width:500;height:400;submit:cmseditorsettings/submit;scrollbar:true" class="hidden">
 
 	<div>
 		<span class="link cancel"><i class="fa fa-times"></i></span>
@@ -6,7 +6,7 @@
 	</div>
 
 	<div>
-		<div class="padding">
+		<div class="padding" id="settings-multioptions">
 			<div data---="multioptions__cmseditor.settings.options__$id:cmseditor.settings"></div>
 		</div>
 	</div>
@@ -47,6 +47,13 @@
 				target && target.trigger('click');
 			}, 1200);
 		};
+	});
+
+	WATCH('cmseditor.settings.options', function(path, value) {
+		var height = $('#settings-multioptions').innerHeight();
+		setTimeout2('settingsoptions', function() {
+			SETTER(true, 'modal', 'reconfigure', 'height:' + height);
+		}, 400);
 	});
 
 </script>

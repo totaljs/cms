@@ -1,4 +1,4 @@
-<div data---="modal__common.form__icon:newspaper-o;if:posts-form;width:1500;reload:postsform/show;submit:postsform/submit;autofocus:true;scrollbar:true" class="hidden">
+<div data---="modal__common.form__icon:newspaper-o;if:posts-form;width:1500;height:610;reload:postsform/show;submit:postsform/submit;autofocus:true;scrollbar:true" class="hidden">
 
 	<div>
 		<span class="link cancel"><i class="fa fa-times"></i></span>
@@ -148,7 +148,6 @@
 			var frm = $frm[0].contentWindow;
 			var doc = frm.document;
 
-			$frm.css('height', el.find('.ui-window-body').height() - 5);
 			FUNC.loading(true);
 
 			AJAX('POST [url]api/posts/preview/', model, function(response) {
@@ -286,6 +285,7 @@
 			if (type === 2) {
 				cmseditor.instance.reconfigure('template:' + value);
 				cmseditor.instance.set('');
+				SETTER('modal', 'reconfigure', 'height:1000');
 			}
 
 		}, true);
