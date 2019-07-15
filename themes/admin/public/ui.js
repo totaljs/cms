@@ -8786,6 +8786,9 @@ COMPONENT('modal', 'zindex:12;width:800;bg:true;scrollbar:false', function(self,
 				emodal && emodal.css('max-width', config.width);
 				self.resize();
 				break;
+			case 'height':
+				self.resize();
+				break;
 			case 'center':
 				self.resize();
 				break;

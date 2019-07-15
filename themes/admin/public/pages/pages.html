@@ -149,9 +149,12 @@
 		};
 
 		exports.checked = function(el) {
-			var items = [];
-			items.push({ id: 'remove', name: '@(Remove pages)', icon: 'trash' });
-			SETTER('contextmenu', 'show', 'center', el, items, function(item) {
+			var options = {};
+			options.element = el;
+			options.items = [];
+			options.items.push({ id: 'remove', name: '@(Remove pages)', icon: 'trash' });
+
+			options.callback = function(item) {
 				switch (item.id) {
 					case 'remove':
 						SETTER('confirm', 'show', '@(Are you sure you want to remove all selected pages?)', ['"trash"@(Remove)', '@(No)'], function(index) {
@@ -170,7 +173,9 @@
 						});
 						break;
 				}
-			}, 0, 5);
+			};
+
+			SETTER('menu', 'show', options);
 		};
 
 		exports.options = function(el) {

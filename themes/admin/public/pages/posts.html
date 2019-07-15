@@ -87,10 +87,13 @@
 		};
 
 		exports.checked = function(el) {
-			var items = [];
-			items.push({ id: 'toggle', name: '@(Publish / Unpublish)', icon: 'globe' });
-			items.push({ id: 'remove', name: '@(Remove posts)', icon: 'trash' });
-			SETTER('contextmenu', 'show', 'center', el, items, function(item) {
+			var options = {};
+			options.element = el;
+			options.items = [];
+			options.items.push({ id: 'toggle', name: '@(Publish / Unpublish)', icon: 'globe' });
+			options.items.push({ id: 'remove', name: '@(Remove posts)', icon: 'trash' });
+
+			options.callback = function(item) {
 				switch (item.id) {
 					case 'toggle':
 						var arr = [];
@@ -119,21 +122,28 @@
 						});
 						break;
 				}
-			}, 0, 5);
+			};
+
+			SETTER('menu', 'show', options);
 		};
 
 		exports.options = function(el) {
-			var items = [];
-			items.push({ id: 'refresh', name: '@(Refresh)', icon: 'refresh' });
-			items.push({ id: 'create', name: '@(Create post)', icon: 'plus-circle' });
-			SETTER('contextmenu', 'show', 'left', el, items, function(item) {
+			var options = {};
+			options.element = el;
+			options.items = [];
+			options.items.push({ id: 'refresh', name: '@(Refresh)', icon: 'refresh' });
+			options.items.push({ id: 'create', name: '@(Create notice)', icon: 'plus-circle' });
+
+			options.callback = function(item) {
 				switch (item.id) {
 					case 'refresh':
 					case 'create':
 						exports[item.id]();
 						break;
 				}
-			}, 2, 5);
+			};
+
+			SETTER('menu', 'show', options);
 		};
 
 		exports.create = function() {

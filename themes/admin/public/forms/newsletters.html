@@ -1,4 +1,4 @@
-<div data---="modal__common.form__icon:hash;if:newsletters-form;width:1200;reload:newslettersform/show;submit:newslettersform/submit;autofocus:true;scrollbar:true" class="hidden">
+<div data---="modal__common.form__icon:hash;if:newsletters-form;width:1200;height:500;reload:newslettersform/show;submit:newslettersform/submit;autofocus:true;scrollbar:true" class="hidden">
 
 	<div>
 		<span class="link cancel"><i class="fa fa-times"></i></span>
@@ -96,11 +96,9 @@
 	PLUGIN('newslettersform', function(exports) {
 
 		exports.show = function(com) {
-
-			var model = newsletters.form;
+			var model = GET('newsletters.form');
 			com.reconfigure({ title: model.id ? '@(Edit newslettter)' : '@(New newslettter)' });
-			model.id && AJAX('GET [url]api/newsletters/{1}/stats/'.arg(model), 'newsletters.form.stats');
-
+			model.id && AJAX('GET [url]api/newsletters/{id}/stats/'.arg(model), 'newsletters.form.stats');
 			WAIT('cmseditor.instance', function() {
 				cmseditor.instance.setWidgetOptions(model.widgets);
 				cmseditor.instance.lock(false);
@@ -203,6 +201,7 @@
 			if (type === 2) {
 				cmseditor.instance.reconfigure('template:' + value);
 				cmseditor.instance.set('');
+				SETTER('modal', 'reconfigure', 'height:1000');
 			}
 
 		}, true);

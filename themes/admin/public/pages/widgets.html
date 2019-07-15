@@ -106,14 +106,16 @@
 		};
 
 		exports.options = function(el) {
-			console.log('options');
-			var items = [];
-			items.push({ id: 'refresh', name: '@(Refresh)', icon: 'refresh' });
-			items.push({ id: 'create', name: '@(Create widget)', icon: 'plus-circle' });
-			items.push({ id: 'import', name: '@(Download existing)', icon: 'cloud-download' });
-			items.push({ id: 'widgets-globals', name: '@(Global CSS/JS)', icon: 'paint-brush' });
-			items.push({ id: 'pages-globals', name: '@(Variables)', icon: 'clone' });
-			SETTER('contextmenu', 'show', 'left', el, items, function(item) {
+			var options = {};
+			options.element = el;
+			options.items = [];
+			options.items.push({ id: 'refresh', name: '@(Refresh)', icon: 'refresh' });
+			options.items.push({ id: 'create', name: '@(Create widget)', icon: 'plus-circle' });
+			options.items.push({ id: 'import', name: '@(Download existing)', icon: 'cloud-download' });
+			options.items.push({ id: 'widgets-globals', name: '@(Global CSS/JS)', icon: 'paint-brush' });
+			options.items.push({ id: 'pages-globals', name: '@(Variables)', icon: 'clone' });
+
+			options.callback = function(item) {
 				switch (item.id) {
 					case 'refresh':
 					case 'create':
@@ -124,7 +126,9 @@
 						SET('common.form', item.id);
 						break;
 				}
-			}, 2, 5);
+			};
+
+			SETTER('menu', 'show', options);
 		};
 
 		exports.checkbox = function(el, grid) {
@@ -134,10 +138,12 @@
 		};
 
 		exports.checked = function(el) {
-			console.log('wtf');
-			var items = [];
-			items.push({ id: 'remove', name: '@(Remove widgets)', icon: 'trash' });
-			SETTER('contextmenu', 'show', 'center', el, items, function(item) {
+			var options = {};
+			options.element = el;
+			options.items = [];
+			options.items.push({ id: 'remove', name: '@(Remove widgets)', icon: 'trash' });
+
+			options.callback = function(item) {
 				switch (item.id) {
 					case 'remove':
 						SETTER('confirm', 'show', '@(Are you sure you want to remove all selected widgets?)', ['"trash"@(Remove)', '@(No)'], function(index) {
@@ -156,7 +162,9 @@
 						});
 						break;
 				}
-			}, 0, 5);
+			};
+
+			SETTER('menu', 'show', options);
 		};
 	});
 

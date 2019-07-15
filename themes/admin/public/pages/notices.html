@@ -42,7 +42,6 @@
 		};
 
 		exports.button = function(name, row, grid) {
-			console.log('expots.button', name);
 			switch (name) {
 				case 'remove':
 					SETTER('confirm', 'show', '@(Are you sure you want to remove selected post?)', ['"trash"@(Remove)', '@(No)'], function(index) {
@@ -83,9 +82,12 @@
 		};
 
 		exports.checked = function(el) {
-			var items = [];
-			items.push({ id: 'remove', name: '@(Remove notices)', icon: 'trash' });
-			SETTER('contextmenu', 'show', 'center', el, items, function(item) {
+			var options = {};
+			options.element = el;
+			options.items = [];
+			options.items.push({ id: 'remove', name: '@(Remove notices)', icon: 'trash' });
+
+			options.callback = function(item) {
 				switch (item.id) {
 					case 'remove':
 						SETTER('confirm', 'show', '@(Are you sure you want to remove all selected notices?)', ['"trash"@(Remove)', '@(No)'], function(index) {
@@ -104,21 +106,28 @@
 						});
 						break;
 				}
-			}, 0, 5);
+			};
+
+			SETTER('menu', 'show', options);
 		};
 
 		exports.options = function(el) {
-			var items = [];
-			items.push({ id: 'refresh', name: '@(Refresh)', icon: 'refresh' });
-			items.push({ id: 'create', name: '@(Create notice)', icon: 'plus-circle' });
-			SETTER('contextmenu', 'show', 'left', el, items, function(item) {
+			var options = {};
+			options.element = el;
+			options.items = [];
+			options.items.push({ id: 'refresh', name: '@(Refresh)', icon: 'refresh' });
+			options.items.push({ id: 'create', name: '@(Create notice)', icon: 'plus-circle' });
+
+			options.callback = function(item) {
 				switch (item.id) {
 					case 'refresh':
 					case 'create':
 						exports[item.id]();
 						break;
 				}
-			}, 2, 5);
+			};
+
+			SETTER('menu', 'show', options);
 		};
 
 		exports.create = function() {
