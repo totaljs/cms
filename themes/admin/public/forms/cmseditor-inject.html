@@ -1,23 +1,14 @@
-<div data---="modal__cmseditor.form__if:inject;width:800;height:375;submit:cmseditorinject/submit;reload:cmseditorinject/reload;scrollbar:true" class="hidden">
+<div data---="form__cmseditor.form__if:inject;width:800;submit:cmseditorinject/submit;reload:cmseditorinject/reload;title:@(Inject HTML);icon:code" class="hidden">
 
-	<div>
-		<span class="link cancel"><i class="fa fa-times"></i></span>
-		<label><i class="fa fa-code"></i>@(Inject HTML)</label>
+	<div class="padding">
+		<div data---="codemirror__cmseditor.inject__height:300;required:true;tabs:true;trim:true">@(HTML)</div>
+		<div class="help">@(You can inject custom HTML.)</div>
 	</div>
 
-	<div>
-		<div class="padding">
-			<div data---="codemirror__cmseditor.inject__height:300;required:true;tabs:true;trim:true">@(HTML)</div>
-			<div class="help">@(You can inject custom HTML.)</div>
-		</div>
-	</div>
-
-	<div>
-		<div data---="validation__cmseditor.inject">
-			<span class="link cancel">@(Cancel)</span>
-			<button name="submit">@(APPLY)</button>
-		</div>
-	</div>
+	<nav data---="validation__cmseditor.inject">
+		<button name="submit">@(APPLY)</button>
+		<button name="cancel">@(Cancel)</button>
+	</nav>
 
 </div>
 

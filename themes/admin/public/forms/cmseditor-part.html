@@ -1,25 +1,17 @@
-<div data---="modal__cmseditor.form__if:part;width:500;height:97;autofocus:true;submit:cmseditorpart/submit;scrollbar:true" class="hidden">
+<div data---="form__cmseditor.form__if:part;width:500;autofocus:true;submit:cmseditorpart/submit;title:@(Edit part);icon:object-ungroup" class="hidden">
 
-	<div>
-		<span class="link cancel"><i class="fa fa-times"></i></span>
-		<label><i class="fa fa-object-ungroup"></i>@(Edit part)</label>
-	</div>
-
-	<div>
-		<div class="padding bg-yellow">
-			<div data---="input__cmseditor.part.name__required:true;maxlength:30" class="m">@(Name)</div>
-			<div class="hidden" data-bind="cmseditor.part.isnew__show:!value">
-				<span class="link b red exec" data-exec="cmseditorpart/remove"><i class="fa fa-times-circle mr5"></i>@(Remove part)</span>
-			</div>
+	<div class="padding bg-yellow">
+		<div data---="input__cmseditor.part.name__required:true;maxlength:30" class="m">@(Name)</div>
+		<div class="hidden" data-bind="cmseditor.part.isnew__show:!value">
+			<span class="link b red exec" data-exec="cmseditorpart/remove"><i class="fa fa-times-circle mr5"></i>@(Remove part)</span>
 		</div>
 	</div>
 
-	<div>
-		<div data---="validation__cmseditor.part">
-			<span class="link cancel">@(Cancel)</span>
-			<button name="submit">@(APPLY)</button>
-		</div>
-	</div>
+	<nav data---="validation__cmseditor.part">
+		<button name="submit">@(APPLY)</button>
+		<button name="cancel">@(Cancel)</button>
+	</nav>
+
 </div>
 
 <script>

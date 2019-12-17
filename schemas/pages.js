@@ -49,7 +49,7 @@ NEWSCHEMA('Page', function(schema) {
 	// Gets listing
 	schema.setQuery(function($) {
 		var filter = NOSQL('pages').listing();
-		filter.fields('id', 'name', 'title', 'url', 'ispartial', 'icon', 'parent', 'language', 'draft');
+		filter.fields('id', 'name', 'title', 'url', 'ispartial', 'icon', 'parent', 'language', 'draft', 'dtupdated');
 		filter.sort('datecreated', true);
 		filter.callback($.callback);
 	});

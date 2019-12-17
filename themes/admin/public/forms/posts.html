@@ -1,116 +1,107 @@
-<div data---="modal__common.form__icon:newspaper-o;if:posts-form;width:1500;height:610;reload:postsform/show;submit:postsform/submit;autofocus:true;scrollbar:true" class="hidden">
+<div data---="form__common.form__icon:newspaper-o;if:posts-form;width:1500;reload:postsform/show;submit:postsform/submit;autofocus:true" class="hidden">
 
-	<div>
-		<span class="link cancel"><i class="fa fa-times"></i></span>
-		<label></label>
-	</div>
-
-	<div>
-		<div class="padding" style="padding-bottom:10px">
-			<div class="row">
-				<div class="col-md-4 m">
-					<div data---="input__posts.form.name__required:true;maxlength:100">@(Name)</div>
-				</div>
-				<div class="col-md-8">
-					<div class="row">
-						<div class="col-md-4 m">
-							<div data---="input__posts.form.idcategory__dirsource:common.dependencies.posts;icon:folder-o;empty:;required:true">@(Category)</div>
-						</div>
-						<div class="col-md-4 m">
-							<div data---="input__posts.form.template__dirsource:common.dependencies.templatesposts;icon:paint-brush;required:true;empty:">@(Template)</div>
-						</div>
-						<div class="col-md-4 m">
-							<div data---="input__posts.form.date__type:date;icon:clock-o;placeholder:@(yyyy-MM-dd);align:center">@(Publish date)</div>
-						</div>
-					</div>
-				</div>
+	<div class="padding" style="padding-bottom:10px">
+		<div class="row">
+			<div class="col-md-4 m">
+				<div data---="input__posts.form.name__required:true;maxlength:100">@(Name)</div>
 			</div>
-		</div>
-
-		<div class="padding bg-smoke npb">
-			<div class="tabmenu-container">
-				<ul data---="tabmenu__posts.form.type__null__'html'" class="tabmenu right" style="width:100%">
-					<li data-value="html"><i class="fa fa-paint-brush"></i>@(Designer)</li>
-					<li data-value="markdown"><i class="fab fa-markdown"></i>@(Markdown)</li>
-				</ul>
-				<div data---="checkbox__posts.form.ispublished" class="b">@(Is published)</div>
-			</div>
-		</div>
-		<div data-bind="posts.form.type__show:value==='html'">
-			<div class="cmseditor" data---="cmseditor__posts.form.body" data-jc-import="[url]components/cmseditor.html" style="border-top:0;padding-top:8px"></div>
-		</div>
-		<div data-bind="posts.form.type__show:value==='markdown'__delay:500">
-
-			<div class="toolbar toolbar3">
-				<button class="exec" data-exec="postsform/toolbar" name="preview"><i class="fa fa-search"></i>@(Preview)</button>
-				<span></span>
-				<button class="exec" data-exec="postsform/toolbar" name="file"><i class="far fa-folder"></i>@(Browse file)</button>
-			</div>
-
-			<div class="padding npt">
-				<div data---="codemirror__posts.form.body__type:markdown;height:auto"></div>
-			</div>
-			<hr class="nmt nmb" />
-		</div>
-		<div class="backups hidden" data-bind="posts.form.id__show:!!value"><span class="link exec" data-exec="postsform/backups"><i class="fa fa-clock-o mr5"></i>@(Restore a backup)</span></div>
-		<div class="padding bg-yellow">
-			<div class="row mt10">
-				<div class="col-md-4 m">
-					<div data---="input__posts.form.description__maxlength:300">@(Description)</div>
-				</div>
-				<div class="col-md-8">
-					<div class="row">
-						<div class="col-md-4 m">
-							<div data---="dropdowncheckbox__posts.form.signals__alltext:null;datasource:signals;empty:@(Doesn't contain any signals.);icon:dot-circle-o">@(Signals)</div>
-							<div class="help">@(Signals can start a special action for visitors.)</div>
-						</div>
-						<div class="col-md-4 m">
-							<div data---="input__posts.form.author__maxlength:30;icon:user">@(Author)</div>
-						</div>
-						<div class="col-md-3 m">
-							<div data---="input__posts.form.language__icon:flag;dirsource:common.dependencies.languages;empty:">@(Language)</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div data-bind="posts.form.id__show:value && value.length" class="hidden">
-			<hr class="nmt" />
-			<div class="padding">
+			<div class="col-md-8">
 				<div class="row">
-					<div class="col-lg-2 col-md-3 m">
-						<div class="keyvalue">
-							<div class="key">@(# Id)</div>
-							<div class="value" data-bind="posts.form.id__html:value"></div>
-						</div>
+					<div class="col-md-4 m">
+						<div data---="input__posts.form.idcategory__dirsource:common.dependencies.posts;icon:folder-o;empty:;required:true">@(Category)</div>
 					</div>
-					<div class="col-lg-2 col-md-3 m">
-						<div class="keyvalue">
-							<div class="key"><i class="fa fa-calendar"></i>@(Created)</div>
-							<div class="value" data-bind="posts.form.datecreated__html:Thelpers.time(value)"></div>
-						</div>
+					<div class="col-md-4 m">
+						<div data---="input__posts.form.template__dirsource:common.dependencies.templatesposts;icon:paint-brush;required:true;empty:">@(Template)</div>
 					</div>
-					<div class="col-lg-2 col-md-3 m">
-						<div class="keyvalue">
-							<div class="key"><i class="fa fa-calendar"></i>@(Updated)</div>
-							<div class="value" data-bind="posts.form.dateupdated__html:value ? Thelpers.time(value) : '@(unchanged)'"></div>
-						</div>
-					</div>
-					<div class="col-lg-6 m" data-bind="posts.form.stats__show:value">
-						<div data---="nosqlcounter__posts.form.stats__height:52"></div>
-						<div class="help"><i class="fa fa-chart-bar"></i>@(Stats of all views for the last period)</div>
+					<div class="col-md-4 m">
+						<div data---="input__posts.form.date__type:date;icon:clock-o;placeholder:@(yyyy-MM-dd);align:center">@(Publish date)</div>
 					</div>
 				</div>
 			</div>
 		</div>
-		<div data---="error__posts.form.response"></div>
 	</div>
 
-	<div>
-		<div data---="validation__posts.form">
-			<span class="link cancel">@(Cancel)</span>
-			<button name="submit">@(SAVE)</button>
+	<div class="padding bg-smoke npb">
+		<div class="tabmenu-container">
+			<ul data---="tabmenu__posts.form.type__null__'html'" class="tabmenu right" style="width:100%">
+				<li data-value="html"><i class="fa fa-paint-brush"></i>@(Designer)</li>
+				<li data-value="markdown"><i class="fab fa-markdown"></i>@(Markdown)</li>
+			</ul>
+			<div data---="checkbox__posts.form.ispublished" class="b">@(Is published)</div>
 		</div>
+	</div>
+	<div data-bind="posts.form.type__show:value==='html'">
+		<div class="cmseditor" data---="cmseditor__posts.form.body" data-jc-import="[url]components/cmseditor.html" style="border-top:0;padding-top:8px"></div>
+	</div>
+	<div data-bind="posts.form.type__show:value==='markdown'__delay:500">
+
+		<div class="toolbar toolbar3">
+			<button class="exec" data-exec="postsform/toolbar" name="preview"><i class="fa fa-search"></i>@(Preview)</button>
+			<span></span>
+			<button class="exec" data-exec="postsform/toolbar" name="file"><i class="far fa-folder"></i>@(Browse file)</button>
+		</div>
+
+		<div class="padding npt">
+			<div data---="codemirror__posts.form.body__type:markdown;height:auto"></div>
+		</div>
+		<hr class="nmt nmb" />
+	</div>
+	<div class="backups hidden" data-bind="posts.form.id__show:!!value"><span class="link exec" data-exec="postsform/backups"><i class="fa fa-clock-o mr5"></i>@(Restore a backup)</span></div>
+	<div class="padding bg-yellow">
+		<div class="row mt10">
+			<div class="col-md-4 m">
+				<div data---="input__posts.form.description__maxlength:300">@(Description)</div>
+			</div>
+			<div class="col-md-8">
+				<div class="row">
+					<div class="col-md-4 m">
+						<div data---="dropdowncheckbox__posts.form.signals__alltext:null;datasource:signals;empty:@(Doesn't contain any signals.);icon:dot-circle-o">@(Signals)</div>
+						<div class="help">@(Signals can start a special action for visitors.)</div>
+					</div>
+					<div class="col-md-4 m">
+						<div data---="input__posts.form.author__maxlength:30;icon:user">@(Author)</div>
+					</div>
+					<div class="col-md-3 m">
+						<div data---="input__posts.form.language__icon:flag;dirsource:common.dependencies.languages;empty:">@(Language)</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div data-bind="posts.form.id__show:value && value.length" class="hidden">
+		<hr class="nmt" />
+		<div class="padding">
+			<div class="row">
+				<div class="col-lg-2 col-md-3 m">
+					<div class="keyvalue">
+						<div class="key">@(# Id)</div>
+						<div class="value" data-bind="posts.form.id__html:value"></div>
+					</div>
+				</div>
+				<div class="col-lg-2 col-md-3 m">
+					<div class="keyvalue">
+						<div class="key"><i class="fa fa-calendar"></i>@(Created)</div>
+						<div class="value" data-bind="posts.form.datecreated__html:Thelpers.time(value)"></div>
+					</div>
+				</div>
+				<div class="col-lg-2 col-md-3 m">
+					<div class="keyvalue">
+						<div class="key"><i class="fa fa-calendar"></i>@(Updated)</div>
+						<div class="value" data-bind="posts.form.dateupdated__html:value ? Thelpers.time(value) : '@(unchanged)'"></div>
+					</div>
+				</div>
+				<div class="col-lg-6 m" data-bind="posts.form.stats__show:value">
+					<div data---="nosqlcounter__posts.form.stats__height:52"></div>
+					<div class="help"><i class="fa fa-chart-bar"></i>@(Stats of all views for the last period)</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div data---="error__posts.form.response"></div>
+
+	<div data---="validation__posts.form">
+		<button name="submit">@(SAVE)</button>
+		<button name="cancel">@(Cancel)</button>
 	</div>
 
 </div>

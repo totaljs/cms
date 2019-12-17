@@ -1,22 +1,13 @@
-<div data---="modal__cmseditor.form__if:sourcecode;width:1100;height:555;submit:cmseditorsourcecode/submit;cancel:cmseditorsourcecode/cancel;scrollbar:true" class="hidden">
+<div data---="form__cmseditor.form__if:sourcecode;width:1100;submit:cmseditorsourcecode/submit;cancel:cmseditorsourcecode/cancel;title:@(Source-code);icon:code" class="hidden">
 
-	<div>
-		<span class="link cancel"><i class="fa fa-times"></i></span>
-		<label><i class="fa fa-code"></i>@(Source code editor)</label>
+	<div class="padding">
+		<div data---="codemirror__cmseditor.sourcecode__height:500;required:true;tabs:true;trim:true">@(HTML)</div>
 	</div>
 
-	<div>
-		<div class="padding">
-			<div data---="codemirror__cmseditor.sourcecode__height:500;required:true;tabs:true;trim:true">@(HTML)</div>
-		</div>
-	</div>
-
-	<div>
-		<div data---="validation__cmseditor.sourcecode">
-			<span class="link cancel">@(Cancel)</span>
-			<button name="submit">@(APPLY)</button>
-		</div>
-	</div>
+	<nav data---="validation__cmseditor.sourcecode">
+		<button name="submit">@(APPLY)</button>
+		<button name="cancel">@(Cancel)</span>
+	</nav>
 
 </div>
 

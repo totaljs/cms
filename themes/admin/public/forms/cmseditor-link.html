@@ -1,44 +1,35 @@
-<div data---="modal__cmseditor.form__if:link;width:600;height:450;autofocus:true;submit:cmseditorlink/submit;cancel:cmseditorlink/cancel;reload:cmseditorlink/reload;scrollbar:true" class="hidden">
+<div data---="form__cmseditor.form__if:link;width:600;height:450;autofocus:true;submit:cmseditorlink/submit;cancel:cmseditorlink/cancel;reload:cmseditorlink/reload;title:@(Link editor);icon:link" class="hidden">
 
-	<div>
-		<span class="link cancel"><i class="fa fa-times"></i></span>
-		<label><i class="fa fa-link"></i>@(Link editor)</label>
+	<div class="padding">
+		<div data---="input__cmseditor.link.href2__dirsource:%links;icon:sitemap;dirkey:path;dirvalue:url" class="m">@(URL according to the sitemap)</div>
 	</div>
-
-	<div>
-		<div class="padding">
-			<div data---="input__cmseditor.link.href2__dirsource:%links;icon:sitemap;dirkey:path;dirvalue:url" class="m">@(URL according to the sitemap)</div>
+	<hr class="nmt nmb" />
+	<div class="padding bg-yellow">
+		<div data---="input__cmseditor.link.href__icon:globe;required:true;autocomplete:cmseditorlink/autocomplete">@(URL address)</div>
+		<div class="m mt10 fs12">
+			<span class="link exec mr10" data-exec="cmseditorlink/type" data-type="upload"><i class="fa fa-folder-o mr5"></i>@(Browse files)</span>
+			<span class="link exec mr10" data-exec="cmseditorlink/type" data-type="email"><i class="fa fa-envelope-o mr5"></i>@(Email)</span>
+			<span class="link exec" data-exec="cmseditorlink/type" data-type="phone"><i class="fa fa-phone mr5"></i>@(Phone number)</span>
 		</div>
-		<hr class="nmt nmb" />
-		<div class="padding bg-yellow">
-			<div data---="input__cmseditor.link.href__icon:globe;required:true;autocomplete:cmseditorlink/autocomplete">@(URL address)</div>
-			<div class="m mt10 fs12">
-				<span class="link exec mr10" data-exec="cmseditorlink/type" data-type="upload"><i class="fa fa-folder-o mr5"></i>@(Browse files)</span>
-				<span class="link exec mr10" data-exec="cmseditorlink/type" data-type="email"><i class="fa fa-envelope-o mr5"></i>@(Email)</span>
-				<span class="link exec" data-exec="cmseditorlink/type" data-type="phone"><i class="fa fa-phone mr5"></i>@(Phone number)</span>
-			</div>
-			<div data---="input__cmseditor.link.target__dirsource:cmseditorlink.target;required:true" class="m">@(Target)</div>
-			<div data---="input__cmseditor.link.title__icon:info-circle" class="m">@(Tooltip)</div>
-			<div data---="checkbox__cmseditor.link.alllinks">@(Apply on all links in the parent container)</div>
+		<div data---="input__cmseditor.link.target__dirsource:cmseditorlink.target;required:true" class="m">@(Target)</div>
+		<div data---="input__cmseditor.link.title__icon:info-circle" class="m">@(Tooltip)</div>
+		<div data---="checkbox__cmseditor.link.alllinks">@(Apply on all links in the parent container)</div>
+	</div>
+	<div class="padding">
+		<div data-bind="cmseditor.link.tracking__show:!value" class="hidden">
+			<div class="help"><i class="fa fa-chart-bar mr5"></i>@(This feature tracks clicks to this link.)</div>
+			<div class="fs12 b"><span class="link exec" data-path="common.form2" data-value="'tracking'">@(Enable link tracking)</span></div>
 		</div>
-		<div class="padding">
-			<div data-bind="cmseditor.link.tracking__show:!value" class="hidden">
-				<div class="help"><i class="fa fa-chart-bar mr5"></i>@(This feature tracks clicks to this link.)</div>
-				<div class="fs12 b"><span class="link exec" data-path="common.form2" data-value="'tracking'">@(Enable link tracking)</span></div>
-			</div>
-			<div data-bind="cmseditor.link.tracking__show:value" class="hidden">
-				<div data---="nosqlcounter__cmseditor.link.tracking"></div>
-				<div class="fs11 mt5"><span class="link red exec" data-exec="cmseditorlink/removetracking"><i class="fa fa-times-circle mr5"></i>@(Remove tracking)</span></div>
-			</div>
+		<div data-bind="cmseditor.link.tracking__show:value" class="hidden">
+			<div data---="nosqlcounter__cmseditor.link.tracking"></div>
+			<div class="fs11 mt5"><span class="link red exec" data-exec="cmseditorlink/removetracking"><i class="fa fa-times-circle mr5"></i>@(Remove tracking)</span></div>
 		</div>
 	</div>
 
-	<div>
-		<di data---="validation__cmseditor.link">
-			<span class="link cancel">@(Cancel)</span>
-			<button name="submit">@(APPLY)</button>
-		</div>
-	</div>
+	<nav data---="validation__cmseditor.link">
+		<button name="submit">@(APPLY)</button>
+		<button class="cancel">@(Cancel)</button>
+	</nav>
 
 </div>
 

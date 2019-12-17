@@ -9,8 +9,8 @@
 	<meta name="format-detection" content="telephone=no" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 	<meta name="robots" content="all,follow" />
-	<link rel="stylesheet" href="//cdn.componentator.com/spa.min@17.css" />
-	<script src="//cdn.componentator.com/spa.min@17.js"></script>
+	<link rel="stylesheet" href="//cdn.componentator.com/spa.min@18.css" />
+	<script src="//cdn.componentator.com/spa.min@18.js"></script>
 	@{import('head', '/admin.css', '/admin.js', 'favicon.ico')}
 </head>
 <body data---="exec,avatar">
@@ -34,9 +34,8 @@
 	<header>
 		<nav>
 			<a href="/" title="@{'%name'}" target="_blank"><i class="fa fa-globe"></i></a>
-			<button class="navigation exec" data-exec="navigation"><i class="fa fa-navicon"></i>@(Options)</button>
+			<button class="navigation exec" data-exec="navigation"><i class="fa fa-angle-down"></i><span data-bind="common.title__html">@(Options)</span></button>
 		</nav>
-		<div class="title" data-bind="common.title__html:value"></div>
 		<div class="user hidden-xs">
 			<i class="fa fa-circle"></i><span data-bind="user.name__html:value"></span>
 		</div>
@@ -49,7 +48,6 @@
 			</div>
 		</div>
 	</header>
-	<div class="header-empty"></div>
 
 	<div id="parts">
 		<div data---="part__common.page__if:dashboard;url:/admin/pages/dashboard.html;reload:dashboard/reload;hidden:dashboard/hidden;cleaner:10"></div>
@@ -108,7 +106,8 @@
 		});
 
 		ON('page', function(item) {
-			SET('common.title', '<i class="fa fa-{icon}"></i>{title}'.arg(item));
+			// SET('common.title', '<i class="fa fa-{icon}"></i>{title}'.arg(item));
+			SET('common.title', item.title);
 			document.title = common.name + ': ' + item.title;
 			setTimeout(refresh_height, 500);
 			setTimeout(refresh_height, 1000);
@@ -121,6 +120,7 @@
 
 			opt.element = el;
 			opt.items = items;
+			opt.offsetY = -5;
 			opt.callback = function(item) {
 				if (item.signout)
 					location.href = '[url]logout/'.env();
@@ -128,9 +128,11 @@
 					REDIRECT(item.url);
 			};
 
-			common.nav.forEach(function(item) {
-				(user.sa || !user.roles.length || user.roles.indexOf(item.role) !== -1) && items.push({ name: item.title, icon: item.icon, url: item.url });
-			});
+			for (var i = 0; i < common.nav.length; i++) {
+				var item = common.nav[i];
+				if (user.sa || !user.roles.length || user.roles.indexOf(item.role) !== -1)
+					items.push({ name: item.title, icon: item.icon, url: item.url });
+			}
 
 			items.push('-');
 			items.push({ name: '@(Sign out)', icon: 'power-off red', signout: true });

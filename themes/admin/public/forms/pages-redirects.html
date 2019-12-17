@@ -1,24 +1,15 @@
-<div data---="modal__common.form__if:pages-redirects;width:800;height:390;reload:pagesredirects/reload;submit:pagesredirects/submit;scrollbar:false" class="hidden">
+<div data---="form__common.form__if:pages-redirects;width:800;height:390;reload:pagesredirects/reload;submit:pagesredirects/submit;title:@(Edit redirects)" class="hidden">
 
-	<div>
-		<span class="link cancel"><i class="fa fa-times"></i></span>
-		<label><i class="fa fa-clone"></i>@(Edit redirects)</label>
+	<div class="padding bg-yellow-fade">
+		<div data---="codemirror__pages.formredirects.body__height:300;type:totaljsresources;tabs:true;trim:true">@(Redirects)</div>
+		<div class="help">@(Follow this format: <code>OLDURL&nbsp;&nbsp;: NEWURL</code>)</div>
 	</div>
+	<div data---="error__pages.formredirects.response"></div>
 
-	<div>
-		<div class="padding bg-yellow-fade">
-			<div data---="codemirror__pages.formredirects.body__height:300;type:totaljsresources;tabs:true;trim:true">@(Redirects)</div>
-			<div class="help">@(Follow this format: <code>OLDURL&nbsp;&nbsp;: NEWURL</code>)</div>
-		</div>
-		<div data---="error__pages.formredirects.response"></div>
-	</div>
-
-	<div>
-		<div data---="validation__pages.formredirects">
-			<span class="link cancel">@(Cancel)</span>
-			<button name="submit">@(SAVE)</button>
-		</div>
-	</div>
+	<nav data---="validation__pages.formredirects">
+		<button name="submit">@(SAVE)</button>
+		<button name="cancel">@(Cancel)</button>
+	</nav>
 
 </div>
 

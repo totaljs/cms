@@ -1,80 +1,23 @@
-<div data-scope="pages">
-
-	<div data---="layout__null__parent:window" class="invisible">
-
-		<script type="text/plain">
-			{
-				right: { size: 250 },
-				top: { size: 45 },
-				main: {}
-			}
-		</script>
-
-		<section data-type="top2">
-
-			<!--
-			<div class="toolbar">
-				<button class="right exec highlight hidden-xs" data-exec="?/create"><i class="fa fa-plus-circle"></i>@(Create)</button>
-				<button class="exec" data-exec="?/options"><i class="fa fa-cogs"></i>@(Options)</button>
-				<span></span>
-				<button class="exec" data-exec="?/checked" name="checked" disabled="disabled"><i class="fa fa-check-circle"></i>@(Checked)</button>
-			</div>
-		-->
-
-			<div class="header">
-				<label><i class="far fa-file-alt"></i>@(List of pages)</label>
-				<nav data-bind="users.selected__enabled .S">
-					<button class="exec" data-exec="users/create"><i class="fa fa-plus-circle"></i>@(Create)</button>
-					<button class="exec S" data-exec="users/edit" disabled><i class="fa fa-pencil"></i>@(Edit)</button>
-					<button class="exec S" data-exec="users/remove" disabled><i class="fa fa-trash-o"></i>@(Remove)</button>
-				</nav>
-			</div>
-		</section>
-
-		<section data-type="right">
-			<div class="m" data-bind="common.dependencies.navigations__show:value && value.length">
-				<label><i class="fa fa-sitemap"></i>@(Navigations)</label>
-				<div class="panelbody">
-					<nav data-bind="common.dependencies.navigations__template" class="buttonmenu">
-						<script type="text/html">
-							{{ if value }}
-								{{ foreach m in value }}
-									<button data-id="{{ m.id }}" class="exec" data-exec="?/navigation"><i class="fa fa-chevron-right"></i>{{ m.name }}</button>
-								{{ end }}
-							{{ fi }}
-						</script>
-					</nav>
-				</div>
-			</div>
-			<div class="m">
-				<label><i class="fa fa-clone"></i>@(Options)</label>
-				<div class="panelbody">
-					<nav class="buttonmenu">
-						<button class="exec b" data-exec="?/create"><i class="fa fa-plus-circle"></i>@(Add new page)</button>
-						<button class="exec" data-path="common.form" data-value="'pages-globals'"><i class="fa fa-cog"></i>@(Variables)</button>
-						<button class="exec" data-path="common.form" data-value="'widgets-globals'"><i class="fa fa-paint-brush"></i>@(Global style/script)</button>
-						<button class="exec b" data-path="common.form" data-value="'pages-redirects'"><i class="fa fa-retweet"></i>@(Redirects)</button>
-					</nav>
-				</div>
-			</div>
-		</section>
-
-		<section data-type="main">
-			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?/checkbox;button:?/button;noborder:1;height:window;margin:90">
-				<script type="text/plain">
-				[
-					{ name: 'path', text: '@(Name)', width: 300, template: '{{ language | language }}{{ if icon }}<i class="{{ icon }} mr5"></i>{{ fi }}{{ path | pagespath }}{{ if draft }}<span class="badge badge-red ml5">@(draft)</span>{{ fi }}{{ if ispartial }}<span class="badge badge-green ml5">@(partial)</span>{{ fi }}', classth: 'left', classfilter: 'left' },
-					{ name: 'url', text: '@(URL address)', width: 230, template: '{{ if ispartial }}<span class="silver">{{ url }}</span>{{ else }}{{ url }}{{ fi }}', class: 'hidden-xs' },
-					{ name: 'language', text: '<i class="fa fa-flag" style="margin-right:0"></i>', width: 50, title: '@(Language)', sort: false, align: 1, filter: ' ' },
-					{ name: 'dtupdated', text: '@(Updated)', format: '[date]', width: 100, sort: false, align: 1 },
-					{ name: '@(Options)', filter: false, align: 2, sort: false, width: 150, template: '{{ if !ispartial }}<a href="{{ url }}" class="fs11 mr5" target="_blank">@(show)</a>{{ fi }}<div class="inline mr10"><button title="@(Duplicate)" name="duplicate"><i class="far fa-copy"></i></button><button name="update" title="@(Edit)"><i class="fa fa-pencil"></i></button><button class="btn-remove" name="remove" title="@(Remove)"><i class="far fa-trash-o"></i></button></div>' }
-				]
-				</script>
-			</div>
-
-		</section>
+<div data-scope="pages" class="container">
+	<div class="toolbar">
+		<button class="right exec highlight" data-exec="?/create"><i class="fa fa-plus-circle"></i>@(Create)</button>
+		<button class="exec" data-exec="?/options"><i class="fa fa-cogs"></i>@(Options)</button>
+		<span></span>
+		<button class="exec" data-exec="?/checked" name="checked" disabled="disabled"><i class="fa fa-check-circle"></i>@(Checked)</button>
 	</div>
-
+	<div class="fullheight">
+		<div data---="datagrid__?.grid__padding:10;filterlabel:@(Search);checked:?/checkbox;button:?/button">
+			<script type="text/plain">
+			[
+				{ name: 'path', text: '@(Name)', width: 300, template: '{{ language | language }}{{ if icon }}<i class="{{ icon }} mr5"></i>{{ fi }}{{ path | pagespath }}{{ if draft }}<span class="badge badge-red ml5">@(draft)</span>{{ fi }}{{ if ispartial }}<span class="badge badge-green ml5">@(partial)</span>{{ fi }}', classth: 'left', classfilter: 'left' },
+				{ name: 'url', text: '@(URL address)', width: 230, template: '{{ if ispartial }}<span class="silver">{{ url }}</span>{{ else }}{{ url }}{{ fi }}', class: 'hidden-xs' },
+				{ name: 'language', text: '<i class="fa fa-flag" style="margin-right:0"></i>', width: 50, title: '@(Language)', sort: false, align: 1, filter: ' ' },
+				{ name: 'dtupdated', text: '@(Updated)', format: '[date]', width: 100, sort: false, align: 1 },
+				{ name: '@(Options)', filter: false, align: 2, sort: false, width: 150, template: '{{ if !ispartial }}<a href="{{ url }}" class="fs11 mr5" target="_blank">@(show)</a>{{ fi }}<div class="inline mr10"><button title="@(Duplicate)" name="duplicate"><i class="far fa-copy"></i></button><button name="update" title="@(Edit)"><i class="fa fa-pencil"></i></button><button class="btn-remove" name="remove" title="@(Remove)"><i class="far fa-trash-o"></i></button></div>' }
+			]
+			</script>
+		</div>
+	</div>
 </div>
 
 <div data---="importer__common.form__if:pages-form;url:[url]forms/pages.html;cleaner:5"></div>

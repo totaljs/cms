@@ -1,10 +1,4 @@
-<div data---="modal__common.form__icon:file-text-o;if:pages-form;width:1500;reload:pagesform/show;submit:pagesform/submit;autofocus:true;scrollbar:true" class="hidden">
-
-	<!-- HEADER -->
-	<div>
-		<span class="link cancel"><i class="fa fa-times"></i></span>
-		<label></label>
-	</div>
+<div data---="form__common.form__icon:file-text-o;if:pages-form;width:1500;reload:pagesform/show;submit:pagesform/submit;autofocus:1" class="hidden">
 
 	<div>
 		<div class="padding" style="padding-bottom:10px">
@@ -31,7 +25,7 @@
 			</div>
 		</div>
 		<div data-bind="pages.form.draft__show" class="hidden fs11" style="padding:8px 20px;background-color:red;color:white"><span style="color:white;float:right" class="link exec" data-exec="pagesform/removedraft"><i class="fa fa-times-circle mr5"></i>@(Remove draft)</span><i class="fa fa-warning mr5"></i>@(Page <b>content</b> is in draft mode).</div>
-		<div class="cmseditor" data---="cmseditor__pages.form.body" data-jc-import="[url]components/cmseditor.html"></div>
+		<div class="cmseditor" data---="cmseditor__pages.form.body" data-import="url:[url]components/cmseditor.html;target:body"></div>
 		<div class="backups hidden hidden-xs bg-smoke" data-bind="pages.form.id__show:!!value">
 			<div class="hidden" data-bind="pages.form.id__show">
 				<div data---="checkbox__pages.form.draft" class="nmb red b" data-bind="pages.form.lockedcontent__show:!value">@(DRAFT)</div>
@@ -139,12 +133,10 @@
 		<div data---="error__pages.form.response"></div>
 	</div>
 
-	<div>
-		<div data---="validation__pages.form">
-			<span class="link cancel">@(Cancel)</span>
-			<button name="submit">@(SAVE)</button>
-		</div>
-	</div>
+	<nav data---="validation__pages.form">
+		<button name="submit">@(SAVE)</button>
+		<button name="cancel">@(Cancel)</button>
+	</nav>
 
 </div>
 

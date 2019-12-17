@@ -40,30 +40,23 @@
 
 </style>
 
-<div data---="modal__common.form3__if:filebrowser;width:800;autofocus:true" class="hidden">
+<div data---="form__common.form3__if:filebrowser;width:800;autofocus:true;icon:folder-o;title:@(File Browser)" class="hidden">
 
-	<div>
-		<span class="link cancel"><i class="fa fa-times"></i></span>
-		<label><i class="fa fa-folder-o"></i>@(File Browser)</label>
-	</div>
-
-	<div>
-		<div class="padding">
-			<div class="m" data---="filelistbox__filebrowser.id__datasource:filebrowser.files;search:@(Search file ...);exec:filelistbox/submit;filter:filelistbox/filter"></div>
-			<div class="row">
-				<div class="col-xs-6">
-					<span data---="fileupload__filebrowser.filename__url:[url]api/upload/;$id:filebrowser.filename" class="link fs12"><i class="fa fa-folder-o mr5"></i>@(Upload new file)</span>
-				</div>
-				<div class="col-xs-6 right">
-					<span class="link fs12 red exec" data-exec="filelistbox/clear"><i class="fa fa-trash mr5"></i>@(Clear useless files)</span>
-				</div>
+	<div class="padding">
+		<div class="m" data---="filelistbox__filebrowser.id__datasource:filebrowser.files;search:@(Search file ...);exec:filelistbox/submit;filter:filelistbox/filter"></div>
+		<div class="row">
+			<div class="col-xs-6">
+				<span data---="fileupload__filebrowser.filename__url:[url]api/upload/;$id:filebrowser.filename" class="link fs12"><i class="fa fa-folder-o mr5"></i>@(Upload new file)</span>
+			</div>
+			<div class="col-xs-6 right">
+				<span class="link fs12 red exec" data-exec="filelistbox/clear"><i class="fa fa-trash mr5"></i>@(Clear useless files)</span>
 			</div>
 		</div>
 	</div>
 
-	<div>
+	<nav>
 		<button name="cancel" style="width:100%">@(Cancel)</button>
-	</div>
+	</nav>
 
 </div>
 

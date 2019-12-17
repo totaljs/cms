@@ -1,28 +1,19 @@
-<div data---="modal__common.form__if:subscribers-import;width:600;height:280;submit:subscribersform/submit;autofocus:true;scrollbar:true" class="hidden">
+<div data---="form__common.form__if:subscribers-import;width:600;submit:subscribersform/submit;autofocus:true;title:@(Import subscribers);icon:address-book-o" class="hidden">
 
-	<div>
-		<span class="link cancel"><i class="fa fa-times"></i></span>
-		<label><i class="fa fa-address-book-o"></i>@(Import subscribers)</label>
-	</div>
-
-	<div>
-		<div class="padding">
-			<div data-bind="subscribers.import.importing__show:!value">
-				<div data---="textarea__subscribers.import.body__required:true;height:200;placeholder:@(Put all new email addresses)">@(Email addresses)</div>
-			</div>
-			<div data-bind="subscribers.import.importing__show:value">
-				<div data---="progress__subscribers.import.progress"></div>
-				<div class="help"><i class="fa fa-spin fa-refresh mr5"></i>@(Importing ...)</div>
-			</div>
+	<div class="padding">
+		<div data-bind="subscribers.import.importing__show:!value">
+			<div data---="textarea__subscribers.import.body__required:true;height:200;placeholder:@(Put all new email addresses)">@(Email addresses)</div>
+		</div>
+		<div data-bind="subscribers.import.importing__show:value">
+			<div data---="progress__subscribers.import.progress"></div>
+			<div class="help"><i class="fa fa-spin fa-refresh mr5"></i>@(Importing ...)</div>
 		</div>
 	</div>
 
-	<div>
-		<div data---="validation__subscribers.import">
-			<span class="link cancel">@(Cancel)</span>
-			<button name="submit">@(IMPORT)</button>
-		</div>
-	</div>
+	<nav data---="validation__subscribers.import">
+		<button name="submit">@(IMPORT)</button>
+		<button name="cancel">@(Cancel)</button>
+	</nav>
 
 </div>
 

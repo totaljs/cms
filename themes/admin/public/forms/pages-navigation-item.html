@@ -1,52 +1,43 @@
-<div data---="modal__common.form2__if:pages-navigation-item;width:650;height:648;autofocus:true;submit:pagesnavigationitem/submit;reload:pagesnavigationitem/reload;scrollbar:true;$id:pagesnavigationitemmodal" class="hidden">
+<div data---="form__common.form2__if:pages-navigation-item;width:650;height:648;autofocus:true;submit:pagesnavigationitem/submit;reload:pagesnavigationitem/reload;scrollbar:true;$id:pagesnavigationitemmodal;title:@(Navigation);icon:sitemap" class="hidden">
 
-	<div>
-		<span class="link cancel"><i class="fa fa-times"></i></span>
-		<label><i class="fa fa-sitemap"></i>@(Navigation)</label>
+	<div class="padding bg-smoke">
+		<div data---="input__pages.navigationitem.url2__dirsource:pages.list;icon:sitemap;dirvalue:url">@(URL according to the sitemap)</div>
+		<div class="help m"><i class="fa fa-refresh"></i>@(CMS will synchronizes all information automatically according to the page settings.)</div>
 	</div>
-
-	<div>
-		<div class="padding bg-smoke">
-			<div data---="input__pages.navigationitem.url2__dirsource:pages.list;icon:sitemap;dirvalue:url">@(URL according to the sitemap)</div>
-			<div class="help m"><i class="fa fa-refresh"></i>@(CMS will synchronizes all information automatically according to the page settings.)</div>
-		</div>
-		<hr class="nmt" />
-		<div class="padding npt">
-			<div class="row">
-				<div class="col-md-8 m">
-					<div data---="input__pages.navigationitem.name__required:true;maxlength:50">@(Name)</div>
-				</div>
-				<div class="col-md-4 m">
-					<div data---="input__pages.navigationitem.language__dirsource:common.dependencies.languages">@(Language)</div>
-				</div>
+	<hr class="nmt" />
+	<div class="padding npt">
+		<div class="row">
+			<div class="col-md-8 m">
+				<div data---="input__pages.navigationitem.name__required:true;maxlength:50">@(Name)</div>
 			</div>
-			<div data---="input__pages.navigationitem.url__maxlength:500;required:true">@(URL address)</div>
-			<div class="mt10 fs12"><span class="link exec" data-exec="pagesnavigationitem/file"><i class="fa fa-folder-o mr5"></i>@(Browse files)</span></div>
-		</div>
-		<hr class="nmt" />
-		<div class="padding npt npb">
-			<div class="row">
-				<div class="col-md-6 m">
-					<div data---="input__pages.navigationitem.target__dirsource:pagesnavigationitem.target;required:true__'_self'">@(Target)</div>
-				</div>
-				<div class="col-md-6 m">
-					<div data---="input__pages.navigationitem.behaviour__dirsource:pagesnavigationitem.behaviour__'default'">@(Behaviour)</div>
-				</div>
+			<div class="col-md-4 m">
+				<div data---="input__pages.navigationitem.language__dirsource:common.dependencies.languages">@(Language)</div>
 			</div>
-			<div data---="input__pages.navigationitem.title__maxlength:100">@(Tooltip)</div>
 		</div>
-		<hr class="nmb" />
-		<div class="padding bg-yellow">
-			<div class="mt5" data---="fontawesomebox__pages.navigationitem.icon__search:@(Search icons);height:152"></div>
+		<div data---="input__pages.navigationitem.url__maxlength:500;required:true">@(URL address)</div>
+		<div class="mt10 fs12"><span class="link exec" data-exec="pagesnavigationitem/file"><i class="fa fa-folder-o mr5"></i>@(Browse files)</span></div>
+	</div>
+	<hr class="nmt" />
+	<div class="padding npt npb">
+		<div class="row">
+			<div class="col-md-6 m">
+				<div data---="input__pages.navigationitem.target__dirsource:pagesnavigationitem.target;required:true__'_self'">@(Target)</div>
+			</div>
+			<div class="col-md-6 m">
+				<div data---="input__pages.navigationitem.behaviour__dirsource:pagesnavigationitem.behaviour__'default'">@(Behaviour)</div>
+			</div>
 		</div>
+		<div data---="input__pages.navigationitem.title__maxlength:100">@(Tooltip)</div>
+	</div>
+	<hr class="nmb" />
+	<div class="padding bg-yellow">
+		<div class="mt5" data---="fontawesomebox__pages.navigationitem.icon__search:@(Search icons);height:152"></div>
 	</div>
 
-	<div>
-		<div data---="validation__pages.navigationitem">
-			<span class="link cancel">@(Cancel)</span>
-			<button name="submit">@(APPLY)</button>
-		</div>
-	</div>
+	<nav data---="validation__pages.navigationitem">
+		<button name="submit">@(APPLY)</button>
+		<button name="cancel">@(Cancel)</button>
+	</nav>
 
 </div>
 
@@ -54,11 +45,11 @@
 
 	PLUGIN('pagesnavigationitem', function(exports) {
 
-		SET('pagesnavigationitem.target', [{ name: '@(Current tab or window)', id: '_self' },{ name: '@(New tab or window)', id: '_blank' }]);
-		SET('pagesnavigationitem.behaviour', [{ name: '@(Default)', id: 'default' },{ name: '@(Highlight)', id: 'highlight' },{ name: '@(Info)', id: 'info' },{ name: '@(Warning)', id: 'warn' },{ name: '@(Special)', id: 'special' }]);
+		SET('?.target', [{ name: '@(Current tab or window)', id: '_self' },{ name: '@(New tab or window)', id: '_blank' }]);
+		SET('?.behaviour', [{ name: '@(Default)', id: 'default' },{ name: '@(Highlight)', id: 'highlight' },{ name: '@(Info)', id: 'info' },{ name: '@(Warning)', id: 'warn' },{ name: '@(Special)', id: 'special' }]);
 
 		exports.reload = function() {
-			setTimeout2('pagesnavigationitem', function() {
+			setTimeout2(exports.name, function() {
 				SETTER('#pagesnavigationitemmodal', 'resize');
 			}, 500);
 		};

@@ -1,22 +1,12 @@
-<div data---="modal__cmseditor.form__if:settings;width:500;height:400;submit:cmseditorsettings/submit;scrollbar:true" class="hidden">
+<div data---="form__cmseditor.form__if:settings;width:500;submit:cmseditorsettings/submit;icon:cog;title:@(Widget settings)" class="hidden">
 
-	<div>
-		<span class="link cancel"><i class="fa fa-times"></i></span>
-		<label><i class="fa fa-cofg"></i>@(Widget settings)</label>
+	<div class="padding" id="settings-multioptions">
+		<div data---="multioptions__cmseditor.settings.options__$id:cmseditor.settings"></div>
 	</div>
-
-	<div>
-		<div class="padding" id="settings-multioptions">
-			<div data---="multioptions__cmseditor.settings.options__$id:cmseditor.settings"></div>
-		</div>
-	</div>
-
-	<div>
-		<div data---="validation__cmseditor.settings">
-			<span class="link cancel">@(Cancel)</span>
-			<button name="submit">@(APPLY)</button>
-		</div>
-	</div>
+	<nav>
+		<button name="submit">@(APPLY)</button>
+		<button name="cancel">@(Cancel)</button>
+	</nav>
 
 </div>
 
