@@ -14,6 +14,7 @@ body { background-color: #E0E0E0; }
 .header label { float: left; font-size: 14px; font-weight: bold; height: 26px; line-height: 26px; margin: 10px 0 0 5px; padding: 0 10px 0; }
 .header label i { color: $color; }
 .header nav { float: right; margin: 10px 0 0 10px; }
+
 .header nav button { outline: 0; background-color: white; border: 1px solid transparent; border: 1px solid #E0E0E0; border-left: 0; font-size: 12px; height: 26px; padding: 0 8px; margin: 0; color: black; min-width: 80px; position: relative; display: inline-block; line-height: 24px; }
 .header nav button i, .header label i { margin-right: 5px; }
 .header nav button:first-child { border-left: 1px solid #E0E0E0; border-top-left-radius: 2px; border-bottom-left-radius: 2px; }
@@ -25,17 +26,25 @@ body { background-color: #E0E0E0; }
 .header button .fa-times, .header button .fa-times-circle, .header button .fa-trash-o { color: #e73323; }
 .header .highlight { background-color: #FFFFD5; }
 
-header { height: 45px; background-color: #F0F0F0; border-bottom: 1px solid #E0E0E0; }
-header nav a { float: right; width: 44px; height: 44px; text-align: center; font-size: 16px; line-height: 44px; color: $color; border-left: 1px solid #E0E0E0; }
-header nav a:hover { opacity: 0.8; }
-
-header nav button { background-color: white; border: 0; color: black; float: left; font-size: 12px; outline: 0; height: 24px; padding: 0 10px; line-height: 0; text-align: left; font-weight: bold; border-radius: 2px; margin: 10px 0 0 10px; }
-header nav button i { margin: 0 8px 0 0; position: relative; display: inline-block; }
+header { height: 45px; background-color: white; border-bottom: 1px solid #E0E0E0; }
+header nav { float: left; }
+header nav button { width: 44px; height: 44px; text-align: center; font-size: 16px; line-height: 44px; color: black; border: 0; outline: 0; border-right: 1px solid #E0E0E0; }
+header nav button:hover { background-color: #F8F8F8; }
+header nav button.selected { background-color: $color; color: white; }
 
 header .user { float: right; font-size: 12px; line-height: 45px; margin-right: 20px; }
 header .user .fa, header .user .fal { margin-right: 5px; }
 header .title { height: 40px; border-left: 1px solid #F0F0F0; font-size: 16px; float: left; padding: 9px 0 0 20px; color: black; font-weight: bold; }
 header .title .fa, header .title .fal { margin-right: 8px; }
+
+.smallcaption { font-size: 10px; color: #888; font-weight: bold; margin-bottom: 10px; text-transform: uppercase; }
+.smallcaption i { margin-right: 5px; }
+
+.links a, .links button { display: block; border: 0; text-align: left; color: #505050; font-size: 14px; border-radius: 2px; padding: 2px 5px; margin-bottom: 2px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; position: relative; width: 100%; }
+.links .selected { font-weight: bold; color: black; background-color: #F0F0F0; }
+.links a i, .links button i { width: 14px; text-align: center; font-size: 12px; margin-right: 7px; color: $color; }
+.links a:hover, .links button:hover { text-decoration: none; color: black; }
+.links a b, .links button b { position: absolute; font-size: 10px; right: 5px; background-color: $color; color: white; width: 16px; height: 16px; padding: 1px 0 0 0; border-radius: 100px; text-align: center; margin: 2px 0 0; }
 
 .header-message { display: none; float: right; width: 300px; vertical-align: middle; height: 40px; font-size: 12px; background-color: #FFFFD5; margin-right: 20px; opacity: 0; transition: all 0.3s; transform: translate(100px,0px); box-shadow: -2px 0 5px rgba(0,0,0,0.05); }
 .header-message-visible { opacity: 1; transform: translate(0,0); }
@@ -118,8 +127,8 @@ h3 { font-weight: 700; font-family: Arial; margin: 0 0 20px 0; padding: 0; color
 h3 b { font-weight: 700; }
 h3 .fa, h3 .far, h3 .fal { margin-right: 8px; }
 
-.caption { font-size: 12px; text-transform: uppercase; margin-bottom: 20px; color: black; font-weight: bold; border: 1px solid #808080; padding: 3px 5px; border-radius: 3px; }
-.caption .fa { margin-right: 5px; border-right: 1px solid black; padding-right: 5px; }
+.caption { font-size: 12px; text-transform: uppercase; margin-bottom: 15px; color: black; font-weight: bold; border: 1px solid #808080; padding: 3px 5px; border-radius: 2px; }
+.caption i { margin-right: 5px; border-right: 1px solid black; padding-right: 5px; }
 
 .cmseditor { border-top: 2px solid #E0E0E0; border-bottom: 2px solid #E0E0E0; line-height: 0; }
 .cmseditor iframe { width: 100%; min-height: 300px; border: 0; margin: 0; padding: 0; background-color: #F0F0F0 }

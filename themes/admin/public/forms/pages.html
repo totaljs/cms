@@ -1,76 +1,75 @@
-<div data---="form__common.form__icon:file-text-o;if:pages-form;width:1500;reload:pagesform/show;submit:pagesform/submit;autofocus:1" class="hidden">
-
-	<div>
+<div data---="form__common.form__icon:file-text-o;if:pagesform;width:1500;reload:pagesform/show;submit:pagesform/submit;autofocus:1" class="hidden">
+	<div data-scope="pagesform">
 		<div class="padding" style="padding-bottom:10px">
 			<div class="row">
 				<div class="col-md-3 m">
-					<div data---="input__pages.form.name__placeholder:@(Homepage);required:true">@(Name)</div>
-					<div data---="checkbox__pages.form.ispartial" class="green b mt10">@(Is a partial content)</div>
+					<div data---="input__?.name__placeholder:@(Homepage);required:true">@(Name)</div>
+					<div data---="checkbox__?.ispartial" class="green b mt10">@(Is a partial content)</div>
 				</div>
 				<div class="col-md-3 m">
-					<div data---="input__pages.form.url__icon:globe;placeholder:@(Page relative URL address);required:true">@(URL address)</div>
+					<div data---="input__?.url__icon:globe;placeholder:@(Page relative URL address);required:true">@(URL address)</div>
 				</div>
 				<div class="col-md-3 m">
-					<div data---="disable__pages.form.lockedtemplate__if:value === true">
-						<div data---="input__pages.form.template__dirsource:common.dependencies.templatespages;dirplaceholder:@(Search templates);dirempty:@(No template)">@(Template)</div>
+					<div data---="disable__?.lockedtemplate__if:value === true">
+						<div data---="input__?.template__dirsource:common.dependencies.templatespages;dirplaceholder:@(Search templates);dirempty:@(No template)">@(Template)</div>
 					</div>
-					<div data-bind="pages.form.lockedtemplate__show:!value || user.sa">
-						<div data---="checkbox__pages.form.lockedtemplate2" class="red b mt10">@(Lock this template for editors)</div>
+					<div data-bind="?.lockedtemplate__show:!value || user.sa">
+						<div data---="checkbox__?.lockedtemplate2" class="red b mt10">@(Lock this template for editors)</div>
 					</div>
 				</div>
-				<div class="col-md-3 m" data---="disable__pages.form.ispartial__if:value">
-					<div data---="input__pages.form.parent__dirsource:pages.parents;icon:sitemap;dirplaceholder:@(Search pages)__''">@(Parent)</div>
+				<div class="col-md-3 m" data---="disable__?.ispartial__if:value">
+					<div data---="input__?.parent__dirsource:pages.parents;icon:sitemap;dirplaceholder:@(Search pages)__''">@(Parent)</div>
 					<div class="help">@(Affects sitemap and breadcrumb.)</div>
 				</div>
 			</div>
 		</div>
-		<div data-bind="pages.form.draft__show" class="hidden fs11" style="padding:8px 20px;background-color:red;color:white"><span style="color:white;float:right" class="link exec" data-exec="pagesform/removedraft"><i class="fa fa-times-circle mr5"></i>@(Remove draft)</span><i class="fa fa-warning mr5"></i>@(Page <b>content</b> is in draft mode).</div>
-		<div class="cmseditor" data---="cmseditor__pages.form.body" data-import="url:[url]components/cmseditor.html;target:body"></div>
-		<div class="backups hidden hidden-xs bg-smoke" data-bind="pages.form.id__show:!!value">
-			<div class="hidden" data-bind="pages.form.id__show">
-				<div data---="checkbox__pages.form.draft" class="nmb red b" data-bind="pages.form.lockedcontent__show:!value">@(DRAFT)</div>
+		<div data-bind="?.draft__show" class="hidden fs11" style="padding:8px 20px;background-color:red;color:white"><span style="color:white;float:right" class="link exec" data-exec="pagesform/removedraft"><i class="fa fa-times-circle mr5"></i>@(Remove draft)</span><i class="fa fa-warning mr5"></i>@(Page <b>content</b> is in draft mode).</div>
+		<div class="cmseditor" data---="cmseditor__?.body" data-import="url:[url]components/cmseditor.html;target:body"></div>
+		<div class="backups hidden hidden-xs bg-smoke" data-bind="?.id__show:!!value">
+			<div class="hidden" data-bind="?.id__show">
+				<div data---="checkbox__?.draft" class="nmb red b" data-bind="?.lockedcontent__show:!value">@(DRAFT)</div>
 			</div>
 			<div class="hidden" data-bind="user.sa__show">
-				<div data---="checkbox__pages.form.lockedcontent" class="nmb b">@(LOCK)</div>
+				<div data---="checkbox__?.lockedcontent" class="nmb b">@(LOCK)</div>
 			</div>
 			<div class="hidden" data-bind="user.sa__show">
-				<div data---="checkbox__pages.form.usedefault" class="nmb b">@(DEFAULT CONTENT)</div>
+				<div data---="checkbox__?.usedefault" class="nmb b">@(DEFAULT CONTENT)</div>
 			</div>
-			<div class="hidden" data-bind="pages.form.lockedcontent__hide">
+			<div class="hidden" data-bind="?.lockedcontent__hide">
 				<span class="link exec inline green" data-exec="cmseditor.instance.editCSS"><i class="fa fa-paint-brush mr5"></i>@(Edit page styles)</span>
 			</div>
-			<div class="hidden" data-bind="pages.form.lockedcontent__hide">
+			<div class="hidden" data-bind="?.lockedcontent__hide">
 				<span class="link exec inline" data-exec="pagesform/backups"><i class="fa fa-clock-o mr5"></i>@(Restore a backup)</span>
 			</div>
 			<span class="link exec red" data-exec="pagesform/submit" style="float:right"><i class="fa fa-floppy-o mr5"></i>@(Save settings)</span>
-			<a href="javascript:void(0)" data-bind="pages.form.url__href:pagesform/preview" target="_blank" class="mr10" style="float:right" title="@(Preview saved content)"><i class="fa fa-search mr5"></i>@(Preview)</a>
+			<a href="javascript:void(0)" data-bind="?.url__href:pagesform/preview" target="_blank" class="mr10" style="float:right" title="@(Preview saved content)"><i class="fa fa-search mr5"></i>@(Preview)</a>
 		</div>
 		<div class="padding">
 			<div class="row mt10">
 				<div class="col-md-4 m">
-					<div data---="input__pages.form.title__maxlength:50">@(Title)</div>
+					<div data---="input__?.title__maxlength:50">@(Title)</div>
 					<div class="help">@(Meta title, maximum 60 chars.)</div>
 				</div>
 				<div class="col-md-4">
-					<div data---="input__pages.form.description__icon:align-center;maxlength:120">@(Description)</div>
+					<div data---="input__?.description__icon:align-center;maxlength:120">@(Description)</div>
 					<div class="help">@(Meta description, maximum 120 chars.)</div>
 				</div>
 				<div class="col-md-4 m">
-					<div data---="input__pages.form.keywords__icon:tags;maxlength:80;placeholder:@(company, our team, employees)">@(Keywords)</div>
+					<div data---="input__?.keywords__icon:tags;maxlength:80;placeholder:@(company, our team, employees)">@(Keywords)</div>
 					<div class="help">@(Meta keywords, maximum 6 words seperated by comma.)</div>
 				</div>
 			</div>
 			<div class="row mt10">
 				<div class="col-md-4 m">
-					<div data---="textboxlist__pages.form.redirects__icon:retweet;placeholder:@(Add a relative URL address and press enter)">@(Redirects)</div>
+					<div data---="textboxlist__?.redirects__icon:retweet;placeholder:@(Add a relative URL address and press enter)">@(Redirects)</div>
 					<div class="help">@(URL address for redirecting to this page e.g. <code>/products/</code>)</div>
 				</div>
 				<div class="col-md-4 m">
-					<div data---="dropdowncheckbox__pages.form.navigations__alltext:null;datasource:common.dependencies.navigations;empty:@(Doesn't contain any navigations.);icon:navicon;cleaner:false">@(Side navigations)</div>
+					<div data---="dropdowncheckbox__?.navigations__alltext:null;datasource:common.dependencies.navigations;empty:@(Doesn't contain any navigations.);icon:navicon;cleaner:false">@(Side navigations)</div>
 					<div class="help">@(Add side navigations.)</div>
 				</div>
 				<div class="col-md-2 m">
-					<div data---="input__pages.form.language__icon:flag;dirsource:common.dependencies.languages;dirplaceholder:@(Search language);dirempty:@(No language)">@(Language)</div>
+					<div data---="input__?.language__icon:flag;dirsource:common.dependencies.languages;dirplaceholder:@(Search language);dirempty:@(No language)">@(Language)</div>
 				</div>
 			</div>
 		</div>
@@ -79,61 +78,62 @@
 				<div class="col-md-8">
 					<div class="row">
 						<div class="col-md-6 m">
-							<div data---="dropdowncheckbox__pages.form.signals__alltext:null;datasource:common.dependencies.signals;empty:@(Doesn't contain any signals.);icon:dot-circle-o">@(Signals)</div>
+							<div data---="dropdowncheckbox__?.signals__alltext:null;datasource:common.dependencies.signals;empty:@(Doesn't contain any signals.);icon:dot-circle-o">@(Signals)</div>
 							<div class="help">@(Signals can start special actions when the page is displayed.)</div>
 						</div>
 						<div class="col-md-6 m">
-							<div data---="dropdowncheckbox__pages.form.partial__alltext:null;datasource:pages.partial;empty:@(Doesn't contain any partial pages.);icon:database;cleaner:false">@(Nested partial pages)</div>
+							<div data---="dropdowncheckbox__?.partial__alltext:null;datasource:pages.partial;empty:@(Doesn't contain any partial pages.);icon:database;cleaner:false">@(Nested partial pages)</div>
 							<div class="help">@(Join other partial pages with this.)</div>
 						</div>
 					</div>
 					<hr />
 					<div class="b"><i class="fa fa-cog mr5"></i>@(Settings for navigations)</div>
 					<div style="margin-top:8px">
-						<div data---="checkbox__pages.form.navicon" class="inline mr10">@(Replace icon in all navigations)</div>
-						<div data---="checkbox__pages.form.navname" class="inline mr10">@(Replace name and language in all navigations)</div>
-						<div data---="checkbox__pages.form.replacelink" class="inline">@(Replace older URL in the whole content)</div>
+						<div data---="checkbox__?.navicon" class="inline mr10">@(Replace icon in all navigations)</div>
+						<div data---="checkbox__?.navname" class="inline mr10">@(Replace name and language in all navigations)</div>
+						<div data---="checkbox__?.replacelink" class="inline">@(Replace older URL in the whole content)</div>
 					</div>
 				</div>
 				<div class="col-md-4">
 					<div class="fs12"><i class="fab fa-fa mr5"></i>@(Choose icon):</div>
-					<div class="mt5" data---="fontawesomebox__pages.form.icon__search:@(Search icons);height:160"></div>
+					<div class="mt5" data---="fontawesomebox__?.icon__search:@(Search icons);height:160"></div>
 				</div>
 			</div>
 		</div>
-		<div data-bind="pages.form.id__show:value && value.length" class="hidden">
+		<div data-bind="?.id__show:value && value.length" class="hidden">
 			<hr class="nmt" />
 			<div class="padding">
 				<div class="row">
 					<div class="col-lg-2 col-md-3 m">
 						<div class="keyvalue">
 							<div class="key">@(# Id)</div>
-							<div class="value" data-bind="pages.form.id__html:value"></div>
+							<div class="value" data-bind="?.id__html:value"></div>
 						</div>
 					</div>
 					<div class="col-lg-2 col-md-3 m">
 						<div class="keyvalue">
 							<div class="key"><i class="fa fa-calendar"></i>@(Created)</div>
-							<div class="value" data-bind="pages.form.datecreated__html:Thelpers.time(value)"></div>
+							<div class="value" data-bind="?.datecreated__html:Thelpers.time(value)"></div>
 						</div>
 					</div>
 					<div class="col-lg-2 col-md-3 m">
 						<div class="keyvalue">
 							<div class="key"><i class="fa fa-calendar"></i>@(Updated)</div>
-							<div class="value" data-bind="pages.form.dateupdated__html:value ? Thelpers.time(value) : '@(unchanged)'"></div>
+							<div class="value" data-bind="?.dateupdated__html:value ? Thelpers.time(value) : '@(unchanged)'"></div>
 						</div>
 					</div>
-					<div class="col-lg-6 m" data-bind="pages.form.stats__show:value">
-						<div data---="nosqlcounter__pages.form.stats__height:52"></div>
+					<div class="col-lg-6 m" data-bind="?.stats__show:value">
+						<div data---="nosqlcounter__?.stats__height:52"></div>
 						<div class="help"><i class="fa fa-chart-bar"></i>@(Stats of all views for the last period)</div>
 					</div>
 				</div>
 			</div>
 		</div>
-		<div data---="error__pages.form.response"></div>
+
+		<div data---="error__?.response"></div>
 	</div>
 
-	<nav data---="validation__pages.form">
+	<nav data---="validation__pagesform">
 		<button name="submit">@(SAVE)</button>
 		<button name="cancel">@(Cancel)</button>
 	</nav>
@@ -145,37 +145,35 @@
 	PLUGIN('pagesform', function(exports) {
 
 		if (user.sa) {
-			WATCH('pages.form.lockedtemplate2', function(path, value, type) {
-				type === 2 && SET('pages.form.lockedtemplate', value);
+			WATCH('?.lockedtemplate2', function(path, value, type) {
+				type === 2 && SET('?.lockedtemplate', value);
 			});
 
-			WATCH('pages.form.lockedcontent', function(path, value, type) {
-				value && SET('pages.form.draft', false);
+			WATCH('?.lockedcontent', function(path, value, type) {
+				value && SET('?.draft', false);
 				cmseditor.instance.lock(value);
 			});
 		}
 
-		WATCH('pages.form.draft', function(path, value, type) {
-			type === 2 && BIND('pages.form.url');
+		WATCH('?.draft', function(path, value, type) {
+			type === 2 && BIND('?.url');
 		});
 
 		exports.preview = function(value) {
-			return value + (pages.form && pages.form.draft ? '?DRAFT=1' : '');
+			return value + (W.pagesform && W.pagesform.draft ? '?DRAFT=1' : '');
 		};
 
 		exports.removedraft = function() {
-			SETTER('confirm', 'show', '@(Are you sure you want to remove stored draft?)', ['"trash-o" @(Yes)', '@(Cancel)'], function(index) {
-				if (!index) {
-					SET('pages.form.body', pages.form.bodycurrent);
-					SET('pages.form.draft', false);
-					cmseditor.instance.setWidgetOptions(pages.form.widgets);
-				}
+			SETTER('confirm', 'show2', '@(Are you sure you want to remove stored draft?)', ['"trash-o" @(Yes)', '@(Cancel)'], function() {
+				SET('?.body', pagesform.bodycurrent);
+				SET('?.draft', false);
+				cmseditor.instance.setWidgetOptions(pagesform.widgets);
 			});
 		};
 
 		exports.show = function(com) {
 
-			var model = pages.form;
+			var model = pagesform;
 			var items = pages.list;
 			var parent = [];
 			var partial = [];
@@ -184,30 +182,26 @@
 
 			for (var i = 0, length = items.length; i < length; i++) {
 				var item = items[i];
-				if (item.id !== model.id) {
-					if (item.ispartial)
-						partial.push({ id: item.id, name: item.name });
-					else
-						parent.push({ id: item.id, name: item.name, url: item.url });
-				}
+				if (item.id !== model.id)
+					partial.push({ id: item.id, name: item.name, url: item.ispartial ? null : item.url });
 			}
 
 			SET('pages.partial', partial);
 			SET('pages.parents', parent);
-			SET('pages.form.lockedtemplate2', !!model.lockedtemplate, true);
+			SET('?.lockedtemplate2', !!model.lockedtemplate, true);
 
 			WAIT('cmseditor.instance', function() {
 				cmseditor.instance.setWidgetOptions(model.draft ? model.dwidgets : model.widgets);
 				cmseditor.instance.lock(!!model.lockedcontent);
 			});
 
-			model.id && AJAX('GET [url]api/pages/{id}/stats/'.arg(model), 'pages.form.stats');
+			model.id && AJAX('GET [url]api/pages/{id}/stats/'.arg(model), '?.stats');
 			FUNC.loading(false, 1000);
 		};
 
 		exports.submit = function(hide) {
 
-			var model = CLONE(pages.form);
+			var model = CLONE('pagesform');
 			var editor = cmseditor.instance;
 
 			model.pictures = editor.getPictures();
@@ -245,13 +239,14 @@
 				FUNC.loading(true);
 				AJAX('POST [url]api/pages/ REPEAT', model, function(response) {
 					FUNC.loading(false, 1000);
+
 					if (response.success) {
 						SETTER('snackbar', 'success', '@(Page has been saved successfully.)');
 
 						if (typeof hide === 'function')
 							hide();
 						else
-							SET('pages.form.lockedtemplate', locked);
+							SET('?.lockedtemplate', locked);
 
 						EXEC('pages/refresh');
 
@@ -262,18 +257,16 @@
 				});
 			};
 
-			if (model.lockedtemplate && !user.sa) {
-				SETTER('confirm', 'show', '@(Are you sure you want to use always this template?)', ['@(Sure)', '@(No)'], function(index) {
-					!index && submit();
-				});
-			} else
+			if (model.lockedtemplate && !user.sa)
+				SETTER('confirm', 'show2', '@(Are you sure you want to use always this template?)', ['@(Sure)', '@(No)'], sumit);
+			else
 				submit();
 		};
 
 		exports.backups = function(el) {
 
 			FUNC.loading(true);
-			AJAX('GET [url]api/pages/{1}/backups/'.format(GET('pages.form.id')), function(response) {
+			AJAX('GET [url]api/pages/{1}/backups/'.format(GET('?.id')), function(response) {
 
 				FUNC.loading(false, 1000);
 
@@ -296,7 +289,7 @@
 			});
 		};
 
-		WATCH('pages.form.template', function(path, value, type) {
+		WATCH('?.template', function(path, value, type) {
 			if (type === 2) {
 				cmseditor.instance.reconfigure('template:' + (value || ''));
 				cmseditor.instance.set('');

@@ -23,44 +23,40 @@
 
 			<div class="header">
 				<label><i class="far fa-file-alt"></i>@(List of pages)</label>
-				<nav data-bind="users.selected__enabled .S">
-					<button class="exec" data-exec="users/create"><i class="fa fa-plus-circle"></i>@(Create)</button>
-					<button class="exec S" data-exec="users/edit" disabled><i class="fa fa-pencil"></i>@(Edit)</button>
-					<button class="exec S" data-exec="users/remove" disabled><i class="fa fa-trash-o"></i>@(Remove)</button>
+				<nav data-bind="?.checked__enabled .S:value && value.length">
+					<button class="exec" data-exec="?/create"><i class="fa fa-plus-circle"></i>@(Create)</button>
+					<button class="exec" data-exec="?/options"><i class="fa fa-wrench"></i>@(Options)</button>
+					<button class="exec S" data-exec="?/checked" disabled><i class="fa fa-check-circle"></i>@(Checked)</button>
 				</nav>
 			</div>
 		</section>
 
 		<section data-type="right">
-			<div class="m" data-bind="common.dependencies.navigations__show:value && value.length">
-				<label><i class="fa fa-sitemap"></i>@(Navigations)</label>
-				<div class="panelbody">
-					<nav data-bind="common.dependencies.navigations__template" class="buttonmenu">
-						<script type="text/html">
-							{{ if value }}
-								{{ foreach m in value }}
-									<button data-id="{{ m.id }}" class="exec" data-exec="?/navigation"><i class="fa fa-chevron-right"></i>{{ m.name }}</button>
-								{{ end }}
-							{{ fi }}
-						</script>
-					</nav>
-				</div>
+			<div class="padding">
+				<div class="caption"><i class="fa fa-clone"></i>@(Options)</div>
+				<nav class="links">
+					<button class="exec b selected" data-exec="?/create"><i class="fa fa-plus-circle"></i>@(Add new page)</button>
+					<button class="exec" data-path="common.form" data-value="'pages-globals'"><i class="fa fa-cog"></i>@(Variables)</button>
+					<button class="exec" data-path="common.form" data-value="'widgets-globals'"><i class="fa fa-paint-brush"></i>@(Global style/script)</button>
+					<button class="exec b" data-path="common.form" data-value="'pages-redirects'"><i class="fa fa-retweet"></i>@(Redirects)</button>
+				</nav>
 			</div>
-			<div class="m">
-				<label><i class="fa fa-clone"></i>@(Options)</label>
-				<div class="panelbody">
-					<nav class="buttonmenu">
-						<button class="exec b" data-exec="?/create"><i class="fa fa-plus-circle"></i>@(Add new page)</button>
-						<button class="exec" data-path="common.form" data-value="'pages-globals'"><i class="fa fa-cog"></i>@(Variables)</button>
-						<button class="exec" data-path="common.form" data-value="'widgets-globals'"><i class="fa fa-paint-brush"></i>@(Global style/script)</button>
-						<button class="exec b" data-path="common.form" data-value="'pages-redirects'"><i class="fa fa-retweet"></i>@(Redirects)</button>
-					</nav>
-				</div>
+			<div class="padding npt" data-bind="common.dependencies.navigations__show:value && value.length">
+				<div class="caption"><i class="fa fa-sitemap"></i>@(Navigations)</div>
+				<nav data-bind="common.dependencies.navigations__template" class="buttonmenu">
+					<script type="text/html">
+						{{ if value }}
+							{{ foreach m in value }}
+								<button data-id="{{ m.id }}" class="exec" data-exec="?/navigation"><i class="fa fa-chevron-right"></i>{{ m.name }}</button>
+							{{ end }}
+						{{ fi }}
+					</script>
+				</nav>
 			</div>
 		</section>
 
 		<section data-type="main">
-			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?/checkbox;button:?/button;noborder:1;height:window;margin:90">
+			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?.checked;button:?/button;noborder:1;height:window;margin:90">
 				<script type="text/plain">
 				[
 					{ name: 'path', text: '@(Name)', width: 300, template: '{{ language | language }}{{ if icon }}<i class="{{ icon }} mr5"></i>{{ fi }}{{ path | pagespath }}{{ if draft }}<span class="badge badge-red ml5">@(draft)</span>{{ fi }}{{ if ispartial }}<span class="badge badge-green ml5">@(partial)</span>{{ fi }}', classth: 'left', classfilter: 'left' },
@@ -77,7 +73,7 @@
 
 </div>
 
-<div data---="importer__common.form__if:pages-form;url:[url]forms/pages.html;cleaner:5"></div>
+<div data---="importer__common.form__if:pagesform;url:[url]forms/pages.html;cleaner:5"></div>
 <div data---="importer__common.form__if:pages-navigation;url:[url]forms/pages-navigation.html;cleaner:5"></div>
 <div data---="importer__common.form2__if:pages-navigation-item;url:[url]forms/pages-navigation-item.html;cleaner:5"></div>
 <div data---="importer__common.form__if:pages-redirects;url:[url]forms/pages-redirects.html;cleaner:5"></div>
@@ -161,8 +157,8 @@
 						SET('cmseditor.css', response.css);
 						SET('cmseditor.template', response.template);
 
-						SET('?.form', response, true);
-						SET('common.form', 'pages-form');
+						SET('pagesform', response, true);
+						SET('common.form', 'pagesform');
 					});
 
 					break;
@@ -180,11 +176,10 @@
 			options.element = el;
 			options.items = [];
 			options.items.push({ id: 'remove', name: '@(Remove pages)', icon: 'trash' });
-
 			options.callback = function(item) {
 				switch (item.id) {
 					case 'remove':
-						SETTER('confirm', 'show', '@(Are you sure you want to remove all selected pages?)', ['"trash"@(Remove)', '@(No)'], function(index) {
+						SETTER('confirm', 'show', '@(Are you sure you want to remove all selected pages?)', ['"trash" @(Remove)', '@(No)'], function(index) {
 							if (index)
 								return;
 							FUNC.loading(true);
@@ -208,7 +203,7 @@
 		exports.options = function(el) {
 			var options = {};
 			options.items = [];
-			options.items.push({ id: 'create', name: '@(Create page)', icon: 'plus-circle', classname: 'b' });
+			options.items.push({ id: 'create', name: '@(Create page)', icon: 'plus-circle green', classname: 'b' });
 			options.items.push({ id: 'refresh', name: '@(Refresh)', icon: 'refresh' });
 			options.items.push('-');
 			options.items.push({ value: 'pages-globals', name: '@(Variables)', icon: 'cog' });
@@ -239,8 +234,8 @@
 		};
 
 		exports.create = function() {
-			SET('?.form', { widgets: [], ispartial: false, navicon: true, navname: true, replacelink: true, url: '---' }, true);
-			SET('common.form', 'pages-form');
+			SET('pagesform', { widgets: [], ispartial: false, navicon: true, navname: true, replacelink: true, url: '---' }, true);
+			SET('common.form', 'pagesform');
 		};
 
 	});

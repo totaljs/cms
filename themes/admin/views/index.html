@@ -32,9 +32,12 @@
 	<div data---="websocket__null__reconnect:5000;url:[url]live/"></div>
 
 	<header>
-		<nav>
-			<a href="/" title="@{'%name'}" target="_blank"><i class="fa fa-globe"></i></a>
-			<button class="navigation exec" data-exec="navigation"><i class="fa fa-angle-down"></i><span data-bind="common.title__html">@(Options)</span></button>
+		<nav data-bind="common.nav__template" data---="selected__common.page__datasource:common.nav;selector:button">
+			<script type="text/html">
+			{{ foreach m in value }}
+				<button class="exec" data-exec="main/plugin" data-if="{{ m.value }}" title="{{ m.title }}"><i class="fa fa-{{ m.icon }}"></i></button>
+			{{ end }}
+			</script>
 		</nav>
 		<div class="user hidden-xs">
 			<i class="fa fa-circle"></i><span data-bind="user.name__html:value"></span>
@@ -104,6 +107,8 @@
 			obj.form2 = ''; // Form 2nd level
 			obj.form3 = ''; // Form 3nd level
 		});
+
+		CACHEPATH('common.page', '1 week');
 
 		ON('page', function(item) {
 			// SET('common.title', '<i class="fa fa-{icon}"></i>{title}'.arg(item));
@@ -342,22 +347,15 @@
 			}, true);
 		}, true);
 
-		ROUTE('[url]', function() {
-			var items = common.nav;
-			for (var i = 0, length = items.length; i < length; i++) {
-				var item = items[i];
-				if (user.sa || !user.roles.length || (user.roles.indexOf(item.role) !== -1)) {
-					REDIRECT(item.url);
-					return;
-				}
-			}
-		});
+		PLUGIN('main', function(exports) {
 
-		common.nav.forEach(function(item) {
-			ROUTE(item.url, function() {
+			exports.plugin = function(el) {
+				var id = el instanceof jQuery ? el.attrd('if') : el;
+				var item = common.nav.findItem('value', id);
 				EMIT('page', item);
-				SET('common.page', item.value);
-			});
+				SET('common.page', id);
+			};
+
 		});
 
 	</script>
