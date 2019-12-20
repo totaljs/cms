@@ -1,10 +1,10 @@
 <div data---="form__cmseditor.form__if:sourcecode;width:1100;submit:cmseditorsourcecode/submit;cancel:cmseditorsourcecode/cancel;title:@(Source-code);icon:code" class="hidden">
 
 	<div class="padding">
-		<div data---="codemirror__cmseditor.sourcecode__height:500;required:true;tabs:true;trim:true">@(HTML)</div>
+		<div data---="codemirror__cmseditorsourcecode__height:500;required:true;tabs:true;trim:true">@(HTML)</div>
 	</div>
 
-	<nav data---="validation__cmseditor.sourcecode">
+	<nav data---="validation__cmseditorsourcecode">
 		<button name="submit">@(APPLY)</button>
 		<button name="cancel">@(Cancel)</span>
 	</nav>
@@ -16,7 +16,7 @@
 	PLUGIN('cmseditorsourcecode', function(exports) {
 
 		exports.submit = function(hide) {
-			cmseditor.instance.replace(cmseditor.sourcecode);
+			cmseditor.instance.replace(cmseditorsourcecode);
 			hide();
 		};
 

@@ -1,6 +1,6 @@
 <div data-scope="pages">
 
-	<div data---="layout__null__parent:window" class="invisible">
+	<div data---="layout__null__parent:window;margin:58" class="invisible">
 
 		<script type="text/plain">
 			{
@@ -11,16 +11,6 @@
 		</script>
 
 		<section data-type="top2">
-
-			<!--
-			<div class="toolbar">
-				<button class="right exec highlight hidden-xs" data-exec="?/create"><i class="fa fa-plus-circle"></i>@(Create)</button>
-				<button class="exec" data-exec="?/options"><i class="fa fa-cogs"></i>@(Options)</button>
-				<span></span>
-				<button class="exec" data-exec="?/checked" name="checked" disabled="disabled"><i class="fa fa-check-circle"></i>@(Checked)</button>
-			</div>
-		-->
-
 			<div class="header">
 				<label><i class="far fa-file-alt"></i>@(List of pages)</label>
 				<nav data-bind="?.checked__enabled .S:value && value.length">
@@ -35,19 +25,19 @@
 			<div class="padding">
 				<div class="caption"><i class="fa fa-clone"></i>@(Options)</div>
 				<nav class="links">
-					<button class="exec b selected" data-exec="?/create"><i class="fa fa-plus-circle"></i>@(Add new page)</button>
+					<button class="exec b" data-exec="?/create"><i class="fa fa-plus-circle"></i>@(Add new page)</button>
 					<button class="exec" data-path="common.form" data-value="'pages-globals'"><i class="fa fa-cog"></i>@(Variables)</button>
 					<button class="exec" data-path="common.form" data-value="'widgets-globals'"><i class="fa fa-paint-brush"></i>@(Global style/script)</button>
 					<button class="exec b" data-path="common.form" data-value="'pages-redirects'"><i class="fa fa-retweet"></i>@(Redirects)</button>
 				</nav>
 			</div>
-			<div class="padding npt" data-bind="common.dependencies.navigations__show:value && value.length">
+			<div class="padding" data-bind="common.dependencies.navigations__show:value && value.length">
 				<div class="caption"><i class="fa fa-sitemap"></i>@(Navigations)</div>
-				<nav data-bind="common.dependencies.navigations__template" class="buttonmenu">
+				<nav data-bind="common.dependencies.navigations__template" class="links">
 					<script type="text/html">
 						{{ if value }}
 							{{ foreach m in value }}
-								<button data-id="{{ m.id }}" class="exec" data-exec="?/navigation"><i class="fa fa-chevron-right"></i>{{ m.name }}</button>
+								<button data-id="{{ m.id }}" class="exec" data-exec="?/navigation"><i class="fa fa-navicon"></i>{{ m.name }}</button>
 							{{ end }}
 						{{ fi }}
 					</script>
@@ -56,12 +46,12 @@
 		</section>
 
 		<section data-type="main">
-			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?.checked;button:?/button;noborder:1;height:window;margin:90">
+			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?.checked;button:?/button;noborder:1;height:window;margin:103;dblclick:?/update">
 				<script type="text/plain">
 				[
 					{ name: 'path', text: '@(Name)', width: 300, template: '{{ language | language }}{{ if icon }}<i class="{{ icon }} mr5"></i>{{ fi }}{{ path | pagespath }}{{ if draft }}<span class="badge badge-red ml5">@(draft)</span>{{ fi }}{{ if ispartial }}<span class="badge badge-green ml5">@(partial)</span>{{ fi }}', classth: 'left', classfilter: 'left' },
 					{ name: 'url', text: '@(URL address)', width: 230, template: '{{ if ispartial }}<span class="silver">{{ url }}</span>{{ else }}{{ url }}{{ fi }}', class: 'hidden-xs' },
-					{ name: 'language', text: '<i class="fa fa-flag" style="margin-right:0"></i>', width: 50, title: '@(Language)', sort: false, align: 1, filter: ' ' },
+					{ name: 'language', text: '@(Language)', width: 80, sort: false, align: 1 },
 					{ name: 'dtupdated', text: '@(Updated)', format: '[date]', width: 100, sort: false, align: 1 },
 					{ name: '@(Options)', filter: false, align: 2, sort: false, width: 150, template: '{{ if !ispartial }}<a href="{{ url }}" class="fs11 mr5" target="_blank">@(show)</a>{{ fi }}<div class="inline mr10"><button title="@(Duplicate)" name="duplicate"><i class="far fa-copy"></i></button><button name="update" title="@(Edit)"><i class="fa fa-pencil"></i></button><button class="btn-remove" name="remove" title="@(Remove)"><i class="far fa-trash-o"></i></button></div>' }
 				]
@@ -123,14 +113,16 @@
 			exports.refresh();
 		};
 
+		exports.update = function(row) {
+			exports.button('update', row);
+		};
+
 		exports.button = function(name, row, grid) {
 			switch (name) {
 				case 'remove':
-					SETTER('confirm', 'show', '@(Are you sure you want to remove selected page?)', ['"trash"@(Remove)', '@(No)'], function(index) {
-						if (!index) {
-							FUNC.loading(true);
-							AJAX('DELETE [url]api/pages/', row, AJAX('DELETE [url]api/pages/', row, FUNC.messageresponse('@(Pages has been removed successfully)', exports.refresh)));
-						}
+					SETTER('confirm', 'show2', '@(Are you sure you want to remove selected page?)', ['"trash"@(Remove)', '@(No)'], function() {
+						FUNC.loading(true);
+						AJAX('DELETE [url]api/pages/', row, FUNC.messageresponse('@(Pages has been removed successfully)', exports.refresh));
 					});
 					break;
 				case 'update':
@@ -156,7 +148,6 @@
 
 						SET('cmseditor.css', response.css);
 						SET('cmseditor.template', response.template);
-
 						SET('pagesform', response, true);
 						SET('common.form', 'pagesform');
 					});

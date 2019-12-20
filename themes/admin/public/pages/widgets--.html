@@ -1,54 +1,39 @@
-<div data-scope="widgets">
-
-	<div data---="layout__null__parent:window;margin:58" class="invisible">
-
-		<script type="text/plain">
-			{
-				right: { size: 250 },
-				top: { size: 45 },
-				main: {}
-			}
-		</script>
-
-		<section data-type="top2">
-			<div class="header">
-				<label><i class="far fa-file-alt"></i>@(List of widgets)</label>
-				<nav data-bind="?.checked__enabled .S:value && value.length">
-					<button class="exec" data-exec="?/create"><i class="fa fa-plus-circle"></i>@(Create)</button>
-					<button class="exec" data-exec="?/options"><i class="fa fa-wrench"></i>@(Options)</button>
-					<button class="exec S" data-exec="?/checked" disabled><i class="fa fa-check-circle"></i>@(Checked)</button>
-				</nav>
-			</div>
-		</section>
-
-		<section data-type="right">
-			<div class="padding">
-				<div class="caption"><i class="fa fa-clone"></i>@(Options)</div>
-				<nav class="links">
-					<button class="exec" data-path="common.form" data-value="'pages-globals'"><i class="fa fa-cog"></i>@(Variables)</button>
-					<button class="exec hidden b" data-bind="common.componentator__show:value !== false" data-exec="?/import"><i class="fa fa-cloud-download"></i>@(Download widgets)</button>
-					<button class="exec" data-path="common.form" data-value="'widgets-globals'"><i class="fa fa-paint-brush"></i>@(Global style/script)</button>
-				</nav>
-			</div>
-		</section>
-
-		<section data-type="main">
-			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?.checked;button:?/button;noborder:1;height:window;margin:103;dblclick:?/update">
-				<script type="text/plain">
+<div data-scope="widgets" class="container">
+	<div class="toolbar">
+		<button class="right highlight exec" data-exec="?/create"><i class="fa fa-plus-circle"></i>@(Create)</button>
+		<button class="exec" data-exec="?/options"><i class="fa fa-cogs"></i>@(Options)</button>
+		<span></span>
+		<button class="exec" data-exec="?/checked" name="checked" disabled="disabled"><i class="fa fa-check-circle"></i>@(Checked)</button>
+	</div>
+	<div class="row">
+		<div class="col-md-9">
+			<div class="fullheight">
+				<div data---="datagrid__?.grid__padding:10;checked:?/checkbox;button:?/button">
+					<script type="text/plain">
 					[
 						{ name: 'name', text: '@(Name)', width: 430, template: '{{ if picture }}<i class="fa fa-camera mr5 blue"></i>{{ fi }}{{ name }}' },
 						{ name: 'category', text: '@(Category)', width: 200, class: 'hidden-xs' },
 						{ name: '@(Options)', filter: false, align: 1, sort: false, width: 100, template: '<button title="@(Duplicate)" name="duplicate"><i class="far fa-copy"></i></button><button name="update" title="@(Edit)"><i class="fa fa-pencil"></i></button><button class="btn-remove" name="remove" title="@(Remove)"><i class="far fa-trash-o"></i></button>' }
 					]
-				</script>
+					</script>
+				</div>
 			</div>
-
-		</section>
+		</div>
+		<div class="col-md-3">
+			<div class="panel m">
+				<label><i class="fa fa-clone"></i>@(Globals)</label>
+				<div class="panelbody">
+					<nav class="buttonmenu">
+						<button class="exec" data-path="common.form" data-value="'pages-globals'"><i class="fa fa-cog"></i>@(Variables)</button>
+						<button class="exec hidden b" data-bind="common.componentator__show:value !== false" data-exec="?/import"><i class="fa fa-cloud-download"></i>@(Download widgets)</button>
+						<button class="exec" data-path="common.form" data-value="'widgets-globals'"><i class="fa fa-paint-brush"></i>@(Global style/script)</button>
+					</nav>
+				</div>
+			</div>
+		</div>
 	</div>
-
 </div>
-
-<div data---="importer__common.form__if:widgetsform;url:[url]forms/widgets.html;cleaner:5"></div>
+<div data---="importer__common.form__if:widgets-form;url:[url]forms/widgets.html;cleaner:5"></div>
 
 <script>
 	PLUGIN('widgets', function(exports) {
@@ -75,7 +60,7 @@
 		};
 
 		exports.import = function() {
-			SET('common.form3', 'widgetsimport');
+			SET('common.form3', 'widgets-import');
 		};
 
 		exports.reload = function() {
@@ -116,17 +101,16 @@
 		};
 
 		exports.create = function() {
-			SETR('widgetsform', {});
-			SET('common.form', 'widgetsform');
+			SET('?.form', {}, true);
+			SET('common.form', 'widgets-form');
 		};
 
 		exports.options = function(el) {
 			var options = {};
 			options.element = el;
 			options.items = [];
-			options.items.push({ id: 'create', name: '@(Create widget)', icon: 'plus-circle green' });
 			options.items.push({ id: 'refresh', name: '@(Refresh)', icon: 'refresh' });
-			options.items.push('-');
+			options.items.push({ id: 'create', name: '@(Create widget)', icon: 'plus-circle' });
 			options.items.push({ id: 'import', name: '@(Download existing)', icon: 'cloud-download' });
 			options.items.push({ id: 'widgets-globals', name: '@(Global CSS/JS)', icon: 'paint-brush' });
 			options.items.push({ id: 'pages-globals', name: '@(Variables)', icon: 'clone' });

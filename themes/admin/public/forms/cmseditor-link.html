@@ -1,28 +1,29 @@
 <div data---="form__cmseditor.form__if:link;width:600;height:450;autofocus:true;submit:cmseditorlink/submit;cancel:cmseditorlink/cancel;reload:cmseditorlink/reload;title:@(Link editor);icon:link" class="hidden">
-
-	<div class="padding">
-		<div data---="input__cmseditor.link.href2__dirsource:%links;icon:sitemap;dirkey:path;dirvalue:url" class="m">@(URL according to the sitemap)</div>
-	</div>
-	<hr class="nmt nmb" />
-	<div class="padding bg-yellow">
-		<div data---="input__cmseditor.link.href__icon:globe;required:true;autocomplete:cmseditorlink/autocomplete">@(URL address)</div>
-		<div class="m mt10 fs12">
-			<span class="link exec mr10" data-exec="cmseditorlink/type" data-type="upload"><i class="fa fa-folder-o mr5"></i>@(Browse files)</span>
-			<span class="link exec mr10" data-exec="cmseditorlink/type" data-type="email"><i class="fa fa-envelope-o mr5"></i>@(Email)</span>
-			<span class="link exec" data-exec="cmseditorlink/type" data-type="phone"><i class="fa fa-phone mr5"></i>@(Phone number)</span>
+	<div data-scope="cmseditorlink">
+		<div class="padding">
+			<div data---="input__?.href2__dirsource:%links;icon:sitemap;dirkey:path;dirvalue:url" class="m">@(URL according to the sitemap)</div>
 		</div>
-		<div data---="input__cmseditor.link.target__dirsource:cmseditorlink.target;required:true" class="m">@(Target)</div>
-		<div data---="input__cmseditor.link.title__icon:info-circle" class="m">@(Tooltip)</div>
-		<div data---="checkbox__cmseditor.link.alllinks">@(Apply on all links in the parent container)</div>
-	</div>
-	<div class="padding">
-		<div data-bind="cmseditor.link.tracking__show:!value" class="hidden">
-			<div class="help"><i class="fa fa-chart-bar mr5"></i>@(This feature tracks clicks to this link.)</div>
-			<div class="fs12 b"><span class="link exec" data-path="common.form2" data-value="'tracking'">@(Enable link tracking)</span></div>
+		<hr class="nmt nmb" />
+		<div class="padding bg-yellow">
+			<div data---="input__?.href__icon:globe;required:true;autocomplete:?/autocomplete">@(URL address)</div>
+			<div class="m mt10 fs12">
+				<span class="link exec mr10" data-exec="?/type" data-type="upload"><i class="fa fa-folder-o mr5"></i>@(Browse files)</span>
+				<span class="link exec mr10" data-exec="?/type" data-type="email"><i class="fa fa-envelope-o mr5"></i>@(Email)</span>
+				<span class="link exec" data-exec="?/type" data-type="phone"><i class="fa fa-phone mr5"></i>@(Phone number)</span>
+			</div>
+			<div data---="input__?.target__dirsource:?.target;required:true" class="m">@(Target)</div>
+			<div data---="input__?.title__icon:info-circle" class="m">@(Tooltip)</div>
+			<div data---="checkbox__?.alllinks">@(Apply on all links in the parent container)</div>
 		</div>
-		<div data-bind="cmseditor.link.tracking__show:value" class="hidden">
-			<div data---="nosqlcounter__cmseditor.link.tracking"></div>
-			<div class="fs11 mt5"><span class="link red exec" data-exec="cmseditorlink/removetracking"><i class="fa fa-times-circle mr5"></i>@(Remove tracking)</span></div>
+		<div class="padding">
+			<div data-bind="?.tracking__show:!value" class="hidden">
+				<div class="help"><i class="fa fa-chart-bar mr5"></i>@(This feature tracks clicks to this link.)</div>
+				<div class="fs12 b"><span class="link exec" data-path="common.form2" data-value="'tracking'">@(Enable link tracking)</span></div>
+			</div>
+			<div data-bind="?.tracking__show:value" class="hidden">
+				<div data---="nosqlcounter__?.tracking"></div>
+				<div class="fs11 mt5"><span class="link red exec" data-exec="?/removetracking"><i class="fa fa-times-circle mr5"></i>@(Remove tracking)</span></div>
+			</div>
 		</div>
 	</div>
 
@@ -37,17 +38,17 @@
 
 	PLUGIN('cmseditorlink', function(exports) {
 
-		SET('cmseditorlink.target', [{ name: '@(Current tab or window)', id: '_self' },{ name: '@(New tab or window)', id: '_blank' }]);
+		SET('?.target', [{ name: '@(Current tab or window)', id: '_self' },{ name: '@(New tab or window)', id: '_blank' }]);
 
-		WATCH('cmseditor.link.href2', function(path, value, type) {
+		WATCH('?.href2', function(path, value, type) {
 			if (value && type === 2)
-				SET('cmseditor.link.href', value);
+				SET('?.href', value);
 		});
 
-		WATCH('cmseditor.link.href', function(path, value, type) {
-			SET('cmseditor.link.href2', value);
+		WATCH('?.href', function(path, value, type) {
+			SET('?.href2', value);
 			if (type === 2 && cmseditor.link.target !== '_blank' && (/^(http|https)\:\/\//i).test(value))
-				SET('cmseditor.link.target', '_blank');
+				SET('?.target', '_blank');
 		}, true);
 
 		exports.reload = function() {
@@ -63,10 +64,10 @@
 					cmseditor.instance.filebrowser(path);
 					break;
 				case 'email':
-					SET(path, 'mailto:' + cmseditor.link.href.replace(r, ''));
+					SET(path, 'mailto:' + cmseditorlink.href.replace(r, ''));
 					break;
 				case 'phone':
-					SET(path, 'tel:' + cmseditor.link.href.replace(r, ''));
+					SET(path, 'tel:' + cmseditorlink.href.replace(r, ''));
 					break;
 			}
 		};
@@ -75,7 +76,7 @@
 
 			var editor = cmseditor.instance;
 			var target = editor.getTarget();
-			var obj = cmseditor.link;
+			var obj = cmseditorlink;
 			var link;
 
 			if (target.prop('tagName') === 'A')
@@ -147,22 +148,20 @@
 		};
 
 		exports.tracking = function(id) {
-			AJAX('GET [url]api/tracking/{0}/'.format(id), 'cmseditor.link.tracking');
-			cmseditor.link.idtracking = id;
+			AJAX('GET [url]api/tracking/{0}/'.format(id), '?.tracking');
+			cmseditorlink.idtracking = id;
 		};
 
 		exports.removetracking = function() {
-			var id = cmseditor.link.idtracking;
+			var id = cmseditorlink.idtracking;
 			cmseditor.link.idtracking = null;
 			SET('cmseditor.link.tracking', null);
-			SETTER('confirm', 'show', '@(Do you want to remove this tracking from database?)', ['"trash-o"@(Remove)', '@(No)'], function(index) {
-				if (!index) {
-					AJAX('DELETE [url]api/tracking/{0}/'.format(id), NOOP);
-					var arr = GET('%tracking');
-					if (arr) {
-						arr = arr.remove('id', id);
-						SET('%tracking', arr);
-					}
+			SETTER('confirm', 'show2', '@(Do you want to remove this tracking from database?)', ['"trash-o" @(Remove)', '@(No)'], function(index) {
+				AJAX('DELETE [url]api/tracking/{0}/'.format(id), NOOP);
+				var arr = GET('%tracking');
+				if (arr) {
+					arr = arr.remove('id', id);
+					SET('%tracking', arr);
 				}
 			});
 		};

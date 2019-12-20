@@ -31,7 +31,6 @@
 		obj.crop = {};
 		obj.widget = {};
 		obj.settings = {};
-		obj.sourcecode = '';
 		obj.html = {};
 		obj.instance = null;
 		obj.widgets = []; // Contains all widgets
@@ -927,7 +926,7 @@
 					target = tmp;
 					target.data('temporary', true);
 
-					var link = cmseditor.link;
+					var link = cmseditorlink;
 
 					link.file = '';
 					link.href = '';
@@ -937,7 +936,7 @@
 					link.tracking = null;
 					link.idtracking = null;
 
-					UPDATE('cmseditor.link', true);
+					UPDATE('cmseditorlink', true);
 					SET('cmseditor.form', 'link');
 					return;
 				}
@@ -1129,7 +1128,7 @@
 						});
 
 						var tag = targettmp[0].nodeName;
-						var cattr = cmseditor.attribute;
+						var cattr = cmseditorattribute;
 
 						cattr.isimage = tag === 'IMG';
 						cattr.config = targettmp.attrd('jc-config');
@@ -1181,7 +1180,7 @@
 							cattr.alt = targettmp.attr('alt') || '';
 						}
 
-						UPDATE('cmseditor.attribute', true);
+						UPDATE('cmseditorattribute', true);
 						SET('cmseditor.form', 'attribute');
 						return;
 
@@ -1204,7 +1203,7 @@
 							idtracking = tmp.attrd('cms-track');
 						}
 
-						var link = cmseditor.link;
+						var link = cmseditorlink;
 						link.file = '';
 						link.href = href;
 						link.target = targ;
@@ -1213,7 +1212,7 @@
 						link.tracking = null;
 						link.idtracking = idtracking;
 
-						UPDATE('cmseditor.link', true);
+						UPDATE('cmseditorlink', true);
 						SET('cmseditor.form', 'link');
 						return;
 
@@ -1435,7 +1434,7 @@
 		self.sourcecode = function() {
 			SETTER('loading', 'show');
 			self.save(function() {
-				SET('cmseditor.sourcecode', self.getSourceCode().replace(/\n[\s\t]+\n/g, '\n'), true);
+				SET('cmseditorsourcecode', self.getSourceCode().replace(/\n[\s\t]+\n/g, '\n'), true);
 				SET('cmseditor.form', 'sourcecode');
 			}, 'sourcecode');
 		};

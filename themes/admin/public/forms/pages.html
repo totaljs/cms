@@ -51,7 +51,7 @@
 					<div class="help">@(Meta title, maximum 60 chars.)</div>
 				</div>
 				<div class="col-md-4">
-					<div data---="input__?.description__icon:align-center;maxlength:120">@(Description)</div>
+					<div data---="input__?.description__maxlength:120">@(Description)</div>
 					<div class="help">@(Meta description, maximum 120 chars.)</div>
 				</div>
 				<div class="col-md-4 m">
@@ -61,42 +61,35 @@
 			</div>
 			<div class="row mt10">
 				<div class="col-md-4 m">
-					<div data---="textboxlist__?.redirects__icon:retweet;placeholder:@(Add a relative URL address and press enter)">@(Redirects)</div>
-					<div class="help">@(URL address for redirecting to this page e.g. <code>/products/</code>)</div>
-				</div>
-				<div class="col-md-4 m">
 					<div data---="dropdowncheckbox__?.navigations__alltext:null;datasource:common.dependencies.navigations;empty:@(Doesn't contain any navigations.);icon:navicon;cleaner:false">@(Side navigations)</div>
 					<div class="help">@(Add side navigations.)</div>
 				</div>
+				<div class="col-md-4 m">
+					<div data---="dropdowncheckbox__?.partial__alltext:null;datasource:pages.partial;empty:@(Doesn't contain any partial pages.);cleaner:false">@(Nested partial pages)</div>
+					<div class="help">@(Join other partial pages with this.)</div>
+				</div>
 				<div class="col-md-2 m">
-					<div data---="input__?.language__icon:flag;dirsource:common.dependencies.languages;dirplaceholder:@(Search language);dirempty:@(No language)">@(Language)</div>
+					<div data---="input__?.language__dirsource:common.dependencies.languages;dirplaceholder:@(Search language);dirempty:@(No language)">@(Language)</div>
+				</div>
+				<div class="col-md-2 m">
+					<div class="fs12" style="margin-bottom:5px">@(Choose icon):</div>
+					<div data---="faiconsbutton__?.icon"></div>
 				</div>
 			</div>
 		</div>
-		<div class="padding bg-yellow">
+		<div class="padding bg-yellow npb">
 			<div class="row">
-				<div class="col-md-8">
-					<div class="row">
-						<div class="col-md-6 m">
-							<div data---="dropdowncheckbox__?.signals__alltext:null;datasource:common.dependencies.signals;empty:@(Doesn't contain any signals.);icon:dot-circle-o">@(Signals)</div>
-							<div class="help">@(Signals can start special actions when the page is displayed.)</div>
-						</div>
-						<div class="col-md-6 m">
-							<div data---="dropdowncheckbox__?.partial__alltext:null;datasource:pages.partial;empty:@(Doesn't contain any partial pages.);icon:database;cleaner:false">@(Nested partial pages)</div>
-							<div class="help">@(Join other partial pages with this.)</div>
-						</div>
-					</div>
-					<hr />
-					<div class="b"><i class="fa fa-cog mr5"></i>@(Settings for navigations)</div>
-					<div style="margin-top:8px">
-						<div data---="checkbox__?.navicon" class="inline mr10">@(Replace icon in all navigations)</div>
-						<div data---="checkbox__?.navname" class="inline mr10">@(Replace name and language in all navigations)</div>
-						<div data---="checkbox__?.replacelink" class="inline">@(Replace older URL in the whole content)</div>
-					</div>
+				<div class="col-md-6 m">
+					<div data---="dropdowncheckbox__?.signals__alltext:null;datasource:common.dependencies.signals;empty:@(Doesn't contain any signals.);icon:dot-circle-o">@(Signals)</div>
+					<div class="help">@(Signals can start special actions when the page is displayed.)</div>
 				</div>
-				<div class="col-md-4">
-					<div class="fs12"><i class="fab fa-fa mr5"></i>@(Choose icon):</div>
-					<div class="mt5" data---="fontawesomebox__?.icon__search:@(Search icons);height:160"></div>
+				<div class="col-md-6 m">
+					<div class="b"><i class="fa fa-cog mr5"></i>@(Settings for navigations)</div>
+					<div class="mt5">
+						<div data---="checkbox__?.navicon" class="inline mr10">@(Replace icon in navigations)</div>
+						<div data---="checkbox__?.navname" class="inline mr10">@(Replace name and language in navigations)</div>
+						<div data---="checkbox__?.replacelink" class="inline">@(Replace older URL in all pages)</div>
+					</div>
 				</div>
 			</div>
 		</div>
