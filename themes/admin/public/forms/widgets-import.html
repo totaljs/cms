@@ -1,36 +1,34 @@
 <style>
 	.widgetext { cursor: pointer; position: relative; }
-	.widgetext img { border: 1px solid #E0E0E0; border-radius: 3px; }
-	.widgetext-name { font-weight: bold; color: black; margin-top: 8px; line-height: 16px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-	.widgetext-category { font-size: 11px; color: gray; }
-	.widgetext .fa { margin-right: 5px; }
+	.widgetext img { border: 1px solid #E0E0E0; border-radius: 2px; }
+	.widgetext-name { font-weight: bold; color: black; line-height: 16px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+	.widgetext-category { font-size: 11px; color: gray; margin-top: 8px;  }
+	.widgetext i { margin-right: 5px; }
 	.widgetext .fa-check-circle { display: none; }
 	.widgetextinstalled .fa-check-circle { display: block; position: absolute; font-size: 40px; right: 10px; bottom: 50px; background-color: white; border-radius: 100px; padding: 0 2px 0; }
 	.widgetextinstalled img { border-color: #79AF65; }
 </style>
 
-<div data---="form__common.form3__if:widgetsimport;width:800;reload:widgetsimport/show;scroll:false;icon:plug;title:@(Download existing widgets)" class="hidden">
+<div data---="form__common.form3__if:widgetsimport;width:1100;reload:widgetsimport/show;scroll:false;icon:plug;title:@(Download existing widgets)" class="hidden">
 
-	<div class="padding npb mb10">
-		<div class="tabmenu-container">
-			<ul data---="tabmenu__widgets.externaltab__null__'all'" class="tabmenu tabmenu-bordered">
-				<li data-value="all">@(All)</li>
-				<li data-value="Layouts">@(Layouts)</li>
-				<li data-value="Columns">@(Columns)</li>
-				<li data-value="Content">@(Content)</li>
-				<li data-value="Inline">@(Inline)</li>
-			</ul>
-		</div>
+	<div class="tabmenu-container">
+		<ul data---="tabmenu__widgets.externaltab__null__'all'" class="tabmenu tabmenu-bordered">
+			<li data-value="all">@(All)</li>
+			<li data-value="Layouts">@(Layouts)</li>
+			<li data-value="Columns">@(Columns)</li>
+			<li data-value="Content">@(Content)</li>
+			<li data-value="Inline">@(Inline)</li>
+		</ul>
 	</div>
 
-	<div data---="listing__widgets.external -> widgetsimport/filter(value)" class="padding">
+	<div data---="listing__widgets.external -> widgetsimport/filter(value)__count:18" class="padding">
 		<script type="text/html">
-			<div class="col-xs-4 col-sm-3 m">
+			<div class="col-xs-3 col-sm-2 m">
 				<div class="widgetext exec{{ id | widgetsinstalled }}" data-id="{{ id }}" data-exec="widgetsimport/submit">
 					<i class="fa fa-check-circle green"></i>
 					<div><img src="{{ picture }}" border="0" class="img-responsive" /></div>
+					<div class="widgetext-category"><i class="far fa-folder-o"></i>{{ category }}</div>
 					<div class="widgetext-name">{{ name }}</div>
-					<div class="widgetext-category"><i class="fa fa-folder-o"></i>{{ category }}</div>
 				</div>
 			</div>
 		</script>

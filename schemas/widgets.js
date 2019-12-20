@@ -26,8 +26,8 @@ NEWSCHEMA('Widget', function(schema) {
 	// Gets listing
 	schema.setQuery(function($) {
 		var filter = NOSQL('widgets').find();
-		filter.sort('datecreated', true);
-		filter.fields('id', 'picture', 'name', 'icon', 'category', 'datecreated', 'reference');
+		filter.sort('dtcreated', true);
+		filter.fields('id', 'picture', 'name', 'icon', 'category', 'dtcreated', 'reference', 'dtupdated');
 		filter.callback((err, docs, count) => $.callback(filter.adminOutput(docs, count)));
 	});
 
@@ -61,10 +61,11 @@ NEWSCHEMA('Widget', function(schema) {
 		var isUpdate = !!model.id;
 
 		if (isUpdate) {
-			model.dateupdated = NOW;
+			model.dtupdated = NOW;
 		} else {
 			model.id = UID();
-			model.datecreated = NOW;
+			model.dtcreated = NOW;
+			model.dtupdated = NOW;
 		}
 
 		var replace = model.replace;
@@ -125,7 +126,7 @@ NEWSCHEMA('Widget', function(schema) {
 				// updating
 				// loads file content
 				Fs.readFile($.options.filename, function(err, data) {
-					NOSQL('widgets').modify({ body: data.toString('utf8'), dateupdated: NOW }).where('id', widget.id).callback(function() {
+					NOSQL('widgets').modify({ body: data.toString('utf8'), dtupdated: NOW }).where('id', widget.id).callback(function() {
 						setTimeout2('widgets', refresh, 300);
 					});
 				});
@@ -137,7 +138,7 @@ NEWSCHEMA('Widget', function(schema) {
 
 		var category = meta.match(/\w+/).toString().capitalize();
 		Fs.readFile($.options.filename, function(err, data) {
-			NOSQL('widgets').insert({ id: UID(), name: U.getName(meta).replace('.' + U.getExtension(meta), '').capitalize(), reference: meta, body: data.toString('utf8'), datecreated: NOW, picture: '', icon: '', category: category }).callback(function() {
+			NOSQL('widgets').insert({ id: UID(), name: U.getName(meta).replace('.' + U.getExtension(meta), '').capitalize(), reference: meta, body: data.toString('utf8'), dtcreated: NOW, picture: '', icon: '', category: category }).callback(function() {
 				setTimeout2('widgets', refresh, 300);
 			});
 		});

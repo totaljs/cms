@@ -510,7 +510,7 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .ui-features li:hover { background-color: #F8F8F8; }
 .ui-features-noscroll { overflow: hidden !important; }
 
-.ui-listing-paginate { margin: 10px 0; padding: 15px 0 0; border-top: 1px solid #E0E0E0; }
+.ui-listing-paginate { margin: 10px 0; padding: 20px 0 0; border-top: 1px solid #E0E0E0; text-align: center; }
 .ui-listing-paginate button { width: 28px; height: 28px; background-color: white; border: 1px solid #4285F4; border-left: 0; outline: 0; border-radius: 0; font-size: 12px; color: #4285F4; padding: 1px 0 0; margin: 0; user-select: none; }
 .ui-listing-paginate button:first-child { margin-left: 0; border-bottom-left-radius: 3px; border-top-left-radius: 3px; border-left: 1px solid #4285F4; }
 .ui-listing-paginate button:last-child { margin-left: 0; border-bottom-right-radius: 3px; border-top-right-radius: 3px; }

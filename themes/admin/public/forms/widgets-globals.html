@@ -1,13 +1,11 @@
-<div data---="form__common.form__if:widgets-globals;width:800;reload:widgetsglobals/reload;submit:widgetsglobals/submit;icon:clone;title:@(Edit global style and script)" class="hidden">
+<div data---="form__common.form__if:widgetsglobals;width:800;reload:widgetsglobals/reload;submit:widgetsglobals/submit;icon:clone;title:@(Edit global style and script)" class="hidden">
 
-	<div class="padding bg-smoke mb10 npb">
-		<p class="nmt">@(Globals variables can contain preddefined values for styles and main script. Styles support auto-vendor-prefixes and variable declaration like in SASS. All content will be minified into the single file of CSS and JS.)</p>
-		<div class="tabmenu-container">
-			<ul data---="tabmenu__widgets.formglobalstab__null__'css'" class="tabmenu tabmenu-bordered">
-				<li data-value="css"><i class="fa fa-paint-brush"></i>@(Style)</li>
-				<li data-value="js"><i class="fa fa-code"></i>@(Script)</li>
-			</ul>
-		</div>
+	<div class="padding bg-smoke" style="padding-bottom:5px">
+		<p class="nmt nmb">@(Globals variables can contain preddefined values for styles and main script. Styles support auto-vendor-prefixes and variable declaration like in SASS. All content will be minified into the single file of CSS and JS.)</p>
+		<ul data---="tabmenu__widgets.formglobalstab__null__'css'" class="tabmenu tabmenu-bordered">
+			<li data-value="css"><i class="fa fa-paint-brush"></i>@(Style)</li>
+			<li data-value="js"><i class="fa fa-code"></i>@(Script)</li>
+		</ul>
 	</div>
 
 	<div class="padding" data-bind="widgets.formglobalstab__show:value==='css'__exec:widgetsglobals/redraw">
