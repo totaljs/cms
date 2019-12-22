@@ -15,7 +15,7 @@
 	.ui-navigation-language:first-child { margin-top: 0; }
 </style>
 
-<div data---="form__common.form__icon:sitemap;if:pages-navigation;width:800;submit:pagesnavigation/submit;reload:pagesnavigation/reload" class="hidden">
+<div data---="form__common.form__icon:sitemap;if:pagesnavigation;width:800;submit:pagesnavigation/submit;reload:pagesnavigation/reload" class="hidden">
 
 	<div class="toolbar toolbar2 nmt nmb">
 		<button class="exec" data-exec="pagesnavigation/create"><i class="fa fa-plus-circle"></i>@(Add new)</button>
@@ -24,10 +24,10 @@
 	</div>
 
 	<div class="padding">
-		<div data---="navigation__pages.navigation.children" class="mt10"></div>
+		<div data---="navigation__pagesnavigation.children" class="mt10"></div>
 	</div>
 
-	<nav data---="validation__pages.navigation">
+	<nav data---="validation__pagesnavigation">
 		<button name="submit">@(APPLY)</button>
 		<button name="cancel">@(Cancel)</button>
 	</nav>
@@ -55,8 +55,8 @@
 					var item = self.finditem(id, self.get());
 					var obj = CLONE(item.item);
 					obj.$target = item.children;
-					SET('pages.navigationitem', obj, true);
-					SET('common.form2', 'pages-navigation-item');
+					SETR('pagesnavigationitem', obj);
+					SET('common.form2', 'pagesnavigationitem');
 				} else if (el.hclass('remove')) {
 					var item = self.finditem(id, self.get());
 					var index = item.children.indexOf(item.item);
@@ -70,8 +70,8 @@
 					obj.$target = item.item.children;
 					obj.behaviour = 'default';
 					obj.target = '_self';
-					SET('pages.navigationitem', obj, true);
-					SET('common.form2', 'pages-navigation-item');
+					SETR('pagesnavigationitem', obj);
+					SET('common.form2', 'pagesnavigationitem');
 				}
 			});
 
@@ -179,29 +179,29 @@
 		};
 	});
 
-	Tangular.register('navigationchildren', function(value, template) {
+	Thelpers.navigationchildren = function(value, template) {
 		var builder = [];
 		for (var i = 0, length = value.length; i < length; i++) {
 			var item = value[i];
 			builder.push(template(item, { template: template }));
 		}
 		return builder.join('');
-	});
+	};
 
 	PLUGIN('pagesnavigation', function(exports) {
 
 		exports.create = function() {
-			SET('pages.navigationitem', { $target: pages.navigation.children, target: '_self', behaviour: 'default' }, true);
-			SET('common.form2', 'pages-navigation-item');
+			SETR('pagesnavigationitem', { $target: pagesnavigation.children, target: '_self', behaviour: 'default' });
+			SET('common.form2', 'pagesnavigationitem');
 		};
 
 		exports.clear = function() {
-			SET('pages.navigation.children', []);
-			CHANGE('pages.navigation.children', true);
+			SET('?.children', []);
+			CHANGE('?.children', true);
 		};
 
 		exports.reload = function(com) {
-			com.reconfigure({ title: '@(Edit navigation: {0})'.format(common.dependencies.navigations.findItem('id', pages.navigation.id).name) });
+			com.reconfigure({ title: '@(Edit: {0})'.format(common.dependencies.navigations.findItem('id', pagesnavigation.id).name) });
 		};
 
 		exports.submit = function(hide) {
@@ -214,8 +214,8 @@
 				}
 			}
 
-			clean(pages.navigation.children);
-			AJAX('POST [url]api/nav/ REPEAT', pages.navigation, function(response) {
+			clean(pagesnavigation.children);
+			AJAX('POST [url]api/nav/ REPEAT', pagesnavigation, function(response) {
 				FUNC.loading(false, 1000);
 				hide();
 			});

@@ -106,16 +106,16 @@
 					<div class="col-lg-2 col-md-3 m">
 						<div class="keyvalue">
 							<div class="key"><i class="fa fa-calendar"></i>@(Created)</div>
-							<div class="value" data-bind="?.datecreated__html:Thelpers.time(value)"></div>
+							<div class="value" data-bind="?.dtcreated__html:Thelpers.time(value)"></div>
 						</div>
 					</div>
 					<div class="col-lg-2 col-md-3 m">
 						<div class="keyvalue">
 							<div class="key"><i class="fa fa-calendar"></i>@(Updated)</div>
-							<div class="value" data-bind="?.dateupdated__html:value ? Thelpers.time(value) : '@(unchanged)'"></div>
+							<div class="value" data-bind="?.dtupdated__html:value ? Thelpers.time(value) : '@(unchanged)'"></div>
 						</div>
 					</div>
-					<div class="col-lg-6 m" data-bind="?.stats__show:value">
+					<div class="col-lg-6 m" data-bind="?.stats__show">
 						<div data---="nosqlcounter__?.stats__height:52"></div>
 						<div class="help"><i class="fa fa-chart-bar"></i>@(Stats of all views for the last period)</div>
 					</div>

@@ -18,6 +18,15 @@
 
 Read more in [__documentation__](https://wiki.totaljs.com/?q=cms+welcome).
 
+
+## Renamed
+
+```html
+dateupdated --> dtupdated
+datecreated --> dtcreated
+idpage      --> pageid
+```
+
 ## License
 
 The source-code is under __MIT license__.

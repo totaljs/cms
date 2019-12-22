@@ -1,6 +1,6 @@
 NEWSCHEMA('NavigationItem', function(schema) {
 	schema.define('id', 'String(20)');
-	schema.define('idpage', 'UID'); // Page ID
+	schema.define('pageid', 'UID'); // Page ID
 	schema.define('name', 'String(50)', true);
 	schema.define('url', 'String(500)', true);
 	schema.define('title', 'String(100)');
@@ -85,7 +85,7 @@ NEWSCHEMA('Navigation', function(schema) {
 function findByPage(id, items) {
 	for (var i = 0; i < items.length; i++) {
 		var item = items[i];
-		if (item.idpage === id)
+		if (item.pageid === id)
 			return item;
 		if (item.children) {
 			item = findByPage(id, item.children);

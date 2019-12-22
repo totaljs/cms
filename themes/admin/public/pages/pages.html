@@ -53,6 +53,7 @@
 					{ name: 'url', text: '@(URL address)', width: 230, template: '{{ if ispartial }}<span class="silver">{{ url }}</span>{{ else }}{{ url }}{{ fi }}', class: 'hidden-xs' },
 					{ name: 'language', text: '@(Language)', width: 80, sort: false, align: 1 },
 					{ name: 'dtupdated', text: '@(Updated)', format: '[date]', width: 150, sort: false, align: 1 },
+					{ name: 'dtcreated', text: '@(Created)', format: '[date]', width: 150, sort: false, align: 1 },
 					{ name: '@(Options)', filter: false, align: 2, sort: false, width: 150, template: '{{ if !ispartial }}<a href="{{ url }}" class="fs11 mr5" target="_blank">@(show)</a>{{ fi }}<div class="inline mr10"><button title="@(Duplicate)" name="duplicate"><i class="far fa-copy"></i></button><button name="update" title="@(Edit)"><i class="fa fa-pencil"></i></button><button class="btn-remove" name="remove" title="@(Remove)"><i class="far fa-trash-o"></i></button></div>' }
 				]
 				</script>
@@ -64,8 +65,8 @@
 </div>
 
 <div data---="importer__common.form__if:pagesform;url:[url]forms/pages.html;cleaner:5"></div>
-<div data---="importer__common.form__if:pages-navigation;url:[url]forms/pages-navigation.html;cleaner:5"></div>
-<div data---="importer__common.form2__if:pages-navigation-item;url:[url]forms/pages-navigation-item.html;cleaner:5"></div>
+<div data---="importer__common.form__if:pagesnavigation;url:[url]forms/pages-navigation.html;cleaner:5"></div>
+<div data---="importer__common.form2__if:pagesnavigationitem;url:[url]forms/pages-navigation-item.html;cleaner:5"></div>
 <div data---="importer__common.form__if:pagesredirects;url:[url]forms/pages-redirects.html;cleaner:5"></div>
 
 <script>
@@ -214,8 +215,8 @@
 		exports.navigation = function(el) {
 			AJAX('GET [url]api/nav/{0}/'.format(el.attrd('id')), function(response) {
 				FUNC.loading(false, 1000);
-				SET('?.navigation', response, true);
-				SET('common.form', 'pages-navigation');
+				SETR('pagesnavigation', response);
+				SET('common.form', 'pagesnavigation');
 			});
 		};
 

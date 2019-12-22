@@ -40,8 +40,7 @@
 
 </style>
 
-<div data---="form__common.form3__if:filebrowser;width:800;autofocus:true;icon:folder-o;title:@(File Browser)" class="hidden">
-
+<div data---="form__common.form3__if:filebrowser;width:1000;autofocus:true;icon:folder-o;title:@(File Browser)" class="hidden">
 	<div class="padding">
 		<div class="m" data---="filelistbox__filebrowser.id__datasource:filebrowser.files;search:@(Search file ...);exec:filelistbox/submit;filter:filelistbox/filter"></div>
 		<div class="row">
@@ -57,7 +56,6 @@
 	<nav>
 		<button name="cancel" style="width:100%">@(Cancel)</button>
 	</nav>
-
 </div>
 
 <script>
@@ -146,7 +144,7 @@
 
 	});
 
-	COMPONENT('filelistbox', 'height:200', function(self, config) {
+	COMPONENT('filelistbox', 'height:300', function(self, config) {
 
 		var Eitems, datasource, filter = null;
 		var skip = false;
