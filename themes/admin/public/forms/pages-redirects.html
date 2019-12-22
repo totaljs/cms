@@ -1,12 +1,12 @@
-<div data---="form__common.form__if:pages-redirects;width:800;height:390;reload:pagesredirects/reload;submit:pagesredirects/submit;title:@(Edit redirects)" class="hidden">
+<div data---="form__common.form__if:pagesredirects;width:800;height:390;reload:pagesredirects/reload;submit:pagesredirects/submit;title:@(Edit redirects)" class="hidden">
 
-	<div class="padding bg-yellow-fade">
-		<div data---="codemirror__pages.formredirects.body__height:300;type:totaljsresources;tabs:true;trim:true">@(Redirects)</div>
+	<div class="padding">
+		<div data---="codemirror__pagesredirects.body__height:300;type:totaljsresources;tabs:true;trim:true">@(Redirects)</div>
 		<div class="help">@(Follow this format: <code>OLDURL&nbsp;&nbsp;: NEWURL</code>)</div>
 	</div>
-	<div data---="error__pages.formredirects.response"></div>
+	<div data---="error__pagesredirects.response"></div>
 
-	<nav data---="validation__pages.formredirects">
+	<nav data---="validation__pagesredirects">
 		<button name="submit">@(SAVE)</button>
 		<button name="cancel">@(Cancel)</button>
 	</nav>
@@ -19,11 +19,9 @@
 
 		exports.reload = function() {
 			AJAX('GET [url]api/pages/redirects/', function(response) {
-
 				if (!response.body)
 					response.body = '// OLD URL      : NEW URL\n@(/products/)      : @(/company/products/)\n@(/services/)      : @(/company/services/)';
-
-				SET('pages.formredirects', response, true);
+				SET('?', response, true);
 				FUNC.loading(false, 1000);
 			});
 		};
@@ -34,7 +32,7 @@
 				FUNC.loading(false, 1000);
 				if (response.success) {
 					SETTER('snackbar', 'success', '@(Redirects have been applied successfully.)');
-					SET('common.form', '');
+					NULL('common.form');
 				}
 			});
 		};

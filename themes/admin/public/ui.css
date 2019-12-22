@@ -213,7 +213,7 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .CodeMirror-simplescroll-vertical div { right: 0; width: 100%; }
 .CodeMirror-overlayscroll .CodeMirror-scrollbar-filler, .CodeMirror-overlayscroll .CodeMirror-gutter-filler { display: none; }
 .CodeMirror-overlayscroll-horizontal div, .CodeMirror-overlayscroll-vertical div { position: absolute; background: #A0A0A0; }
-.CodeMirror-scrollbar-filler { background: #D0D0D0; }
+.CodeMirror-scrollbar-filler { background: #D0D0D0 !important; }
 .CodeMirror-overlayscroll-horizontal, .CodeMirror-overlayscroll-vertical { position: absolute; z-index: 6; }
 .CodeMirror-overlayscroll-horizontal { bottom: 0; left: 0; height: 6px; }
 .CodeMirror-overlayscroll-horizontal div { bottom: 0; height: 100%; }
@@ -284,7 +284,7 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .ui-dropdowncheckbox-required .ui-dropdowncheckbox-label:before { color: red; content: '***'; margin-right: 5px; }
 .ui-dropdowncheckbox-required .ui-dropdowncheckbox-label { font-weight: bold; }
 .ui-dropdowncheckbox-required .ui-dropdowncheckbox i { border-left-color: #D0D0D0; }
-.ui-dropdowncheckbox-values { position: absolute; width: 100%; z-index: 2; background-color: white; border: 1px solid #D0D0D0; padding: 5px 10px; border-radius: 0 0 3px 3px; line-height: 18px; margin-top: -1px; box-shadow: 0 3px 5px rgba(0,0,0,0.08); overflow: auto; max-height: 250px; font-size: 12px; }
+.ui-dropdowncheckbox-values { position: absolute; width: 100%; z-index: 2; background-color: white; border: 1px solid #D0D0D0; padding: 5px 10px; border-radius: 0 0 2px 2px; line-height: 18px; margin-top: -1px; box-shadow: 0 3px 5px rgba(0,0,0,0.08); overflow: auto; max-height: 250px; font-size: 12px; }
 .ui-dropdowncheckbox-item { cursor: pointer; padding-bottom: 2px; }
 .ui-dropdowncheckbox-item span { cursor: pointer; vertical-align: middle; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; margin-left: 20px; }
 .ui-dropdowncheckbox-item div { float: left; width: 16px; height: 16px; border: 1px solid #E0E0E0; margin: 1px 6px 0 0; vertical-align: middle; cursor: pointer; color: white; font-size: 11px; text-align: center; padding: 1px 0 0 1px; background-color: white; border-radius: 2px; }
@@ -320,18 +320,32 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .ui-snackbar-icon.fa-times-circle { color: red; }
 .ui-snackbar-icon.fa-check-circle { color: #60CD4F; }
 
-.ui-confirm-noscroll, .ui-confirm-noscroll body { overflow: hidden; }
+..ui-confirm-noscroll, .ui-confirm-noscroll body { overflow: hidden; }
 .ui-confirm { background-color: rgba(255,255,255,0.9); position: fixed; left: 0; right: 0; bottom: 0; top: 0; z-index: 100; width: 100%; display: table; height: 100%; transition: 0.5s all; opacity: 0; }
 .ui-confirm > div { display: table-cell; vertical-align: middle; text-align: center; color: white; padding: 15px; }
-.ui-confirm-body { padding: 30px; position: relative; display: inline-block; border-radius: 4px; max-width: 600px; text-align: left; transform: scale(0.5); transition: 0.3s all; color: gray; border: 1px solid #E0E0E0; background-color: white; box-shadow: 0 0 30px rgba(0,0,0,0.1); }
-.ui-confirm-message { border-bottom: 1px solid #F0F0F0; padding: 0 0 20px 0; margin-bottom: 20px; }
-.ui-confirm button { font-size: 12px; position: relative; display: inline-block; cursor: pointer; outline: 0; background-color: #E0E0E0; border: 0; border-radius: 4px; color: gray; padding: 0 20px; height: 30px; font-weight: normal; margin: 0 10px 0 0; }
+.ui-confirm-body { padding: 30px 25px 30px; position: relative; display: inline-block; border-radius: 4px; max-width: 600px; text-align: left; transform: scale(0.5); transition: 0.15s all; color: gray; border: 8px solid #E0E0E0; background-color: white; box-shadow: 0 0 30px rgba(0,0,0,0.1); }
+.ui-confirm-message { border-bottom: 1px solid #F0F0F0; padding: 0 0 10px 0; margin-bottom: 15px; }
+.ui-confirm button { font-size: 12px; position: relative; display: inline-block; cursor: pointer; outline: 0; background-color: #E0E0E0; border: 0; border-radius: 2px; color: gray; padding: 0 20px; height: 30px; font-weight: normal; margin: 0 10px 0 0; }
 .ui-confirm button .fa { margin-right: 5px; }
 .ui-confirm button:hover { opacity: 0.9; }
-.ui-confirm button[data-index="0"] { color: white; font-weight: bold; font-weight: bold; background-color: #EC2C28; }
+.ui-confirm-close { position: absolute; color: #C0C0C0; font-size: 11px; right: 10px; top: 8px; cursor: pointer; }
+.ui-confirm-close:hover { color: #A0A0A0; }
 .ui-confirm-visible { opacity: 1; }
 .ui-confirm-visible .ui-confirm-body { -webkit-transform: scale(1); transform: scale(1); }
 .ui-confirm-click { transform: scale(1.07) !important; }
+
+.ui-dark .ui-confirm { background-color: rgba(0,0,0,0.9) }
+.ui-dark .ui-confirm-body { border: 10px solid #303030; background-color: #202020; }
+.ui-dark .ui-confirm-message { border-bottom-color: #303030; }
+.ui-dark .ui-confirm button { background-color: #505050; color: #C0C0C0; }
+.ui-dark .ui-confirm-close { color: #505050; }
+.ui-dark .ui-confirm-close:hover { color: #888888; }
+
+.ui-confirm button[data-index="0"] { color: white; font-weight: bold; font-weight: bold; background-color: #EC2C28; }
+
+@media(max-width: 767px) {
+	.ui-confirm button { display: block; margin: 8px 0 0; display: block; width: 100%; }
+}
 
 .ui-crop { text-align: center; padding: 40px 0 85px; background-color: #FFFFF5; position: relative; width: 100%; user-select: none; }
 .ui-crop canvas { cursor: crosshair; border: 1px solid #4285F4; }
@@ -769,7 +783,7 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .ui-input-label { margin-bottom: 3px; font-size: 12px; }
 .ui-input-label i { margin-right: 4px; }
 .ui-input-required .ui-input-label:before { content: '***'; color: red; margin-right: 3px; }
-.ui-input-control { border: 1px solid #E0E0E0; border-radius: 3px; height: 32px; background-color: white; }
+.ui-input-control { border: 1px solid #E0E0E0; border-radius: 2px; height: 32px; background-color: white; }
 .ui-input-input { padding: 6px 2px 0 6px; position: relative; line-height: 20px; }
 .ui-input-placeholder { position: absolute; color: gray; margin: 0; user-select: none; cursor: text; width: 100%; text-align: left; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
 .ui-input-control input { border: 0; outline: 0; background-color: white; width: 100%; padding: 0; margin: 0; line-height: 15px; font-size: 13px; color: black; font-family: Arial; }
@@ -872,3 +886,34 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 	.ui-faicons .ui-faicons-nav span { cursor: pointer; font-size: 26px; }
 	.ui-faicons .ui-faicons-content span { min-width: 45px; }
 }
+
+.ui-directory { position: absolute; opacity: 0; transition: 0.25s transform cubic-bezier(0.23, 1, 0.32, 1); left: -100; top: -100; z-index: 100; box-shadow: 0 1px 20px rgba(0,0,0,0.1); background-color: white; border-radius: 3px; border: 1px solid #E0E0E0; overflow: hidden; transition: all 0.2s; }
+.ui-directory-search { height: 38px; background: white; border-radius: 3px 3px 0 0; border-bottom: 1px solid #E0E0E0; line-height: 22px; }
+.ui-directory-search input { width: 100%; background-color: white; border: 0; font-size: 12px; outline: 0; padding: 0; margin: 0; line-height: 16px; outline: 0; }
+.ui-directory-search > div { margin: 0 20px 0 35px; padding: 6px 10px 0 0; line-height: 24px; }
+.ui-directory-search > span { float: left; width: 16px; text-align: center; padding: 8px 0 0 12px; font-size: 12px; }
+.ui-directory-add { float: right !important; padding-left: 0 !important; color: gray; text-align: left !important; font-size: 11px !important; cursor: pointer; width: 22px !important; }
+.ui-directory-add:hover { color: black; }
+.ui-directory-search .fa-times { color: red; cursor: pointer; }
+.ui-directory-visible { opacity: 1; }
+.ui-directory-container { height: 150px; overflow-x: hidden; overflow-y: auto; overflow-scrolling: touch; margin: 0 30px 0 0; padding: 0; }
+.ui-directory ul { list-style-type: none; margin: 0; padding: 0; }
+.ui-directory .selected { background-color: #E9E9E9; color: black; }
+.ui-directory .current { background-color: #F2F2F2; color: black; }
+.ui-directory-default li { padding: 0 40px 0 10px; height: 26px; line-height: 26px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+.ui-directory li { border-top: 1px solid #F0F0F0; font-size: 12px; background-color: white; cursor: pointer; margin: 0; }
+.ui-directory li:first-child { border-top: 0; }
+.ui-directory-search-hidden .ui-directory-search { height: 0; overflow: hidden; opacity: 0; }
+
+.ui-dark .ui-directory { background-color: #303030; border-color: #404040; box-shadow: 1px 5px 10px rgba(0,0,0,0.2); }
+.ui-dark .ui-directory-search { background: #303030; }
+.ui-dark .ui-directory li { background-color: #303030; border-color: #404040; }
+.ui-dark .ui-directory-search { border-bottom-color: #404040; }
+.ui-dark .ui-directory-search input { background-color: #303030; }
+.ui-dark .ui-directory-add:hover { color: white; }
+.ui-dark .ui-directory .current { background-color: #404040; color: white; }
+.ui-dark .ui-directory .selected { background-color: #505050; color: white; }
+
+.ui-viewbox { overflow: hidden; -ms-overflow-style: none; box-sizing: content-box }
+.ui-viewbox-disabled { z-index: 5; position: absolute; background-color: rgba(255,255,255,0.8); }
+.ui-viewbox-hidden { visibility: hidden; }

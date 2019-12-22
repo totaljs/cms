@@ -109,15 +109,19 @@
 							response.reference = '';
 						}
 
-						SETR('?.form', response);
+						SETR('widgetsform.form', response);
 						SET('common.form', 'widgetsform');
 					});
 					break;
 			}
 		};
 
+		exports.update = function(row) {
+			exports.button('update', row);
+		};
+
 		exports.create = function() {
-			SETR('widgetsform', {});
+			SETR('widgetsform.form', {});
 			SET('common.form', 'widgetsform');
 		};
 

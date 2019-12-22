@@ -40,22 +40,19 @@ header .title .fa, header .title .fal { margin-right: 8px; }
 .smallcaption { font-size: 10px; color: #888; font-weight: bold; margin-bottom: 10px; text-transform: uppercase; }
 .smallcaption i { margin-right: 5px; }
 
-.link { color: $color; }
 .links a, .links button { display: block; border: 0; text-align: left; color: black; font-size: 12px; border-radius: 2px; padding: 2px 5px; margin-bottom: 1px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; position: relative; width: 100%; }
 .links .selected { font-weight: bold; color: black; background-color: #F0F0F0; }
 .links a i, .links button i { width: 14px; text-align: center; font-size: 12px; margin-right: 7px; color: $color; }
 .links a:hover, .links button:hover { text-decoration: none; color: black; background-color: #F8F8F8; }
 .links a b, .links button b { position: absolute; font-size: 10px; right: 5px; background-color: $color; color: white; width: 16px; height: 16px; padding: 1px 0 0 0; border-radius: 100px; text-align: center; margin: 2px 0 0; }
 
-.header-message { display: none; float: right; width: 300px; vertical-align: middle; height: 40px; font-size: 12px; background-color: #FFFFD5; margin-right: 20px; opacity: 0; transition: all 0.3s; transform: translate(100px,0px); box-shadow: -2px 0 5px rgba(0,0,0,0.05); }
+.header-message { display: block; position: absolute; right: 0; top: 0; width: 400px; vertical-align: middle; height: 57px; font-size: 12px; background-color: #FFFFD5; opacity: 0; transition: all 0.3s; transform: translate(100px,0px); box-shadow: -2px 0 10px rgba(0,0,0,0.05); }
 .header-message-visible { opacity: 1; transform: translate(0,0); }
-.header-message .fa { width: 40px; border-right: 1px solid #E6E4CB; height: 40px; vertical-align: middle; font-size: 20px; padding: 10px 0 0 2px; text-align: center; float: left; color: #E6C752; }
-.header-message > div { display: block; margin-left: 50px; line-height: 14px; }
-.header-message-table { display: table; width: 100%; table-layout: fixed; height: 40px; }
+.header-message > i { width: 50px; border-right: 1px solid #EEEEAD; height: 57px; line-height: 57px; vertical-align: middle; font-size: 20px; padding: 0 0 0 2px; text-align: center; float: left; color: #E6C752; }
+.header-message > div { display: block; margin-left: 60px; line-height: 14px; }
+.header-message-table { display: table; width: 100%; table-layout: fixed; height: 57px; }
 .header-message-cell { display: table-cell; vertical-align: middle; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.header-message-cell b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-.header-empty { height: 40px; }
+.header-message-cell b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; line-height: 18px; }
 
 .backups { border-bottom: 1px solid #E0E0E0; padding: 10px 20px; font-size: 12px; height: 37px; }
 .backups > div { margin: -1px 18px 0 0; float: left; border-right: 1px solid #E0E0E0; padding-right: 20px }
@@ -147,7 +144,7 @@ h3 .fa, h3 .far, h3 .fal { margin-right: 8px; }
 .keyvalue .key .fa, .keyvalue .key .far, .keyvalue .key .fal { margin-right: 4px; }
 .keyvalue .value { font-size: 14px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
 
-.stats { border-bottom: 1px solid #E0E0E0; padding: 5px 0 0; font-size: 14px; height: 35px; }
+.stats { border-bottom: 1px solid #E0E0E0; padding: 2px 0 0; font-size: 12px; height: 25px; }
 .stats .key { margin-right: 90px; color: #505050; }
 .stats .key .fa { margin-right: 4px; }
 .stats .value { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; float: right; width: 80px; text-align: right; }
@@ -177,7 +174,7 @@ h3 .fa, h3 .far, h3 .fal { margin-right: 8px; }
 
 .tabmenu-container { padding: 5px 20px; background-color: #F0F0F0; }
 .tabmenu { padding: 0; margin: 0; display: block; position: relative; font-size: 12px; border: 0; list-style-type: none; height: 44px; overflow: hidden; user-select: none; }
-.tabmenu li { background-color: white; margin: 10px 0 0 0; text-align: center; padding: 0 7px; line-height: 24px; height: 24px; color: #6d6d6d; cursor: pointer; min-width: 70px; max-width: 150px; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; border-left: 1px solid white; }
+.tabmenu li { background-color: white; margin: 10px 0 0 0; text-align: center; padding: 0 7px; line-height: 24px; height: 24px; color: #6d6d6d; cursor: pointer; min-width: 70px; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; border-left: 1px solid white; }
 .tabmenu li:hover { color: #252525; }
 .tabmenu li:first-child { border-radius: 2px 0 0 2px; border-left: 0; }
 .tabmenu li:last-child { border-radius: 0 2px 2px 0; }

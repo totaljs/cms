@@ -2923,40 +2923,61 @@ COMPONENT('repeater', 'hidden:true;check:true', function(self, config) {
 
 COMPONENT('confirm', function(self) {
 
-	var is, visible = false;
+	var cls = 'ui-' + self.name;
+	var cls2 = '.' + cls;
+	var is;
+	var events = {};
 
 	self.readonly();
 	self.singleton();
-	self.nocompile();
+	self.nocompile && self.nocompile();
 
 	self.make = function() {
 
-		self.aclass('ui-confirm hidden');
+		self.aclass(cls + ' hidden');
 
 		self.event('click', 'button', function() {
-			self.hide($(this).attrd('index').parseInt());
+			self.hide(+$(this).attrd('index'));
+		});
+
+		self.event('click', cls2 + '-close', function() {
+			self.callback = null;
+			self.hide(-1);
 		});
 
 		self.event('click', function(e) {
 			var t = e.target.tagName;
 			if (t !== 'DIV')
 				return;
-			var el = self.find('.ui-confirm-body');
-			el.aclass('ui-confirm-click');
+			var el = self.find(cls2 + '-body');
+			el.aclass(cls + '-click');
 			setTimeout(function() {
-				el.rclass('ui-confirm-click');
+				el.rclass(cls + '-click');
 			}, 300);
 		});
+	};
 
-		$(window).on('keydown', function(e) {
-			if (!visible)
-				return;
-			var index = e.which === 13 ? 0 : e.which === 27 ? 1 : null;
-			if (index != null) {
-				self.find('button[data-index="{0}"]'.format(index)).trigger('click');
-				e.preventDefault();
-				e.stopPropagation();
-			}
+	events.keydown = function(e) {
+		var index = e.which === 13 ? 0 : e.which === 27 ? 1 : null;
+		if (index != null) {
+			self.find('button[data-index="{0}"]'.format(index)).trigger('click');
+			e.preventDefault();
+			e.stopPropagation();
+			events.unbind();
+		}
+	};
+
+	events.bind = function() {
+		$(W).on('keydown', events.keydown);
+	};
+
+	events.unbind = function() {
+		$(W).off('keydown', events.keydown);
+	};
+
+	self.show2 = function(message, buttons, fn) {
+		self.show(message, buttons, function(index) {
+			!index && fn();
 		});
 	};
 
@@ -2973,30 +2994,35 @@ COMPONENT('confirm', function(self) {
 				icon = '<i class="fa fa-{0}"></i>'.format(icon.toString().replace(/"/g, ''));
 			} else
 				icon = '';
-			builder.push('<button data-index="{1}">{2}{0}</button>'.format(item, i, icon));
+
+			var color = item.match(/#[0-9a-f]+/i);
+			if (color)
+				item = item.replace(color, '').trim();
+
+			builder.push('<button data-index="{1}"{3}>{2}{0}</button>'.format(item, i, icon, color ? ' style="background:{0}"'.format(color) : ''));
 		}
 
-		self.content('ui-confirm-warning', '<div class="ui-confirm-message">{0}</div>{1}'.format(message.replace(/\n/g, '<br />'), builder.join('')));
+		self.content('<div class="{0}-message">{1}</div>{2}'.format(cls, message.replace(/\n/g, '<br />'), builder.join('')));
 	};
 
 	self.hide = function(index) {
 		self.callback && self.callback(index);
-		self.rclass('ui-confirm-visible');
-		visible = false;
+		self.rclass(cls + '-visible');
+		events.unbind();
 		setTimeout2(self.id, function() {
-			$('html').rclass('ui-confirm-noscroll');
+			$('html').rclass(cls + '-noscroll');
 			self.aclass('hidden');
 		}, 1000);
 	};
 
-	self.content = function(cls, text) {
-		$('html').aclass('ui-confirm-noscroll');
-		!is && self.html('<div><div class="ui-confirm-body"></div></div>');
-		self.find('.ui-confirm-body').empty().append(text);
+	self.content = function(text) {
+		$('html').aclass(cls + '-noscroll');
+		!is && self.html('<div><div class="{0}-body"><span class="{0}-close"><i class="fa fa-times"></i></span></div></div>'.format(cls));
+		self.find(cls2 + '-body').append(text);
 		self.rclass('hidden');
-		visible = true;
+		events.bind();
 		setTimeout2(self.id, function() {
-			self.aclass('ui-confirm-visible');
+			self.aclass(cls + '-visible');
 		}, 5);
 	};
 });
@@ -9765,7 +9791,7 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 			opt.offsetY = -1 + (config.diroffsety || 0);
 			opt.offsetX = 0 + (config.diroffsetx || 0);
 			opt.placeholder = config.dirplaceholder;
-			opt.render = config.dirrender ? GET(config.dirrender) : null;
+			opt.render = config.dirrender ? GET(self.makepath(config.dirrender)) : null;
 			opt.custom = !!config.dircustom;
 			opt.offsetWidth = 2;
 			opt.minwidth = config.dirminwidth || 200;
@@ -10984,5 +11010,664 @@ COMPONENT('faicons', 'search:Search', function(self, config) {
 		container.empty();
 		self.unbindevents();
 		self.aclass('hidden');
+	};
+});
+
+COMPONENT('directory', 'minwidth:200', function(self, config) {
+
+	var cls = 'ui-directory';
+	var cls2 = '.' + cls;
+	var container, timeout, icon, plus, skipreset = false, skipclear = false, ready = false, input = null;
+	var is = false, selectedindex = 0, resultscount = 0;
+	var templateE = '{{ name | encode | ui_directory_helper }}';
+	var templateR = '{{ name | raw }}';
+	var template = '<li data-index="{{ $.index }}" data-search="{{ name }}" {{ if selected }} class="current selected{{ if classname }} {{ classname }}{{ fi }}"{{ else if classname }} class="{{ classname }}"{{ fi }}>{0}</li>';
+	var templateraw = template.format(templateR);
+
+	template = template.format(templateE);
+
+	Thelpers.ui_directory_helper = function(val) {
+		var t = this;
+		return t.template ? (typeof(t.template) === 'string' ? t.template.indexOf('{{') === -1 ? t.template : Tangular.render(t.template, this) : t.render(this, val)) : self.opt.render ? self.opt.render(this, val) : val;
+	};
+
+	self.template = Tangular.compile(template);
+	self.templateraw = Tangular.compile(templateraw);
+
+	self.readonly();
+	self.singleton();
+	self.nocompile && self.nocompile();
+
+	self.configure = function(key, value, init) {
+		if (init)
+			return;
+		switch (key) {
+			case 'placeholder':
+				self.find('input').prop('placeholder', value);
+				break;
+		}
+	};
+
+	self.make = function() {
+
+		self.aclass(cls + ' hidden');
+		self.append('<div class="{1}-search"><span class="{1}-add hidden"><i class="fa fa-plus"></i></span><span class="{1}-button"><i class="fa fa-search"></i></span><div><input type="text" placeholder="{0}" class="{1}-search-input" name="dir{2}" autocomplete="dir{2}" /></div></div><div class="{1}-container"><ul></ul></div>'.format(config.placeholder, cls, Date.now()));
+		container = self.find('ul');
+		input = self.find('input');
+		icon = self.find(cls2 + '-button').find('.fa');
+		plus = self.find(cls2 + '-add');
+
+		self.event('mouseenter mouseleave', 'li', function() {
+			if (ready) {
+				container.find('li.current').rclass('current');
+				$(this).aclass('current');
+				var arr = container.find('li:visible');
+				for (var i = 0; i < arr.length; i++) {
+					if ($(arr[i]).hclass('current')) {
+						selectedindex = i;
+						break;
+					}
+				}
+			}
+		});
+
+		self.event('focus', 'input', function() {
+			if (self.opt.search === false)
+				$(this).blur();
+		});
+
+		self.event('click', cls2 + '-button', function(e) {
+			skipclear = false;
+			input.val('');
+			self.search();
+			e.stopPropagation();
+			e.preventDefault();
+		});
+
+		self.event('click', cls2 + '-add', function() {
+			if (self.opt.callback) {
+				self.opt.scope && M.scope(self.opt.scope);
+				self.opt.callback(input.val(), self.opt.element, true);
+				self.hide();
+			}
+		});
+
+		self.event('click', 'li', function(e) {
+			if (self.opt.callback) {
+				self.opt.scope && M.scope(self.opt.scope);
+				self.opt.callback(self.opt.items[+this.getAttribute('data-index')], self.opt.element);
+			}
+			is = true;
+			self.hide(0);
+			e.preventDefault();
+			e.stopPropagation();
+		});
+
+		var e_click = function(e) {
+			var node = e.target;
+			var count = 0;
+
+			if (is) {
+				while (true) {
+					var c = node.getAttribute('class') || '';
+					if (c.indexOf(cls + '-search-input') !== -1) {
+						is = false;
+						break;
+					}
+					node = node.parentNode;
+					if (!node || !node.tagName || node.tagName === 'BODY' || count > 3)
+						break;
+					count++;
+				}
+			} else {
+				is = true;
+				while (true) {
+					var c = node.getAttribute('class') || '';
+					if (c.indexOf(cls) !== -1) {
+						is = false;
+						break;
+					}
+					node = node.parentNode;
+					if (!node || !node.tagName || node.tagName === 'BODY' || count > 4)
+						break;
+					count++;
+				}
+			}
+
+			is && self.hide(0);
+		};
+
+		var e_resize = function() {
+			is && self.hide(0);
+		};
+
+		self.bindedevents = false;
+
+		self.bindevents = function() {
+			if (!self.bindedevents) {
+				$(document).on('click', e_click);
+				$(window).on('resize', e_resize);
+				self.bindedevents = true;
+			}
+		};
+
+		self.unbindevents = function() {
+			if (self.bindedevents) {
+				self.bindedevents = false;
+				$(document).off('click', e_click);
+				$(window).off('resize', e_resize);
+			}
+		};
+
+		self.event('keydown', 'input', function(e) {
+			var o = false;
+			switch (e.which) {
+				case 8:
+					skipclear = false;
+					break;
+				case 27:
+					o = true;
+					self.hide();
+					break;
+				case 13:
+					o = true;
+					var sel = self.find('li.current');
+					if (self.opt.callback) {
+						self.opt.scope && M.scope(self.opt.scope);
+						if (sel.length)
+							self.opt.callback(self.opt.items[+sel.attrd('index')], self.opt.element);
+						else
+							self.opt.callback(this.value, self.opt.element, true);
+					}
+					self.hide();
+					break;
+				case 38: // up
+					o = true;
+					selectedindex--;
+					if (selectedindex < 0)
+						selectedindex = 0;
+					self.move();
+					break;
+				case 40: // down
+					o = true;
+					selectedindex++;
+					if (selectedindex >= resultscount)
+						selectedindex = resultscount;
+					self.move();
+					break;
+			}
+
+			if (o) {
+				e.preventDefault();
+				e.stopPropagation();
+			}
+
+		});
+
+		self.event('input', 'input', function() {
+			setTimeout2(self.ID, self.search, 100, null, this.value);
+		});
+
+		var fn = function() {
+			is && self.hide(1);
+		};
+
+		self.on('reflow', fn);
+		self.on('scroll', fn);
+		self.on('resize', fn);
+		$(window).on('scroll', fn);
+	};
+
+	self.move = function() {
+
+		var counter = 0;
+		var scroller = container.parent();
+		var h = scroller.height();
+		var li = container.find('li');
+		var hli = li.eq(0).innerHeight() || 30;
+		var was = false;
+		var last = -1;
+		var lastselected = 0;
+
+		li.each(function(index) {
+			var el = $(this);
+
+			if (el.hclass('hidden')) {
+				el.rclass('current');
+				return;
+			}
+
+			var is = selectedindex === counter;
+			el.tclass('current', is);
+
+			if (is) {
+				was = true;
+				var t = (hli * (counter || 1));
+				var f = Math.ceil((h / hli) / 2);
+				if (counter > f)
+					scroller[0].scrollTop = (t + f) - (h / 2.8 >> 0);
+				else
+					scroller[0].scrollTop = 0;
+			}
+
+			counter++;
+			last = index;
+			lastselected++;
+		});
+
+		if (!was && last >= 0) {
+			selectedindex = lastselected;
+			li.eq(last).aclass('current');
+		}
+	};
+
+	self.search = function(value) {
+
+		if (!self.opt)
+			return;
+
+		icon.tclass('fa-times', !!value).tclass('fa-search', !value);
+		self.opt.custom && plus.tclass('hidden', !value);
+
+		if (!value && !self.opt.ajax) {
+			if (!skipclear)
+				container.find('li').rclass('hidden');
+			if (!skipreset)
+				selectedindex = 0;
+			resultscount = self.opt.items ? self.opt.items.length : 0;
+			self.move();
+			return;
+		}
+
+		resultscount = 0;
+		selectedindex = 0;
+
+		if (self.opt.ajax) {
+			var val = value || '';
+			if (self.ajaxold !== val) {
+				self.ajaxold = val;
+				setTimeout2(self.ID, function(val) {
+					self.opt && self.opt.ajax(val, function(items) {
+						var builder = [];
+						var indexer = {};
+						for (var i = 0; i < items.length; i++) {
+							var item = items[i];
+							if (self.opt.exclude && self.opt.exclude(item))
+								continue;
+							indexer.index = i;
+							resultscount++;
+							builder.push(self.opt.raw ? self.templateraw(item, indexer) : self.template(item, indexer));
+						}
+						skipclear = true;
+						self.opt.items = items;
+						container.html(builder);
+						self.move();
+					});
+				}, 300, null, val);
+			}
+		} else if (value) {
+			value = value.toSearch();
+			container.find('li').each(function() {
+				var el = $(this);
+				var val = el.attrd('search').toSearch();
+				var is = val.indexOf(value) === -1;
+				el.tclass('hidden', is);
+				if (!is)
+					resultscount++;
+			});
+			skipclear = true;
+			self.move();
+		}
+	};
+
+	self.show = function(opt) {
+
+		// opt.element
+		// opt.items
+		// opt.callback(value, el)
+		// opt.offsetX     --> offsetX
+		// opt.offsetY     --> offsetY
+		// opt.offsetWidth --> plusWidth
+		// opt.placeholder
+		// opt.render
+		// opt.custom
+		// opt.minwidth
+		// opt.maxwidth
+		// opt.key
+		// opt.exclude    --> function(item) must return Boolean
+		// opt.search
+		// opt.selected   --> only for String Array "opt.items"
+
+		var el = opt.element instanceof jQuery ? opt.element[0] : opt.element;
+
+		if (opt.items == null)
+			opt.items = EMPTYARRAY;
+
+		self.tclass(cls + '-default', !opt.render);
+
+		if (!opt.minwidth)
+			opt.minwidth = 200;
+
+		if (is) {
+			clearTimeout(timeout);
+			if (self.target === el) {
+				self.hide(1);
+				return;
+			}
+		}
+
+		self.initializing = true;
+		self.target = el;
+		opt.ajax = null;
+		self.ajaxold = null;
+
+		var element = $(opt.element);
+		var callback = opt.callback;
+		var items = opt.items;
+		var type = typeof(items);
+		var item;
+
+		if (type === 'string') {
+			items = GET(items);
+			type = typeof(items);
+		}
+
+		if (type === 'function' && callback) {
+			type = '';
+			opt.ajax = items;
+			items = null;
+		}
+
+		if (!items && !opt.ajax) {
+			self.hide(0);
+			return;
+		}
+
+		setTimeout(self.bindevents, 500);
+		self.tclass(cls + '-search-hidden', opt.search === false);
+
+		self.opt = opt;
+		opt.class && self.aclass(opt.class);
+
+		input.val('');
+
+		var builder = [];
+		var ta = opt.key ? Tangular.compile((opt.raw ? templateraw : template).replace(/\{\{\sname/g, '{{ ' + opt.key)) : opt.raw ? self.templateraw : self.template;
+		var selected = null;
+
+		if (!opt.ajax) {
+			var indexer = {};
+			for (var i = 0; i < items.length; i++) {
+				item = items[i];
+
+				if (typeof(item) === 'string')
+					item = { name: item, id: item, selected: item === opt.selected };
+
+				if (opt.exclude && opt.exclude(item))
+					continue;
+
+				if (item.selected) {
+					selected = i;
+					skipreset = true;
+				}
+
+				indexer.index = i;
+				builder.push(ta(item, indexer));
+			}
+
+			if (opt.empty) {
+				item = {};
+				item[opt.key || 'name'] = opt.empty;
+				item.template = '<b>{0}</b>'.format(opt.empty);
+				indexer.index = -1;
+				builder.unshift(ta(item, indexer));
+			}
+		}
+
+		self.target = element[0];
+
+		var w = element.width();
+		var offset = element.offset();
+		var width = w + (opt.offsetWidth || 0);
+
+		if (opt.minwidth && width < opt.minwidth)
+			width = opt.minwidth;
+		else if (opt.maxwidth && width > opt.maxwidth)
+			width = opt.maxwidth;
+
+		ready = false;
+
+		opt.ajaxold = null;
+		plus.aclass('hidden');
+		self.find('input').prop('placeholder', opt.placeholder || config.placeholder);
+		var scroller = self.find(cls2 + '-container').css('width', width + 30);
+		container.html(builder);
+
+		var options = { left: 0, top: 0, width: width };
+
+		switch (opt.align) {
+			case 'center':
+				options.left = Math.ceil((offset.left - width / 2) + (width / 2));
+				break;
+			case 'right':
+				options.left = (offset.left - width) + w;
+				break;
+			default:
+				options.left = offset.left;
+				break;
+		}
+
+		options.top = opt.position === 'bottom' ? ((offset.top - self.height()) + element.height()) : offset.top;
+		options.scope = M.scope ? M.scope() : '';
+
+		if (opt.offsetX)
+			options.left += opt.offsetX;
+
+		if (opt.offsetY)
+			options.top += opt.offsetY;
+
+		self.css(options);
+
+		!isMOBILE && setTimeout(function() {
+			ready = true;
+			if (opt.search !== false)
+				input.focus();
+		}, 200);
+
+		setTimeout(function() {
+			self.initializing = false;
+			is = true;
+			if (selected == null)
+				scroller[0].scrollTop = 0;
+			else {
+				var h = container.find('li:first-child').height();
+				var y = (container.find('li.selected').index() * h) - (h * 2);
+				scroller[0].scrollTop = y < 0 ? 0 : y;
+			}
+		}, 100);
+
+		if (is) {
+			self.search();
+			return;
+		}
+
+		selectedindex = selected || 0;
+		resultscount = items ? items.length : 0;
+		skipclear = true;
+
+		self.search();
+		self.rclass('hidden');
+
+		setTimeout(function() {
+			if (self.opt && self.target && self.target.offsetParent)
+				self.aclass(cls + '-visible');
+			else
+				self.hide(1);
+		}, 100);
+
+		skipreset = false;
+	};
+
+	self.hide = function(sleep) {
+		if (!is || self.initializing)
+			return;
+		clearTimeout(timeout);
+		timeout = setTimeout(function() {
+			self.unbindevents();
+			self.rclass(cls + '-visible').aclass('hidden');
+			if (self.opt) {
+				self.opt.close && self.opt.close();
+				self.opt.class && self.rclass(self.opt.class);
+				self.opt = null;
+			}
+			is = false;
+		}, sleep ? sleep : 100);
+	};
+});
+
+COMPONENT('viewbox', 'margin:0;scroll:true;delay:100;scrollbar:0;visibleY:1;height:100', function(self, config) {
+
+	var eld, elb;
+	var scrollbar;
+	var cls = 'ui-viewbox';
+	var cls2 = '.' + cls;
+	var init = false;
+
+	self.readonly();
+
+	self.init = function() {
+		var obj;
+		if (W.OP)
+			obj = W.OP;
+		else
+			obj = $(W);
+
+		var resize = function() {
+			for (var i = 0; i < M.components.length; i++) {
+				var com = M.components[i];
+				if (com.name === 'viewbox' && com.dom.offsetParent && com.$ready && !com.$removed)
+					com.resize();
+			}
+		};
+
+		obj.on('resize', function() {
+			setTimeout2('viewboxresize', resize, 200);
+		});
+	};
+
+	self.configure = function(key, value, init) {
+		switch (key) {
+			case 'disabled':
+				eld.tclass('hidden', !value);
+				break;
+			case 'minheight':
+			case 'margin':
+			case 'marginxs':
+			case 'marginsm':
+			case 'marginmd':
+			case 'marginlg':
+				!init && self.resize();
+				break;
+			case 'selector': // backward compatibility
+				config.parent = value;
+				self.resize();
+				break;
+		}
+	};
+
+	self.scrollbottom = function(val) {
+		if (val == null)
+			return elb[0].scrollTop;
+		elb[0].scrollTop = (elb[0].scrollHeight - self.dom.clientHeight) - (val || 0);
+		return elb[0].scrollTop;
+	};
+
+	self.scrolltop = function(val) {
+		if (val == null)
+			return elb[0].scrollTop;
+		elb[0].scrollTop = (val || 0);
+		return elb[0].scrollTop;
+	};
+
+	self.make = function() {
+		self.aclass('invisible');
+		config.scroll && MAIN.version > 17 && self.element.wrapInner('<div class="ui-viewbox-body"></div>');
+		self.element.prepend('<div class="ui-viewbox-disabled hidden"></div>');
+		eld = self.find('> .{0}-disabled'.format(cls)).eq(0);
+		elb = self.find('> .{0}-body'.format(cls)).eq(0);
+		self.aclass('{0} {0}-hidden'.format(cls));
+		if (config.scroll) {
+			if (config.scrollbar) {
+				if (MAIN.version > 17) {
+					scrollbar = W.SCROLLBAR(self.find(cls2 + '-body'), { visibleY: config.visibleY, visibleX: config.visibleX, orientation: config.visibleX ? null : 'y', parent: self.element });
+					self.scrolltop = scrollbar.scrollTop;
+					self.scrollbottom = scrollbar.scrollBottom;
+				} else
+					self.aclass(cls + '-scroll');
+			} else {
+				self.aclass(cls + '-scroll');
+				self.find(cls2 + '-body').aclass('noscrollbar');
+			}
+		}
+		self.resize();
+	};
+
+	self.released = function(is) {
+		!is && self.resize();
+	};
+
+	var css = {};
+
+	self.resize = function(scrolltop) {
+
+		if (self.release())
+			return;
+
+		var el = self.parent(config.parent);
+		var h = el.height();
+		var w = el.width();
+		var width = WIDTH();
+		var margin = config.margin;
+		var responsivemargin = config['margin' + width];
+
+		if (responsivemargin != null)
+			margin = responsivemargin;
+
+		if (h === 0 || w === 0) {
+			self.$waiting && clearTimeout(self.$waiting);
+			self.$waiting = setTimeout(self.resize, 234);
+			return;
+		}
+
+		h = ((h / 100) * config.height) - margin;
+
+		if (config.minheight && h < config.minheight)
+			h = config.minheight;
+
+		css.height = h;
+		css.width = self.element.width();
+		eld.css(css);
+
+		css.width = null;
+		self.css(css);
+		elb.length && elb.css(css);
+		self.element.SETTER('*', 'resize');
+		var c = cls + '-hidden';
+		self.hclass(c) && self.rclass(c, 100);
+		scrollbar && scrollbar.resize();
+		scrolltop && self.scrolltop(0);
+
+		if (!init) {
+			self.rclass('invisible', 250);
+			init = true;
+		}
+	};
+
+	self.resizescrollbar = function() {
+		scrollbar && scrollbar.resize();
+	};
+
+	self.setter = function() {
+		setTimeout(self.resize, config.delay, config.scrolltop);
 	};
 });

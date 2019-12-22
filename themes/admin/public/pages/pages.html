@@ -26,9 +26,9 @@
 				<div class="caption"><i class="fa fa-clone"></i>@(Options)</div>
 				<nav class="links">
 					<button class="exec b" data-exec="?/create"><i class="fa fa-plus-circle"></i>@(Add new page)</button>
-					<button class="exec" data-path="common.form" data-value="'pages-globals'"><i class="fa fa-cog"></i>@(Variables)</button>
-					<button class="exec" data-path="common.form" data-value="'widgets-globals'"><i class="fa fa-paint-brush"></i>@(Global style/script)</button>
-					<button class="exec b" data-path="common.form" data-value="'pages-redirects'"><i class="fa fa-retweet"></i>@(Redirects)</button>
+					<button class="exec" data-path="common.form" data-value="'pagesglobals'"><i class="fa fa-cog"></i>@(Variables)</button>
+					<button class="exec" data-path="common.form" data-value="'widgetsglobals'"><i class="fa fa-paint-brush"></i>@(Global style/script)</button>
+					<button class="exec b" data-path="common.form" data-value="'pagesredirects'"><i class="fa fa-retweet"></i>@(Redirects)</button>
 				</nav>
 			</div>
 			<div class="padding" data-bind="common.dependencies.navigations__show:value && value.length">
@@ -66,7 +66,7 @@
 <div data---="importer__common.form__if:pagesform;url:[url]forms/pages.html;cleaner:5"></div>
 <div data---="importer__common.form__if:pages-navigation;url:[url]forms/pages-navigation.html;cleaner:5"></div>
 <div data---="importer__common.form2__if:pages-navigation-item;url:[url]forms/pages-navigation-item.html;cleaner:5"></div>
-<div data---="importer__common.form__if:pages-redirects;url:[url]forms/pages-redirects.html;cleaner:5"></div>
+<div data---="importer__common.form__if:pagesredirects;url:[url]forms/pages-redirects.html;cleaner:5"></div>
 
 <script>
 	PLUGIN('pages', function(exports) {
@@ -197,8 +197,8 @@
 			options.items.push({ id: 'create', name: '@(Create page)', icon: 'plus-circle green', classname: 'b' });
 			options.items.push({ id: 'refresh', name: '@(Refresh)', icon: 'refresh' });
 			options.items.push('-');
-			options.items.push({ value: 'pages-globals', name: '@(Variables)', icon: 'cog' });
-			options.items.push({ value: 'widgets-globals', name: '@(Global style/script)', icon: 'paint-brush' });
+			options.items.push({ value: 'pagesglobals', name: '@(Variables)', icon: 'cog' });
+			options.items.push({ value: 'widgetsglobals', name: '@(Global style/script)', icon: 'paint-brush' });
 			options.element = el;
 
 			options.callback = function(item) {
@@ -209,11 +209,6 @@
 			};
 
 			SETTER('menu', 'show', options);
-		};
-
-		exports.globals = function(el) {
-			SET('?.formglobals', {}, true);
-			SET('common.form', 'pages-globals');
 		};
 
 		exports.navigation = function(el) {

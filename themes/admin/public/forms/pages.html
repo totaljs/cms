@@ -175,8 +175,10 @@
 
 			for (var i = 0, length = items.length; i < length; i++) {
 				var item = items[i];
-				if (item.id !== model.id)
-					partial.push({ id: item.id, name: item.name, url: item.ispartial ? null : item.url });
+				if (item.id !== model.id) {
+					var target = item.ispartial ? partial : parent;
+					target.push({ id: item.id, name: item.name, url: item.ispartial ? null : item.url });
+				}
 			}
 
 			SET('pages.partial', partial);

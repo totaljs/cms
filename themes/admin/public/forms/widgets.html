@@ -1,29 +1,27 @@
-<div data---="form__common.form__icon:plug;if:widgetsform;width:800;reload:widgetsform/show;submit:widgetsform/submit;autofocus:true" class="hidden">
+<div data---="form__common.form__icon:plug;if:widgetsform;width:1000;reload:widgetsform/show;submit:widgetsform/submit;autofocus:true" class="hidden">
 
-	<div data-scope="widgetsform">
+	<div data-scope="widgetsform.form">
 		<div class="padding">
 			<div class="row">
 				<div class="col-sm-9">
 					<div data---="input__?.name__required:true;maxlength:50" class="m">@(Name)</div>
-					<div data---="input__?.category__dirsource:?.categories;icon:folder-o;required:true">@(Select existing category)</div>
-					<div class="fs11 mt10" data-bind="?.id__show:!!value"><span class="link exec" data-exec="?/backups"><i class="fa fa-clock-o mr5"></i>@(Restore a backup)</span></div>
+					<div data---="input__?.category__dirsource:widgetsform.categories;icon:folder-o;required:true;dirplaceholder:@(Search category)">@(Select existing category)</div>
+					<div data-bind="?.id__show" class="mt10 hidden">
+						<div data---="checkbox__?.replace">@(Replace the widget body in the entire content)</div>
+					</div>
 				</div>
 				<div class="col-sm-3">
 					<div data---="preview__?.picture__width:300;height:200;url:[url]api/upload/base64/">@(Preview)</div>
 					<div class="help">@(Keep size 300x200px)</div>
 				</div>
 			</div>
-			<div data-bind="?.id__show:!!value">
-				<hr />
-				<div data---="checkbox__?.replace">@(Replace the widget body in the entire content)</div>
-			</div>
 		</div>
-		<div class="padding bg-yellow">
+		<div class="padding bg-smoke">
 			<div data---="codemirror__?.body__height:500;icon:code;required:true;tabs:true;trim:true">@(Source-code)</div>
 			<div class="row fs12 mt10">
 				<div class="col-xs-6">
-					<span class="link exec mr10" data-exec="?/upload"><i class="fa fa-folder mr5"></i>@(Browse files)</span>
-					<a href="https://componentator.com/widgets/" class="link" target="_blank"><i class="fa fa-download mr5"></i>@(Download widgets)</a>
+					<span class="link exec mr10" data-exec="?/upload"><i class="far fa-folder mr5"></i>@(Browse files)</span>
+					<span class="link exec hidden" data-exec="?/backups" data-bind="?.id__show"><i class="far fa-clock-o mr5"></i>@(Restore a backup)</span>
 				</div>
 				<div class="col-xs-6 right">
 					<span class="link exec mr10" data-exec="?/template"><i class="fa fa-code mr5"></i>@(Preddefined template)</span>
@@ -34,7 +32,7 @@
 		<div data---="error__?.response"></div>
 	</div>
 
-	<nav data---="validation__widgets.form">
+	<nav data---="validation__widgetsform.form">
 		<button name="submit">@(SAVE)</button>
 		<button name="cancel">@(Cancel)</button>
 	</nav>
@@ -104,7 +102,10 @@
 
 	PLUGIN('widgetsform', function(exports) {
 
-		SET('?.categories', [{ name: '@(Layout)', id: 'Layouts'},{ name: '@(Columns)', id: 'Columns' },{ name: '@(Content)', id: 'Content' },{ name: '@(Inline)', id: 'Inline' },{ name: '@(Newsletter)', id: 'Newsletter' }]);
+		var categories = [{ name: '@(Layout)', id: 'Layouts'},{ name: '@(Columns)', id: 'Columns' },{ name: '@(Content)', id: 'Content' },{ name: '@(Inline)', id: 'Inline' },{ name: '@(Newsletter)', id: 'Newsletter' }];
+		categories.quicksort('name');
+
+		SET('?.categories', categories);
 
 		exports.show = function(com) {
 			com.reconfigure({ title: GET('?.id') ? '@(Edit widget)' : '@(New widget)' });
@@ -113,7 +114,7 @@
 
 		exports.upload = function(el) {
 			refresh_filebrowser(function(file) {
-				SETTER('.widgetsform.body', 'insert', file);
+				SETTER('.widgetsform.form.body', 'insert', file);
 			});
 		};
 
@@ -123,7 +124,7 @@
 
 		exports.submit = function(hide) {
 			FUNC.loading(true);
-			AJAX('POST [url]api/widgets/ REPEAT', GETR('widgets.form'), function(response) {
+			AJAX('POST [url]api/widgets/ REPEAT', GETR('widgetsform.form'), function(response) {
 				FUNC.loading(false, 1000);
 				if (response.success) {
 					SETTER('snackbar', 'success', '@(Widget has been saved successfully.)');
@@ -150,7 +151,7 @@
 				SETTER('suggestion', 'show', 'left', el, response, function(value) {
 					FUNC.loading(true);
 					setTimeout(function() {
-						MODIFY('widgetsform.body', value.data.body);
+						MODIFY('widgetsform.form.body', value.data.body);
 						FUNC.loading(false, 1000);
 					}, 100);
 				});
