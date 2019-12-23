@@ -29,6 +29,7 @@ NEWSCHEMA('Settings', function(schema) {
 	schema.define('smtp', 'String');
 	schema.define('smtpoptions', 'JSON');
 	schema.define('componentator', Boolean);
+	schema.define('cookie', 'String(30)', true);
 
 	schema.setGet(function($) {
 		$.callback(PREF);
@@ -79,7 +80,7 @@ NEWSCHEMA('Settings', function(schema) {
 	schema.addWorkflow('smtp', function($) {
 		var model = $.model;
 		if (model.smtp)
-			F.useSMTP(model.smtp, model.smtpoptions ? model.smtpoptions.parseJSON() : '', err => err ? $.invalid(err) : $.success());
+			Mail.use(model.smtp, model.smtpoptions ? model.smtpoptions.parseJSON() : '', err => err ? $.invalid(err) : $.success());
 		else
 			$.success();
 	});
@@ -101,6 +102,7 @@ NEWSCHEMA('Settings', function(schema) {
 
 		CONF.url = PREF.url;
 		MAIN.users = [];
+		CONF.admin_cookie = PREF.cookie || '__admin';
 
 		// Refreshes internal informations
 		if (PREF.users && PREF.users.length)
@@ -114,7 +116,7 @@ NEWSCHEMA('Settings', function(schema) {
 		var users = {};
 		for (var i = 0, length = MAIN.users.length; i < length; i++) {
 			var user = MAIN.users[i];
-			var key = (user.login + ':' + user.password + ':' + CONF.secret + (user.login + ':' + user.password).hash()).md5();
+			var key = (user.login + ':' + user.password + ':' + CONF.secret + (user.login + ':' + user.password).hash() + CONF.admin_secret).md5();
 			users[key] = user;
 		}
 

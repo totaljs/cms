@@ -34,7 +34,7 @@ function file_sitemap(req, res) {
 	for (var i = 0; i < arr.length; i++) {
 		var item = arr[i];
 		if (!lng || item.language === lng)
-			builder.push('<url><loc>{0}</loc><lastmod>{1}</lastmod></url>'.format((PREF.url || CONF.url) + item.url, (item.dateupdated ? item.dateupdated : item.datecreated).format('yyyy-MM-dd')));
+			builder.push('<url><loc>{0}</loc><lastmod>{1}</lastmod></url>'.format(CONF.url + item.url, (item.dtupdated ? item.dtupdated : item.dtcreated).format('yyyy-MM-dd')));
 	}
 
 	OPERATION('sitemap.xml', builder, function() {

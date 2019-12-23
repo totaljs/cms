@@ -236,14 +236,14 @@
 							</div>
 							<div class="col-md-6 m">
 								<div class="legend m fs12">
-									<i class="fa fa-square legend-1 mr5"></i><span class="mr10">@(Desktop iv)</span>
-									<i class="fa fa-square legend-2 mr5"></i><span class="mr10">@(Mobile)</span>
+									<i class="fa fa-square legend-1 mr5"></i><span class="mr10">@(Desktop)</span>
+									<i class="fa fa-square legend-2 mr5"></i><span class="mr10">@(Mobile devices)</span>
 								</div>
 								<div data-jc="barchart__dashboard.stats.devices__height:250"></div>
 								<div style="margin-top:8px" data-bind="dashboard.stats.devicessum__template">
 									<script type="text/html">
-										<span class="fs11 gray" style="float:right">@(Mobile visitors:) <b>{{ value.mobile | format(0) }}</b></span>
-										<span class="fs11 gray">@(Desktop visitors:) <b>{{ value.desktop | format(0) }}</b></span>
+										<span class="fs11 gray" style="float:right">@(Total mobile:) <b>{{ value.mobile | format(0) }}</b></span>
+										<span class="fs11 gray">@(Total desktop:) <b>{{ value.desktop | format(0) }}</b></span>
 									</script>
 								</div>
 							</div>

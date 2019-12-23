@@ -186,7 +186,7 @@ ON('controller', function(controller, name) {
 	}
 
 	var cookie = controller.cookie(CONF.admin_cookie);
-	if (cookie == null || !cookie.length) {
+	if (!cookie || !cookie.length) {
 		DDOS[controller.ip] = ddos ? ddos + 1 : 1;
 		controller.cancel();
 		controller.theme('admin');
@@ -255,7 +255,7 @@ function logout() {
 
 function login() {
 	var self = this;
-	var key = (self.body.name + ':' + self.body.password + ':' + CONF.secret + (self.body.name + ':' + self.body.password).hash()).md5();
+	var key = (self.body.name + ':' + self.body.password + ':' + CONF.secret + (self.body.name + ':' + self.body.password).hash() + CONF.admin_secret).md5();
 	if (MAIN.users[key]) {
 		$SAVE('Event', { type: 'system/login', user: self.body.name, admin: true }, NOOP, self);
 		self.cookie(CONF.admin_cookie, key, '1 month', COOKIE_OPTIONS);
