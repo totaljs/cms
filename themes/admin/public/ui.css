@@ -219,20 +219,29 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .CodeMirror-overlayscroll-horizontal div { bottom: 0; height: 100%; }
 .CodeMirror-overlayscroll-vertical { right: 0; top: 0; width: 6px; }
 .CodeMirror-overlayscroll-vertical div { right: 0; width: 100%; }
+.cm-trailingspace { background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAACCAYAAAB/qH1jAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3QUXCToH00Y1UgAAACFJREFUCNdjPMDBUc/AwNDAAAFMTAwMDA0OP34wQgX/AQBYgwYEx4f9lQAAAABJRU5ErkJggg==); background-position: bottom left; background-repeat: repeat-x; }
+.cm-tab { background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAMCAYAAAAkuj5RAAAAKElEQVRIiWNgGAWjYBQMacDIwMBgzMDAcBZKw8BQ4I+CUTAKRsEgAAAA4AwCz6/F0QAAAABJRU5ErkJggg==) no-repeat 100% 50%; }
 
-.ui-nosqlcounter .last { border-radius: 0 3px 3px 0; }
+.ui-nosqlcounter .last { border-radius: 0 2px 0 0; }
 .ui-nosqlcounter span { border-bottom: 1px solid rgba(255,255,255,0.5); display: block; padding: 2px 0; overflow: hidden; white-space: nowrap; }
 .ui-nosqlcounter .empty div { background-color: #A0A0A0; }
 .ui-nosqlcounter .current div { background-color: #E74024; }
-.ui-nosqlcounter-table { height: 100%; width: 100%; border: 0; display: table; background-color: #F8F8F8; border-radius: 3px; border: 1px solid #E5E5E5; }
+.ui-nosqlcounter-table { height: 100%; width: 100%; border: 0; display: table; background-color: #F8F8F8; border-radius: 2px 2px 0 0; border: 1px solid #E5E5E5; }
 .ui-nosqlcounter-cell { height: 100%; width: 100%; border: 0; display: table-cell; vertical-align: bottom; }
 .ui-nosqlcounter-cell > div div { background-color: #5186ED; width: 100%; position: absolute; bottom: 0; }
 .ui-nosqlcounter-cell > div { position: relative; display: inline-block; vertical-align: bottom; border-left: 1px solid white; text-align: center; font-size: 8px; width: 8.333%; cursor: default; overflow: hidden; color: white; border-left: 1px solid #E0E0E0; height: 100%; }
 .ui-nosqlcounter-cell > div:first-child { border-left: 0; }
-.ui-nosqlcounter-cell > div:first-child div { border-radius: 3px 0 0 3px; }
-.ui-nosqlcounter-cell > div:last-child div { border-radius: 0px 3px 3px 0; }
+.ui-nosqlcounter-cell > div:first-child div { border-radius: 2px 0 0 0; }
+.ui-nosqlcounter-cell > div:last-child div { border-radius: 0px 2px 0 0; }
+.ui-nosqlcounter-cell > div:hover { opacity: 0.8; }
 .ui-nosqlcounter-labels { margin-top: 5px; }
 .ui-nosqlcounter-labels > div { position: relative; display: inline-block; vertical-align: top; text-align: center; font-size: 8px; width: 8.333%; overflow: hidden; color: #A0A0A0; }
+
+.ui-dark .ui-nosqlcounter-table { background-color: #303030; border-color: #404040; }
+.ui-dark .ui-nosqlcounter .empty div { background-color: #505050; }
+.ui-dark .ui-nosqlcounter-cell > div div { background-color: #5186ED }
+.ui-dark .ui-nosqlcounter-cell > div { border-left-color: rgba(255,255,255,0.2); }
+.ui-dark .ui-nosqlcounter .current div { background-color: #E74024; }
 
 .ui-keyvalue-label { margin-bottom: 5px; font-size: 12px; }
 .ui-keyvalue-label .fa { margin-right: 5px; }

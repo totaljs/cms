@@ -1,4 +1,4 @@
-<div data---="form__common.form2__if:pagesnavigationitem;width:650;height:648;autofocus:true;submit:pagesnavigationitem/submit;reload:pagesnavigationitem/reload;scrollbar:true;$id:pagesnavigationitemmodal;title:@(Navigation item)" class="hidden">
+<div data---="form__common.form2__if:pagesnavigationitem;width:650;height:648;autofocus:1;submit:pagesnavigationitem/submit;reload:pagesnavigationitem/reload;scrollbar:true;$id:pagesnavigationitemmodal;title:@(Navigation item)" class="hidden">
 
 	<div data-scope="pagesnavigationitem">
 		<div class="padding bg-smoke">
@@ -9,15 +9,15 @@
 		<div class="padding npt npb">
 			<div class="row">
 				<div class="col-md-8 m">
-					<div data---="input__?.name__required:true;maxlength:50">@(Name)</div>
+					<div data---="input__?.name__required:1;maxlength:50">@(Name)</div>
 				</div>
 				<div class="col-md-4 m">
-					<div data---="input__?.language__dirsource:common.dependencies.languages">@(Language)</div>
+					<div data---="input__?.language__dirsource:common.dependencies.languages;dirplaceholder:@(Search)">@(Language)</div>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-md-8 m">
-					<div data---="input__?.url__maxlength:500;required:true">@(URL address)</div>
+					<div data---="input__?.url__maxlength:500;required:1">@(URL address)</div>
 					<div class="mt10 fs12"><span class="link exec" data-exec="?/file"><i class="fa fa-folder-o mr5"></i>@(Browse files)</span></div>
 				</div>
 				<div class="col-md-4 m">

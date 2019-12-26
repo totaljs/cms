@@ -1,21 +1,21 @@
 <style>
 	/*auto*/
-	.ui-widgetlist { border: 1px solid #E0E0E0; font-size: 14px; color: black; position: relative; }
+	.ui-widgetlist { border-bottom: 1px solid #E0E0E0; font-size: 14px; color: black; position: relative; }
 	.ui-widgetlist ul { list-style-type: none; width: 100%; height: 100%; overflow: auto; margin: 0; padding: 20px 10px; overflow-scrolling: touch; }
 	.ui-widgetlist li { border: 0; padding: 5px 10px; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; position: relative; display: inline-block; width: 20%; transition: all 0.3s; }
-	.ui-widgetlist li img { display: block; max-width: 100%; height: auto; border-radius: 4px; }
-	.ui-widgetlist li:hover .ui-widgetlist-picture { background-color: #E0E0E0; border: 2px solid #4299F7; }
+	.ui-widgetlist li img { display: block; max-width: 100%; height: auto; border-radius: 2px; }
+	.ui-widgetlist li:hover .ui-widgetlist-picture { background-color: #E0E0E0; border-color: #4299F7; }
 	.ui-widgetlist li .fa { width: 22px; font-size: 12px; border-right: 1px solid #E0E0E0; margin-right: 7px; color: #A0A0A0; }
 	.ui-widgetlist-name { font-size: 11px; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 13px; }
 	.ui-widgetlist-name b { font-size: 12px; }
-	.ui-widgetlist-picture { background-color: #F8F8F8; padding: 10px; border-radius: 3px; border: 2px solid #E0E0E0; }
+	.ui-widgetlist-picture { background-color: #F8F8F8; padding: 10px; border-radius: 2px; border: 1px solid #E0E0E0; }
 	.ui-widgetlist-selected { background-color: #FFE7A4 !important; font-weight: bold; }
 	.ui-widgetlist-search-empty { height: 34px; }
-	.ui-widgetlist-search { border-bottom: 1px solid #E0E0E0; height: 34px; background-color: white; position: absolute; width: 100%; box-shadow: 0 5px 10px rgba(0,0,0,0.05); }
-	.ui-widgetlist-search input { width: 100%; outline: 0; background-color: white; font: normal normal 12px Arial; border: 0; margin: 0; padding: 0; }
-	.ui-widgetlist-search span { float: left; width: 30px; text-align: center; height: 30px; padding: 8px 0 0 0; font-size: 12px; color: #A0A0A0; }
+	.ui-widgetlist-search { border-bottom: 1px solid #E0E0E0; height: 34px; background-color: #F5F5F5; position: absolute; width: 100%; }
+	.ui-widgetlist-search input { width: 100%; outline: 0; background-color: #F5F5F5; font: normal normal 12px Arial; border: 0; margin: 0; padding: 0; }
+	.ui-widgetlist-search span { float: left; width: 30px; text-align: center; height: 30px; padding: 8px 0 0 0; margin-left: 7px; font-size: 12px; color: #A0A0A0; }
 	.ui-widgetlist-search .fa-times { color: red; cursor: pointer; }
-	.ui-widgetlist-search div { margin-left: 30px; padding: 6px 10px 0 0; }
+	.ui-widgetlist-search div { margin-left: 40px; padding: 5px 10px 0 0; }
 	.ui-widgetlist-invalid { border-color: #E1A1A1; background-color: #FFF3F3 !important; }
 	.ui-widgetlist-invalid .ui-widgetlist-search { border-color: #E1A1A1; }
 	.ui-widgetlist.ui-disabled input { background-color: #F0F0F0; color: gray; }
@@ -31,12 +31,11 @@
 	}
 </style>
 
-<div data---="form__cmseditor.form__if:widgets;width:888;autofocus:true;reload:cmseditorwidgets/reload;icon:plug;title:@(Widgets)" class="hidden">
-
-	<div class="padding">
-		<div data---="widgetlist__null__search:@(Search widgets);datasource:cmseditor.widgets;height:480;exec:cmseditorwidgets/select"></div>
-		<div class="help" style="float:right"><span class="link exec" data-exec="cmseditorwidgets/inject"><i class="fa fa-code"></i>@(Inject custom HTML)</span></div>
-		<div data-bind="common.componentator__show:value" class="hidden help"><span class="link exec" data-exec="cmseditorwidgets/import"><i class="fa fa-download"></i>@(Download existing widgets)</span></div>
+<div data---="form__cmseditor.form__if:widgets;width:1024;autofocus:true;reload:cmseditorwidgets/reload;icon:plug;title:@(Widgets)" class="hidden">
+	<div data---="widgetlist__null__search:@(Search widgets);datasource:cmseditor.widgets;height:480;exec:cmseditorwidgets/select"></div>
+	<div class="padding bg-smoke" style="padding-top:8px">
+		<div class="help pull-right"><span class="link exec" data-exec="cmseditorwidgets/inject"><i class="fa fa-code"></i>@(Inject custom HTML)</span></div>
+		<div data-bind="common.componentator__show" class="hidden help pull-left"><span class="link exec" data-exec="cmseditorwidgets/import"><i class="fa fa-download"></i>@(Download existing widgets)</span></div>
 		<div class="clearfix"></div>
 	</div>
 
@@ -62,7 +61,7 @@
 			// current category
 			var category = cmseditor.instance.widgetscategory;
 			category && category.length && SET('widgets.externaltab', category[0]);
-			SET('common.form3', 'widgets-import');
+			SET('common.form3', 'widgetsimport');
 		};
 
 		exports.select = function(id) {

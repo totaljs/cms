@@ -1631,7 +1631,7 @@ COMPONENT('checkbox', function(self, config) {
 	};
 });
 
-COMPONENT('codemirror', 'linenumbers:false;required:false;trim:false;tabs:false', function(self, config) {
+COMPONENT('codemirror', 'linenumbers:true;required:false;trim:false;tabs:true', function(self, config) {
 
 	var editor = null;
 
@@ -1676,165 +1676,27 @@ COMPONENT('codemirror', 'linenumbers:false;required:false;trim:false;tabs:false'
 
 	self.make = function() {
 
-		(function(mod) {
-			mod(CodeMirror);
-		})(function(CodeMirror) {
+		var findmatch = function() {
 
-			function Bar(cls, orientation, scroll) {
-				var self = this;
-				self.orientation = orientation;
-				self.scroll = scroll;
-				self.screen = self.total = self.size = 1;
-				self.pos = 0;
-
-				self.node = document.createElement('div');
-				self.node.className = cls + '-' + orientation;
-				self.inner = self.node.appendChild(document.createElement('div'));
-
-				CodeMirror.on(self.inner, 'mousedown', function(e) {
-
-					if (e.which != 1)
-						return;
-
-					CodeMirror.e_preventDefault(e);
-					var axis = self.orientation == 'horizontal' ? 'pageX' : 'pageY';
-					var start = e[axis], startpos = self.pos;
-
-					function done() {
-						CodeMirror.off(document, 'mousemove', move);
-						CodeMirror.off(document, 'mouseup', done);
-					}
-
-					function move(e) {
-						if (e.which != 1)
-							return done();
-						self.moveTo(startpos + (e[axis] - start) * (self.total / self.size));
-					}
-
-					CodeMirror.on(document, 'mousemove', move);
-					CodeMirror.on(document, 'mouseup', done);
-				});
-
-				CodeMirror.on(self.node, 'click', function(e) {
-					CodeMirror.e_preventDefault(e);
-					var innerBox = self.inner.getBoundingClientRect(), where;
-					if (self.orientation == 'horizontal')
-						where = e.clientX < innerBox.left ? -1 : e.clientX > innerBox.right ? 1 : 0;
-					else
-						where = e.clientY < innerBox.top ? -1 : e.clientY > innerBox.bottom ? 1 : 0;
-					self.moveTo(self.pos + where * self.screen);
-				});
-
-				function onWheel(e) {
-					var moved = CodeMirror.wheelEventPixels(e)[self.orientation == 'horizontal' ? 'x' : 'y'];
-					var oldPos = self.pos;
-					self.moveTo(self.pos + moved);
-					if (self.pos != oldPos) CodeMirror.e_preventDefault(e);
-				}
-				CodeMirror.on(self.node, 'mousewheel', onWheel);
-				CodeMirror.on(self.node, 'DOMMouseScroll', onWheel);
+			if (config.mode === 'todo') {
+				self.todo_done();
+				return;
 			}
 
-			Bar.prototype.setPos = function(pos, force) {
-				var t = this;
-				if (pos < 0)
-					pos = 0;
-				if (pos > t.total - t.screen)
-					pos = t.total - t.screen;
-				if (!force && pos == t.pos)
-					return false;
-				t.pos = pos;
-				t.inner.style[t.orientation == 'horizontal' ? 'left' : 'top'] = (pos * (t.size / t.total)) + 'px';
-				return true;
-			};
-
-			Bar.prototype.moveTo = function(pos) {
-				var t = this;
-				t.setPos(pos) && t.scroll(pos, t.orientation);
-			};
-
-			var minButtonSize = 10;
-
-			Bar.prototype.update = function(scrollSize, clientSize, barSize) {
-				var t = this;
-				var sizeChanged = t.screen != clientSize || t.total != scrollSize || t.size != barSize;
-
-				if (sizeChanged) {
-					t.screen = clientSize;
-					t.total = scrollSize;
-					t.size = barSize;
+			var sel = editor.getSelections()[0];
+			var cur = editor.getCursor();
+			var count = editor.lineCount();
+			var before = editor.getLine(cur.line).substring(cur.ch, cur.ch + sel.length) === sel;
+			var beg = cur.ch + (before ? sel.length : 0);
+			for (var i = cur.line; i < count; i++) {
+				var ch = editor.getLine(i).indexOf(sel, beg);
+				if (ch !== -1) {
+					editor.doc.addSelection({ line: i, ch: ch }, { line: i, ch: ch + sel.length });
+					break;
 				}
-
-				var buttonSize = t.screen * (t.size / t.total);
-				if (buttonSize < minButtonSize) {
-					t.size -= minButtonSize - buttonSize;
-					buttonSize = minButtonSize;
-				}
-
-				t.inner.style[t.orientation == 'horizontal' ? 'width' : 'height'] = buttonSize + 'px';
-				t.setPos(t.pos, sizeChanged);
-			};
-
-			function SimpleScrollbars(cls, place, scroll) {
-				var t = this;
-				t.addClass = cls;
-				t.horiz = new Bar(cls, 'horizontal', scroll);
-				place(t.horiz.node);
-				t.vert = new Bar(cls, 'vertical', scroll);
-				place(t.vert.node);
-				t.width = null;
+				beg = 0;
 			}
-
-			SimpleScrollbars.prototype.update = function(measure) {
-				var t = this;
-				if (t.width == null) {
-					var style = window.getComputedStyle ? window.getComputedStyle(t.horiz.node) : t.horiz.node.currentStyle;
-					if (style)
-						t.width = parseInt(style.height);
-				}
-
-				var width = t.width || 0;
-				var needsH = measure.scrollWidth > measure.clientWidth + 1;
-				var needsV = measure.scrollHeight > measure.clientHeight + 1;
-
-				t.vert.node.style.display = needsV ? 'block' : 'none';
-				t.horiz.node.style.display = needsH ? 'block' : 'none';
-
-				if (needsV) {
-					t.vert.update(measure.scrollHeight, measure.clientHeight, measure.viewHeight - (needsH ? width : 0));
-					t.vert.node.style.bottom = needsH ? width + 'px' : '0';
-				}
-
-				if (needsH) {
-					t.horiz.update(measure.scrollWidth, measure.clientWidth, measure.viewWidth - (needsV ? width : 0) - measure.barLeft);
-					t.horiz.node.style.right = needsV ? width + 'px' : '0';
-					t.horiz.node.style.left = measure.barLeft + 'px';
-				}
-
-				return {right: needsV ? width : 0, bottom: needsH ? width : 0};
-			};
-
-			SimpleScrollbars.prototype.setScrollTop = function(pos) {
-				this.vert.setPos(pos);
-			};
-
-			SimpleScrollbars.prototype.setScrollLeft = function(pos) {
-				this.horiz.setPos(pos);
-			};
-
-			SimpleScrollbars.prototype.clear = function() {
-				var parent = this.horiz.node.parentNode;
-				parent.removeChild(this.horiz.node);
-				parent.removeChild(this.vert.node);
-			};
-
-			CodeMirror.scrollbarModel.simple = function(place, scroll) {
-				return new SimpleScrollbars('CodeMirror-simplescroll', place, scroll);
-			};
-			CodeMirror.scrollbarModel.overlay = function(place, scroll) {
-				return new SimpleScrollbars('CodeMirror-overlayscroll', place, scroll);
-			};
-		});
+		};
 
 		var content = config.label || self.html();
 		self.html((content ? '<div class="ui-codemirror-label' + (config.required ? ' ui-codemirror-label-required' : '') + '">' + (config.icon ? '<i class="fa fa-' + config.icon + '"></i> ' : '') + content + ':</div>' : '') + '<div class="ui-codemirror"></div>');
@@ -1845,6 +1707,8 @@ COMPONENT('codemirror', 'linenumbers:false;required:false;trim:false;tabs:false'
 		options.mode = config.type || 'htmlmixed';
 		options.indentUnit = 4;
 		options.scrollbarStyle = 'simple';
+		options.scrollPastEnd = true;
+		options.extraKeys = { 'Cmd-D': findmatch, 'Ctrl-D': findmatch };
 
 		if (config.tabs)
 			options.indentWithTabs = true;
@@ -1855,8 +1719,32 @@ COMPONENT('codemirror', 'linenumbers:false;required:false;trim:false;tabs:false'
 			options.matchBrackets = true;
 		}
 
+		options.showTrailingSpace = true;
+
 		editor = CodeMirror(container[0], options);
 		self.editor = editor;
+
+		editor.on('keydown', function(editor, e) {
+			if (e.shiftKey && e.ctrlKey && (e.keyCode === 40 || e.keyCode === 38)) {
+				var tmp = editor.getCursor();
+				editor.doc.addSelection({ line: tmp.line + (e.keyCode === 40 ? 1 : -1), ch: tmp.ch });
+				e.stopPropagation();
+				e.preventDefault();
+			}
+
+			if (e.keyCode === 13) {
+				var tmp = editor.getCursor();
+				var line = editor.lineInfo(tmp.line);
+				if ((/^\t+$/).test(line.text))
+					editor.replaceRange('', { line: tmp.line, ch: 0 }, { line: tmp.line, ch: line.text.length });
+				return;
+			}
+
+			if (e.keyCode === 27) {
+				e.stopPropagation();
+			}
+
+		});
 
 		if (config.height !== 'auto') {
 			var is = typeof(config.height) === 'number';
@@ -1926,7 +1814,7 @@ COMPONENT('codemirror', 'linenumbers:false;required:false;trim:false;tabs:false'
 		self.$oldstate = invalid;
 		self.find('.ui-codemirror').tclass('ui-codemirror-invalid', invalid);
 	};
-}, ['//cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.css', '//cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.js', '//cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/mode/javascript/javascript.min.js', '//cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/mode/htmlmixed/htmlmixed.min.js', '//cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/mode/xml/xml.min.js', '//cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/mode/css/css.min.js', '//cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/mode/markdown/markdown.min.js', function(next) {
+}, ['//cdnjs.cloudflare.com/ajax/libs/codemirror/5.45.0/codemirror.min.css', '//cdnjs.cloudflare.com/ajax/libs/codemirror/5.45.0/codemirror.min.js', '//cdnjs.cloudflare.com/ajax/libs/codemirror/5.45.0/mode/javascript/javascript.min.js', '//cdnjs.cloudflare.com/ajax/libs/codemirror/5.45.0/mode/htmlmixed/htmlmixed.min.js', '//cdnjs.cloudflare.com/ajax/libs/codemirror/5.45.0/mode/xml/xml.min.js', '//cdnjs.cloudflare.com/ajax/libs/codemirror/5.45.0/mode/css/css.min.js', '//cdnjs.cloudflare.com/ajax/libs/codemirror/5.45.0/mode/markdown/markdown.min.js', function(next) {
 	CodeMirror.defineMode('totaljsresources', function() {
 		var REG_KEY = /^[a-z0-9_\-.#]+/i;
 		return {
@@ -1987,12 +1875,242 @@ COMPONENT('codemirror', 'linenumbers:false;required:false;trim:false;tabs:false'
 			}
 		};
 	});
+
+	(function(mod) {
+		mod(CodeMirror);
+	})(function(CodeMirror) {
+
+		function Bar(cls, orientation, scroll) {
+			var self = this;
+			self.orientation = orientation;
+			self.scroll = scroll;
+			self.screen = self.total = self.size = 1;
+			self.pos = 0;
+
+			self.node = document.createElement('div');
+			self.node.className = cls + '-' + orientation;
+			self.inner = self.node.appendChild(document.createElement('div'));
+
+			CodeMirror.on(self.inner, 'mousedown', function(e) {
+
+				if (e.which != 1)
+					return;
+
+				CodeMirror.e_preventDefault(e);
+				var axis = self.orientation == 'horizontal' ? 'pageX' : 'pageY';
+				var start = e[axis], startpos = self.pos;
+
+				function done() {
+					CodeMirror.off(document, 'mousemove', move);
+					CodeMirror.off(document, 'mouseup', done);
+				}
+
+				function move(e) {
+					if (e.which != 1)
+						return done();
+					self.moveTo(startpos + (e[axis] - start) * (self.total / self.size));
+				}
+
+				CodeMirror.on(document, 'mousemove', move);
+				CodeMirror.on(document, 'mouseup', done);
+			});
+
+			CodeMirror.on(self.node, 'click', function(e) {
+				CodeMirror.e_preventDefault(e);
+				var innerBox = self.inner.getBoundingClientRect(), where;
+				if (self.orientation == 'horizontal')
+					where = e.clientX < innerBox.left ? -1 : e.clientX > innerBox.right ? 1 : 0;
+				else
+					where = e.clientY < innerBox.top ? -1 : e.clientY > innerBox.bottom ? 1 : 0;
+				self.moveTo(self.pos + where * self.screen);
+			});
+
+			function onWheel(e) {
+				var moved = CodeMirror.wheelEventPixels(e)[self.orientation == 'horizontal' ? 'x' : 'y'];
+				var oldPos = self.pos;
+				self.moveTo(self.pos + moved);
+				if (self.pos != oldPos) CodeMirror.e_preventDefault(e);
+			}
+			CodeMirror.on(self.node, 'mousewheel', onWheel);
+			CodeMirror.on(self.node, 'DOMMouseScroll', onWheel);
+		}
+
+		Bar.prototype.setPos = function(pos, force) {
+			var t = this;
+			if (pos < 0)
+				pos = 0;
+			if (pos > t.total - t.screen)
+				pos = t.total - t.screen;
+			if (!force && pos == t.pos)
+				return false;
+			t.pos = pos;
+			t.inner.style[t.orientation == 'horizontal' ? 'left' : 'top'] = (pos * (t.size / t.total)) + 'px';
+			return true;
+		};
+
+		Bar.prototype.moveTo = function(pos) {
+			var t = this;
+			t.setPos(pos) && t.scroll(pos, t.orientation);
+		};
+
+		var minButtonSize = 10;
+
+		Bar.prototype.update = function(scrollSize, clientSize, barSize) {
+			var t = this;
+			var sizeChanged = t.screen != clientSize || t.total != scrollSize || t.size != barSize;
+
+			if (sizeChanged) {
+				t.screen = clientSize;
+				t.total = scrollSize;
+				t.size = barSize;
+			}
+
+			var buttonSize = t.screen * (t.size / t.total);
+			if (buttonSize < minButtonSize) {
+				t.size -= minButtonSize - buttonSize;
+				buttonSize = minButtonSize;
+			}
+
+			t.inner.style[t.orientation == 'horizontal' ? 'width' : 'height'] = buttonSize + 'px';
+			t.setPos(t.pos, sizeChanged);
+		};
+
+		function SimpleScrollbars(cls, place, scroll) {
+			var t = this;
+			t.addClass = cls;
+			t.horiz = new Bar(cls, 'horizontal', scroll);
+			place(t.horiz.node);
+			t.vert = new Bar(cls, 'vertical', scroll);
+			place(t.vert.node);
+			t.width = null;
+		}
+
+		SimpleScrollbars.prototype.update = function(measure) {
+			var t = this;
+			if (t.width == null) {
+				var style = window.getComputedStyle ? window.getComputedStyle(t.horiz.node) : t.horiz.node.currentStyle;
+				if (style)
+					t.width = parseInt(style.height);
+			}
+
+			var width = t.width || 0;
+			var needsH = measure.scrollWidth > measure.clientWidth + 1;
+			var needsV = measure.scrollHeight > measure.clientHeight + 1;
+
+			t.vert.node.style.display = needsV ? 'block' : 'none';
+			t.horiz.node.style.display = needsH ? 'block' : 'none';
+
+			if (needsV) {
+				t.vert.update(measure.scrollHeight, measure.clientHeight, measure.viewHeight - (needsH ? width : 0));
+				t.vert.node.style.bottom = needsH ? width + 'px' : '0';
+			}
+
+			if (needsH) {
+				t.horiz.update(measure.scrollWidth, measure.clientWidth, measure.viewWidth - (needsV ? width : 0) - measure.barLeft);
+				t.horiz.node.style.right = needsV ? width + 'px' : '0';
+				t.horiz.node.style.left = measure.barLeft + 'px';
+			}
+
+			return {right: needsV ? width : 0, bottom: needsH ? width : 0};
+		};
+
+		SimpleScrollbars.prototype.setScrollTop = function(pos) {
+			this.vert.setPos(pos);
+		};
+
+		SimpleScrollbars.prototype.setScrollLeft = function(pos) {
+			this.horiz.setPos(pos);
+		};
+
+		SimpleScrollbars.prototype.clear = function() {
+			var parent = this.horiz.node.parentNode;
+			parent.removeChild(this.horiz.node);
+			parent.removeChild(this.vert.node);
+		};
+
+		CodeMirror.scrollbarModel.simple = function(place, scroll) {
+			return new SimpleScrollbars('CodeMirror-simplescroll', place, scroll);
+		};
+		CodeMirror.scrollbarModel.overlay = function(place, scroll) {
+			return new SimpleScrollbars('CodeMirror-overlayscroll', place, scroll);
+		};
+	});
+
+
+	(function(mod) {
+		mod(CodeMirror);
+	})(function(CodeMirror) {
+		CodeMirror.defineOption('showTrailingSpace', false, function(cm, val, prev) {
+			if (prev == CodeMirror.Init)
+				prev = false;
+			if (prev && !val)
+				cm.removeOverlay('trailingspace');
+			else if (!prev && val) {
+				cm.addOverlay({ token: function(stream) {
+					for (var l = stream.string.length, i = l; i; --i) {
+						if (stream.string.charCodeAt(i - 1) !== 32)
+							break;
+					}
+					if (i > stream.pos) {
+						stream.pos = i;
+						return null;
+					}
+					stream.pos = l;
+					return 'trailingspace';
+				}, name: 'trailingspace' });
+			}
+		});
+	});
+
+	(function(mod) {
+		mod(CodeMirror);
+	})(function(CodeMirror) {
+
+		CodeMirror.defineOption('scrollPastEnd', false, function(cm, val, old) {
+			if (old && old != CodeMirror.Init) {
+				cm.off('change', onChange);
+				cm.off('refresh', updateBottomMargin);
+				cm.display.lineSpace.parentNode.style.paddingBottom = '';
+				cm.state.scrollPastEndPadding = null;
+			}
+			if (val) {
+				cm.on('change', onChange);
+				cm.on('refresh', updateBottomMargin);
+				updateBottomMargin(cm);
+			}
+		});
+
+		function onChange(cm, change) {
+			if (CodeMirror.changeEnd(change).line == cm.lastLine())
+				updateBottomMargin(cm);
+		}
+
+		function updateBottomMargin(cm) {
+			var padding = '';
+
+			if (cm.lineCount() > 1) {
+				var totalH = cm.display.scroller.clientHeight - 30;
+				var lastLineH = cm.getLineHandle(cm.lastLine()).height;
+				padding = (totalH - lastLineH) + 'px';
+			}
+
+			if (cm.state.scrollPastEndPadding != padding) {
+				cm.state.scrollPastEndPadding = padding;
+				cm.display.lineSpace.parentNode.style.paddingBottom = padding;
+				cm.off('refresh', updateBottomMargin);
+				cm.setSize();
+				cm.on('refresh', updateBottomMargin);
+			}
+
+		}
+	});
+
 	next();
 }]);
 
 COMPONENT('nosqlcounter', 'count:0;height:80', function(self, config) {
 
-	var cls = 'ui-nosqlcounter';
+	var cls = 'ui-' + self.name;
 	var cls2 = '.' + cls;
 	var months = MONTHS;
 	var container, labels;
@@ -2047,7 +2165,6 @@ COMPONENT('nosqlcounter', 'count:0;height:80', function(self, config) {
 		}
 
 		var max = null;
-
 		for (var i = 0; i < stats.length; i++) {
 			if (max == null)
 				max = stats[i].value;
