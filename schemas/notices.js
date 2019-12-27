@@ -1,7 +1,7 @@
-NEWSCHEMA('Notice', function(schema) {
+NEWSCHEMA('Notices', function(schema) {
 
 	schema.define('id', 'UID');
-	schema.define('idcategory', 'String(50)', true);
+	schema.define('categoryid', 'String(50)', true);
 	schema.define('name', 'String(200)', true);
 	schema.define('author', 'String(30)', true);
 	schema.define('body', String, true);
@@ -16,17 +16,17 @@ NEWSCHEMA('Notice', function(schema) {
 
 		var opt = $.options === EMPTYOBJECT ? $.query : $.options;
 		var isAdmin = $.controller ? $.controller.name === 'admin' : false;
-		var filter = NOSQL('notices').find();
+		var filter = NOSQL('notices').list();
 
 		filter.paginate(opt.page, opt.limit, 70);
 
 		if (isAdmin) {
-			opt.author && filter.adminFilter('author', opt, String);
-			opt.name && filter.adminFilter('name', opt, String);
-			opt.category && filter.adminFilter('category', opt, String);
+			opt.author && filter.gridfilter('author', opt, String);
+			opt.name && filter.gridfilter('name', opt, String);
+			opt.category && filter.gridfilter('category', opt, String);
 		} else {
 			opt.author && filter.where('author', opt.author);
-			opt.category && filter.where('idcategory', opt.category);
+			opt.category && filter.where('categoryid', opt.category);
 			opt.published && filter.where('date', '<=', NOW);
 			opt.search && filter.like('search', opt.search.keywords(true, true));
 			opt.ispinned != null && filter.where('ispinned', opt.ispinned);
@@ -34,22 +34,17 @@ NEWSCHEMA('Notice', function(schema) {
 			filter.fields('body');
 		}
 
-		filter.fields('id', 'idcategory', 'category', 'date', 'name', 'author', 'icon', 'datecreated', 'ispinned', 'event', 'url');
+		filter.fields('id,categoryid,category,date,name,author,icon,dtcreated,ispinned,event,url');
+		filter.gridsort(opt.sort || 'dtcreated_desc');
 
-		if (opt.sort)
-			filter.adminSort(opt.sort);
-		else
-			filter.sort('datecreated', true);
-
-		filter.callback(function(err, docs, count) {
-			!isAdmin && prepare_body(docs);
-			$.callback(filter.adminOutput(docs, count));
+		filter.callback(function(err, response) {
+			!isAdmin && prepare_body(response.items);
+			$.callback(response);
 		});
 	});
 
 	// Gets a specific post
 	schema.setGet(function($) {
-
 		var options = $.options;
 		var filter = NOSQL('notices').one();
 		var id = options.id || $.id;
@@ -81,17 +76,17 @@ NEWSCHEMA('Notice', function(schema) {
 		var nosql = NOSQL('notices');
 
 		if (isUpdate) {
-			model.dateupdated = NOW;
+			model.dtupdated = NOW;
 			model.adminupdated = user;
 		} else {
 			model.id = UID();
 			model.admincreated = user;
-			model.datecreated = NOW;
+			model.dtcreated = NOW;
 		}
 
 		!model.date && (model.date = NOW);
 
-		var category = PREF.notices.findItem('id', model.idcategory);
+		var category = PREF.notices.findItem('id', model.categoryid);
 
 		model.category = category ? category.name : '';
 		model.search = ((model.name || '') + ' ' + (model.body || '')).keywords(true, true).join(' ').max(1000);
@@ -99,7 +94,7 @@ NEWSCHEMA('Notice', function(schema) {
 		var db = isUpdate ? nosql.modify(model).where('id', model.id).backup(user).log('Update: ' + model.id, user) : nosql.insert(model).log('Create: ' + model.id, user);
 
 		db.callback(function() {
-			$SAVE('Event', { type: 'notices/save', id: model.id, user: user, body: model.name, admin: true }, NOOP, $);
+			$SAVE('Events', { type: 'notices/save', id: model.id, user: user, body: model.name, admin: true }, NOOP, $);
 			EMIT('notices.save', model);
 			F.cache.removeAll('cachecms');
 			$.success();

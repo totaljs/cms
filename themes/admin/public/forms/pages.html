@@ -141,7 +141,6 @@
 			WATCH('?.lockedtemplate2', function(path, value, type) {
 				type === 2 && SET('?.lockedtemplate', value);
 			});
-
 			WATCH('?.lockedcontent', function(path, value, type) {
 				value && SET('?.draft', false);
 				cmseditor.instance.lock(value);
@@ -196,7 +195,7 @@
 
 		exports.submit = function(hide) {
 
-			var model = CLONE('pagesform');
+			var model = CLONE('?');
 			var editor = cmseditor.instance;
 
 			model.pictures = editor.getPictures();
@@ -246,7 +245,7 @@
 						EXEC('pages/refresh');
 
 						// Updates parts
-						parts.idowner = response.value;
+						parts.ownerid = response.value;
 						AJAX('POST [url]api/parts/', parts, NOOP);
 					}
 				});

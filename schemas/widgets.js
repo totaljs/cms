@@ -9,10 +9,10 @@ function WidgetInstace() {
 }
 
 WidgetInstace.prototype.globals = function(name, value) {
-	$WORKFLOW('Globals', 'add', { name: name, value: value }, NOOP);
+	$WORKFLOW('Pages/Globals', 'add', { name: name, value: value }, NOOP);
 };
 
-NEWSCHEMA('Widget', function(schema) {
+NEWSCHEMA('Widgets', function(schema) {
 
 	schema.define('id', 'UID');
 	schema.define('name', 'String(50)', true);
@@ -25,10 +25,10 @@ NEWSCHEMA('Widget', function(schema) {
 
 	// Gets listing
 	schema.setQuery(function($) {
-		var filter = NOSQL('widgets').find();
+		var filter = NOSQL('widgets').list();
 		filter.sort('dtcreated', true);
-		filter.fields('id', 'picture', 'name', 'icon', 'category', 'dtcreated', 'reference', 'dtupdated');
-		filter.callback((err, docs, count) => $.callback(filter.adminOutput(docs, count)));
+		filter.fields('id,picture,name,icon,category,dtcreated,reference,dtupdated');
+		filter.callback($.callback);
 	});
 
 	// Gets widget detail
@@ -73,9 +73,9 @@ NEWSCHEMA('Widget', function(schema) {
 		var db = isUpdate ? nosql.modify(model).where('id', model.id).backup(user).log('Update: ' + model.id, user) : nosql.insert(model).log('Create: ' + model.id, user);
 
 		db.callback(function() {
-			$SAVE('Event', { type: 'widgets/save', id: model.id, user: user, body: model.name, admin: true }, NOOP, $);
-			EMIT('widgets.save', model);
-			refresh(() => replace && $WORKFLOW('Widget', 'replace', { id: model.id }, ERROR('widgets.save')));
+			$SAVE('Events', { type: 'widgets/save', id: model.id, user: user, body: model.name, admin: true }, NOOP, $);
+			EMIT('widgets_save', model);
+			refresh(() => replace && $WORKFLOW('Widgets', 'replace', { id: model.id }, ERROR('widgets.save')));
 			$.success();
 		});
 	});
@@ -83,19 +83,16 @@ NEWSCHEMA('Widget', function(schema) {
 	// Removes a specific widget
 	schema.setRemove(function($) {
 		var user = $.user.name;
-		var id = $.body.id;
-		NOSQL('widgets').remove().where('id', id).backup(user).log('Remove: ' + id, user).callback(function(err, count) {
+		NOSQL('widgets').remove().where('id', $.id).backup(user).log('Remove: ' + $.id, user).callback(function(err, count) {
 
-			if (INSTALLED[id]) {
-				var w = MAIN.widgets[id];
+			if (INSTALLED[$.id]) {
+				var w = MAIN.widgets[$.id];
 				w && w.total && w.total.uninstall && w.total.uninstall();
-				delete INSTALLED[id];
+				delete INSTALLED[$.id];
 			}
 
 			$.success();
-			count && setTimeout2('widgets', function() {
-				refresh(null, true);
-			}, 1000);
+			count && setTimeout2('widgets', () => refresh(null, true), 1000);
 		});
 	});
 
@@ -173,7 +170,7 @@ NEWSCHEMA('Widget', function(schema) {
 	});
 });
 
-NEWSCHEMA('WidgetGlobals').make(function(schema) {
+NEWSCHEMA('Widgets/Globals').make(function(schema) {
 
 	schema.define('css', 'String');
 	schema.define('js', 'String');
@@ -394,7 +391,7 @@ function refresh(callback, force) {
 
 		if (rebuildcss || rebuildjs || rebuildeditor) {
 
-			$GET('WidgetGlobals', function(err, response) {
+			$GET('Widgets/Globals', function(err, response) {
 
 				var version = U.GUID(5);
 
@@ -450,7 +447,7 @@ function replaceContent(arr) {
 	var options = {};
 	arr.wait(function(item, next) {
 		options.id = item;
-		$WORKFLOW('Widget', 'replace', options, next);
+		$WORKFLOW('Widgets', 'replace', options, next);
 	});
 }
 
@@ -534,7 +531,7 @@ function watcher() {
 
 			if (changes.length) {
 				for (var i = 0, length = changes.length; i < length; i++)
-					$WORKFLOW('Widget', 'import', { filename: changes[i] }, NOOP);
+					$WORKFLOW('Widgets', 'import', { filename: changes[i] }, NOOP);
 			}
 
 			setTimeout(watch, 3500);

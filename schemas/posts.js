@@ -1,9 +1,9 @@
 const REGEXP_GLOBAL = /\$[0-9a-z-_]+/gi;
 
-NEWSCHEMA('Post', function(schema) {
+NEWSCHEMA('Posts', function(schema) {
 
 	schema.define('id', 'UID');
-	schema.define('idcategory', 'String(50)');
+	schema.define('categoryid', 'String(50)');
 	schema.define('template', 'String(30)', true);
 	schema.define('type', ['html', 'markdown']);
 	schema.define('name', 'String(100)', true);
@@ -26,16 +26,16 @@ NEWSCHEMA('Post', function(schema) {
 
 		var opt = $.options === EMPTYOBJECT ? $.query : $.options;
 		var isAdmin = $.controller ? $.controller.name === 'admin' : false;
-		var filter = NOSQL('posts').find();
+		var filter = NOSQL('posts').list();
 
 		filter.paginate(opt.page, opt.limit, 70);
 
 		if (isAdmin) {
-			opt.category && filter.adminFilter('category', opt, String);
-			opt.author && filter.adminFilter('author', opt, String);
-			opt.name && filter.adminFilter('name', opt, String);
-			opt.type && filter.adminFilter('type', opt, String);
-			opt.language && filter.adminFilter('language', opt, String);
+			opt.category && filter.gridfilter('category', opt, String);
+			opt.author && filter.gridfilter('author', opt, String);
+			opt.name && filter.gridfilter('name', opt, String);
+			opt.type && filter.gridfilter('type', opt, String);
+			opt.language && filter.gridfilter('language', opt, String);
 		} else {
 			opt.category && filter.where('linker_category', opt.category);
 			opt.author && filter.where('author', opt.author);
@@ -45,14 +45,10 @@ NEWSCHEMA('Post', function(schema) {
 			filter.fields('description');
 		}
 
-		filter.fields('id', 'idcategory', 'category', 'name', 'datecreated', 'date', 'linker', 'linker_category', 'pictures', 'summary', 'ispublished', 'signals', 'author', 'template', 'type', 'language');
+		filter.fields('id,categoryid,category,name,datecreated,date,linker,linker_category,pictures,summary,ispublished,signals,author,template,type,language');
 
-		if (opt.sort)
-			filter.adminSort(opt.sort);
-		else
-			filter.sort('date', true);
-
-		filter.callback((err, docs, count) => $.callback(filter.adminOutput(docs, count)));
+		filter.gridsort(opt.sort || 'date_desc');
+		filter.callback($.callback);
 	});
 
 	// Gets a specific post
@@ -119,16 +115,14 @@ NEWSCHEMA('Post', function(schema) {
 
 	// Removes a specific post
 	schema.setRemove(function($) {
-		var id = $.body.id;
+		var id = $.id;
 		var user = $.user.name;
-
 		NOSQL('posts').remove().backup(user).log('Remove: ' + id, user).where('id', id).callback(function() {
 			FUNC.remove('posts', id);
 			$.success();
 			refresh_cache();
 		});
-
-		NOSQL('parts').remove().where('idowner', id).where('type', 'post');
+		NOSQL('parts').remove().where('ownerid', id).where('type', 'post');
 	});
 
 	// Saves the post into the database
@@ -152,7 +146,7 @@ NEWSCHEMA('Post', function(schema) {
 		model.linker = model.date.format('yyyyMMdd') + '-' + model.name.slug();
 		model.stamp = new Date().format('yyyyMMddHHmm');
 
-		var category = MAIN.posts.find('id', model.idcategory);
+		var category = MAIN.posts.find('id', model.categoryid);
 		if (category) {
 			model.linker_category = category.linker;
 			model.category = category.name;
@@ -171,7 +165,7 @@ NEWSCHEMA('Post', function(schema) {
 		var db = isUpdate ? nosql.modify(model).where('id', model.id).backup(user).log('Update: ' + model.id, user) : nosql.insert(model).log('Create: ' + model.id, user);
 
 		db.callback(function() {
-			$SAVE('Event', { type: 'posts/save', id: model.id, user: user, body: model.name, admin: true }, NOOP, $);
+			$SAVE('Events', { type: 'posts/save', id: model.id, user: user, body: model.name, admin: true }, NOOP, $);
 			EMIT('posts.save', model);
 			$.success(model.id);
 			refresh_cache();

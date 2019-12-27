@@ -1,6 +1,6 @@
 var WSDATA = { TYPE: 'event' };
 
-NEWSCHEMA('Event', function(schema) {
+NEWSCHEMA('Events', function(schema) {
 
 	schema.define('id', 'String(50)', true);
 	schema.define('type', 'String(50)', true);
@@ -13,7 +13,7 @@ NEWSCHEMA('Event', function(schema) {
 
 		model.id = $.model.id;
 		model.type = $.model.type;
-		model.created = NOW;
+		model.dtcreated = NOW;
 
 		if ($.model.body)
 			model.body = $.model.body;

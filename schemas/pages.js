@@ -1,8 +1,8 @@
+const Fs = require('fs');
 const REGEXP_HTML_CLASS = /(\s)class=".*?"/g;
 const REGEXP_HTML_ATTR = /(\s)data-cms-id="[a-z0-9]+"|data-cms-widget="[a-z0-9]+"/g;
 const REGEXP_HTML_DIV = /<div\s>/g;
 const REGEXP_GLOBAL = /\$[0-9a-z-_]+/gi;
-const Fs = require('fs');
 
 var loaded = false;
 
@@ -11,7 +11,7 @@ MAIN.sitemap = [];
 MAIN.variables = {};
 MAIN.redirects = {};
 
-NEWSCHEMA('Page', function(schema) {
+NEWSCHEMA('Pages', function(schema) {
 
 	schema.define('id', 'UID');
 	schema.define('body', String);                      // RAW html
@@ -49,7 +49,7 @@ NEWSCHEMA('Page', function(schema) {
 	// Gets listing
 	schema.setQuery(function($) {
 		var filter = NOSQL('pages').listing();
-		filter.fields('id', 'name', 'title', 'url', 'ispartial', 'icon', 'parent', 'language', 'draft', 'dtupdated');
+		filter.fields('id,name,title,url,ispartial,icon,parent,language,draft,dtupdated');
 		filter.sort('dtcreated', true);
 		filter.callback($.callback);
 	});
@@ -109,7 +109,7 @@ NEWSCHEMA('Page', function(schema) {
 			}
 		});
 
-		NOSQL('parts').remove().where('idowner', id).where('type', 'page');
+		NOSQL('parts').remove().where('ownerid', id).where('type', 'page');
 	});
 
 	// Saves a page into the database
@@ -149,7 +149,7 @@ NEWSCHEMA('Page', function(schema) {
 			}
 		}
 
-		redirectsmod && $WORKFLOW('Redirects', 'update');
+		redirectsmod && $WORKFLOW('Pages/Redirects', 'update');
 
 		if (!model.navigations.length)
 			model.navigations = null;
@@ -189,15 +189,15 @@ NEWSCHEMA('Page', function(schema) {
 
 		// Update a URL in all navigations where this page is used
 		if (!model.ispartial)
-			$WORKFLOW('Navigation', 'page', { page: model });
+			$WORKFLOW('Navigations', 'page', { page: model });
 
 		db.callback(function() {
 
-			$SAVE('Event', { type: 'pages/save', id: model.id, user: user, body: model.name, admin: true }, NOOP, $);
+			$SAVE('Events', { type: 'pages/save', id: model.id, user: user, body: model.name, admin: true }, NOOP, $);
 			EMIT('pages.save', model);
 
 			if (model.replacelink && model.url !== oldurl && oldurl)
-				$WORKFLOW('Page', 'replacelinks', { url: model.url, oldurl: oldurl });
+				$WORKFLOW('Pages', 'replacelinks', { url: model.url, oldurl: oldurl });
 			else
 				setTimeout2('pages', refresh, 1000);
 
@@ -258,7 +258,7 @@ NEWSCHEMA('Page', function(schema) {
 	});
 });
 
-NEWSCHEMA('Globals', function(schema) {
+NEWSCHEMA('Pages/Globals', function(schema) {
 
 	var pending = [];
 
@@ -318,7 +318,7 @@ NEWSCHEMA('Globals', function(schema) {
 	});
 });
 
-NEWSCHEMA('Redirects', function(schema) {
+NEWSCHEMA('Pages/Redirects', function(schema) {
 
 	schema.define('body', 'String');
 
@@ -360,7 +360,7 @@ NEWSCHEMA('Redirects', function(schema) {
 });
 
 function refresh_redirects() {
-	$GET('Redirects', function(err, response) {
+	$GET('Pages/Redirects', function(err, response) {
 		var lines = response.body.split('\n');
 		MAIN.redirects = {};
 		for (var i = 0, length = lines.length; i < length; i++) {
@@ -429,7 +429,7 @@ function refresh() {
 		MAIN.partial = partial;
 		MAIN.pages = pages;
 
-		$GET('Globals', function(err, response) {
+		$GET('Pages/Globals', function(err, response) {
 			parseGlobals(response.body);
 			F.cache.removeAll('cachecms');
 			loaded = true;

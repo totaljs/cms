@@ -1,6 +1,6 @@
 const Fs = require('fs');
 
-NEWSCHEMA('File', function(schema) {
+NEWSCHEMA('Files', function(schema) {
 
 	schema.setQuery(function($) {
 		FILESTORAGE('files').all($.callback);

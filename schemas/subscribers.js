@@ -1,4 +1,4 @@
-NEWSCHEMA('Subscriber', function(schema) {
+NEWSCHEMA('Subscribers', function(schema) {
 
 	schema.define('email', String, true);
 
@@ -15,7 +15,7 @@ NEWSCHEMA('Subscriber', function(schema) {
 				continue;
 
 			var obj = {};
-			obj.datecreated = NOW;
+			obj.dtcreated = NOW;
 			obj.ip = $.ip;
 			obj.language = $.language;
 			obj.unsubscribed = false;
@@ -24,7 +24,7 @@ NEWSCHEMA('Subscriber', function(schema) {
 			db.modify(obj, obj).where('email', obj.email).callback(function(err, count) {
 				if (count) {
 					if (email.length === 1)
-						$SAVE('Event', { type: 'subscribers/add', user: $.user ? $.user.name : '', body: obj.email }, NOOP, $);
+						$SAVE('Events', { type: 'subscribers/add', user: $.user ? $.user.name : '', body: obj.email }, NOOP, $);
 					EMIT('subscribers.save', obj);
 					db.counter.hit('all', 1);
 				}
@@ -38,20 +38,16 @@ NEWSCHEMA('Subscriber', function(schema) {
 	schema.setQuery(function($) {
 
 		var opt = $.options === EMPTYOBJECT ? $.query : $.options;
-		var filter = NOSQL('subscribers').find();
+		var filter = NOSQL('subscribers').list();
 
 		filter.paginate(opt.page, opt.limit, 100);
-		opt.email && filter.adminFilter('email', opt, String);
-		opt.language && filter.adminFilter('language', opt, String);
-		opt.datecreated && filter.adminFilter('datecreated', opt, Date);
-
-		if (opt.sort)
-			filter.adminSort(opt.sort);
-		else
-			filter.sort('datecreated', true);
-
-		filter.callback((err, docs, count) => $.callback(filter.adminOutput(docs, count)));
+		opt.email && filter.gridfilter('email', opt, String);
+		opt.language && filter.gridfilter('language', opt, String);
+		opt.dtcreated && filter.gridfilter('dtcreated', opt, Date);
+		filter.gridsort(opt.sort || 'dtcreated_desc');
+		filter.callback($.callback);
 	});
+
 	// Removes user from DB
 	schema.setRemove(function($) {
 		var id = $.body.id;
@@ -68,7 +64,7 @@ NEWSCHEMA('Subscriber', function(schema) {
 				builder.push('"' + response[i].email + '"');
 
 			$.controller.content(builder.join('\n'), U.getContentType('csv'), { 'Content-Disposition': 'attachment; filename="subscribers.csv"' });
-			$.callback();
+			$.cancel();
 		});
 	});
 
@@ -78,14 +74,12 @@ NEWSCHEMA('Subscriber', function(schema) {
 		NOSQL('subscribers').update(function(doc) {
 			doc.unsubscribed = !doc.unsubscribed;
 			return doc;
-		}).log('Toggle: ' + arr.join(', '), user).in('email', arr).callback(function() {
-			$.success();
-		});
+		}).log('Toggle: ' + arr.join(', '), user).in('email', arr).callback($.done());
 	});
 
 	schema.addWorkflow('unsubscribe', function($) {
 		NOSQL('subscribers').modify({ unsubscribed: true, dateupdated: NOW }).where('email', $.query.email);
-		$SAVE('Event', { type: 'subscribers/rem', user: $.user ? $.user.name : '', body: $.query.email }, NOOP, $);
+		$SAVE('Events', { type: 'subscribers/rem', user: $.user ? $.user.name : '', body: $.query.email }, NOOP, $);
 		$.success();
 	});
 

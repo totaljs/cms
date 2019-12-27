@@ -7,7 +7,7 @@
 		</div>
 	</div>
 
-	<nav data---="validation__cmseditor.part">
+	<nav data---="validation__cmseditorpart">
 		<button name="submit">@(APPLY)</button>
 		<button name="cancel">@(Cancel)</button>
 	</nav>
@@ -17,6 +17,7 @@
 <script>
 
 	PLUGIN('cmseditorpart', function(exports) {
+
 		exports.remove = function() {
 			SETTER('confirm', 'show', '@(Are you sure you want to remove this part?)', ['"trash-o" @(Remove)', '@(Cancel)'], function(index) {
 				if (!index) {
@@ -38,13 +39,11 @@
 			editor.change(true);
 			hide();
 		};
-	});
 
-	WATCH('cmseditor.part.isnew', function(path, value) {
-		if (value != null && !value)
-			SETTER(true, 'modal', 'reconfigure', 'height:117');
-		else
-			SETTER(true, 'modal', 'reconfigure', 'height:97');
+		WATCH('?.isnew', function(path, value) {
+			SETTER(true, 'modal', 'reconfigure', 'height:' + (value != null && !value ? 117 : 97));
+		});
+
 	});
 
 </script>

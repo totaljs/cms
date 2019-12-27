@@ -17,7 +17,7 @@
 		</div>
 		<div data---="error__?.response"></div>
 	</div>
-	<nav data---="validation__pages.formglobals">
+	<nav data---="validation__pagesglobals">
 		<button name="submit">@(SAVE)</button>
 		<button name="cancel">@(Cancel)</button>
 	</nav>
@@ -44,7 +44,7 @@
 
 		exports.submit = function() {
 			FUNC.loading(true);
-			AJAX('POST [url]api/pages/globals/ REPEAT', GETR('pages.formglobals'), function(response) {
+			AJAX('POST [url]api/pages/globals/ REPEAT', GETR('?'), function(response) {
 				FUNC.loading(false, 1000);
 				if (response.success) {
 					SETTER('snackbar', 'success', '@(Globals variables have been saved successfully.)');

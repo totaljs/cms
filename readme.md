@@ -25,6 +25,7 @@ Read more in [__documentation__](https://wiki.totaljs.com/?q=cms+welcome).
 dateupdated --> dtupdated
 datecreated --> dtcreated
 idpage      --> pageid
+idowner     --> ownerid         (parst)
 ```
 
 ## License

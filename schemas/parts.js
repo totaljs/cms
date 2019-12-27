@@ -1,4 +1,4 @@
-NEWSCHEMA('PartData', function(schema) {
+NEWSCHEMA('Parts/Data', function(schema) {
 
 	// Id generated on client-side
 	schema.define('id', 'String(20)');
@@ -12,26 +12,27 @@ NEWSCHEMA('PartData', function(schema) {
 
 	// Widget container category
 	schema.define('category', 'Capitalize');
+
 });
 
-NEWSCHEMA('Part', function(schema) {
+NEWSCHEMA('Parts', function(schema) {
 
 	// Owner
-	schema.define('idowner', 'UID');
+	schema.define('ownerid', 'UID');
 
 	// page, post
 	schema.define('type', 'Lower');
 
 	// List of dynamic widgets in this part
-	schema.define('items', '[PartData]');
+	schema.define('items', '[Parts/Data]');
 
 	schema.setSave(function($) {
 		var model = $.model;
-		model.dateupdated = NOW;
-		NOSQL('parts').remove().where('idowner', model.idowner).callback(function() {
+		model.dtupdated = NOW;
+		NOSQL('parts').remove().where('ownerid', model.ownerid).callback(function() {
 			for (var i = 0; i < model.items.length; i++) {
 				var item = model.items[i];
-				item.idowner = model.idowner;
+				item.ownerid = model.ownerid;
 				item.type = model.type;
 				FUNC.write('parts', item.id, U.minifyHTML(item.body), true);
 				item.body = undefined;

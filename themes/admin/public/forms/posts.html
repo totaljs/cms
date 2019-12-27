@@ -81,13 +81,13 @@
 				<div class="col-lg-2 col-md-3 m">
 					<div class="keyvalue">
 						<div class="key"><i class="fa fa-calendar"></i>@(Created)</div>
-						<div class="value" data-bind="posts.form.datecreated__html:Thelpers.time(value)"></div>
+						<div class="value" data-bind="posts.form.dtcreated__html:Thelpers.time(value)"></div>
 					</div>
 				</div>
 				<div class="col-lg-2 col-md-3 m">
 					<div class="keyvalue">
 						<div class="key"><i class="fa fa-calendar"></i>@(Updated)</div>
-						<div class="value" data-bind="posts.form.dateupdated__html:value ? Thelpers.time(value) : '@(unchanged)'"></div>
+						<div class="value" data-bind="posts.form.dtupdated__html:value ? Thelpers.time(value) : '@(unchanged)'"></div>
 					</div>
 				</div>
 				<div class="col-lg-6 m" data-bind="posts.form.stats__show:value">
@@ -235,7 +235,7 @@
 					EXEC('posts/refresh');
 
 					// Updates parts
-					parts.idowner = response.value;
+					parts.ownerid = response.value;
 					AJAX('POST [url]api/parts/', parts, NOOP);
 				}
 

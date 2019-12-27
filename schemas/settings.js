@@ -52,7 +52,7 @@ NEWSCHEMA('Settings', function(schema) {
 		model.datebackup = undefined;
 
 		EMIT('settings.save', PREF);
-		$SAVE('Event', { type: 'settings', id: model.id, user: $.user.name, admin: true }, NOOP, $);
+		$SAVE('Events', { type: 'settings', id: model.id, user: $.user.name, admin: true }, NOOP, $);
 		$.success();
 	});
 

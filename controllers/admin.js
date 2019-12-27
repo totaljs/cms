@@ -53,32 +53,32 @@ exports.install = function() {
 	ROUTE('GET     #admin/api/dashboard/tracking/             *Tracking --> @stats');
 
 	// MODEL: /schema/widgets.js
-	ROUTE('GET     #admin/api/widgets/                        *Widget --> @query');
-	ROUTE('GET     #admin/api/widgets/{id}/                   *Widget --> @read');
-	ROUTE('POST    #admin/api/widgets/                        *Widget --> @save');
-	ROUTE('DELETE  #admin/api/widgets/                        *Widget --> @remove');
-	ROUTE('GET     #admin/api/widgets/{id}/editor/            *Widget --> @editor');
-	ROUTE('GET     #admin/api/widgets/dependencies/           *Widget --> @dependencies');
-	ROUTE('GET     #admin/api/widgets/{id}/settings/          *Widget', json_widget_settings);
+	ROUTE('GET     #admin/api/widgets/                        *Widgets --> @query');
+	ROUTE('GET     #admin/api/widgets/{id}/                   *Widgets --> @read');
+	ROUTE('POST    #admin/api/widgets/                        *Widgets --> @save');
+	ROUTE('DELETE  #admin/api/widgets/{id}/                   *Widgets --> @remove');
+	ROUTE('GET     #admin/api/widgets/{id}/editor/            *Widgets --> @editor');
+	ROUTE('GET     #admin/api/widgets/dependencies/           *Widgets --> @dependencies');
+	ROUTE('GET     #admin/api/widgets/{id}/settings/          *Widgets', json_widget_settings);
 	ROUTE('GET     #admin/api/widgets/{id}/backups/           *Common --> @backup');
 
 	// MODEL: /schema/widgets.js
-	ROUTE('GET     #admin/api/widgets/globals/                *WidgetGlobals --> @read');
-	ROUTE('POST    #admin/api/widgets/globals/                *WidgetGlobals --> @save', 30);
+	ROUTE('GET     #admin/api/widgets/globals/                *Widgets/Globals --> @read');
+	ROUTE('POST    #admin/api/widgets/globals/                *Widgets/Globals --> @save', 30);
 
 	// MODEL: /schema/pages.js
-	ROUTE('GET     #admin/api/pages/                          *Page --> @query');
-	ROUTE('GET     #admin/api/pages/{id}/                     *Page --> @read');
-	ROUTE('POST    #admin/api/pages/                          *Page --> @url @save (response)');
-	ROUTE('DELETE  #admin/api/pages/                          *Page --> @remove');
-	ROUTE('GET     #admin/api/pages/stats/                    *Page --> @stats');
-	ROUTE('GET     #admin/api/pages/{id}/stats/               *Page --> @stats');
+	ROUTE('GET     #admin/api/pages/                          *Pages --> @query');
+	ROUTE('GET     #admin/api/pages/{id}/                     *Pages --> @read');
+	ROUTE('POST    #admin/api/pages/                          *Pages --> @url @save (response)');
+	ROUTE('DELETE  #admin/api/pages/                          *Pages --> @remove');
+	ROUTE('GET     #admin/api/pages/stats/                    *Pages --> @stats');
+	ROUTE('GET     #admin/api/pages/{id}/stats/               *Pages --> @stats');
 	ROUTE('GET     #admin/api/pages/{id}/backups/             *Common --> @backup');
 	ROUTE('POST    #admin/api/pages/preview/',                view_pages_preview, ['json'], 512);
 	ROUTE('GET     #admin/api/pages/dependencies/',           json_pages_dependencies);
 	ROUTE('POST    #admin/api/pages/css/',                    css_pages, ['json'], 512);
 
-	ROUTE('POST    #admin/api/parts/                          *Part --> @save');
+	ROUTE('POST    #admin/api/parts/                          *Parts --> @save');
 	ROUTE('POST    #admin/api/tracking/                       *Tracking --> @save');
 	ROUTE('GET     #admin/api/tracking/                       *Tracking --> @query');
 	ROUTE('GET     #admin/api/tracking/{id}/                  *Tracking --> @stats');
@@ -91,70 +91,70 @@ exports.install = function() {
 	ROUTE('POST    #admin/api/pages/redirects/                *Redirects --> @save', 30);
 
 	// MODEL: /schema/events.js
-	ROUTE('GET     #admin/api/events/                         *Event --> @query');
-	ROUTE('GET     #admin/api/events/clear/                   *Event --> @clear');
+	ROUTE('GET     #admin/api/events/                         *Events --> @query');
+	ROUTE('GET     #admin/api/events/clear/                   *Events --> @clear');
 
 	// MODEL: /schema/posts.js
-	ROUTE('GET     #admin/api/posts/                          *Post --> @query');
-	ROUTE('GET     #admin/api/posts/{id}/                     *Post --> @read');
-	ROUTE('POST    #admin/api/posts/                          *Post --> @save');
-	ROUTE('DELETE  #admin/api/posts/                          *Post --> @remove');
-	ROUTE('GET     #admin/api/posts/toggle/                   *Post --> @toggle');
-	ROUTE('GET     #admin/api/posts/stats/                    *Post --> @stats');
-	ROUTE('GET     #admin/api/posts/{id}/stats/               *Post --> @stats');
+	ROUTE('GET     #admin/api/posts/                          *Posts --> @query');
+	ROUTE('GET     #admin/api/posts/{id}/                     *Posts --> @read');
+	ROUTE('POST    #admin/api/posts/                          *Posts --> @save');
+	ROUTE('DELETE  #admin/api/posts/                          *Posts --> @remove');
+	ROUTE('GET     #admin/api/posts/toggle/                   *Posts --> @toggle');
+	ROUTE('GET     #admin/api/posts/stats/                    *Posts --> @stats');
+	ROUTE('GET     #admin/api/posts/{id}/stats/               *Posts --> @stats');
 	ROUTE('GET     #admin/api/posts/{id}/backups/             *Common --> @backup');
 	ROUTE('POST    #admin/api/posts/preview/',                view_posts_preview, ['json'], 512);
 
 	// MODEL: /schema/notices.js
-	ROUTE('GET     #admin/api/notices/                        *Notice --> @query');
-	ROUTE('GET     #admin/api/notices/{id}/                   *Notice --> @read');
-	ROUTE('POST    #admin/api/notices/                        *Notice --> @save');
-	ROUTE('DELETE  #admin/api/notices/                        *Notice --> @remove');
-	ROUTE('GET     #admin/api/notices/toggle/                 *Notice --> @toggle');
+	ROUTE('GET     #admin/api/notices/                        *Notices --> @query');
+	ROUTE('GET     #admin/api/notices/{id}/                   *Notices --> @read');
+	ROUTE('POST    #admin/api/notices/                        *Notices --> @save');
+	ROUTE('DELETE  #admin/api/notices/                        *Notices --> @remove');
+	ROUTE('GET     #admin/api/notices/toggle/                 *Notices --> @toggle');
 	ROUTE('POST    #admin/api/notices/preview/',              view_notices_preview, ['json']);
 
 	// MODEL: /schema/subscribers.js
-	ROUTE('GET     #admin/api/subscribers/                    *Subscriber --> @query');
-	ROUTE('GET     #admin/api/subscribers/{id}/               *Subscriber --> @read');
-	ROUTE('POST    #admin/api/subscribers/                    *Subscriber --> @save');
-	ROUTE('DELETE  #admin/api/subscribers/                    *Subscriber --> @remove');
-	ROUTE('GET     #admin/api/subscribers/stats/              *Subscriber --> @stats');
-	ROUTE('GET     #admin/api/subscribers/toggle/             *Subscriber --> @toggle');
+	ROUTE('GET     #admin/api/subscribers/                    *Subscribers --> @query');
+	ROUTE('GET     #admin/api/subscribers/{id}/               *Subscribers --> @read');
+	ROUTE('POST    #admin/api/subscribers/                    *Subscribers --> @save');
+	ROUTE('DELETE  #admin/api/subscribers/                    *Subscribers --> @remove');
+	ROUTE('GET     #admin/api/subscribers/stats/              *Subscribers --> @stats');
+	ROUTE('GET     #admin/api/subscribers/toggle/             *Subscribers --> @toggle');
 
 	// MODEL: /schema/newsletters.js
-	ROUTE('GET     #admin/api/newsletters/                    *Newsletter --> @query');
-	ROUTE('GET     #admin/api/newsletters/{id}/               *Newsletter --> @read');
-	ROUTE('POST    #admin/api/newsletters/                    *Newsletter --> @save');
-	ROUTE('DELETE  #admin/api/newsletters/                    *Newsletter --> @remove');
-	ROUTE('POST    #admin/api/newsletters/test/               *Newsletter --> @test');
-	ROUTE('GET     #admin/api/newsletters/toggle/             *Newsletter --> @toggle');
-	ROUTE('GET     #admin/api/newsletters/stats/              *Newsletter --> @stats');
-	ROUTE('GET     #admin/api/newsletters/{id}/stats/         *Newsletter --> @stats');
+	ROUTE('GET     #admin/api/newsletters/                    *Newsletters --> @query');
+	ROUTE('GET     #admin/api/newsletters/{id}/               *Newsletters --> @read');
+	ROUTE('POST    #admin/api/newsletters/                    *Newsletters --> @save');
+	ROUTE('DELETE  #admin/api/newsletters/                    *Newsletters --> @remove');
+	ROUTE('POST    #admin/api/newsletters/test/               *Newsletters --> @test');
+	ROUTE('GET     #admin/api/newsletters/toggle/             *Newsletters --> @toggle');
+	ROUTE('GET     #admin/api/newsletters/stats/              *Newsletters --> @stats');
+	ROUTE('GET     #admin/api/newsletters/{id}/stats/         *Newsletters --> @stats');
 	ROUTE('GET     #admin/api/newsletters/{id}/backups/       *Common --> @backup');
 	ROUTE('GET     #admin/api/newsletters/state/',            json_newsletter_state);
 
 	// MODEL: /schema/navigations.js
-	ROUTE('GET     #admin/api/nav/{id}/                       *Navigation --> @read');
-	ROUTE('POST    #admin/api/nav/                            *Navigation --> @save');
+	ROUTE('GET     #admin/api/nav/{id}/                       *Navigations --> @read');
+	ROUTE('POST    #admin/api/nav/                            *Navigations --> @save');
 
 	// MODEL: /schema/navigations.js
-	ROUTE('GET     #admin/api/redirects/{id}/                 *Redirect --> @read');
-	ROUTE('POST    #admin/api/redirects/                      *Redirect --> @save');
+	ROUTE('GET     #admin/api/redirects/{id}/                 *Redirects --> @read');
+	ROUTE('POST    #admin/api/redirects/                      *Redirects --> @save');
 
 	// MODEL: /schema/settings.js
 	ROUTE('GET     #admin/api/settings/                       *Settings --> @read');
 	ROUTE('POST    #admin/api/settings/                       *Settings --> @smtp @save (response) @load');
 
 	// MODEL: /schema/common.js
-	ROUTE('GET    #admin/api/backups/clear/                   *Common   --> @backup_clear');
-	ROUTE('GET    #admin/api/backups/{type}/{id}/             *Common   --> @backup_read');
+	ROUTE('GET    #admin/api/backups/clear/                   *Common --> @backup_clear');
+	ROUTE('GET    #admin/api/backups/{type}/{id}/             *Common --> @backup_read');
 
 	// Files
-	ROUTE('GET     #admin/api/files/                          *File     --> @query');
-	ROUTE('GET     #admin/api/files/clear/                    *File     --> @clear');
+	ROUTE('GET     #admin/api/files/                          *Files --> @query');
+	ROUTE('GET     #admin/api/files/clear/                    *Files --> @clear');
 
 	// Others
-	ROUTE('GET     #admin/api/contactforms/stats/             *Contact --> stats');
+	ROUTE('GET     #admin/api/contactforms/stats/             *Contacts --> stats');
 
 	// Websocket
 	WEBSOCKET('#admin/live/', socket, ['json']);

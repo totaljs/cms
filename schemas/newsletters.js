@@ -2,7 +2,7 @@ const REG_URL = /href="\/|src="\//g;
 
 MAIN.newsletter = { id: null, sending: false, percentage: 0 };
 
-NEWSCHEMA('Newsletter', function(schema) {
+NEWSCHEMA('Newsletters', function(schema) {
 
 	schema.define('id', 'UID');
 	schema.define('template', 'String(50)', true);
@@ -17,21 +17,16 @@ NEWSCHEMA('Newsletter', function(schema) {
 	schema.setQuery(function($) {
 
 		var opt = $.options === EMPTYOBJECT ? $.query : {};
-		var filter = NOSQL('newsletters').find();
+		var filter = NOSQL('newsletters').list();
 
 		filter.paginate(opt.page, opt.limit, 70);
-		opt.name && filter.adminFilter('name', opt, String);
-		opt.count && filter.adminFilter('count', opt, Number);
-		opt.datecreated && filter.adminFilter('datecreated', opt, Date);
+		opt.name && filter.gridfilter('name', opt, String);
+		opt.count && filter.gridfilter('count', opt, Number);
+		opt.dtcreated && filter.gridfilter('dtcreated', opt, Date);
 
-		filter.fields('id', 'name', 'count', 'issent', 'datecreated');
-
-		if (opt.sort)
-			filter.adminSort(opt.sort);
-		else
-			filter.sort('datecreated', true);
-
-		filter.callback((err, docs, count) => $.callback(filter.adminOutput(docs, count)));
+		filter.fields('id,name,count,issent,dtcreated');
+		filter.gridsort(opt.sort || 'dtcreated_desc');
+		filter.callback($.callback);
 	});
 
 	// Gets a specific post
@@ -51,12 +46,12 @@ NEWSCHEMA('Newsletter', function(schema) {
 				$.callback(response);
 			});
 
-		}, 'error-newsletter-404');
+		}, 'error-newsletters-404');
 	});
 
 	// Removes a specific post
 	schema.setRemove(function($) {
-		var id = $.body.id;
+		var id = $.id;
 		var user = $.user.name;
 		FUNC.remove('newsletters', id);
 		NOSQL('newsletters').remove().backup(user).log('Remove: ' + id, user).where('id', id).callback(() => $.success());
@@ -72,19 +67,19 @@ NEWSCHEMA('Newsletter', function(schema) {
 		var nosql = NOSQL('newsletters');
 
 		if (isUpdate) {
-			model.dateupdated = NOW;
+			model.dtupdated = NOW;
 			model.adminupdated = user;
 		} else {
 			model.id = UID();
 			model.admincreated = user;
-			model.datecreated = NOW;
+			model.dtcreated = NOW;
 			model.count = 0;
 		}
 
 		var body = U.minifyHTML(model.body);
-		!model.datecreated && (model.datecreated = NOW);
+		!model.dtcreated && (model.dtcreated = NOW);
 		model.stamp = model.stamp = new Date().format('yyyyMMddHHmm');
-		model.linker = model.datecreated.format('yyyyMMdd') + '-' + model.name.slug();
+		model.linker = model.dtcreated.format('yyyyMMdd') + '-' + model.name.slug();
 		model.search = ((model.name || '') + ' ' + (model.search || '')).keywords(true, true).join(' ').max(1000);
 
 		FUNC.write('newsletters', model.id + '_' + model.stamp, body); // backup
@@ -95,7 +90,7 @@ NEWSCHEMA('Newsletter', function(schema) {
 		var db = isUpdate ? nosql.modify(model).where('id', model.id).backup(user).log('Update: ' + model.id, user) : nosql.insert(model).log('Create: ' + model.id, user);
 
 		db.callback(function() {
-			$SAVE('Event', { type: 'newsletters/save', user: user, id: model.id, body: model.name, admin: true }, NOOP, $);
+			$SAVE('Events', { type: 'newsletters/save', user: user, id: model.id, body: model.name, admin: true }, NOOP, $);
 			EMIT('newsletter.save', model);
 			if ($.model.send) {
 				$.model.body = body;
@@ -146,7 +141,7 @@ NEWSCHEMA('Newsletter', function(schema) {
 	schema.addWorkflow('send', function($) {
 
 		if (MAIN.newsletter.sending) {
-			$.invalid().push('error-newsletter-sending');
+			$.invalid().push('error-newsletters-sending');
 			return;
 		}
 

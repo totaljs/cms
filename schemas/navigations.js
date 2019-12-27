@@ -1,4 +1,4 @@
-NEWSCHEMA('NavigationItem', function(schema) {
+NEWSCHEMA('Navigations/Items', function(schema) {
 	schema.define('id', 'String(20)');
 	schema.define('pageid', 'UID'); // Page ID
 	schema.define('name', 'String(50)', true);
@@ -7,42 +7,44 @@ NEWSCHEMA('NavigationItem', function(schema) {
 	schema.define('icon', 'Lower(40)');
 	schema.define('language', 'Lower(2)');
 	schema.define('target', ['_self', '_blank']);
-	schema.define('children', '[NavigationItem]');
+	schema.define('children', '[Navigations/Items]');
 	schema.define('behaviour', ['default', 'info', 'warn', 'highlight', 'special']);
 });
 
-NEWSCHEMA('Navigation', function(schema) {
+NEWSCHEMA('Navigations', function(schema) {
+
 	schema.define('id', 'String(50)', true);
-	schema.define('children', '[NavigationItem]');
+	schema.define('children', '[Navigations/Items]');
 
 	schema.setGet(function($) {
-		FUNC.alert($.user, 'navigations/edit', $.controller.id);
-		NOSQL('navigations').one().where('id', $.controller.id).callback(function(err, response) {
+		FUNC.alert($.user, 'navigations/edit', $.id);
+		NOSQL('navigations').one().where('id', $.id).callback(function(err, response) {
 			if (response) {
 				$.callback(response);
 			} else {
-				$.model.id = $.controller.id;
+				$.model.id = $.id;
 				$.callback($.model);
 			}
 		});
 	});
 
 	schema.setSave(function($) {
-		var user = $.controller.user.name;
+
+		var user = $.user.name;
 		var db = NOSQL('navigations');
 		var model = $.model.$clean();
 
 		var nav = PREF.navigations.findItem('id', model.id);
 		if (nav) {
 			model.name = nav.name;
-			model.dateupdated = NOW;
+			model.dtupdated = NOW;
 		} else {
 			$.invalid('error-navigations-404');
 			return;
 		}
 
 		db.update(model, model).where('id', model.id).backup(user).log('Update navigation "{0}"'.format(model.id), user).callback(function() {
-			$SAVE('Event', { type: 'navigations/save', user: user, id: model.id, body: model.name, admin: true }, NOOP, $);
+			$SAVE('Events', { type: 'navigations/save', user: user, id: model.id, body: model.name, admin: true }, NOOP, $);
 			EMIT('navigations.save', model);
 			refresh();
 			$.success();
