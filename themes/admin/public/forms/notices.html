@@ -1,68 +1,71 @@
-<div data---="form__common.form__icon:bullhorn;if:notices-form;width:800;reload:noticesform/show;submit:noticesform/submit;autofocus:true" class="hidden">
+<div data---="form__common.form__if:noticesform;icon:bullhorn;width:800;reload:noticesform/show;submit:noticesform/submit;autofocus:true" class="hidden">
 
-	<div class="padding npb">
-		<div class="row">
-			<div class="col-md-8 m">
-				<div data---="input__notices.form.name__required:true;maxlength:50" class="m">@(Name)</div>
-				<div data---="checkbox__notices.form.ispinned" class="b red">@(Pin this notice)</div>
-			</div>
-			<div class="col-md-4 m">
-				<div data---="input__notices.form.date__type:date;icon:clock-o;placeholder:@(yyyy-MM-dd);align:center">@(Date)</div>
-				<div class="help mt10">@(You can specify a publish date.)</div>
-			</div>
-		</div>
-	</div>
-	<div class="padding bg-yellow">
-		<div class="row">
-			<div class="col-md-4 m">
-				<div data---="input__notices.form.idcategory__dirsource:common.dependencies.notices;icon:folder-o;required:true">@(Category)</div>
-				<div class="help">@(Choose a category)</div>
-			</div>
-			<div class="col-md-4">
-				<div data---="input__notices.form.author__maxlength:30;icon:user">@(Author)</div>
-				<div class="help">@(Specify an author's name)</div>
-			</div>
-			<div class="col-md-4">
-				<div data---="input__notices.form.event__type:date;icon:calendar;placeholder:@(yyyy-MM-dd);align:center">@(Event)</div>
-				<div class="help">@(You can specify date of event.)</div>
+	<div data-scope="noticesform">
+		<div class="padding npb">
+			<div class="row">
+				<div class="col-md-8 m">
+					<div data---="input__?.name__required:true;maxlength:50" class="m">@(Name)</div>
+					<div data---="checkbox__?.ispinned" class="b red">@(Pin this notice)</div>
+				</div>
+				<div class="col-md-4 m">
+					<div data---="input__?.date__type:date;icon:clock-o;placeholder:@(yyyy-MM-dd);align:center">@(Date)</div>
+					<div class="help mt10">@(You can specify a publish date.)</div>
+				</div>
 			</div>
 		</div>
-	</div>
-	<div class="padding bg-smoke npb">
+		<div class="padding bg-smoke">
+			<div class="row">
+				<div class="col-md-4 m">
+					<div data---="input__?.categoryid__dirsource:common.dependencies.notices;icon:folder-o;required:true;dirplaceholder:@(Search)">@(Category)</div>
+					<div class="help">@(Choose a category)</div>
+				</div>
+				<div class="col-md-4">
+					<div data---="input__?.author__maxlength:30;icon:user">@(Author)</div>
+					<div class="help">@(Specify an author's name)</div>
+				</div>
+				<div class="col-md-4">
+					<div data---="input__?.event__type:date;icon:calendar;placeholder:@(yyyy-MM-dd);align:center">@(Event)</div>
+					<div class="help">@(You can specify date of event.)</div>
+				</div>
+			</div>
+		</div>
+		<div class="padding" style="padding-bottom:10px">
+			<div class="row">
+				<div class="col-md-8 m">
+					<div data---="input__?.url__placeholder:@(Type a URL address)">@(URL address)</div>
+				</div>
+				<div class="col-md-4 m">
+					<div class="fs12" style="margin-bottom:5px">@(Choose icon):</div>
+					<div data---="faiconsbutton__?.icon"></div>
+				</div>
+			</div>
+		</div>
 		<div class="tabmenu-container">
-			<ul data---="tabmenu__notices.formtab__'editor'" class="tabmenu">
+			<ul data---="tabmenu__?tab__'editor'" class="tabmenu">
 				<li data-value="editor"><i class="fa fa-pencil"></i>@(Editor)</li>
 				<li data-value="preview"><i class="fa fa-search"></i>@(Preview)</li>
 			</ul>
 		</div>
-	</div>
-	<div class="padding">
-		<div data-bind="notices.formtab__show:value=='editor'">
-			<div data---="codemirror__notices.form.body__height:200;required:true;type:markdown">@(Body)</div>
-			<div class="row fs12 mt10">
-				<div class="col-xs-6">
-					<span class="link exec" data-exec="noticesform/upload"><i class="fa fa-folder-o mr5"></i>@(Browse files)</span>
-				</div>
-				<div class="col-xs-6 right">
-					<div class="help nmt">@(You can type body in markdown format.)</div>
+		<div class="padding">
+			<div data-bind="?tab__show:value=='editor'">
+				<div data---="codemirror__?.body__height:300;required:true;type:markdown">@(Body)</div>
+				<div class="row fs12 mt10">
+					<div class="col-xs-6">
+						<span class="link exec" data-exec="noticesform/upload"><i class="fa fa-folder-o mr5"></i>@(Browse files)</span>
+					</div>
+					<div class="col-xs-6 right">
+						<div class="help nmt">@(You can type body in markdown format.)</div>
+					</div>
 				</div>
 			</div>
+			<div data-bind="?tab__show:value=='preview'" class="hidden">
+				<div data-bind="notices.preview__html:value" class="noticespreview"></div>
+			</div>
 		</div>
-		<div data-bind="notices.formtab__show:value=='preview'" class="hidden">
-			<div data-bind="notices.preview__html:value" class="noticespreview"></div>
-		</div>
+		<div data---="error__?.response"></div>
 	</div>
-	<div class="padding bg-smoke">
-		<div data---="input__notices.form.url__placeholder:@(Type a URL address)">URL address</div>
-		<div class="help">@(You can specify a target URL address.)</div>
-	</div>
-	<div class="padding">
-		<div data---="fontawesomebox__notices.form.icon__search:@(Search icon);height:200"></div>
-		<div class="help">@(Choose an icon for this notice.)</div>
-	</div>
-	<div data---="error__notices.form.response"></div>
 
-	<nav data---="validation__notices.form">
+	<nav data---="validation__noticesform">
 		<button name="submit">@(SAVE)</button>
 		<button name="cancel">@(Cancel)</button>
 	</nav>
@@ -74,8 +77,8 @@
 	PLUGIN('noticesform', function(exports) {
 
 		exports.show = function(com) {
-			SET('notices.formtab', 'editor');
-			com.reconfigure({ title: GET('notices.form.id') ? '@(Edit notice)' : '@(New notice)' });
+			SET('noticesformtab', 'editor');
+			com.reconfigure({ title: GET('?.id') ? '@(Edit notice)' : '@(New notice)' });
 			FUNC.loading(false, 1000);
 		};
 
@@ -86,13 +89,13 @@
 					file = '![{0}]({1})'.format(name, file);
 				else
 					file = '[{0}]({1})'.format(name, file);
-				SETTER('.notices.form.body', 'insert', file);
+				SETTER('.noticesform.body', 'insert', file);
 			});
 		};
 
 		exports.submit = function(hide) {
 			FUNC.loading(true);
-			AJAX('POST [url]api/notices/', GETR('notices.form'), function(response) {
+			AJAX('POST [url]api/notices/', GETR('?'), function(response) {
 				FUNC.loading(false, 1000);
 				if (response.success) {
 					SETTER('snackbar', 'success', '@(Notice has been saved successfully.)');
@@ -102,9 +105,9 @@
 			});
 		};
 
-		WATCH('notices.formtab', function(path, value) {
+		WATCH('noticesformtab', function(path, value) {
 			if (value === 'preview')
-				AJAX('POST [url]api/notices/preview/', { body: GET('notices.form.body') }, 'notices.preview');
+				AJAX('POST [url]api/notices/preview/', { body: noticesform.body }, 'notices.preview');
 		});
 	});
 

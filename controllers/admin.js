@@ -85,10 +85,10 @@ exports.install = function() {
 	ROUTE('DELETE  #admin/api/tracking/{id}/                  *Tracking --> @remove');
 
 	// MODEL: /schema/pages.js
-	ROUTE('GET     #admin/api/pages/globals/                  *Globals --> @read');
-	ROUTE('POST    #admin/api/pages/globals/                  *Globals --> @save', 30);
-	ROUTE('GET     #admin/api/pages/redirects/                *Redirects --> @read');
-	ROUTE('POST    #admin/api/pages/redirects/                *Redirects --> @save', 30);
+	ROUTE('GET     #admin/api/pages/globals/                  *Pages/Globals --> @read');
+	ROUTE('POST    #admin/api/pages/globals/                  *Pages/Globals --> @save', 30);
+	ROUTE('GET     #admin/api/pages/redirects/                *Pages/Redirects --> @read');
+	ROUTE('POST    #admin/api/pages/redirects/                *Pages/Redirects --> @save', 30);
 
 	// MODEL: /schema/events.js
 	ROUTE('GET     #admin/api/events/                         *Events --> @query');
@@ -379,7 +379,7 @@ function view_notices_preview() {
 	var self = this;
 	var body = self.body.body;
 	if (body)
-		$WORKFLOW('Notice', 'preview', body, (err, response) => self.content(response, 'text/html'));
+		$WORKFLOW('Notices', 'preview', body, (err, response) => self.content(response, 'text/html'));
 	else
 		self.content('', 'text/html');
 }
