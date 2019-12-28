@@ -67,6 +67,10 @@
 			exports.refresh();
 		};
 
+		exports.update = function(row) {
+			exports.button('update', row);
+		};
+
 		exports.button = function(name, row, grid) {
 			switch (name) {
 				case 'remove':

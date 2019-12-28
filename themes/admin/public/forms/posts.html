@@ -1,112 +1,115 @@
-<div data---="form__common.form__icon:newspaper-o;if:posts-form;width:1500;reload:postsform/show;submit:postsform/submit;autofocus:true" class="hidden">
+<div data---="form__common.form__if:postsform;width:1500;icon:newspaper-o;reload:postsform/show;submit:postsform/submit;autofocus:true" class="hidden">
 
-	<div class="padding" style="padding-bottom:10px">
-		<div class="row">
-			<div class="col-md-4 m">
-				<div data---="input__posts.form.name__required:true;maxlength:100">@(Name)</div>
-			</div>
-			<div class="col-md-8">
-				<div class="row">
-					<div class="col-md-4 m">
-						<div data---="input__posts.form.idcategory__dirsource:common.dependencies.posts;icon:folder-o;empty:;required:true">@(Category)</div>
-					</div>
-					<div class="col-md-4 m">
-						<div data---="input__posts.form.template__dirsource:common.dependencies.templatesposts;icon:paint-brush;required:true;empty:">@(Template)</div>
-					</div>
-					<div class="col-md-4 m">
-						<div data---="input__posts.form.date__type:date;icon:clock-o;placeholder:@(yyyy-MM-dd);align:center">@(Publish date)</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="padding bg-smoke npb">
-		<div class="tabmenu-container">
-			<ul data---="tabmenu__posts.form.type__null__'html'" class="tabmenu right" style="width:100%">
-				<li data-value="html"><i class="fa fa-paint-brush"></i>@(Designer)</li>
-				<li data-value="markdown"><i class="fab fa-markdown"></i>@(Markdown)</li>
-			</ul>
-			<div data---="checkbox__posts.form.ispublished" class="b">@(Is published)</div>
-		</div>
-	</div>
-	<div data-bind="posts.form.type__show:value==='html'">
-		<div class="cmseditor" data---="cmseditor__posts.form.body" data-jc-import="[url]components/cmseditor.html" style="border-top:0;padding-top:8px"></div>
-	</div>
-	<div data-bind="posts.form.type__show:value==='markdown'__delay:500">
-
-		<div class="toolbar toolbar3">
-			<button class="exec" data-exec="postsform/toolbar" name="preview"><i class="fa fa-search"></i>@(Preview)</button>
-			<span></span>
-			<button class="exec" data-exec="postsform/toolbar" name="file"><i class="far fa-folder"></i>@(Browse file)</button>
-		</div>
-
-		<div class="padding npt">
-			<div data---="codemirror__posts.form.body__type:markdown;height:auto"></div>
-		</div>
-		<hr class="nmt nmb" />
-	</div>
-	<div class="backups hidden" data-bind="posts.form.id__show:!!value"><span class="link exec" data-exec="postsform/backups"><i class="fa fa-clock-o mr5"></i>@(Restore a backup)</span></div>
-	<div class="padding bg-yellow">
-		<div class="row mt10">
-			<div class="col-md-4 m">
-				<div data---="input__posts.form.description__maxlength:300">@(Description)</div>
-			</div>
-			<div class="col-md-8">
-				<div class="row">
-					<div class="col-md-4 m">
-						<div data---="dropdowncheckbox__posts.form.signals__alltext:null;datasource:signals;empty:@(Doesn't contain any signals.);icon:dot-circle-o">@(Signals)</div>
-						<div class="help">@(Signals can start a special action for visitors.)</div>
-					</div>
-					<div class="col-md-4 m">
-						<div data---="input__posts.form.author__maxlength:30;icon:user">@(Author)</div>
-					</div>
-					<div class="col-md-3 m">
-						<div data---="input__posts.form.language__icon:flag;dirsource:common.dependencies.languages;empty:">@(Language)</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div data-bind="posts.form.id__show:value && value.length" class="hidden">
-		<hr class="nmt" />
-		<div class="padding">
+	<div data-scope="postsform">
+		<div class="padding" style="padding-bottom:10px">
 			<div class="row">
-				<div class="col-lg-2 col-md-3 m">
-					<div class="keyvalue">
-						<div class="key">@(# Id)</div>
-						<div class="value" data-bind="posts.form.id__html:value"></div>
-					</div>
+				<div class="col-md-5 m">
+					<div data---="input__?.name__required:true;maxlength:100">@(Name)</div>
 				</div>
-				<div class="col-lg-2 col-md-3 m">
-					<div class="keyvalue">
-						<div class="key"><i class="fa fa-calendar"></i>@(Created)</div>
-						<div class="value" data-bind="posts.form.dtcreated__html:Thelpers.time(value)"></div>
+				<div class="col-md-7">
+					<div class="row">
+						<div class="col-md-4 m">
+							<div data---="input__?.idcategory__dirsource:common.dependencies.posts;icon:folder-o;empty:;required:true">@(Category)</div>
+						</div>
+						<div class="col-md-4 m">
+							<div data---="input__?.template__dirsource:common.dependencies.templatesposts;icon:paint-brush;required:true;empty:">@(Template)</div>
+						</div>
+						<div class="col-md-4 m">
+							<div data---="input__?.date__type:date;icon:clock-o;placeholder:@(yyyy-MM-dd)">@(Publish date)</div>
+						</div>
 					</div>
-				</div>
-				<div class="col-lg-2 col-md-3 m">
-					<div class="keyvalue">
-						<div class="key"><i class="fa fa-calendar"></i>@(Updated)</div>
-						<div class="value" data-bind="posts.form.dtupdated__html:value ? Thelpers.time(value) : '@(unchanged)'"></div>
-					</div>
-				</div>
-				<div class="col-lg-6 m" data-bind="posts.form.stats__show:value">
-					<div data---="nosqlcounter__posts.form.stats__height:52"></div>
-					<div class="help"><i class="fa fa-chart-bar"></i>@(Stats of all views for the last period)</div>
 				</div>
 			</div>
 		</div>
-	</div>
-	<div data---="error__posts.form.response"></div>
 
-	<div data---="validation__posts.form">
+		<div class="tabmenu-container">
+			<div data---="checkbox__?.ispublished" class="b pull-left" style="margin-top:15px">@(Is published)</div>
+			<div class="pull-right">
+				<ul data---="tabmenu__?.type__null__'html'" class="tabmenu">
+					<li data-value="html"><i class="fa fa-paint-brush"></i>@(Designer)</li>
+					<li data-value="markdown"><i class="fab fa-markdown"></i>@(Markdown)</li>
+				</ul>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+		<div data-bind="?.type__show:value==='html'">
+			<div class="cmseditor" data---="cmseditor__?.body" data-import="url:[url]components/cmseditor.html;target:body" style="border-top:0;padding-top:8px"></div>
+		</div>
+		<div data-bind="?.type__show:value==='markdown'__delay:500">
+
+			<div class="toolbar toolbar3">
+				<button class="exec" data-exec="?/toolbar" name="preview"><i class="fa fa-search"></i>@(Preview)</button>
+				<span></span>
+				<button class="exec" data-exec="?/toolbar" name="file"><i class="far fa-folder"></i>@(Browse file)</button>
+			</div>
+
+			<div class="padding npt">
+				<div data---="codemirror__?.body__type:markdown;height:auto"></div>
+			</div>
+			<hr class="nmt nmb" />
+		</div>
+		<div class="backups hidden" data-bind="?.id__show"><span class="link exec" data-exec="?/backups"><i class="fa fa-clock-o mr5"></i>@(Restore a backup)</span></div>
+		<div class="padding bg-smoke">
+			<div class="row mt10">
+				<div class="col-md-4 m">
+					<div data---="input__?.description__maxlength:300">@(Description)</div>
+				</div>
+				<div class="col-md-8">
+					<div class="row">
+						<div class="col-md-4 m">
+							<div data---="dropdowncheckbox__?.signals__alltext:null;datasource:signals;empty:@(Doesn't contain any signals.);icon:dot-circle-o">@(Signals)</div>
+							<div class="help">@(Signals can start a special action for visitors.)</div>
+						</div>
+						<div class="col-md-4 m">
+							<div data---="input__?.author__maxlength:30;icon:user">@(Author)</div>
+						</div>
+						<div class="col-md-3 m">
+							<div data---="input__?.language__icon:flag;dirsource:common.dependencies.languages;empty:">@(Language)</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div data-bind="?.id__show:value && value.length" class="hidden">
+			<hr class="nmt" />
+			<div class="padding">
+				<div class="row">
+					<div class="col-lg-2 col-md-3 m">
+						<div class="keyvalue">
+							<div class="key">@(# Id)</div>
+							<div class="value" data-bind="?.id__html:value"></div>
+						</div>
+					</div>
+					<div class="col-lg-2 col-md-3 m">
+						<div class="keyvalue">
+							<div class="key"><i class="fa fa-calendar"></i>@(Created)</div>
+							<div class="value" data-bind="?.dtcreated__html:Thelpers.time(value)"></div>
+						</div>
+					</div>
+					<div class="col-lg-2 col-md-3 m">
+						<div class="keyvalue">
+							<div class="key"><i class="fa fa-calendar"></i>@(Updated)</div>
+							<div class="value" data-bind="?.dtupdated__html:value ? Thelpers.time(value) : '@(unchanged)'"></div>
+						</div>
+					</div>
+					<div class="col-lg-6 m" data-bind="?.stats__show:value">
+						<div data---="nosqlcounter__?.stats__height:52"></div>
+						<div class="help"><i class="fa fa-chart-bar"></i>@(Stats of all views for the last period)</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div data---="error__?.response"></div>
+	</div>
+
+	<nav data---="validation__postsform">
 		<button name="submit">@(SAVE)</button>
 		<button name="cancel">@(Cancel)</button>
-	</div>
+	</nav>
 
 </div>
 
-<div data---="window__common.window___if:posts-preview;title:@(Preview);reload:postsform/initpreview">
+<div data---="window__common.window___if:postspreview;title:@(Preview);reload:postsform/initpreview">
 	<iframe src="about:blank" frameborder="0" style="width:100%"></iframe>
 </div>
 
@@ -117,9 +120,9 @@
 		exports.body = '';
 
 		exports.show = function(com) {
-			var model = posts.form;
+			var model = GET('?');
 			com.reconfigure({ title: model.id ? '@(Edit post)' : '@(New post)' });
-			model.id && AJAX('GET [url]api/posts/{id}/stats/'.arg(model), 'posts.form.stats');
+			model.id && AJAX('GET [url]api/posts/{id}/stats/'.arg(model), '?.stats');
 			WAIT('cmseditor.instance', function() {
 				cmseditor.instance.setWidgetOptions(model.widgets);
 				cmseditor.instance.lock(false);
@@ -128,10 +131,10 @@
 
 		exports.initpreview = function(el) {
 
-			var model = posts.form;
+			var model = GET('?');
 
 			if (!model.template) {
-				SETTER('snackbar', 'warning', '@(You must choose a template)');
+				SETTER('snackbar', 'warning', '@(You need to choose a template)');
 				return;
 			}
 
@@ -158,11 +161,11 @@
 							file = '![{0}]({1})'.format(name, file);
 						else
 							file = '[{0}]({1})'.format(name, file);
-						SETTER('.posts.form.body', 'insert', file);
+						exports.element.SETTER('.postsform.body', 'insert', file);
 					});
 					break;
 				case 'preview':
-					SET('common.window', 'posts-preview');
+					SET('common.window', 'postspreview');
 					break;
 			}
 		};
@@ -171,7 +174,7 @@
 
 			FUNC.loading(true);
 
-			var model = CLONE(posts.form);
+			var model = CLONE('?');
 			var editor = cmseditor.instance;
 
 			// Clears cache
@@ -245,7 +248,7 @@
 		exports.backups = function(el) {
 
 			FUNC.loading(true);
-			AJAX('GET [url]api/posts/{0}/backups/'.format(GET('posts.form.id')), function(response) {
+			AJAX('GET [url]api/posts/{0}/backups/'.format(GET('?.id')), function(response) {
 
 				FUNC.loading(false, 1000);
 
@@ -271,28 +274,25 @@
 			});
 		};
 
-		WATCH('posts.form.template', function(path, value, type) {
-
+		WATCH('?.template', function(path, value, type) {
 			if (type === 2) {
 				cmseditor.instance.reconfigure('template:' + value);
 				cmseditor.instance.set('');
-				SETTER('modal', 'reconfigure', 'height:1000');
 			}
-
 		}, true);
 
-		WATCH('posts.form.type', function(path, value, type) {
+		WATCH('?.type', function(path, value, type) {
 
 			if (value === 'html' && (type === 2 || type === 0) && window.cmseditor && window.cmseditor.instance) {
-				exports.markdown = GET('posts.form.body');
-				cmseditor.instance.reconfigure('template:' + GET('posts.form.template'));
+				exports.markdown = GET('?.body');
+				cmseditor.instance.reconfigure('template:' + GET('?.template'));
 				cmseditor.instance.set('');
 				cmseditor.instance.autoresize();
 			}
 
 			if (value === 'markdown' && type === 2) {
-				exports.html = GET('posts.form.body');
-				SET('posts.form.body', exports.markdown);
+				exports.html = GET('?.body');
+				SET('?.body', exports.markdown);
 			}
 
 		}, true);

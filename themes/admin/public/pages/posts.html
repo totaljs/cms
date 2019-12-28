@@ -1,38 +1,63 @@
-<div data-scope="posts" class="container">
-	<div class="toolbar">
-		<button class="right exec highlight" data-exec="?/create"><i class="fa fa-plus-circle"></i>@(Create)</button>
-		<button class="exec" data-exec="?/options"><i class="fa fa-cogs"></i>@(Options)</button>
-		<span></span>
-		<button class="exec" data-exec="?/checked" name="checked" disabled="disabled"><i class="fa fa-check-circle"></i>@(Checked)</button>
+<div data-scope="posts">
+
+	<div data---="layout__null__parent:window;margin:58" class="invisible">
+
+		<script type="text/plain">
+			{
+				right: { size: 250 },
+				top: { size: 45 },
+				main: {}
+			}
+		</script>
+
+		<section data-type="top2">
+			<div class="header">
+				<label><i class="fa fa-bullhorn"></i>@(List of notices)</label>
+				<nav data-bind="?.checked__enabled .S:value && value.length">
+					<button class="exec" data-exec="?/create"><i class="fa fa-plus-circle"></i>@(Create)</button>
+					<button class="exec" data-exec="?/options"><i class="fa fa-wrench"></i>@(Options)</button>
+					<button class="exec S" data-exec="?/checked" disabled><i class="fa fa-check-circle"></i>@(Checked)</button>
+				</nav>
+			</div>
+		</section>
+
+		<section data-type="right">
+			<div class="padding">
+				<div class="caption"><i class="fa fa-clone"></i>@(Options)</div>
+				<nav class="links">
+					<button class="exec" data-exec="?/create"><i class="fa fa-plus-circle"></i>@(Add new notice)</button>
+				</nav>
+			</div>
+		</section>
+
+		<section data-type="main">
+			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?.checked;button:?/button;noborder:1;height:window;margin:103;dblclick:?/update">
+				<script type="text/plain">
+				[
+					{ name: 'name', text: '@(Name)', width: 350, template: '{{ language | language }}{{ if !ispublished }}<span class="badge badge-gray mr5">@(unpublished)</span>{{ fi }}{{ name }}' },
+					{ name: 'category', text: '@(Category)', width: 150, class: 'hidden-xs' },
+					{ name: 'author', text: '@(Author)', width: 150, class: 'hidden-xs' },
+					{ name: 'type', text: '@(Type)', width: 100, align: 1, class: 'hidden-xs silver' },
+					{ name: 'language', text: 'Language', width: 40, title: '@(Language)', filter: false, sort: false, align: 1, hide: true },
+					{ name: 'date', text: '@(From)', align: 1, width: 130, class: 'hidden-xs', template: '{{ date | format(\'@(yyyy-MM-dd)\') }}' },
+					{ name: 'dtupdated', text: '@(Updated)', format: '[date]', width: 150, sort: false, align: 1, hide: true },
+					{ name: 'dtcreated', text: '@(Created)', format: '[date]', width: 150, sort: false, align: 1, hide: true },
+					{ name: '@(Options)', align: 1, filter: false, sort: false, width: 100, template: '<button title="@(Duplicate)" name="duplicate"><i class="far fa-copy"></i></button><button name="update" title="@(Edit)"><i class="fa fa-pencil"></i></button><button class="btn-remove" name="remove" title="@(Remove)"><i class="far fa-trash-o"></i></button>' }
+				]
+				</script>
+			</div>
+
+		</section>
 	</div>
-	<div class="fullheight">
-		<div data---="datagrid__?.grid__padding:10;filterlabel:@(Search);checked:?/checkbox;button:?/button">
-			<script type="text/plain">
-			[
-				{ name: 'name', text: '@(Name)', width: 350, template: '{{ language | language }}{{ if !ispublished }}<span class="badge badge-gray mr5">@(unpublished)</span>{{ fi }}{{ name }}' },
-				{ name: 'category', text: '@(Category)', width: 150, class: 'hidden-xs' },
-				{ name: 'author', text: '@(Author)', width: 150, class: 'hidden-xs' },
-				{ name: 'type', text: '@(Type)', width: 100, align: 1, class: 'hidden-xs silver' },
-				{ name: 'language', text: '<i class="fa fa-flag" style="margin-right:0"></i>', width: 40, title: '@(Language)', filter: false, sort: false, align: 1 },
-				{ name: 'date', text: '@(From)', align: 1, width: 130, class: 'hidden-xs', template: '{{ date | format(\'@(yyyy-MM-dd)\') }}' },
-				{ name: '@(Options)', align: 1, filter: false, sort: false, width: 100, template: '<button title="@(Duplicate)" name="duplicate"><i class="far fa-copy"></i></button><button name="update" title="@(Edit)"><i class="fa fa-pencil"></i></button><button class="btn-remove" name="remove" title="@(Remove)"><i class="far fa-trash-o"></i></button>' }
-			]
-			</script>
-		</div>
-	</div>
+
 </div>
-<div data---="importer__common.form__if:posts-form;url:[url]forms/posts.html;cleaner:5"></div>
+
+<div data---="importer__common.form__if:postsform;url:[url]forms/posts.html;cleaner:5"></div>
 
 <script>
-
 	PLUGIN('posts', function(exports) {
-
-		var toolbar = { btnChecked: exports.element.find('.toolbar button[name="checked"]') };
-
 		exports.refresh = function() {
-
 			FUNC.loading(true);
-
 			AJAX('GET [url]api/posts/', function(response) {
 				SET('?.grid', response);
 				FUNC.loading(false, 200);
@@ -46,11 +71,9 @@
 		exports.button = function(name, row, grid) {
 			switch (name) {
 				case 'remove':
-					SETTER('confirm', 'show', '@(Are you sure you want to remove selected post?)', ['"trash"@(Remove)', '@(No)'], function(index) {
-						if (index)
-							return;
+					SETTER('confirm', 'show2', '@(Are you sure you want to remove selected post?)', ['"trash" @(Remove)', '@(No)'], function() {
 						FUNC.loading(true);
-						AJAX('DELETE [url]api/posts/', row, function(response) {
+						AJAX('DELETE [url]api/posts/' + row.id, function(response) {
 							FUNC.loading(false, 1000);
 							if (response.success) {
 								SETTER('snackbar', 'success', '@(Post has been removed successfully.)');
@@ -62,28 +85,24 @@
 				case 'update':
 				case 'duplicate':
 					FUNC.loading(true);
-					AJAX('GET [url]api/posts/{id}/'.arg(row), function(response) {
+					AJAX('GET [url]api/posts/' + row.id, function(response) {
 
 						if (name === 'duplicate')
 							response.id = '';
-						else
-							SKIP('?.form.stats');
 
 						if (!response.type)
 							response.type = 'html';
 
 						SET('cmseditor.template', response.template);
-						SET('?.form', response, true);
-						SET('common.form', 'posts-form');
+						SET('postsform', response, true);
+						SET('common.form', 'postsform');
 					});
 					break;
 			}
 		};
 
-		exports.checkbox = function(el, grid) {
-			el && !el.value && grid.checked(el.checked);
-			var count = grid.checked().length;
-			toolbar.btnChecked.prop('disabled', count === 0);
+		exports.update = function(row) {
+			exports.button('update', row);
 		};
 
 		exports.checked = function(el) {
@@ -105,15 +124,12 @@
 						AJAX('GET [url]api/posts/toggle/', { id: arr.join(',') }, exports.refresh);
 						break;
 					case 'remove':
-						SETTER('confirm', 'show', '@(Are you sure you want to remove all selected posts?)', ['"trash"@(Remove)', '@(No)'], function(index) {
-							if (index)
-								return;
-
-							var arr = FIND('.posts.grid').checked();
+						SETTER('confirm', 'show2', '@(Are you sure you want to remove all selected posts?)', ['"trash"@(Remove)', '@(No)'], function(index) {
+							var arr = exports.element.FIND('.posts.grid').checked();
 							FUNC.loading(true);
 							arr.wait(function(el, next, index) {
 								SET('common.progress', (index / arr.length) * 100);
-								AJAX('DELETE [url]api/posts/', { id: el.id }, next);
+								AJAX('DELETE [url]api/posts/' + el.id, next);
 							}, function() {
 								exports.refresh();
 								FUNC.loading(false, 1000);
@@ -147,10 +163,9 @@
 		};
 
 		exports.create = function() {
-			SET('?.form', { type: 'html', author: user.name, widgets: [], ispublished: true }, true);
-			SET('common.form', 'posts-form');
+			SET('postsform', { type: 'html', author: user.name, widgets: [], ispublished: true }, true);
+			SET('common.form', 'postsform');
 		};
 
 	});
-
 </script>
