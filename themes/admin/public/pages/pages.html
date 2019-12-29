@@ -72,8 +72,6 @@
 <script>
 	PLUGIN('pages', function(exports) {
 
-		var toolbar = { btnChecked: exports.element.find('.toolbar button[name="checked"]') };
-
 		exports.refresh = function() {
 
 			FUNC.loading(true);
@@ -155,12 +153,6 @@
 
 					break;
 			}
-		};
-
-		exports.checkbox = function(el, grid) {
-			el && !el.value && grid.checked(el.checked);
-			var count = grid.checked().length;
-			toolbar.btnChecked.prop('disabled', count === 0);
 		};
 
 		exports.checked = function(el) {

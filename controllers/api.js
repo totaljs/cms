@@ -4,9 +4,9 @@ exports.install = function() {
 	CORS();
 
 	// Operations
-	ROUTE('POST /api/subscribers/',              ['*Subscriber --> @save']);
-	ROUTE('POST /api/contact/',                  ['*Contact --> @save']);
-	ROUTE('GET  /api/track/{id}/',               ['*Tracking --> @exec']);
+	ROUTE('POST /api/subscribers/     *Subscribers --> @save');
+	ROUTE('POST /api/contact/         *Contact     --> @save');
+	ROUTE('GET  /api/track/{id}/      *Tracking    --> @exec');
 	ROUTE('GET  /api/unsubscribe/', unsubscribe, ['*Subscriber']);
 
 	// Newsletter view

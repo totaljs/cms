@@ -8,6 +8,18 @@ ON('ready', function() {
 	setTimeout(refresh_height, 100);
 });
 
+Array.prototype.limit = function(take, fn, callback) {
+	var self = this;
+	if (!self.length) {
+		callback && callback();
+		return;
+	}
+	var arr = self.splice(0, take);
+	fn(arr, function() {
+		self.limit(take, fn, callback);
+	});
+};
+
 function refresh_dependencies() {
 	AJAX('GET [url]api/dependencies/', 'common.dependencies');
 }

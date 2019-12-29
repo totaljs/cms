@@ -1,16 +1,16 @@
-<div data---="form__common.form__if:subscribers-import;width:600;submit:subscribersform/submit;autofocus:true;title:@(Import subscribers);icon:address-book-o" class="hidden">
+<div data---="form__common.form__if:subscribersimport;width:600;submit:subscribersform/submit;autofocus:true;title:@(Import subscribers);icon:address-book-o" class="hidden">
 
-	<div class="padding">
-		<div data-bind="subscribers.import.importing__show:!value">
-			<div data---="textarea__subscribers.import.body__required:true;height:200;placeholder:@(Put all new email addresses)">@(Email addresses)</div>
+	<div class="padding" data-scope="subscribersform">
+		<div data-bind="?.importing__show:!value">
+			<div data---="textarea__?.body__required:true;height:200;placeholder:@(Put all new email addresses)">@(Email addresses)</div>
 		</div>
-		<div data-bind="subscribers.import.importing__show:value">
-			<div data---="progress__subscribers.import.progress"></div>
+		<div data-bind="?.importing__show:value">
+			<div data---="progress__?.progress"></div>
 			<div class="help"><i class="fa fa-spin fa-refresh mr5"></i>@(Importing ...)</div>
 		</div>
 	</div>
 
-	<nav data---="validation__subscribers.import">
+	<nav data---="validation__subscribersform">
 		<button name="submit">@(IMPORT)</button>
 		<button name="cancel">@(Cancel)</button>
 	</nav>
@@ -22,24 +22,24 @@
 
 		exports.submit = function(hide) {
 
-			SET('subscribers.import.progress', 0);
-			SET('subscribers.import.importing', true);
+			SET('?.progress', 0);
+			SET('?.importing', true);
 
 			var data = {};
-			var arr = GET('subscribers.import.body').replace(/\n|\r|;/g, ',').replace(/["']/g, '').trim().split(',');
+			var arr = GET('?.body').replace(/\n|\r|;/g, ',').replace(/["']/g, '').trim().split(',');
 			var count = 0;
 
 			arr.limit(100, function(items, next) {
 				data.email = items.join(',');
 				AJAX('POST /api/subscribers/', data, function() {
 					count += items.length;
-					SET('subscribers.import.progress', ((count / arr.length) * 100) >> 0);
+					SET('?.progress', ((count / arr.length) * 100) >> 0);
 					setTimeout(next, 50);
 				});
 			}, function() {
 				SETTER('snackbar', 'success', '@(Email addresses have been imported successfully.)');
 				setTimeout(function() {
-					SET('subscribers.import.importing', false);
+					SET('?.importing', false);
 					EXEC('subscribers/refresh');
 					hide();
 				}, 1000);
