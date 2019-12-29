@@ -28,9 +28,9 @@ body { background-color: #E0E0E0; }
 
 header { height: 58px; background-color: white; background: linear-gradient(130deg, #E0E0E0 80%, #F0F0F0 80%); border: 1px solid #DEDEDE; }
 header nav { float: left; margin: 9px 0 0 10px; }
-header nav button { width: 40px; height: 40px; text-align: center; font-size: 16px; line-height: 40px; border: 0; outline: 0; background-color: transparent; color: rgba(0,0,0,0.6); border-radius: 2px; }
+header nav button { width: 40px; height: 40px; text-align: center; font-size: 16px; line-height: 39px; border: 1px solid transparent; outline: 0; background-color: transparent; color: rgba(0,0,0,0.6); border-radius: 2px; }
 header nav button:hover { color: black; }
-header nav button.selected { background-color: rgba(0,0,0,0.07); color: black; }
+header nav button.selected { background-color: rgba(0,0,0,0.07); color: black; border: 1px solid rgba(0,0,0,0.05); }
 
 header .user { float: right; font-size: 12px; line-height: 58px; margin-right: 20px; color: black; font-size: 14px; font-weight: bold; }
 header .user .fa, header .user .fal { margin-right: 5px; }

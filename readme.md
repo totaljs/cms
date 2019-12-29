@@ -24,6 +24,7 @@ Read more in [__documentation__](https://wiki.totaljs.com/?q=cms+welcome).
 ```html
 dateupdated --> dtupdated
 datecreated --> dtcreated
+datesent    --> dtsent
 idpage      --> pageid
 idowner     --> ownerid         (parst)
 ```

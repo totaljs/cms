@@ -3,6 +3,7 @@ const MSG_ALERT = { TYPE: 'alert' };
 const ALLOW = ['/api/dependencies/', '/api/pages/preview/', '/api/upload/', '/api/nav/', '/api/files/', '/stats/', '/live/', '/api/widgets/'];
 const SYSUSER = {};
 const COOKIE_OPTIONS = { security: 'strict', httponly: true };
+const ADMINURL = F.routes.sitemap.admin.url;
 
 var DDOS = {};
 var WS = null;
@@ -164,12 +165,10 @@ exports.install = function() {
 	SYSUSER.token = true;
 };
 
-ON('controller', function(controller, name) {
+ON('controller', function(controller) {
 
-	if (name !== 'admin' || controller.url === '/api/login/admin/') {
-		if (!controller.route.groups || !controller.route.groups.admin)
-			return;
-	}
+	if (controller.url.substring(0, ADMINURL.length) !== ADMINURL)
+		return;
 
 	var ddos = DDOS[controller.ip];
 
@@ -204,7 +203,7 @@ ON('controller', function(controller, name) {
 	}
 
 	// Roles
-	if (!user.sa && user.roles.length && controller.url !== controller.sitemap_url('admin')) {
+	if (!user.sa && user.roles.length && controller.url !== (ADMINURL + '/')) {
 
 		var cancel = true;
 

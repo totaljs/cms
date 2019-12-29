@@ -24,7 +24,7 @@ NEWSCHEMA('Newsletters', function(schema) {
 		opt.count && filter.gridfilter('count', opt, Number);
 		opt.dtcreated && filter.gridfilter('dtcreated', opt, Date);
 
-		filter.fields('id,name,count,issent,dtcreated');
+		filter.fields('id,name,count,issent,dtupdated,dtsent,dtcreated');
 		filter.gridsort(opt.sort || 'dtcreated_desc');
 		filter.callback($.callback);
 	});

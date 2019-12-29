@@ -21,7 +21,7 @@
 		</section>
 
 		<section data-type="main">
-			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?.checked;button:?/button;noborder:1;height:window;margin:103;dblclick:?/update;exec:?/refresh">
+			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?.checked;button:?/button;noborder:1;height:window;margin:106;dblclick:?/update;exec:?/refresh">
 				<script type="text/plain">
 					[
 						{ name: 'email', text: '@(Email address)', width: 720, template: '{{ if unsubscribed }}<span class="badge badge-red mr5">@(unsubscribed)</span>{{ fi }}{{ email }}' },
@@ -94,6 +94,7 @@
 			options.items = [];
 			options.items.push({ id: 'toggle', name: '@(Subscribe / Unsubscribe)', icon: 'globe' });
 			options.items.push({ id: 'remove', name: '@(Remove subscribers)', icon: 'trash' });
+			options.align = 'right';
 
 			options.callback = function(item) {
 				switch (item.id) {
@@ -133,6 +134,7 @@
 			options.items.push({ id: 'refresh', name: '@(Refresh)', icon: 'refresh' });
 			options.items.push({ id: 'import', name: '@(Import addresses)', icon: 'plus-circle' });
 			options.items.push({ id: 'export', name: '@(Export addresses to CSV)', icon: 'cloud-upload' });
+			options.align = 'right';
 
 			options.callback = function(item) {
 				switch (item.id) {

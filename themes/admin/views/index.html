@@ -76,19 +76,27 @@
 		var filebrowser = {};
 
 		common.nav = [];
-		common.nav.push({ role: 'Dashboard', title: '@(Dashboard)', url: '@{sitemap_url('admin')}dashboard/', value: 'dashboard', icon: 'fa fa-dashboard' });
-		common.nav.push({ role: 'Events', title: '@(Events)', url: '@{sitemap_url('admin')}events/', value: 'events', icon: 'far fa-clock-o' });
-		common.nav.push({ role: 'Pages', title: '@(Pages)', url: '@{sitemap_url('admin')}pages/', value: 'pages', icon: 'far fa-file-text-o' });
-		common.nav.push({ role: 'Widgets', title: '@(Widgets)', url: '@{sitemap_url('admin')}widgets/', value: 'widgets', icon: 'fa fa-plug' });
-		common.nav.push({ role: 'Posts', title: '@(Posts)', url: '@{sitemap_url('admin')}posts/', value: 'posts', icon: 'fa fa-newspaper-o' });
-		common.nav.push({ role: 'Notices', title: '@(Notices)', url: '@{sitemap_url('admin')}notices/', value: 'notices', icon: 'fa fa-bullhorn' });
-		common.nav.push({ role: 'Newsletters', title: '@(Newsletters)', url: '@{sitemap_url('admin')}newsletters/', value: 'newsletters', icon: 'fa fa-envelope-o' });
-		common.nav.push({ role: 'Subscribers', title: '@(Subscribers)', url: '@{sitemap_url('admin')}subscribers/', value: 'subscribers', icon: 'fa fa-address-book-o' });
-		common.nav.push({ role: 'Settings', title: '@(Settings)', url: '@{sitemap_url('admin')}settings/', value: 'settings', icon: 'fa fa-cog' });
+		common.nav.push({ role: 'Dashboard', title: '@(Dashboard)', value: 'dashboard', icon: 'fa fa-dashboard' });
+		common.nav.push({ role: 'Events', title: '@(Events)', value: 'events', icon: 'far fa-clock-o' });
+		common.nav.push({ role: 'Pages', title: '@(Pages)', value: 'pages', icon: 'far fa-file-text-o' });
+		common.nav.push({ role: 'Widgets', title: '@(Widgets)', value: 'widgets', icon: 'fa fa-plug' });
+		common.nav.push({ role: 'Posts', title: '@(Posts)', value: 'posts', icon: 'fa fa-newspaper-o' });
+		common.nav.push({ role: 'Notices', title: '@(Notices)', value: 'notices', icon: 'fa fa-bullhorn' });
+		common.nav.push({ role: 'Newsletters', title: '@(Newsletters)', value: 'newsletters', icon: 'fa fa-envelope-o' });
+		common.nav.push({ role: 'Subscribers', title: '@(Subscribers)', value: 'subscribers', icon: 'far fa-address-card' });
+		common.nav.push({ role: 'Settings', title: '@(Settings)', value: 'settings', icon: 'fa fa-cog' });
 
 		ENV('url', '@{sitemap_url('admin')}');
-		ENV('roles', 'Dashboard,Events,Newsletters,Notices,Pages,Posts,Settings,Subscribers,Widgets');
 		ENV('date', '@(yyyy-MM-dd - HH:mm)');
+
+		WATCH('common.nav', function(path, value) {
+			var roles = [];
+			for (var i = 0; i < value.length; i++)
+				roles.push(value[i].role);
+			ENV('roles', roles.join(','));
+		}, true);
+
+		CONFIG('input', 'dirplaceholder:@(Search)');
 
 		MAKE('common', function(obj) {
 
@@ -116,8 +124,6 @@
 			// SET('common.title', '<i class="fa fa-{icon}"></i>{title}'.arg(item));
 			SET('common.title', item.title);
 			document.title = common.name + ': ' + item.title;
-			setTimeout(refresh_height, 500);
-			setTimeout(refresh_height, 1000);
 		});
 
 		function navigation(el) {

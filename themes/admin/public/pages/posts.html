@@ -21,7 +21,7 @@
 		</section>
 
 		<section data-type="main">
-			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?.checked;button:?/button;noborder:1;height:window;margin:103;dblclick:?/update">
+			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?.checked;button:?/button;noborder:1;height:window;margin:106;exec:?/refresh;dblclick:?/update">
 				<script type="text/plain">
 				[
 					{ name: 'name', text: '@(Name)', width: 350, template: '{{ language | language }}{{ if !ispublished }}<span class="badge badge-gray mr5">@(unpublished)</span>{{ fi }}{{ name }}' },
@@ -46,9 +46,20 @@
 
 <script>
 	PLUGIN('posts', function(exports) {
-		exports.refresh = function() {
+
+		exports.refresh = function(type, filter, sort, page) {
+
 			FUNC.loading(true);
-			AJAX('GET [url]api/posts/', function(response) {
+
+			if (!filter)
+				filter = {};
+
+			if (!filter.limit)
+				filter.limit = 100;
+
+			filter.page = page || 1;
+
+			AJAX('GET [url]api/posts/', filter, function(response) {
 				SET('?.grid', response);
 				FUNC.loading(false, 200);
 			});

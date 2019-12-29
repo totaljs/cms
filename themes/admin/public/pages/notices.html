@@ -21,7 +21,7 @@
 		</section>
 
 		<section data-type="main">
-			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?.checked;button:?/button;noborder:1;height:window;margin:103;dblclick:?/update">
+			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?.checked;button:?/button;noborder:1;height:window;margin:106;exec:?/refresh;dblclick:?/update">
 				<script type="text/plain">
 				[
 					{ name: 'name', text: '@(Name)', width: 450, template: '{{ if icon }}<i class="{{ icon }} icon"></i>{{ fi }}{{ if ispinned }}<span class="badge badge-green mr5"><i class="fa fa-map-pin"></i>@(Pinned)</span>{{ fi }}{{ name }}' },
@@ -45,16 +45,26 @@
 <script>
 	PLUGIN('notices', function(exports) {
 
-		exports.refresh = function() {
+		exports.refresh = function(type, filter, sort, page) {
+
 			FUNC.loading(true);
-			AJAX('GET [url]api/notices/', function(response) {
+
+			if (!filter)
+				filter = {};
+
+			if (!filter.limit)
+				filter.limit = 100;
+
+			filter.page = page || 1;
+
+			AJAX('GET [url]api/notices/', filter, function(response) {
 				SET('?.grid', response);
 				FUNC.loading(false, 200);
 			});
 		};
 
 		exports.reload = function() {
-			exports.refresh();
+			NULL('?.grid');
 		};
 
 		exports.update = function(row) {
@@ -70,7 +80,7 @@
 							FUNC.loading(false, 1000);
 							if (response.success) {
 								SETTER('snackbar', 'success', '@(Post has been removed successfully.)');
-								exports.refresh();
+								NULL('?.grid');
 							}
 						});
 					});
@@ -108,7 +118,7 @@
 									SET('common.progress', (index / arr.length) * 100);
 									AJAX('DELETE [url]api/notices/' + el.id, next);
 								}, function() {
-									exports.refresh();
+									NULL('?.grid');
 									FUNC.loading(false, 1000);
 									SETTER('snackbar', 'success', '@(Notices have been removed successfully.)');
 								});

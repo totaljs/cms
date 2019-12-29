@@ -3,7 +3,7 @@ NEWSCHEMA('SettingsKeyValue', function(schema) {
 	schema.define('name', 'String(50)', true);
 });
 
-NEWSCHEMA('SuperUser', function(schema) {
+NEWSCHEMA('Settings/SuperUser', function(schema) {
 	schema.define('id', 'String(15)');
 	schema.define('name', String, true);
 	schema.define('login', String, true);
@@ -23,7 +23,7 @@ NEWSCHEMA('Settings', function(schema) {
 	schema.define('posts', '[SettingsKeyValue]');
 	schema.define('notices', '[SettingsKeyValue]');
 	schema.define('navigations', '[SettingsKeyValue]');
-	schema.define('users', '[SuperUser]');
+	schema.define('users', '[Settings/SuperUser]');
 	schema.define('signals', '[SettingsKeyValue]');
 	schema.define('languages', '[SettingsKeyValue]');
 	schema.define('smtp', 'String');
@@ -47,9 +47,9 @@ NEWSCHEMA('Settings', function(schema) {
 		for (var i = 0; i < keys.length; i++)
 			PREF.set(keys[i], model[keys[i]]);
 
-		model.datebackup = F.datetime;
+		model.dtbackup = F.datetime;
 		NOSQL('settings_backup').insert(JSON.parse(JSON.stringify(model)));
-		model.datebackup = undefined;
+		model.dtbackup = undefined;
 
 		EMIT('settings.save', PREF);
 		$SAVE('Events', { type: 'settings', id: model.id, user: $.user.name, admin: true }, NOOP, $);
@@ -133,7 +133,7 @@ NEWSCHEMA('Settings', function(schema) {
 		!PREF.templatesnewsletters && PREF.set('templatesnewsletters', []);
 		!PREF.templatesposts && PREF.set('templatesposts', []);
 		!PREF.languages && PREF.set('languages', []);
-		PREF.smtp && F.useSMTP(PREF.smtp, PREF.smtpoptions.parseJSON());
+		PREF.smtp && Mail.use(PREF.smtp, PREF.smtpoptions.parseJSON());
 
 		EMIT('settings', PREF);
 		$.success();

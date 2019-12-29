@@ -8026,7 +8026,7 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 		var min = (((opt.height - 120) / config.rowheight) >> 0) + 1;
 		var is = output.length < min;
 		if (is) {
-			for (var i = output.length; i < min + 1; i++)
+			for (var i = output.length; i < 50; i++)
 				output.push('<div class="dg-row-empty">&nbsp;</div>');
 		}
 
@@ -9711,11 +9711,11 @@ COMPONENT('menu', function(self) {
 
 });
 
-COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:name;direxclude:false;searchalign:1;after:\\:', function(self, config) {
+COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:name;direxclude:false;forcevalidation:1;searchalign:1;after:\\:', function(self, config) {
 
 	var cls = 'ui-input';
 	var cls2 = '.' + cls;
-	var input, placeholder, dirsource, binded, customvalidator, mask;
+	var input, placeholder, dirsource, binded, customvalidator, mask, isdirvisible = false, nobindcamouflage = false, focused = false;
 
 	self.nocompile();
 	self.bindvisible(20);
@@ -9724,7 +9724,7 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 		Thelpers.ui_input_icon = function(val) {
 			return val.charAt(0) === '!' ? ('<span class="ui-input-icon-custom">' + val.substring(1) + '</span>') : ('<i class="fa fa-' + val + '"></i>');
 		};
-		W.ui_input_template = Tangular.compile(('{{ if label }}<div class="{0}-label">{{ if icon }}<i class="fa fa-{{ icon }}"></i>{{ fi }}{{ label }}{{ after }}</div>{{ fi }}<div class="{0}-control{{ if licon }} {0}-licon{{ fi }}{{ if ricon || (type === \'number\' && increment) }} {0}-ricon{{ fi }}">{{ if ricon || (type === \'number\' && increment) }}<div class="{0}-icon-right{{ if type === \'number\' && increment }} {0}-increment{{ else if riconclick || type === \'date\' || type === \'time\' || (type === \'search\' && searchalign === 1) || type === \'password\' }} {0}-click{{ fi }}">{{ if type === \'number\' }}<i class="fa fa-caret-up"></i><i class="fa fa-caret-down"></i>{{ else }}{{ ricon | ui_input_icon }}{{ fi }}</div>{{ fi }}{{ if licon }}<div class="{0}-icon-left{{ if liconclick || (type === \'search\' && searchalign !== 1) }} {0}-click{{ fi }}">{{ licon | ui_input_icon }}</div>{{ fi }}<div class="{0}-input{{ if align === 1 || align === \'center\' }} center{{ else if align === 2 || align === \'right\' }} right{{ fi }}">{{ if placeholder && !innerlabel }}<div class="{0}-placeholder">{{ placeholder }}</div>{{ fi }}<input type="{{ if !dirsource && type === \'password\' }}password{{ else }}text{{ fi }}"{{ if autofill }} name="{{ PATH }}"{{ else }} autocomplete="input' + Date.now() + '"{{ fi }}{{ if dirsource }} readonly{{ else }} data-jc-bind=""{{ fi }}{{ if maxlength > 0}} maxlength="{{ maxlength }}"{{ fi }}{{ if autofocus }} autofocus{{ fi }} /></div></div>{{ if error }}<div class="{0}-error hidden"><i class="fa fa-warning"></i> {{ error }}</div>{{ fi }}').format(cls));
+		W.ui_input_template = Tangular.compile(('{{ if label }}<div class="{0}-label">{{ if icon }}<i class="fa fa-{{ icon }}"></i>{{ fi }}{{ label | raw }}{{ after | raw }}</div>{{ fi }}<div class="{0}-control{{ if licon }} {0}-licon{{ fi }}{{ if ricon || (type === \'number\' && increment) }} {0}-ricon{{ fi }}">{{ if ricon || (type === \'number\' && increment) }}<div class="{0}-icon-right{{ if type === \'number\' && increment }} {0}-increment{{ else if riconclick || type === \'date\' || type === \'time\' || (type === \'search\' && searchalign === 1) || type === \'password\' }} {0}-click{{ fi }}">{{ if type === \'number\' }}<i class="fa fa-caret-up"></i><i class="fa fa-caret-down"></i>{{ else }}{{ ricon | ui_input_icon }}{{ fi }}</div>{{ fi }}{{ if licon }}<div class="{0}-icon-left{{ if liconclick || (type === \'search\' && searchalign !== 1) }} {0}-click{{ fi }}">{{ licon | ui_input_icon }}</div>{{ fi }}<div class="{0}-input{{ if align === 1 || align === \'center\' }} center{{ else if align === 2 || align === \'right\' }} right{{ fi }}">{{ if placeholder && !innerlabel }}<div class="{0}-placeholder">{{ placeholder }}</div>{{ fi }}<input type="{{ if !dirsource && type === \'password\' }}password{{ else }}text{{ fi }}"{{ if autofill }} autocomplete="on" name="{{ PATH }}"{{ else }} name="input' + Date.now() + '" autocomplete="new-password"{{ fi }}{{ if dirsource }} readonly{{ else }} data-jc-bind=""{{ fi }}{{ if maxlength > 0}} maxlength="{{ maxlength }}"{{ fi }}{{ if autofocus }} autofocus{{ fi }} /></div></div>{{ if error }}<div class="{0}-error hidden"><i class="fa fa-warning"></i> {{ error }}</div>{{ fi }}').format(cls));
 	};
 
 	self.make = function() {
@@ -9742,10 +9742,19 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 		self.redraw();
 
 		self.event('input change', function() {
-			self.check();
+			if (nobindcamouflage)
+				nobindcamouflage = false;
+			else
+				self.check();
 		});
 
 		self.event('focus', 'input', function() {
+
+			if (config.disabled)
+				return $(this).blur();
+
+			focused = true;
+			self.camouflage(false);
 			self.aclass(cls + '-focused');
 			config.autocomplete && EXEC(self.makepath(config.autocomplete), self, input.parent());
 			if (config.autosource) {
@@ -9771,6 +9780,9 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 				setTimeout(function(input) {
 					input.selectionStart = input.selectionEnd = 0;
 				}, 50, this);
+			} else if (config.dirsource && (config.autofocus != false && config.autofocus != 0)) {
+				if (!isdirvisible)
+					self.find(cls2 + '-control').trigger('click');
 			}
 		});
 
@@ -9894,13 +9906,20 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 		});
 
 		self.event('blur', 'input', function() {
+			focused = false;
+			self.camouflage(true);
 			self.rclass(cls + '-focused');
 		});
 
 		self.event('click', cls2 + '-control', function() {
 
-			if (!config.dirsource || config.disabled)
+			if (!config.dirsource || config.disabled || isdirvisible)
 				return;
+
+			isdirvisible = true;
+			setTimeout(function() {
+				isdirvisible = false;
+			}, 500);
 
 			var opt = {};
 			opt.element = self.find(cls2 + '-control');
@@ -9975,7 +9994,7 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 					e.preventDefault();
 					e.stopPropagation();
 					self.find(cls2 + '-control').trigger('click');
-				} else
+				} else if (!config.camouflage || $(e.target).hclass(cls + '-placeholder'))
 					input.focus();
 			}
 		});
@@ -10035,6 +10054,24 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 		});
 	};
 
+	self.camouflage = function(is) {
+		if (config.camouflage) {
+			if (is) {
+				var t = input[0];
+				var arr = (t.value || '').split('');
+				for (var i = 0; i < arr.length; i++)
+					arr[i] = typeof(config.camouflage) === 'string' ? config.camouflage : '*';
+				nobindcamouflage = true;
+				t.value = arr.join('');
+			} else {
+				nobindcamouflage = true;
+				var val = self.get();
+				input[0].value = val == null ? '' : val;
+			}
+			self.tclass(cls + '-camouflaged', is);
+		}
+	};
+
 	self.curpos = function(pos) {
 		var el = input[0];
 		if (el.createTextRange) {
@@ -10049,7 +10086,7 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 
 	self.validate = function(value) {
 
-		if (!config.required || config.disabled)
+		if ((!config.required || config.disabled) && !self.forcedvalidation())
 			return true;
 
 		if (config.dirsource)
@@ -10081,16 +10118,10 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 				return value.isURL();
 			case 'currency':
 			case 'number':
-
 				value = value.parseFloat();
-
-				if (config.minvalue != null && value < config.minvalue)
+				if ((config.minvalue != null && value < config.minvalue) || (config.maxvalue != null && value > config.maxvalue))
 					return false;
-
-				if (config.maxvalue != null && value > config.maxvalue)
-					return false;
-
-				return value > 0;
+				return config.minvalue == null ? value > 0 : true;
 		}
 
 		return value.length > 0;
@@ -10111,6 +10142,10 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 
 	self.getterin = self.getter;
 	self.getter = function(value, realtime, nobind) {
+
+		if (nobindcamouflage)
+			return;
+
 		if (config.mask && config.masktidy) {
 			var val = [];
 			for (var i = 0; i < value.length; i++) {
@@ -10159,6 +10194,8 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 
 		self.setterin(value, path, type);
 		self.bindvalue();
+
+		config.camouflage && !focused && setTimeout(self.camouflage, type === 1 ? 1000 : 1, true);
 
 		if (config.type === 'password')
 			self.password(true);
@@ -10338,13 +10375,26 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 	self.state = function(type) {
 		if (!type)
 			return;
-		var invalid = config.required ? self.isInvalid() : false;
+		var invalid = config.required ? self.isInvalid() : self.forcedvalidation() ? self.isInvalid() : false;
 		if (invalid === self.$oldstate)
 			return;
 		self.$oldstate = invalid;
 		self.tclass(cls + '-invalid', invalid);
 		config.error && self.find(cls2 + '-error').tclass('hidden', !invalid);
 	};
+
+	self.forcedvalidation = function() {
+
+		if (!config.forcevalidation)
+			return false;
+
+		if (self.type === 'number')
+			return false;
+
+		var val = self.get();
+		return (self.type === 'phone' || self.type === 'email') && (val != null && (typeof(val) === 'string' && val.length !== 0));
+	};
+
 });
 
 COMPONENT('layout', 'space:1;border:0;parent:window;margin:0;remember:1', function(self, config) {
@@ -11786,5 +11836,477 @@ COMPONENT('viewbox', 'margin:0;scroll:true;delay:100;scrollbar:0;visibleY:1;heig
 
 	self.setter = function() {
 		setTimeout(self.resize, config.delay, config.scrolltop);
+	};
+});
+
+COMPONENT('datepicker', 'today:Set today;firstday:0;close:Close;yearselect:true;monthselect:true;yearfrom:-70 years;yearto:5 years', function(self, config) {
+
+	var cls = 'ui-datepicker';
+	var cls2 = '.' + cls;
+	var skip = false;
+	var visible = false;
+	var touchdiff;
+	var startX;
+
+	self.days = EMPTYARRAY;
+	self.months = EMPTYARRAY;
+	self.months_short = EMPTYARRAY;
+	self.years_from;
+	self.years_to;
+
+	self.singleton();
+	self.readonly();
+	self.nocompile();
+
+	self.configure = function(key, value) {
+		switch (key) {
+			case 'days':
+				if (value instanceof Array)
+					self.days = value;
+				else
+					self.days = value.split(',').trim();
+
+				for (var i = 0; i < DAYS.length; i++) {
+					DAYS[i] = self.days[i];
+					self.days[i] = DAYS[i].substring(0, 2).toUpperCase();
+				}
+
+				break;
+
+			case 'months':
+				if (value instanceof Array)
+					self.months = value;
+				else
+					self.months = value.split(',').trim();
+
+				self.months_short = [];
+
+				for (var i = 0, length = self.months.length; i < length; i++) {
+					var m = self.months[i];
+					MONTHS[i] = m;
+					if (m.length > 4)
+						m = m.substring(0, 3) + '.';
+					self.months_short.push(m);
+				}
+				break;
+
+			case 'yearfrom':
+				if (value.indexOf('current') !== -1)
+					self.years_from = +(new Date().format('yyyy'));
+				else
+					self.years_from = +(new Date().add(value).format('yyyy'));
+				break;
+
+			case 'yearto':
+				if (value.indexOf('current') !== -1)
+					self.years_to = +(new Date().format('yyyy'));
+				else
+					self.years_to = +(new Date().add(value).format('yyyy'));
+				break;
+		}
+	};
+
+	function getMonthDays(dt) {
+
+		var m = dt.getMonth();
+		var y = dt.getFullYear();
+
+		if (m === -1) {
+			m = 11;
+			y--;
+		}
+
+		return (32 - new Date(y, m, 32).getDate());
+	}
+
+	self.calculate = function(year, month, selected) {
+
+		var d = new Date(year, month, 1, 12, 0);
+		var output = { header: [], days: [], month: month, year: year };
+		var firstDay = config.firstday;
+		var firstCount = 0;
+		var frm = d.getDay() - firstDay;
+		var today = new Date();
+		var ty = today.getFullYear();
+		var tm = today.getMonth();
+		var td = today.getDate();
+		var sy = selected ? selected.getFullYear() : -1;
+		var sm = selected ? selected.getMonth() : -1;
+		var sd = selected ? selected.getDate() : -1;
+		var days = getMonthDays(d);
+
+		if (frm < 0)
+			frm = 7 + frm;
+
+		while (firstCount++ < 7) {
+			output.header.push({ index: firstDay, name: self.days[firstDay] });
+			firstDay++;
+			if (firstDay > 6)
+				firstDay = 0;
+		}
+
+		var index = 0;
+		var indexEmpty = 0;
+		var count = 0;
+		var prev = getMonthDays(new Date(year, month - 1, 1, 12, 0)) - frm;
+		var cur;
+
+		for (var i = 0; i < days + frm; i++) {
+
+			var obj = { isToday: false, isSelected: false, isEmpty: false, isFuture: false, number: 0, index: ++count };
+
+			if (i >= frm) {
+				obj.number = ++index;
+				obj.isSelected = sy === year && sm === month && sd === index;
+				obj.isToday = ty === year && tm === month && td === index;
+				obj.isFuture = ty < year;
+				if (!obj.isFuture && year === ty) {
+					if (tm < month)
+						obj.isFuture = true;
+					else if (tm === month)
+						obj.isFuture = td < index;
+				}
+
+			} else {
+				indexEmpty++;
+				obj.number = prev + indexEmpty;
+				obj.isEmpty = true;
+				cur = d.add('-' + indexEmpty + ' days');
+			}
+
+			if (!obj.isEmpty)
+				cur = d.add(i + ' days');
+
+			obj.month = i >= frm && obj.number <= days ? d.getMonth() : cur.getMonth();
+			obj.year = i >= frm && obj.number <= days ? d.getFullYear() : cur.getFullYear();
+			obj.date = cur;
+			output.days.push(obj);
+		}
+
+		indexEmpty = 0;
+
+		for (var i = count; i < 42; i++) {
+			var cur = d.add(i + ' days');
+			var obj = { isToday: false, isSelected: false, isEmpty: true, isFuture: true, number: ++indexEmpty, index: ++count };
+			obj.month = cur.getMonth();
+			obj.year = cur.getFullYear();
+			obj.date = cur;
+			output.days.push(obj);
+		}
+
+		return output;
+	};
+
+	self.hide = function() {
+		if (visible) {
+			self.unbindevents();
+			self.opt.close && self.opt.close();
+			self.opt = null;
+			self.older = null;
+			self.target = null;
+			self.aclass('hidden');
+			self.rclass(cls + '-visible');
+			visible = false;
+		}
+		return self;
+	};
+
+	self.show = function(opt) {
+
+		setTimeout(function() {
+			clearTimeout2('datepickerhide');
+		}, 5);
+
+		var el = $(opt.element);
+		var dom = el[0];
+
+		if (self.target === dom) {
+			self.hide();
+			return;
+		}
+
+		if (self.opt && self.opt.close)
+			self.opt.close();
+
+		var off = el.offset();
+		var w = el.innerWidth();
+		var h = el.innerHeight();
+		var l = 0;
+		var t = 0;
+		var height = 305 + (opt.cancel ? 25 : 0);
+		var s = 250;
+
+		if (opt.element) {
+			switch (opt.align) {
+				case 'center':
+					l = Math.ceil((off.left - w / 2) + (w / 2));
+					break;
+				case 'right':
+					l = (off.left - w) + w;
+					break;
+				default:
+					l = off.left;
+					break;
+			}
+
+			t = opt.position === 'bottom' ? (off.top - height) : (off.top + h + 12);
+		}
+
+		if (opt.offsetX)
+			l += opt.offsetX;
+
+		if (opt.offsetY)
+			t += opt.offsetY;
+
+		if (l + s > WW)
+			l = (l + w) - s;
+
+		if (t + height > WH)
+			t = (t + h) - height;
+
+		var dt = typeof(opt.value) === 'string' ? GET(opt.value) : opt.value;
+		if ((!(dt instanceof Date)) || isNaN(dt.getTime()))
+			dt = NOW;
+
+		self.opt = opt;
+		self.time = dt.format('HH:mm:ss');
+		self.css({ left: l, top: t });
+		self.rclass('hidden');
+		self.date(dt);
+		self.aclass(cls + '-visible', 50);
+		self.bindevents();
+		self.target = dom;
+		visible = true;
+		return self;
+	};
+
+	self.setdate = function(dt) {
+
+		var time = self.time.split(':');
+
+		if (time.length > 1) {
+			dt.setHours(+(time[0] || '0'));
+			dt.setMinutes(+(time[1] || '0'));
+			dt.setSeconds(+(time[2] || '0'));
+		}
+
+		if (typeof(self.opt.value) === 'string')
+			SET2(self.opt.value, dt);
+		else
+			self.opt.callback(dt);
+	};
+
+	self.make = function() {
+
+		self.aclass(cls + ' hidden');
+
+		var conf = {};
+
+		if (!config.days) {
+			conf.days = [];
+			for (var i = 0; i < DAYS.length; i++)
+				conf.days.push(DAYS[i].substring(0, 2).toUpperCase());
+		}
+
+		!config.months && (conf.months = MONTHS);
+		self.reconfigure(conf);
+
+		self.event('click', cls2 + '-today-a', function() {
+			self.setdate(new Date());
+			self.hide();
+		});
+
+		self.event('click touchend', cls2 + '-day', function() {
+			if (Date.now() - touchdiff > 500)
+				return;
+			var arr = this.getAttribute('data-date').split('-');
+			var dt = new Date(+arr[0], +arr[1], +arr[2], 12, 0);
+			self.find(cls2 + '-selected').rclass(cls + '-selected');
+			var el = $(this).aclass(cls + '-selected');
+			skip = !el.hclass(cls + '-disabled');
+			self.setdate(dt);
+			self.hide();
+		});
+
+		self.event('click touchend', cls2 + '-cancel', function() {
+			if (typeof(self.opt.value) === 'string')
+				SET2(self.opt.value, null);
+			else
+				self.opt.callback(null);
+			self.hide();
+		});
+
+		self.event('click', cls2 + '-header', function(e) {
+			e.stopPropagation();
+		});
+
+		self.event('change', cls2 + '-year', function(e) {
+
+			clearTimeout2('datepickerhide');
+			e.preventDefault();
+			e.stopPropagation();
+
+			var arr = $(this).attrd('date').split('-');
+			var dt = new Date(+arr[0], +arr[1], 1, 12, 0);
+			dt.setFullYear(this.value);
+			self.date(dt, true);
+		});
+
+		self.event('change', cls2 + '-month', function(e){
+
+			clearTimeout2('datepickerhide');
+			e.preventDefault();
+			e.stopPropagation();
+
+			var arr = $(this).attrd('date').split('-');
+			var dt = new Date(+arr[0], +arr[1], 1, 12, 0);
+			dt.setMonth(this.value);
+			self.date(dt, true);
+		});
+
+		self.event('click', 'button', function(e) {
+
+			e.preventDefault();
+			e.stopPropagation();
+
+			var arr = $(this).attrd('date').split('-');
+			var dt = new Date(+arr[0], +arr[1], 1, 12, 0);
+			switch (this.name) {
+				case 'prev':
+					dt.setMonth(dt.getMonth() - 1);
+					break;
+				case 'next':
+					dt.setMonth(dt.getMonth() + 1);
+					break;
+			}
+
+			self.date(dt, true);
+		});
+
+		self.event('touchstart touchmove', cls2 + '-table',function(e){
+
+			e.stopPropagation();
+			e.preventDefault();
+
+			var x = e.originalEvent.touches[0].pageX;
+
+			if (e.type === 'touchstart') {
+				startX = x;
+				touchdiff = Date.now();
+				return;
+			}
+
+			var diffX = startX - x;
+			if (diffX > 70 || diffX < -70) {
+				var arr = $(this).data('date').split('-');
+				var dt = new Date(+arr[0], +arr[1], 1, 12, 0);
+				dt.setMonth(dt.getMonth() + (diffX > 50 ? 1 : -1));
+				self.date(dt, true);
+			}
+		});
+
+		window.$datepicker = self;
+
+		var hide = function() {
+			visible && window.$datepicker && window.$datepicker.hide();
+		};
+
+		var hide2 = function() {
+			visible && setTimeout2('datepickerhide', function() {
+				window.$datepicker && window.$datepicker.hide();
+			}, 20);
+		};
+
+		self.bindevents = function() {
+			if (!visible)
+				$(window).on('scroll click', hide2);
+		};
+
+		self.unbindevents = function() {
+			if (visible)
+				$(window).off('scroll click', hide2);
+		};
+
+		self.on('reflow + scroll + resize', hide);
+	};
+
+	self.date = function(value, skipday) {
+
+		var clssel = cls + '-selected';
+
+		if (typeof(value) === 'string')
+			value = value.parseDate();
+
+		var year = value == null ? null : value.getFullYear();
+		if (year && (year < self.years_from || year > self.years_to))
+			return;
+
+		if (!value || isNaN(value.getTime())) {
+			self.find('.' + clssel).rclass(clssel);
+			value = NOW;
+		}
+
+		var empty = !value;
+
+		if (skipday) {
+			skipday = false;
+			empty = true;
+		}
+
+		if (skip) {
+			skip = false;
+			return;
+		}
+
+		if (!value)
+			value = NOW = new Date();
+
+		var output = self.calculate(value.getFullYear(), value.getMonth(), value);
+		var builder = [];
+
+		for (var i = 0; i < 42; i++) {
+
+			var item = output.days[i];
+
+			if (i % 7 === 0) {
+				builder.length && builder.push('</tr>');
+				builder.push('<tr>');
+			}
+
+			var classes = [];
+
+			item.isEmpty && classes.push(cls + '-disabled');
+			classes.push(cls + '-day');
+
+			!empty && item.isSelected && classes.push(clssel);
+			item.isToday && classes.push(cls + '-day-today');
+			builder.push('<td class="{0}" data-date="{1}-{2}-{3}"><div>{3}</div></td>'.format(classes.join(' '), item.year, item.month, item.number));
+		}
+
+		builder.push('</tr>');
+
+		var header = [];
+		for (var i = 0; i < 7; i++)
+			header.push('<th>{0}</th>'.format(output.header[i].name));
+
+		var years = value.getFullYear();
+		if (config.yearselect) {
+			years = '';
+			var current_year = value.getFullYear();
+			for (var i = self.years_from; i <= self.years_to; i++)
+				years += '<option value="{0}" {1}>{0}</option>'.format(i, i === current_year ? 'selected' : '');
+			years = '<select data-date="{0}-{1}" class="ui-datepicker-year">{2}</select>'.format(output.year, output.month, years);
+		}
+
+		var months = self.months[value.getMonth()];
+		if (config.monthselect) {
+			months = '';
+			var current_month = value.getMonth();
+			for (var i = 0, l = self.months.length; i < l; i++)
+				months += '<option value="{0}" {2}>{1}</option>'.format(i, self.months[i], i === current_month ? 'selected' : '');
+			months = '<select data-date="{0}-{1}" class="ui-datepicker-month">{2}</select>'.format(output.year, output.month, months);
+		}
+
+		self.html('<div class="ui-datepicker-header"><button class="ui-datepicker-header-prev" name="prev" data-date="{0}-{1}"><span class="fa fa-arrow-left"></span></button><div class="ui-datepicker-header-info">{2} {3}</div><button class="ui-datepicker-header-next" name="next" data-date="{0}-{1}"><span class="fa fa-arrow-right"></span></button></div><div class="ui-datepicker-table" data-date="{0}-{1}"><table cellpadding="0" cellspacing="0" border="0"><thead>{4}</thead><tbody>{5}</tbody></table></div>'.format(output.year, output.month, months, years, header.join(''), builder.join('')) + (self.opt.cancel ? ('<div class="ui-datepicker-cancel">' + self.opt.cancel + '</div>') : '') + (config.today ? '<div class="ui-datepicker-today"><span class="link">{0}</span><span class="link ui-datepicker-today-a"><i class="fa fa-datepicker"></i>{1}</span></div>'.format(config.close, config.today) : ''));
 	};
 });

@@ -26,7 +26,7 @@
 								<div class="event">
 									<div class="event-type">{{ if m.user }}<span>{{ m.user }}<i class="fa fa-user"></i></span>{{ fi }}<i class="fa fa-bookmark"></i>{{ m.type }}</div>
 									<div class="event-body">{{ m.body }}</div>
-									<div class="event-user"><span>{{ m.created | time }}<i class="fa fa-clock-o"></i></span>IP: {{ m.ip }}</div>
+									<div class="event-user"><span>{{ m.dtcreated | time }}<i class="fa fa-clock-o"></i></span>IP: {{ m.ip }}</div>
 								</div>
 							{{ end }}
 							{{ if !value || !value.length }}
@@ -47,7 +47,7 @@
 								<div class="event">
 									<div class="event-type">{{ if m.user }}<span>{{ m.user }}<i class="fa fa-user"></i></span>{{ fi }}<i class="fa fa-bookmark"></i>{{ m.type }}</div>
 									<div class="event-body">{{ m.body }}</div>
-									<div class="event-user"><span>{{ m.created | time }}<i class="fa fa-clock-o"></i></span>IP: {{ m.ip }}</div>
+									<div class="event-user"><span>{{ m.dtcreated | time }}<i class="fa fa-clock-o"></i></span>IP: {{ m.ip }}</div>
 								</div>
 							{{ end }}
 							{{ if !value || !value.length }}
@@ -68,7 +68,7 @@
 								<div class="event">
 									<div class="event-type">{{ if m.user }}<span>{{ m.user }}<i class="fa fa-user"></i></span>{{ fi }}<i class="fa fa-bookmark"></i>{{ m.type }}</div>
 									<div class="event-body">{{ m.body }}</div>
-									<div class="event-user"><span>{{ m.created | time }}<i class="fa fa-clock-o"></i></span>IP: {{ m.ip }}</div>
+									<div class="event-user"><span>{{ m.dtcreated | time }}<i class="fa fa-clock-o"></i></span>IP: {{ m.ip }}</div>
 								</div>
 							{{ end }}
 							{{ if !value || !value.length }}
@@ -89,17 +89,19 @@
 		exports.limit = 100; // Count of items per page
 
 		exports.refresh = function() {
+
 			if (common.page !== 'events')
 				return;
+
 			SETTER('loading', 'show');
 			AJAX('GET [url]api/{0}/'.format(exports.scope), function(response) {
 				var data = {};
 				var now = NOW.format('yyyyMMdd');
-				data.today = response.findAll(n => n.created.format('yyyyMMdd') === now);
+				data.today = response.findAll(n => n.dtcreated.format('yyyyMMdd') === now);
 				now = NOW.add('-1 day').format('yyyyMMdd');
-				data.yesterday = response.findAll(n => n.created.format('yyyyMMdd') === now);
+				data.yesterday = response.findAll(n => n.dtcreated.format('yyyyMMdd') === now);
 				now = +now;
-				data.older = response.findAll(n => +n.created.format('yyyyMMdd') < now);
+				data.older = response.findAll(n => +n.dtcreated.format('yyyyMMdd') < now);
 				SET(exports.scope, data);
 				SETTER('loading', 'hide', 500);
 			});
