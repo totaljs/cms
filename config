@@ -6,6 +6,9 @@ author                    : Peter Širka
 admin_superadmin          : admin:admin
 admin_cookie              : __admin
 
+// Secret for administrators
+admin_secret  (generate)  : 10
+
 // Enables real-time visitor tracking
 admin_tracking            : true
 
