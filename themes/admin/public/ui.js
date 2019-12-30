@@ -5409,7 +5409,7 @@ COMPONENT('donutchart', 'format:{{ value | format(0) }};size:0;tooltip:true;pres
 		animate = true;
 		force = false;
 
-		config.redraw && EXEC(config.redraw);
+		config.redraw && EXEC(self.makepath(config.redraw));
 
 		self.select(0);
 		if (config.presentation) {
