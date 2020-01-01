@@ -24,10 +24,10 @@
 	.ui-dashboardvisitors table th:first-child { border-radius: 3px 0 0 0; border-left: 0; }
 	.ui-dashboardvisitors table th:last-child { border-radius: 0 3px 0 0; }
 
-	.ui-stats24 { height: 120px; background-color: #E5E5E5; border-radius: 3px 3px 0 0; box-shadow: inset 0 5px 10px rgba(0,0,0,0.05); margin-bottom: 30px; }
+	.ui-stats24 { height: 120px; border-radius: 2px 2px 0 0; box-shadow: inset 0 5px 10px rgba(0,0,0,0.05); margin-bottom: 30px; }
 	.ui-stats24-container { display: table; width: 100%; height: 119px; table-layout: fixed; }
 	.ui-stats24-bar { display: table-cell; vertical-align: bottom; padding: 0 1px; width: 4.16%; font-size: 9px; text-align: center; color: gray; }
-	.ui-stats24-bar div { background-color: #D0D0D0; border-radius: 3px 3px 0 0; position: relative; text-align: left; color: gray; }
+	.ui-stats24-bar div { background-color: #D0D0D0; border-radius: 2px 2px 0 0; position: relative; text-align: left; color: gray; }
 	.ui-stats24-bar:hover { opacity: 0.9; }
 	.ui-stats24-bar div span { position: absolute; top: 3px; width: 100%; text-align: center; border-bottom: 1px solid #E0E0E0; padding: 0 0 1px 0; }
 	.ui-stats24-bar div.online { background-color: #4584F1; color: white; }
@@ -239,11 +239,11 @@
 									<i class="fa fa-square legend-1 mr5"></i><span class="mr10">@(Desktop)</span>
 									<i class="fa fa-square legend-2 mr5"></i><span class="mr10">@(Mobile devices)</span>
 								</div>
-								<div data-jc="barchart__?.stats.devices__height:250"></div>
+								<div data---="barchart__?.stats.devices__height:250"></div>
 								<div style="margin-top:8px" data-bind="?.stats.devicessum__template">
 									<script type="text/html">
-										<span class="fs11 gray" style="float:right">@(Total mobile:) <b>{{ value.mobile | format(0) }}</b></span>
-										<span class="fs11 gray">@(Total desktop:) <b>{{ value.desktop | format(0) }}</b></span>
+										<span class="fs11 gray" style="float:right">@(Total mobile:) <b>{{ value.mobile | format(0) | def('0') }}</b></span>
+										<span class="fs11 gray">@(Total desktop:) <b>{{ value.desktop | format(0) | def('0') }}</b></span>
 									</script>
 								</div>
 							</div>
@@ -315,7 +315,7 @@
 				</div>
 				<div class="tabmenu-container">
 					<div class="container">
-						<ul data---="tabmenu__?.tab" data-jc-value="'pages'" class="tabmenu">
+						<ul data---="tabmenu__?.tab__null__'pages'" class="tabmenu">
 							<li data-value="pages"><i class="fa fa-search"></i>@(Pages)</li>
 							<li data-value="posts"><i class="fa fa-hashtag"></i>@(Posts)</li>
 							<li data-value="contactforms"><i class="fa fa-envelope"></i>@(Contact forms)</li>

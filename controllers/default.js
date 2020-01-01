@@ -1,9 +1,9 @@
 exports.install = function() {
 	ROUTE('/*', view_cms);
 
-	ROUTE('#posts',   view_posts,        ['*Post']);
-	ROUTE('#post',    view_posts_detail, ['*Post']);
-	ROUTE('#notices', view_notices,      ['*Notice']);
+	ROUTE('#posts',   view_posts,        ['*Posts']);
+	ROUTE('#post',    view_posts_detail, ['*Posts']);
+	ROUTE('#notices', view_notices,      ['*Notices']);
 
 	ROUTE('/design/', '=design/index');
 };
