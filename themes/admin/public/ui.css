@@ -974,3 +974,25 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 	.ui-datepicker-header-info { width: calc(100% - 75px); }
 	.ui-datepicker table td div { padding: 10px 0; }
 }
+
+.ui-stats24 { border-radius: 2px 2px 0 0; border: 1px solid #E0E0E0; }
+.ui-stats24-container { display: table; width: 100%; table-layout: fixed; }
+.ui-stats24-body { padding: 1px 0; }
+.ui-stats24-border .ui-stats24-bar { border-left: 1px solid #F0F0F0; }
+.ui-stats24-border .ui-stats24-body { padding: 0; }
+.ui-stats24-border .ui-stats24-bar:first-child { border-left: 0 !important; }
+.ui-stats24-border .ui-stats24-bar { padding: 0 2px 2px; }
+.ui-stats24-bar { display: table-cell; vertical-align: bottom; padding: 0 1px 1px; width: 4.16%; font-size: 9px; text-align: center; color: gray; }
+.ui-stats24-bar div { background-color: #D0D0D0; border-radius: 2px 2px 0 0; position: relative; text-align: left; color: gray; }
+.ui-stats24-bar:hover { opacity: 0.8; }
+.ui-stats24-bar div span { position: absolute; top: 3px; width: 100%; text-align: center; border-bottom: 1px solid #E0E0E0; padding: 0 0 1px 0; }
+.ui-stats24-bar div.online { background-color: #4584F1 !important; color: white; }
+.ui-stats24-bar div.online span { border-bottom-color: #6398F4 !important; }
+.ui-stats24-bar > span { background-color: #3D6ECC; padding: 1px 0; display: block; color: white; font-weight: bold; }
+.ui-stats24-smallsize .ui-stats24-bar div span { display: none; }
+.ui-stats24-smallsize .ui-stats24-bar > span { display: none; }
+
+.ui-dark .ui-stats24 { border-color: #404040; }
+.ui-dark .ui-stats24-bar div { background-color: #404040; }
+.ui-dark .ui-stats24-bar div span { border-bottom-color: #606060; }
+.ui-dark .ui-stats24-border .ui-stats24-bar { border-left: 1px solid #404040; }

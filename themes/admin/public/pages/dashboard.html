@@ -24,16 +24,6 @@
 	.ui-dashboardvisitors table th:first-child { border-radius: 3px 0 0 0; border-left: 0; }
 	.ui-dashboardvisitors table th:last-child { border-radius: 0 3px 0 0; }
 
-	.ui-stats24 { height: 120px; border-radius: 2px 2px 0 0; box-shadow: inset 0 5px 10px rgba(0,0,0,0.05); margin-bottom: 30px; }
-	.ui-stats24-container { display: table; width: 100%; height: 119px; table-layout: fixed; }
-	.ui-stats24-bar { display: table-cell; vertical-align: bottom; padding: 0 1px; width: 4.16%; font-size: 9px; text-align: center; color: gray; }
-	.ui-stats24-bar div { background-color: #D0D0D0; border-radius: 2px 2px 0 0; position: relative; text-align: left; color: gray; }
-	.ui-stats24-bar:hover { opacity: 0.9; }
-	.ui-stats24-bar div span { position: absolute; top: 3px; width: 100%; text-align: center; border-bottom: 1px solid #E0E0E0; padding: 0 0 1px 0; }
-	.ui-stats24-bar div.online { background-color: #4584F1; color: white; }
-	.ui-stats24-bar div.online span { border-bottom-color: #6398F4; }
-	.ui-stats24-bar > span { background-color: #3D6ECC; padding: 1px 0; display: block; color: white; font-weight: bold; }
-
 	.dashboard-referrer { font-size: 12px; background-color: white; margin: 0 0 5px; padding: 5px 5px 5px 10px; border-radius: 3px; }
 	.dashboard-referrer > div:last-child { margin-right: 40px; }
 	.dashboard-referrer > div:first-child { width: 40px; text-align: center; float: right; font-weight: bold; border-left: 1px solid #E0E0E0; padding: 0 5px; }
@@ -48,7 +38,6 @@
 
 	@media (max-width: 500px) {
 		.dashboard-online-position { margin-top: 110px; }
-		.ui-stats24-bar { font-size: 7px; }
 	}
 </style>
 
@@ -208,7 +197,7 @@
 							&empty; <span data-bind="?.stats.today.hoursavg__html:(value || 0).pluralize(@('# visitors', '# visitor', '# visitors', '# visitors'))" class="fs11 gray"></span>
 						</div>
 					</div>
-					<div data---="stats24__?.stats.today.hours"></div>
+					<div data---="stats24__?.stats.today.hours" class="m"></div>
 
 					<div data-bind="?.stats.visitors__show:value" class="hidden m">
 						<div class="row">
@@ -572,64 +561,6 @@
 			counter++;
 			container.prepend(self.template(item));
 			counter >= config.count && container.find('tr:last-child').remove();
-		};
-	});
-
-	COMPONENT('stats24', function(self, config) {
-
-		var old = '';
-		var bars = [];
-		var binded = false;
-
-		self.readonly();
-		self.nocompile();
-
-		self.make = function() {
-			self.aclass('ui-stats24');
-			var builder = [];
-			for (var i = 0; i < 24; i++)
-				builder.push('<div class="ui-stats24-bar"><div><span></span></div><span>{0}</span></div>'.format(i));
-			self.append('<div class="ui-stats24-container hidden">{0}</div>'.format(builder.join('')));
-			self.find('.ui-stats24-bar').each(function() {
-				bars.push($($(this).find('div')[0]));
-			});
-		};
-
-		self.setter = function(value) {
-
-			var sum = value ? value.join(',') : '';
-			if (sum === old)
-				return;
-
-			self.height(function(height) {
-
-				if (!binded) {
-					self.find('.ui-stats24-container').rclass('hidden');
-					binded = true;
-				}
-
-				old = sum;
-				var max = 0;
-
-				for (var i = 0; i < 24; i++) {
-					if (value[i] > max)
-						max = value[i];
-				}
-
-				for (var i = 0; i < 24; i++) {
-
-					var p = (value[i] / max) * 100;
-
-					if (isNaN(p))
-						p = 0;
-
-					var h = ((height / 100) * p) - 17;
-					if (h < 18)
-						h = 18;
-
-					bars[i].css('height', h + 'px').tclass('online', value[i] > 0).find('span').html(value[i]);
-				}
-			});
 		};
 	});
 
