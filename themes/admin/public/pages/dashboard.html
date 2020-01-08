@@ -93,7 +93,11 @@
 										<div class="value" data-bind="?.stats.today.desktop__html:?/count(value)"></div>
 										<div class="key"><i class="fa fa-square" style="color:#4781B8"></i>@(Desktop computers)</div>
 									</div>
-									<div data-bind="?.stats.today__html:?/mobiledesktop(value)" class="dashboard-devices"></div>
+									<div data---="statsbarsimple__?.stats.today --> ?/mobiledesktop(value)">
+										<script type="text/html">
+											{{ name }} {{ percentage }}%
+										</script>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -238,15 +242,12 @@
 							</div>
 						</div>
 
-						<div data-bind="?.stats.sourcessum__template">
+						<div data---="statsbarsimple__?.stats.sourcesarr">
 							<script type="text/html">
-								<div class="dashboard-sources">
-									<div style="width:{{ value.social }}%;background-color:#649BD0" title="@(From social networks: {{ value.social }}%)"><span>@(Social {{ value.social }}%)</span></div>
-									<div style="width:{{ value.advert }}%;background-color:#EF914E" title="@(From adverts: {{ value.advert }}%)"><span>@(Adverts {{ value.advert }}%)</span></div>
-									<div style="width:{{ value.search }}%;background-color:#87C17E" title="@(From search engines: {{ value.search }}%)"><span>@(Search {{ value.search }}%)</span></div>
-									<div style="width:{{ value.direct }}%;background-color:#9D9BC5" title="@(Direct visitors: {{ value.direct }}%)"><span>@(Direct {{ value.direct }}%)</span></div>
-									<div style="width:{{ value.unknown }}%;background-color:#969696" title="@(From unknown sources: {{ value.unknown }}%)"><span>@(Unknown {{ value.unknown }}%)</span></div>
-								</div>
+								{{ name }} {{ percentage }}%
+							</script>
+							<script type="text/html">
+								{{ name }} {{ percentage }}%
 							</script>
 						</div>
 
@@ -305,11 +306,11 @@
 				<div class="tabmenu-container">
 					<div class="container">
 						<ul data---="tabmenu__?.tab__null__'pages'" class="tabmenu">
-							<li data-value="pages"><i class="fa fa-search"></i>@(Pages)</li>
-							<li data-value="posts"><i class="fa fa-hashtag"></i>@(Posts)</li>
-							<li data-value="contactforms"><i class="fa fa-envelope"></i>@(Contact forms)</li>
-							<li data-value="subscribers"><i class="fa fa-address-card"></i>@(Subscribers)</li>
-							<li data-value="newsletters"><i class="fa fa-envelope-open-o"></i>@(Newsletters)</li>
+							<li data-value="pages"><i class="far fa-file-text-o"></i>@(Pages)</li>
+							<li data-value="posts"><i class="fa fa-newspaper-o"></i>@(Posts)</li>
+							<li data-value="contactforms"><i class="far fa-envelope"></i>@(Contact forms)</li>
+							<li data-value="subscribers"><i class="far fa-address-card"></i>@(Subscribers)</li>
+							<li data-value="newsletters"><i class="far fa-envelope"></i>@(Newsletters)</li>
 						</ul>
 						<div data---="nosqlcounter__?.stats.nosqlcounter__height:250"></div>
 					</div>
@@ -341,6 +342,7 @@
 
 		exports.mobiledesktop = function(value) {
 
+
 			if (!value)
 				return '';
 
@@ -353,7 +355,7 @@
 				mobile = 50;
 
 			var p = mobile < 10 ? 10 : mobile;
-			return '<div style="width:{0}%">{1}%</div>'.format(p, mobile.format(0));
+			return [{ name: '@(Mobile devices)', value: value.mobile, color: '#EF914E' }, { name: '@(Desktop devices)', value: value.desktop, color: '#4781B8' }]
 		};
 
 		exports.getOnline = function() {
@@ -434,7 +436,15 @@
 				source[key] = ((source[key] / sum) * 100).floor(2);
 			});
 
+			var sourcearr = [];
+			sourcearr.push({ name: '@(From social networks)', value: source.social, color: '#649BD0' });
+			sourcearr.push({ name: '@(From adverts)', value: source.advert, color: '#EF914E' });
+			sourcearr.push({ name: '@(From search engines)', value: source.search, color: '#87C17E' });
+			sourcearr.push({ name: '@(Direct visitors)', value: source.direct, color: '#9D9BC5' });
+			sourcearr.push({ name: '@(From unknown sources:)', value: source.unknown, color: '#969696' });
+
 			SET('?.stats.sourcessum', source);
+			SET('?.stats.sourcesarr', sourcearr);
 		};
 
 		exports.getStatsSum = function(year, names) {
