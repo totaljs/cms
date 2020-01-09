@@ -5,6 +5,8 @@ const JSEDITOR = 'editor.js';
 const INSTALLED = {};
 const WARNING = { type: 'warning' };
 
+MAIN.widgets = {};
+
 function WidgetInstace() {
 }
 
@@ -14,7 +16,7 @@ WidgetInstace.prototype.globals = function(name, value) {
 
 NEWSCHEMA('Widgets', function(schema) {
 
-	schema.define('id', 'UID');
+	schema.define('id', UID);
 	schema.define('name', 'String(50)', true);
 	schema.define('category', 'String(50)');
 	schema.define('body', String);
@@ -97,8 +99,8 @@ NEWSCHEMA('Widgets', function(schema) {
 	});
 
 	schema.addWorkflow('editor', function($) {
-		var body = MAIN.widgets[$.controller.id];
-		$.callback({ body: body ? body.html : '', category: body.category });
+		var body = MAIN.widgets[$.id];
+		$.callback({ body: body ? body.html : '', category: body ? body.category : '' });
 	});
 
 	schema.addWorkflow('import', function($) {
@@ -274,7 +276,7 @@ function compile(html) {
 }
 
 function refresh(callback, force) {
-	NOSQL('widgets').find().fields('id', 'name', 'reference', 'body', 'category').callback(function(err, items) {
+	NOSQL('widgets').find().fields('id,name,reference,body,category').callback(function(err, items) {
 
 		var css = [];
 		var js = [];

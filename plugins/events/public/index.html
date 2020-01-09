@@ -1,0 +1,151 @@
+<style>
+	.event-type { font-weight: bold; height: 20px; }
+	.event-type span { float: right; font-weight: normal; font-size: 10px; margin: 2px 0 0; color: gray; }
+	.event-type span i { margin: 0 0 0 5px !important; }
+	.event-user { font-size: 10px; color: gray; margin-top: 5px; height: 20px; }
+	.event-user span { float: right; color: black; }
+	.event-user span i { margin: 0 0 0 5px !important; }
+	.event { border-bottom: 1px solid #E0E0E0; margin-top: 5px; padding: 8px 20px; font-size: 12px; }
+	.event-body { font-size: 14px; }
+	.event i { margin-right: 5px; }
+	.event:first-child { margin-top: 0; }
+	.event-bg-today { background: linear-gradient(#FFFFD5,white); }
+</style>
+
+<div data-scope="events">
+	<div data---="layout__null__parent:window;margin:58" class="invisible">
+
+		<script type="text/plain">
+			{
+				top: { size: 45 },
+				main: {}
+			}
+		</script>
+
+		<section data-type="top2">
+			<div class="header">
+				<label><i class="far fa-clock-o"></i>@(Events)</label>
+				<nav>
+					<button class="exec" data-exec="?/clear"><i class="fa fa-trash-o red"></i>@(Clear)</button>
+				</nav>
+			</div>
+		</section>
+
+		<section data-type="main">
+			<div style="padding:30px">
+				<div class="row">
+					<div class="col-sm-4">
+						<div class="panel">
+							<label><i class="fa fa-circle green blink fs11"></i> @(Today events)</label>
+							<div data---="viewbox__common.page__parent:.ui-layout-section;scrollbar:1;margin:100">
+								<div data-bind="events.today__template">
+									<script type="text/html">
+										{{ foreach m in value }}
+											<div class="event">
+												<div class="event-type">{{ if m.user }}<span>{{ m.user }}<i class="fa fa-user"></i></span>{{ fi }}<i class="fa fa-bookmark"></i>{{ m.type }}</div>
+												<div class="event-body">{{ m.body }}</div>
+												<div class="event-user"><span>{{ m.dtcreated | time }}<i class="far fa-clock-o"></i></span>IP: {{ m.ip }}</div>
+											</div>
+										{{ end }}
+										{{ if !value || !value.length }}
+											<div class="padding help center">@(No data)</div>
+										{{ fi }}
+									</script>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-4">
+						<div class="panel">
+						<label>@(Yesterday events)</label>
+							<div data---="viewbox__common.page__parent:.ui-layout-section;scrollbar:1;margin:100">
+								<div data-bind="events.yesterday__template">
+									<script type="text/html">
+										{{ foreach m in value }}
+											<div class="event">
+												<div class="event-type">{{ if m.user }}<span>{{ m.user }}<i class="fa fa-user"></i></span>{{ fi }}<i class="fa fa-bookmark"></i>{{ m.type }}</div>
+												<div class="event-body">{{ m.body }}</div>
+												<div class="event-user"><span>{{ m.dtcreated | time }}<i class="far fa-clock-o"></i></span>IP: {{ m.ip }}</div>
+											</div>
+										{{ end }}
+										{{ if !value || !value.length }}
+											<div class="padding help center">@(No data)</div>
+										{{ fi }}
+									</script>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-4">
+						<div class="panel">
+							<label>@(Older events)</label>
+							<div data---="viewbox__common.page__parent:.ui-layout-section;scrollbar:1;margin:100">
+								<div data-bind="events.older__template">
+									<script type="text/html">
+										{{ foreach m in value }}
+											<div class="event">
+												<div class="event-type">{{ if m.user }}<span>{{ m.user }}<i class="fa fa-user"></i></span>{{ fi }}<i class="fa fa-bookmark"></i>{{ m.type }}</div>
+												<div class="event-body">{{ m.body }}</div>
+												<div class="event-user"><span>{{ m.dtcreated | time }}<i class="far fa-clock-o"></i></span>IP: {{ m.ip }}</div>
+											</div>
+										{{ end }}
+										{{ if !value || !value.length }}
+											<div class="padding help center">@(No data)</div>
+										{{ fi }}
+									</script>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="clearfix"></div>
+		</section>
+	</div>
+
+</div>
+<script>
+
+	PLUGIN('events', function(exports) {
+
+		exports.scope = 'events';
+		exports.limit = 100; // Count of items per page
+
+		exports.refresh = function() {
+
+			if (common.page !== 'events')
+				return;
+
+			FUNC.loading(true);
+			AJAX('GET [url]api/{0}/'.format(exports.scope), function(response) {
+				var format = 'yyyyMMdd';
+				var data = {};
+				var now = NOW.format(format);
+				data.today = response.findAll(n => n.dtcreated.format(format) === now);
+				now = NOW.add('-1 day').format(format);
+				data.yesterday = response.findAll(n => n.dtcreated.format(format) === now);
+				now = +now;
+				data.older = response.findAll(n => +n.dtcreated.format(format) < now);
+				SET(exports.scope, data);
+				FUNC.loading(false, 500);
+			});
+		};
+
+		exports.clear = function() {
+			SETTER('confirm', 'show2', '@(Are you sure you want to perform selected operation?)', ['"trash-o" @(Clear)', '@(Cancel)'], function(index) {
+				AJAX('GET [url]api/events/clear/', function() {
+					SETTER('snackbar', 'success', '@(Done, all events have been removed.)');
+					exports.refresh();
+				});
+			});
+		};
+
+		exports.reload = function() {
+			exports.refresh();
+		};
+
+		ON('knockknock', exports.refresh);
+
+	});
+
+</script>

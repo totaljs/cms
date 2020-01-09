@@ -1,11 +1,13 @@
 exports.install = function() {
+
+	// Enable CORS for API
+	CORS();
+
 	ROUTE('/*', view_cms);
 
 	ROUTE('#posts',   view_posts,        ['*Posts']);
 	ROUTE('#post',    view_posts_detail, ['*Posts']);
 	ROUTE('#notices', view_notices,      ['*Notices']);
-
-	ROUTE('/design/', '=design/index');
 };
 
 function view_cms() {

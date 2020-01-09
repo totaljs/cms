@@ -1,0 +1,32 @@
+<div data---="form__common.form__if:pagestemplate;width:1100;submit:pagestemplate/submit;title:@(Template source-code);icon:code" class="hidden">
+
+	<div class="padding bg-smoke">
+		<div data---="input__pagestemplate.name__required:true">@(Name)</div>
+		<div class="help">@(Type a name of template)</div>
+	</div>
+	<div class="padding">
+		<div data---="codemirror__pagestemplate.body__height:500;required:true;tabs:true;trim:true;type:totaljs">@(HTML)</div>
+	</div>
+
+	<nav data---="validation__pagestemplate">
+		<button name="submit">@(APPLY)</button>
+		<button name="cancel">@(Cancel)</span>
+	</nav>
+</div>
+
+<script>
+
+	PLUGIN('pagestemplate', function(exports) {
+		exports.submit = function(hide) {
+			var model = GETR('?');
+			AJAX('POST [url]api/templates/ REPEAT', model, function(response) {
+				if (response.success) {
+					refresh_dependencies();
+					SETTER('snackbar', 'success', '@(Template has been saved successfully.)');
+					hide();
+				}
+			});
+		};
+	});
+
+</script>

@@ -1815,6 +1815,47 @@ COMPONENT('codemirror', 'linenumbers:true;required:false;trim:false;tabs:true', 
 		self.find('.ui-codemirror').tclass('ui-codemirror-invalid', invalid);
 	};
 }, ['//cdnjs.cloudflare.com/ajax/libs/codemirror/5.45.0/codemirror.min.css', '//cdnjs.cloudflare.com/ajax/libs/codemirror/5.45.0/codemirror.min.js', '//cdnjs.cloudflare.com/ajax/libs/codemirror/5.45.0/mode/javascript/javascript.min.js', '//cdnjs.cloudflare.com/ajax/libs/codemirror/5.45.0/mode/htmlmixed/htmlmixed.min.js', '//cdnjs.cloudflare.com/ajax/libs/codemirror/5.45.0/mode/xml/xml.min.js', '//cdnjs.cloudflare.com/ajax/libs/codemirror/5.45.0/mode/css/css.min.js', '//cdnjs.cloudflare.com/ajax/libs/codemirror/5.45.0/mode/markdown/markdown.min.js', function(next) {
+
+	CodeMirror.defineMode('totaljs', function(config) {
+		var htmlbase = CodeMirror.getMode(config, 'text/html');
+		var totaljsinner = CodeMirror.getMode(config, 'totaljs:inner');
+		return CodeMirror.overlayMode(htmlbase, totaljsinner);
+	});
+
+	CodeMirror.defineMode('totaljs:inner', function() {
+		return {
+			token: function(stream) {
+
+				if (stream.match(/@{.*?}/, true))
+					return 'variable-T';
+
+				if (stream.match(/@\(.*?\)/, true))
+					return 'variable-L';
+
+				if (stream.match(/\{\{.*?\}\}/, true))
+					return 'variable-A';
+
+				if (stream.match(/data-scope=/, true))
+					return 'variable-S';
+
+				if (stream.match(/data-released=/, true))
+					return 'variable-R';
+
+				if (stream.match(/data-bind=/, true))
+					return 'variable-B';
+
+				if (stream.match(/data-jc=|data-{2,4}=|data-bind=/, true))
+					return 'variable-J';
+
+				if (stream.match(/data-import|(data-jc-(url|scope|import|cache|path|config|id|type|init|class))=/, true))
+					return 'variable-E';
+
+				stream.next();
+				return null;
+			}
+		};
+	});
+
 	CodeMirror.defineMode('totaljsresources', function() {
 		var REG_KEY = /^[a-z0-9_\-.#]+/i;
 		return {
@@ -2036,6 +2077,73 @@ COMPONENT('codemirror', 'linenumbers:true;required:false;trim:false;tabs:true', 
 		};
 	});
 
+	(function(mod) {
+		mod(CodeMirror);
+	})(function(CodeMirror) {
+		CodeMirror.overlayMode = function(base, overlay, combine) {
+			return {
+				startState: function() {
+					return {
+						base: CodeMirror.startState(base),
+						overlay: CodeMirror.startState(overlay),
+						basePos: 0, baseCur: null,
+						overlayPos: 0, overlayCur: null,
+						streamSeen: null
+					};
+				},
+				copyState: function(state) {
+					return {
+						base: CodeMirror.copyState(base, state.base),
+						overlay: CodeMirror.copyState(overlay, state.overlay),
+						basePos: state.basePos, baseCur: null,
+						overlayPos: state.overlayPos, overlayCur: null
+					};
+				},
+				token: function(stream, state) {
+					if (stream != state.streamSeen || Math.min(state.basePos, state.overlayPos) < stream.start) {
+						state.streamSeen = stream;
+						state.basePos = state.overlayPos = stream.start;
+					}
+
+					if (stream.start == state.basePos) {
+						state.baseCur = base.token(stream, state.base);
+						state.basePos = stream.pos;
+					}
+
+					if (stream.start == state.overlayPos) {
+						stream.pos = stream.start;
+						state.overlayCur = overlay.token(stream, state.overlay);
+						state.overlayPos = stream.pos;
+					}
+
+					stream.pos = Math.min(state.basePos, state.overlayPos);
+
+					// state.overlay.combineTokens always takes precedence over combine,
+					// unless set to null
+					if (state.overlayCur == null)
+						return state.baseCur;
+					else if (state.baseCur != null && state.overlay.combineTokens || combine && state.overlay.combineTokens == null)
+						return state.baseCur + ' ' + state.overlayCur;
+					else
+						return state.overlayCur;
+				},
+				indent: base.indent && function(state, textAfter) {
+					return base.indent(state.base, textAfter);
+				},
+				electricChars: base.electricChars, innerMode: function(state) {
+					return { state: state.base, mode: base };
+				},
+				blankLine: function(state) {
+					var baseToken, overlayToken;
+					if (base.blankLine)
+						baseToken = base.blankLine(state.base);
+					if (overlay.blankLine)
+						overlayToken = overlay.blankLine(state.overlay);
+					return overlayToken == null ? baseToken : (combine && baseToken != null ? baseToken + ' ' + overlayToken : overlayToken);
+				}
+			};
+		};
+	});
 
 	(function(mod) {
 		mod(CodeMirror);

@@ -13,7 +13,7 @@ MAIN.redirects = {};
 
 NEWSCHEMA('Pages', function(schema) {
 
-	schema.define('id', 'UID');
+	schema.define('id', UID);
 	schema.define('body', String);                      // RAW html
 	schema.define('bodywidgets', '[String(22)]');       // List of all used widgets
 	schema.define('icon', 'Lower(40)');                // Font-Awesome icon name
@@ -26,7 +26,7 @@ NEWSCHEMA('Pages', function(schema) {
 	schema.define('summary', 'String(500)');            // Short page description generated according to the "CMS_summary" class in CMS editor
 	schema.define('pictures', '[String]');              // URL addresses for first 5 pictures
 	schema.define('search', 'String(1000)');            // Search pharses
-	schema.define('template', 'String(30)');            // Render template views/cms/*.html
+	schema.define('template', UID);                     // Render template views/*.html
 	schema.define('title', 'String(100)');              // Meta title
 	schema.define('url', 'String(200)');                // URL (can be realive for showing content or absolute for redirects)
 	schema.define('oldurl', 'String(200)');             // Temporary: old URL
@@ -385,7 +385,7 @@ function refresh_redirects() {
 // Refreshes internal information (sitemap)
 function refresh() {
 
-	NOSQL('pages').find().fields('id', 'url', 'name', 'title', 'parent', 'icon', 'language', 'ispartial', 'dtcreated', 'dtupdated').callback(function(err, response) {
+	NOSQL('pages').find().fields('id,url,name,title,parent,icon,language,ispartial,dtcreated,dtupdated').callback(function(err, response) {
 
 		var sitemap = {};
 		var helper = {};
@@ -417,13 +417,15 @@ function refresh() {
 		}
 
 		// Pairs parents by URL
-		Object.keys(sitemap).forEach(function(key) {
+		var keys = Object.keys(sitemap);
+		for (var i = 0; i < keys.length; i++) {
+			var key = keys[i];
 			var parent = sitemap[key].parent;
 			if (parent) {
 				sitemap[key].parent = helper[parent];
 				sitemap[sitemap[key].parent] && sitemap[sitemap[key].parent].links.push(sitemap[key]);
 			}
-		});
+		}
 
 		MAIN.sitemap = sitemap;
 		MAIN.partial = partial;
@@ -740,12 +742,13 @@ Controller.prototype.CMSpage = function(callback, cache) {
 
 			var repo = self.repository;
 			self.meta(response.title, response.description, response.keywords);
-			self.sitemap('homepage');
+
+			repo.sitemap = [];
 
 			// Sitemap
 			var tmp = page;
-			while (tmp && tmp.url !== '/') {
-				self.sitemap_add('homepage', tmp.name, tmp.url);
+			while (tmp) {
+				repo.sitemap.unshift(tmp);
 				tmp = MAIN.sitemap[tmp.parent];
 			}
 
@@ -759,6 +762,7 @@ Controller.prototype.CMSpage = function(callback, cache) {
 			}
 
 			repo.page = response;
+			self.layout('');
 
 			FUNC.read('pages', response.id + (DRAFT ? '_draft' : ''), function(err, body) {
 				response.body = body;
@@ -768,13 +772,13 @@ Controller.prototype.CMSpage = function(callback, cache) {
 						repo.page.partial = partial;
 						if (callback) {
 							callback.call(self, function(model) {
-								self.view('~cms/' + repo.page.template, model);
+								self.view('cms' + repo.page.template, model);
 								repo.page.body = null;
 								repo.page.pictures = EMPTYARRAY;
 								repo.page.search = null;
 							});
 						} else {
-							self.view('~cms/' + repo.page.template);
+							self.view('cms' + repo.page.template);
 							repo.page.body = null;
 							repo.page.pictures = EMPTYARRAY;
 							repo.page.search = null;

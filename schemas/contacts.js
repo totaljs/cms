@@ -1,3 +1,6 @@
+
+//	ROUTE('POST /api/contact/         *Contact     --> @save');
+
 NEWSCHEMA('Contacts', function(schema) {
 
 	schema.define('firstname', 'Capitalize(40)', true);

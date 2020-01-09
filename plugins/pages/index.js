@@ -1,6 +1,6 @@
 exports.icon = 'far fa-file-text-o';
 exports.name = 'Pages';
-exports.position = 3;
+exports.position = 30;
 
 exports.install = function() {
 	// Pages
@@ -21,6 +21,9 @@ exports.install = function() {
 	ROUTE('GET     #admin/api/pages/redirects/                *Pages/Redirects --> @read');
 	ROUTE('POST    #admin/api/pages/redirects/                *Pages/Redirects --> @save', 30);
 
+	ROUTE('GET     #admin/api/templates/{id}                  *Templates --> @read');
+	ROUTE('POST    #admin/api/templates/                      *Templates --> @save', 30);
+
 	// Navigations
 	ROUTE('GET     #admin/api/nav/{id}/                       *Navigations --> @read');
 	ROUTE('POST    #admin/api/nav/                            *Navigations --> @save');
@@ -35,14 +38,38 @@ exports.install = function() {
 	ROUTE('GET     #admin/api/tracking/                       *Tracking --> @query');
 	ROUTE('GET     #admin/api/tracking/{id}/                  *Tracking --> @stats');
 	ROUTE('DELETE  #admin/api/tracking/{id}/                  *Tracking --> @remove');
+
+	// Public
+	ROUTE('GET     /api/track/{id}/                           *Tracking --> @exec');
+
+	// Files
+	FILE('/sitemap.xml', sitemap);
 };
+
+function sitemap(req, res) {
+
+	var arr = MAIN.pages;
+	var builder = ['<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'];
+	var lng = F.onLocale ? F.onLocale(req, res) : null;
+
+	for (var i = 0; i < arr.length; i++) {
+		var item = arr[i];
+		if (!lng || item.language === lng)
+			builder.push('<url><loc>{0}</loc><lastmod>{1}</lastmod></url>'.format(CONF.url + item.url, (item.dtupdated ? item.dtupdated : item.dtcreated).format('yyyy-MM-dd')));
+	}
+
+	OPERATION('sitemap.xml', builder, function() {
+		builder.push('</urlset>');
+		res.content(200, builder.join(''), 'text/xml');
+	});
+}
 
 function preview() {
 	var self = this;
-	self.layout('layout-preview');
+	self.layout('');
 	self.repository.preview = true;
 	self.repository.page = self.body;
-	self.view('~cms/' + self.body.template);
+	self.view('cms' + self.body.template);
 }
 
 function dependencies() {

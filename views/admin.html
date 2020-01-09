@@ -56,21 +56,16 @@
 	</header>
 
 	<div id="parts">
-		<div data---="part__common.page__if:dashboard;url:@{#}/pages/dashboard.html;reload:dashboard/reload;hidden:dashboard/hidden;cleaner:10"></div>
-		<div data---="part__common.page__if:events;url:@{#}/pages/events.html;reload:events/reload;hidden:events/hidden;cleaner:10"></div>
-		<div data---="part__common.page__if:posts;url:@{#}/pages/posts.html;reload:posts/reload;cleaner:10"></div>
-		<div data---="part__common.page__if:notices;url:@{#}/pages/notices.html;reload:notices/reload;cleaner:10"></div>
-		<div data---="part__common.page__if:pages;url:@{#}/pages/pages.html;reload:pages/reload;cleaner:10"></div>
-		<div data---="part__common.page__if:widgets;url:@{#}/pages/widgets.html;reload:widgets/reload;cleaner:10"></div>
-		<div data---="part__common.page__if:newsletters;url:@{#}/pages/newsletters.html;reload:newsletters/reload;cleaner:10"></div>
-		<div data---="part__common.page__if:subscribers;url:@{#}/pages/subscribers.html;reload:subscribers/reload;cleaner:10"></div>
-		<div data---="part__common.page__if:settings;url:@{#}/pages/settings.html;reload:settings/reload;cleaner:10"></div>
+		@{foreach m in MAIN.plugins}
+		<div data---="part__common.page__if:@{m.id};url:@{#}_@{m.id}/index.html;reload:@{m.id}/reload;hidden:@{m.id}/hidden"></div>
+		@{end}
 	</div>
 
-	<div data---="importer__common.form3__if:filebrowser;url:@{#}/forms/filebrowser.html"></div>
-	<div data---="importer__common.form3__if:widgetsimport;url:@{#}/forms/widgets-import.html;cleaner:5"></div>
-	<div data---="importer__common.form__if:widgetsglobals;url:@{#}/forms/widgets-globals.html;cleaner:5"></div>
-	<div data---="importer__common.form__if:pagesglobals;url:@{#}/forms/pages-globals.html;cleaner:5"></div>
+	<!-- SPECIAL DEPENDENCIES -->
+	<div data---="importer__common.form3__if:widgetsimport;url:@{#}/_widgets/form-import.html;cleaner:5"></div>
+	<div data---="importer__common.form__if:widgetsglobals;url:@{#}/_widgets/form-globals.html;cleaner:5"></div>
+	<div data---="importer__common.form3__if:filebrowser;url:@{#}/_pages/form-filebrowser.html"></div>
+	<div data---="importer__common.form__if:pagesglobals;url:@{#}_pages/form-globals.html;cleaner:5"></div>
 
 	<script>
 
@@ -86,16 +81,6 @@
 				nav.role = nav.value = nav.id;
 			}
 		})();
-
-		// common.nav.push({ role: 'Dashboard', title: '@(Dashboard)', value: 'dashboard', icon: 'fa fa-dashboard' });
-		// common.nav.push({ role: 'Events', title: '@(Events)', value: 'events', icon: 'far fa-clock-o' });
-		// common.nav.push({ role: 'Pages', title: '@(Pages)', value: 'pages', icon: 'far fa-file-text-o' });
-		// common.nav.push({ role: 'Widgets', title: '@(Widgets)', value: 'widgets', icon: 'fa fa-plug' });
-		// common.nav.push({ role: 'Posts', title: '@(Posts)', value: 'posts', icon: 'fa fa-newspaper-o' });
-		// common.nav.push({ role: 'Notices', title: '@(Notices)', value: 'notices', icon: 'fa fa-bullhorn' });
-		// common.nav.push({ role: 'Newsletters', title: '@(Newsletters)', value: 'newsletters', icon: 'far fa-envelope-o' });
-		// common.nav.push({ role: 'Subscribers', title: '@(Subscribers)', value: 'subscribers', icon: 'far fa-address-card' });
-		// common.nav.push({ role: 'Settings', title: '@(Settings)', value: 'settings', icon: 'fa fa-cog' });
 
 		ENV('url', '/admin/');
 		ENV('date', '@(yyyy-MM-dd - HH:mm)');
@@ -132,38 +117,9 @@
 		CACHEPATH('common.page', '1 week');
 
 		ON('page', function(item) {
-			// SET('common.title', '<i class="fa fa-{icon}"></i>{title}'.arg(item));
-			SET('common.title', item.title);
-			document.title = common.name + ': ' + item.title;
+			SET('common.title', item.name);
+			document.title = common.name + ': ' + item.name;
 		});
-
-		function navigation(el) {
-
-			var opt = {};
-			var items = [];
-
-			opt.element = el;
-			opt.items = items;
-			opt.offsetY = -5;
-			opt.callback = function(item) {
-				if (item.signout)
-					location.href = '[url]logout/'.env();
-				else
-					REDIRECT(item.url);
-			};
-
-			for (var i = 0; i < common.nav.length; i++) {
-				var item = common.nav[i];
-				if (user.sa || !user.roles.length || user.roles.indexOf(item.role) !== -1)
-					items.push({ name: item.title, icon: item.icon, url: item.url });
-			}
-
-			items.push('-');
-			items.push({ name: '@(Sign out)', icon: 'power-off red', signout: true });
-
-			SETTER('menu', 'show', opt);
-
-		}
 
 		Thelpers.time = function(value) {
 
@@ -203,7 +159,8 @@
 				EMIT('visitor', message.message);
 			} else {
 				common.notifications.messages.push(message);
-				!common.notifications.running && refresh_notifications();
+				if (!common.notifications.running)
+					refresh_notifications();
 			}
 		});
 
@@ -317,7 +274,7 @@
 		SETTER(true, 'shortcuts', 'register', 'ESC', function() {
 			if (common.form3)
 				SET('common.form3', '');
-			else if (window.cmseditor && cmseditor.form)
+			else if (W.cmseditor && cmseditor.form)
 				SET('cmseditor.form', '');
 			else if (common.form2)
 				SET('common.form2', '');
@@ -347,9 +304,11 @@
 
 			var items = [];
 
-			common.nav.forEach(function(item) {
-				(user.sa || !user.roles.length || user.roles.indexOf(item.role) !== -1) && items.push({ name: item.title, icon: item.icon, url: item.url });
-			});
+			for (var i = 0; i < common.nav.length; i++) {
+				var item = common.nav[i];
+				if (user.sa || !user.roles.length || user.roles.indexOf(item.role) !== -1)
+					items.push({ name: item.title, icon: item.icon, url: item.url });
+			}
 
 			items.push({ name: '@(Sign out)', icon: 'power-off', signout: true });
 
@@ -357,7 +316,7 @@
 				if (item.signout) {
 					location.href = '[url]logout/'.env();
 				} else {
-					window.cmseditor && cmseditor.form && SET('cmseditor.form', '');
+					W.cmseditor && cmseditor.form && SET('cmseditor.form', '');
 					common.form3 && SET('common.form3', '');
 					common.form2 && SET('common.form2', '');
 					common.form && SET('common.form', '');
@@ -367,14 +326,12 @@
 		}, true);
 
 		PLUGIN('main', function(exports) {
-
 			exports.plugin = function(el) {
 				var id = el instanceof jQuery ? el.attrd('if') : el;
 				var item = common.nav.findItem('value', id);
 				EMIT('page', item);
 				SET('common.page', id);
 			};
-
 		});
 
 	</script>

@@ -47,53 +47,6 @@ exports.install = function() {
 	ROUTE('POST    #admin/api/upload/base64/',                upload_base64, [10000], 2048); // 2 MB
 	ROUTE('GET     #admin/api/dependencies/                   *Settings --> @dependencies');
 
-	// MODEL: /schema/events.js
-	ROUTE('GET     #admin/api/events/                         *Events --> @query');
-	ROUTE('GET     #admin/api/events/clear/                   *Events --> @clear');
-
-	// MODEL: /schema/posts.js
-	ROUTE('GET     #admin/api/posts/                          *Posts --> @query');
-	ROUTE('GET     #admin/api/posts/{id}/                     *Posts --> @read');
-	ROUTE('POST    #admin/api/posts/                          *Posts --> @save');
-	ROUTE('DELETE  #admin/api/posts/                          *Posts --> @remove');
-	ROUTE('GET     #admin/api/posts/toggle/                   *Posts --> @toggle');
-	ROUTE('GET     #admin/api/posts/stats/                    *Posts --> @stats');
-	ROUTE('GET     #admin/api/posts/{id}/stats/               *Posts --> @stats');
-	ROUTE('GET     #admin/api/posts/{id}/backups/             *Common --> @backup');
-	ROUTE('POST    #admin/api/posts/preview/',                view_posts_preview, ['json'], 512);
-
-	// MODEL: /schema/notices.js
-	ROUTE('GET     #admin/api/notices/                        *Notices --> @query');
-	ROUTE('GET     #admin/api/notices/{id}/                   *Notices --> @read');
-	ROUTE('POST    #admin/api/notices/                        *Notices --> @save');
-	ROUTE('DELETE  #admin/api/notices/                        *Notices --> @remove');
-	ROUTE('GET     #admin/api/notices/toggle/                 *Notices --> @toggle');
-	ROUTE('POST    #admin/api/notices/preview/',              view_notices_preview, ['json']);
-
-	// MODEL: /schema/subscribers.js
-	ROUTE('GET     #admin/api/subscribers/                    *Subscribers --> @query');
-	ROUTE('GET     #admin/api/subscribers/{id}/               *Subscribers --> @read');
-	ROUTE('POST    #admin/api/subscribers/                    *Subscribers --> @save');
-	ROUTE('DELETE  #admin/api/subscribers/                    *Subscribers --> @remove');
-	ROUTE('GET     #admin/api/subscribers/stats/              *Subscribers --> @stats');
-	ROUTE('GET     #admin/api/subscribers/toggle/             *Subscribers --> @toggle');
-
-	// MODEL: /schema/newsletters.js
-	ROUTE('GET     #admin/api/newsletters/                    *Newsletters --> @query');
-	ROUTE('GET     #admin/api/newsletters/{id}/               *Newsletters --> @read');
-	ROUTE('POST    #admin/api/newsletters/                    *Newsletters --> @save');
-	ROUTE('DELETE  #admin/api/newsletters/                    *Newsletters --> @remove');
-	ROUTE('POST    #admin/api/newsletters/test/               *Newsletters --> @test');
-	ROUTE('GET     #admin/api/newsletters/toggle/             *Newsletters --> @toggle');
-	ROUTE('GET     #admin/api/newsletters/stats/              *Newsletters --> @stats');
-	ROUTE('GET     #admin/api/newsletters/{id}/stats/         *Newsletters --> @stats');
-	ROUTE('GET     #admin/api/newsletters/{id}/backups/       *Common --> @backup');
-	ROUTE('GET     #admin/api/newsletters/state/',            json_newsletter_state);
-
-	// MODEL: /schema/settings.js
-	ROUTE('GET     #admin/api/settings/                       *Settings --> @read');
-	ROUTE('POST    #admin/api/settings/                       *Settings --> @smtp @save (response) @load');
-
 	// MODEL: /schema/common.js
 	ROUTE('GET    #admin/api/backups/clear/                   *Common --> @backup_clear');
 	ROUTE('GET    #admin/api/backups/{type}/{id}/             *Common --> @backup_read');
@@ -109,6 +62,7 @@ exports.install = function() {
 	WEBSOCKET('#admin/live/', socket, ['json']);
 
 	FILE(pluginfiles);
+	FILE('/download/', file_read);
 
 	// System user
 	SYSUSER.name = CONF.admin_superadmin.split(':')[0];
@@ -205,6 +159,36 @@ function pluginfiles(req, res, is) {
 	res.throw404();
 }
 
+// Reads a specific file from database
+// For images (jpg, gif, png) supports percentual resizing according "?s=NUMBER" argument in query string e.g.: .jpg?s=50, .jpg?s=80 (for image galleries)
+// URL: /download/*.*
+function file_read(req, res) {
+
+	var id = req.split[1].replace('.' + req.extension, '');
+
+	if (!req.query.s || (req.extension !== 'jpg' && req.extension !== 'gif' && req.extension !== 'png')) {
+		res.filefs('files', id);
+		return;
+	}
+
+	// Custom image resizing
+	var size;
+
+	// Small hack for the file cache.
+	// F.exists() uses req.uri.pathname for creating temp identificator and skips all query strings by creating (because this hack).
+	if (req.query.s) {
+		size = req.query.s.parseInt();
+		req.uri.pathname = req.uri.pathname.replace('.', size + '.');
+	}
+
+	res.imagefs('files', id, function(image) {
+		image.output(req.extension);
+		req.extension === 'jpg' && image.quality(85);
+		size && image.resize(size + '%');
+		image.minify();
+	});
+}
+
 ON('service', function(counter) {
 	if (counter % 15 === 0)
 		DDOS = {};
@@ -284,32 +268,4 @@ function upload_base64() {
 
 	var data = self.body.file.base64ToBuffer();
 	FILESTORAGE('files').insert((self.body.name || 'base64').replace(/\.[0-9a-z]+$/i, '').max(40) + ext, data, (err, id) => self.json('/download/' + id + ext));
-}
-
-function json_newsletter_state() {
-	this.json(MAIN.newsletter);
-}
-
-function view_notices_preview() {
-	var self = this;
-	var body = self.body.body;
-	if (body)
-		$WORKFLOW('Notices', 'preview', body, (err, response) => self.content(response, 'text/html'));
-	else
-		self.content('', 'text/html');
-}
-
-// Creates a preview
-function view_posts_preview() {
-	var self = this;
-	self.layout('layout-preview');
-	self.repository.preview = true;
-
-	if (typeof(self.body.body) === 'string')
-		self.body.body = self.body.body.markdown();
-	else
-		self.body.body = '';
-
-	self.repository.page = self.body;
-	self.view('~cms/' + self.body.template);
 }

@@ -221,6 +221,14 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .CodeMirror-overlayscroll-vertical div { right: 0; width: 100%; }
 .cm-trailingspace { background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAACCAYAAAB/qH1jAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3QUXCToH00Y1UgAAACFJREFUCNdjPMDBUc/AwNDAAAFMTAwMDA0OP34wQgX/AQBYgwYEx4f9lQAAAABJRU5ErkJggg==); background-position: bottom left; background-repeat: repeat-x; }
 .cm-tab { background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAMCAYAAAAkuj5RAAAAKElEQVRIiWNgGAWjYBQMacDIwMBgzMDAcBZKw8BQ4I+CUTAKRsEgAAAA4AwCz6/F0QAAAABJRU5ErkJggg==) no-repeat 100% 50%; }
+.cm-variable-T { background-color: rgba(104,178,91,.3); color: black; }
+.cm-variable-L { background-color: rgba(104,178,191,.3); color: black; }
+.cm-variable-A { background-color: rgba(191,61,162,.3); color: black; }
+.cm-variable-S { background-color: rgba(255,59,231,.26); color: #ce1ad6; font-weight: bold; }
+.cm-variable-J { background-color: rgba(0,152,189,.2); color: #0098BD; font-weight: bold; }
+.cm-variable-E { background-color: rgba(97,142,193,.2); color: #618EC1; font-weight: bold; }
+.cm-variable-R { background-color: rgba(196,210,90,.35); color: #97a728; font-weight: bold; }
+.cm-variable-B { background-color: rgba(228,228,228,.35); color: #2183e8; font-weight: bold; }
 
 .ui-nosqlcounter .last { border-radius: 0 2px 0 0; }
 .ui-nosqlcounter span { border-bottom: 1px solid rgba(255,255,255,0.5); display: block; padding: 2px 0; overflow: hidden; white-space: nowrap; }

@@ -27,8 +27,8 @@ body { background-color: #E0E0E0; }
 .header .highlight { background-color: #FFFFD5; }
 
 header { height: 58px; background-color: white; background: linear-gradient(130deg, #E0E0E0 80%, #F0F0F0 80%); border: 1px solid #DEDEDE; }
-header nav { float: left; margin: 9px 0 0 10px; }
-header nav button { width: 40px; height: 40px; text-align: center; font-size: 16px; line-height: 39px; border: 1px solid transparent; outline: 0; background-color: transparent; color: rgba(0,0,0,0.6); border-radius: 2px; }
+header nav { float: left; margin: 8px 0 0 10px; }
+header nav button { width: 38px; height: 38px; text-align: center; font-size: 16px; line-height: 37px; border: 1px solid transparent; outline: 0; background-color: transparent; color: rgba(0,0,0,0.6); border-radius: 2px; }
 header nav button:hover { color: black; }
 header nav button.selected { background-color: white; color: black; border: 1px solid white; box-shadow: 0 2px 2px rgba(0,0,0,0.05); }
 

@@ -1,6 +1,6 @@
 NEWSCHEMA('Navigations/Items', function(schema) {
 	schema.define('id', 'String(20)');
-	schema.define('pageid', 'UID'); // Page ID
+	schema.define('pageid', UID); // Page ID
 	schema.define('name', 'String(50)', true);
 	schema.define('url', 'String(500)', true);
 	schema.define('title', 'String(100)');

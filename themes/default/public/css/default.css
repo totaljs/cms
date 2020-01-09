@@ -47,7 +47,7 @@ footer > a { color: black; }
 .mainmenubutton-visible { color: #A0A0A0 !important; border-color: #A0A0A0 !important; }
 
 .breadcrumb { margin: 0 0 20px; padding: 8px 0; list-style-type: none; font: normal normal 11px Arial; }
-.breadcrumb .fa { margin-right: 5px; }
+.breadcrumb i { margin-right: 5px; }
 .breadcrumb li { position: relative; display: inline-block; }
 .breadcrumb li:after { content: '\f0da'; font-family: 'Font Awesome 5 Free'; margin: 0 8px; color: black; width: 12px; font-weight: 900; }
 .breadcrumb li:last-child:after { content: ''; margin: 0; }
