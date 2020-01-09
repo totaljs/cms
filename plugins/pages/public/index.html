@@ -37,11 +37,11 @@
 					<div data-bind="common.dependencies.templatespages__template">
 						<script type="text/html">
 							{{ foreach m in value }}
-								<button data-id="{{ m.id }}" class="exec" data-exec="?/template"><i class="far fa-file-text-o"></i>{{ m.name }}</button>
+								<button data-id="{{ m.id }}" class="exec" data-exec="?/template"><span class="pull-right exec" data-exec="?/removetemplate" data-prevent="true" style="width:12px;margin-right:0"><i class="fa fa-times red"></i></span><i class="far fa-file-text-o"></i>{{ m.name }}</button>
 							{{ end }}
 						</script>
 					</div>
-					<button class="exec b" data-path="common.form" data-value="'pagestemplates'"><i class="fa fa-check-circle green"></i>@(Add a new template)</button>
+					<button class="exec b" data-exec="?/template"><i class="fa fa-check-circle green"></i>@(Add a new template)</button>
 				</nav>
 			</div>
 
@@ -133,10 +133,15 @@
 
 		exports.template = function(el) {
 			var id = el.attrd('id');
-			AJAX('GET [url]api/templates/' + id, function(response) {
-				SETR('pagestemplate', response);
+			if (id) {
+				AJAX('GET [url]api/templates/' + id, function(response) {
+					SETR('pagestemplate', response);
+					SET('common.form', 'pagestemplate');
+				});
+			} else {
+				SETR('pagestemplate', {});
 				SET('common.form', 'pagestemplate');
-			});
+			}
 		};
 
 		exports.button = function(name, row, grid) {
@@ -236,6 +241,13 @@
 		exports.create = function() {
 			SET('pagesform', { widgets: [], ispartial: false, navicon: true, navname: true, replacelink: true, url: '---' }, true);
 			SET('common.form', 'pagesform');
+		};
+
+		exports.removetemplate = function(el) {
+			var id = el.parent().attrd('id');
+			SETTER('confirm', 'show2', '@(Are you sure you want to remove selected template?)', ['"trash-o" @(Remove)', '@(Cancel)'], function() {
+				AJAX('DELETE [url]api/templates/' + id, refresh_dependencies);
+			});
 		};
 
 	});

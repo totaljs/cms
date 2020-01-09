@@ -5,6 +5,7 @@ error-templates-404        : Template not found.
 error-notices-404          : Notices not found.
 error-newsletters-404      : Newsletter not found.
 error-navigations-404      : Navigations not found.
+error-pages-template       : Page doesn't have defined any template.
 
 error-newsletters-sending  : Newsletter is already sending mails.
 error-data                 : Invalid data.

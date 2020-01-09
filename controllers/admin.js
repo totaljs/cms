@@ -1,9 +1,9 @@
 const MSG_NOTIFY = { TYPE: 'notify' };
 const MSG_ALERT = { TYPE: 'alert' };
+const COOKIE_OPTIONS = { security: 'strict', httponly: true };
 const ALLOW = ['/api/dependencies/', '/api/pages/preview/', '/api/upload/', '/api/nav/', '/api/files/', '/stats/', '/live/', '/api/widgets/'];
 const SYSUSER = {};
-const COOKIE_OPTIONS = { security: 'strict', httponly: true };
-const ADMINURL = F.routes.sitemap.admin.url;
+const ADMINURL = '/admin/';
 
 var DDOS = {};
 var WS = null;
@@ -40,26 +40,22 @@ CONF.admin_tracking && ON('visitor', function(obj) {
 exports.install = function() {
 
 	// Internal
-	ROUTE('GET     #admin', 'admin');
-	ROUTE('GET     #admin/logout/',                           logout);
+	ROUTE('GET     /admin', 'admin');
+	ROUTE('GET     /admin/logout/',                           logout);
 	ROUTE('POST    /api/login/admin/',                        login);
-	ROUTE('POST    #admin/api/upload/',                       upload, ['upload', 10000], 5120); // 5 MB
-	ROUTE('POST    #admin/api/upload/base64/',                upload_base64, [10000], 2048); // 2 MB
-	ROUTE('GET     #admin/api/dependencies/                   *Settings --> @dependencies');
+	ROUTE('POST    /admin/api/upload/',                       upload, ['upload', 10000], 5120); // 5 MB
+	ROUTE('POST    /admin/api/upload/base64/',                upload_base64, [10000], 2048); // 2 MB
+	ROUTE('GET     /admin/api/dependencies/                   *Settings --> @dependencies');
 
 	// MODEL: /schema/common.js
-	ROUTE('GET    #admin/api/backups/clear/                   *Common --> @backup_clear');
-	ROUTE('GET    #admin/api/backups/{type}/{id}/             *Common --> @backup_read');
-
-	// Files
-	ROUTE('GET     #admin/api/files/                          *Files --> @query');
-	ROUTE('GET     #admin/api/files/clear/                    *Files --> @clear');
+	ROUTE('GET     /admin/api/backups/clear/                  *Common --> @backup_clear');
+	ROUTE('GET     /admin/api/backups/{type}/{id}/            *Common --> @backup_read');
 
 	// Others
-	ROUTE('GET     #admin/api/contactforms/stats/             *Contacts --> stats');
+	ROUTE('GET     /admin/api/contactforms/stats/             *Contacts --> stats');
 
 	// Websocket
-	WEBSOCKET('#admin/live/', socket, ['json']);
+	WEBSOCKET('/admin/live/', socket, ['json']);
 
 	FILE(pluginfiles);
 	FILE('/download/', file_read);
@@ -83,10 +79,11 @@ ON('controller', function(controller) {
 		return;
 	}
 
+	/*
 	if (CONF.admin_token && controller.req.headers['x-token'] === CONF.admin_token) {
 		controller.user = SYSUSER;
 		return;
-	}
+	}*/
 
 	var cookie = controller.cookie(CONF.admin_cookie);
 	if (!cookie || !cookie.length) {
@@ -119,6 +116,7 @@ ON('controller', function(controller) {
 
 		// Allowed URL
 		if (cancel) {
+
 			for (var i = 0, length = ALLOW.length; i < length; i++) {
 				if (controller.url.indexOf(ALLOW[i]) !== -1) {
 					cancel = false;
@@ -225,10 +223,7 @@ function upload() {
 
 	self.files.wait(function(file, next) {
 		file.read(function(err, data) {
-
 			// Store current file into the HDD
-			file.extension = U.getExtension(file.filename).toLowerCase();
-
 			FILESTORAGE('files').insert(file.filename, data, function(err, ref) {
 				id.push({ id: ref, name: file.filename, size: file.length, width: file.width, height: file.height, type: file.type, ctime: NOW, mtime: NOW, extension: file.extension, download: '/download/' + ref + '.' + file.extension });
 				setImmediate(next);

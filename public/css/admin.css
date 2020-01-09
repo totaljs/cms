@@ -67,9 +67,10 @@ hr { border-color: #E0E0E0; }
 .toolbar { margin: 20px 0; }
 .toolbar button { outline: 0; background-color: transparent; border: 1px solid transparent; border-radius: 2px; font-size: 12px; height: 24px; padding: 0 5px; margin: 0; color: black; margin-right: 5px; }
 .toolbar button .fa, .toolbar button .fal, .toolbar button .far { margin-right: 5px; }
+.toolbar button.highlight { background-color: #FAFAFA; box-shadow: 0 1px 2px rgba(0,0,0,0.03); }
 .toolbar button:hover { background-color: white; box-shadow: 0 1px 2px rgba(0,0,0,0.03); }
 .toolbar3 button:hover { background-color: #F0F0F0; box-shadow: none; }
-.toolbar button:disabled { color: silver; cursor: not-allowed; background-color: #E0E0E0; box-shadow: none; }
+.toolbar button:disabled { color: silver; cursor: not-allowed; background-color: #E0E0E0 !important; box-shadow: none; }
 .toolbar button:disabled .fa { color: silver; }
 .toolbar button.right { float: right; margin-left: 5px; margin-right: 0; }
 .toolbar span { margin: 2px 6px 0; border-left: 1px solid #D0D0D0; height: 20px; padding: 0 2px 0 0; vertical-align: middle; display: inline-block; position: relative; }
@@ -81,7 +82,7 @@ hr { border-color: #E0E0E0; }
 .uppercase { text-transform: uppercase; }
 .inline { position: relative; display: inline-block; }
 
-.buttonmenu { border: 1px solid #1A88E0; border-radius: 3px; }
+.buttonmenu { border: 1px solid #1A88E0; border-radius: 2px; }
 .buttonmenu button{ display: block; width: 100%; background-color: white; border: 0; text-align: left; padding: 0 10px 0 5px; border-top: 1px solid #1A88E0; height: 26px; font-size: 12px; color: #1A88E0; outline: 0; }
 .buttonmenu button:first-child { border-top: 0; border-top-left-radius: 2px; border-top-right-radius: 2px; }
 .buttonmenu button:last-child { border-bottom-left-radius: 2px; border-bottom-right-radius: 2px; }
@@ -154,13 +155,13 @@ h3 .fa, h3 .far, h3 .fal { margin-right: 8px; }
 .stats.selected .key { color: black; font-weight: bold; }
 .stats.selected .value { color: blact; font-weight: bold; }
 
-.button { background-color: #4285F4; border: 0; color: white; cursor: pointer; outline: 0; width: 100%; border-radius: 3px; height: 50px; text-transform: uppercase; font-family: Arial; }
+.button { background-color: #4285F4; border: 0; color: white; cursor: pointer; outline: 0; width: 100%; border-radius: 2px; height: 50px; text-transform: uppercase; font-family: Arial; }
 .button:hover { box-shadow: 0 2px 5px rgba(0,0,0,0.1); opacity: 0.9; }
 .button:disabled { background-color: #E0E0E0; color: silver; cursor: not-allowed; box-shadow: none; opacity: 1; }
 .button .fa, .button .fal, .button .far { margin-right: 5px; }
 .button-small { height: 32px; font-size: 12px; }
 
-.panel { background-color: white; border-radius: 3px; border: 1px solid #E0E0E0; }
+.panel { background-color: white; border-radius: 2px; border: 1px solid #E0E0E0; }
 .panel > label { display: block; padding: 10px 20px; border-bottom: 1px solid #E0E0E0; font-size: 14px; font-weight: bold; }
 .panel > label .fa, .panel > label .fal, .panel > label .far { margin-right: 5px; }
 .panelbody { padding: 20px; position: relative; }
@@ -186,7 +187,7 @@ h3 .fa, h3 .far, h3 .fal { margin-right: 8px; }
 .tabmenu i { margin-right: 8px; }
 .ui-dark .tabmenu .disabled { color: #606060 !important; background-color: #343434 !important; }
 
-.noticespreview { padding: 10px 20px 20px; border: 2px solid #E0E0E0; border-radius: 3px; font-size: 16px; }
+.noticespreview { padding: 10px 20px 20px; border: 2px solid #E0E0E0; border-radius: 2px; font-size: 16px; }
 .noticespreview p { margin: 10px 0 0; }
 .noticespreview ul { margin: 10px 0 0; }
 .noticespreview img { display: block; margin: 10px 0 0; border-radius: 4px; }

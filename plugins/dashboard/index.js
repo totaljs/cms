@@ -3,10 +3,10 @@ exports.name = 'Dashboard';
 exports.position = 0;
 
 exports.install = function() {
-	ROUTE('GET    #admin/api/dashboard/',                    json_dashboard);
-	ROUTE('GET    #admin/api/dashboard/referrers/',          json_dashboard_referrers);
-	ROUTE('GET    #admin/api/dashboard/online/',             json_dashboard_online);
-	ROUTE('GET    #admin/api/dashboard/tracking/             *Tracking --> @stats');
+	ROUTE('GET    /admin/api/dashboard/',                    json_dashboard);
+	ROUTE('GET    /admin/api/dashboard/referrers/',          json_dashboard_referrers);
+	ROUTE('GET    /admin/api/dashboard/online/',             json_dashboard_online);
+	ROUTE('GET    /admin/api/dashboard/tracking/             *Tracking --> @stats');
 };
 
 function json_dashboard_online() {

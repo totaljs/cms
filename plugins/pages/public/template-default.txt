@@ -33,7 +33,7 @@
 			header nav a:hover { text-decoration: none; color: #505050; }
 			header nav .selected { color: white !important; background-color: #78AE4E; }
 			header nav i { margin-right: 8px; }
-			header .logo { float: left; margin: 12px 0 10px 20px; width: 150px; }
+			header .logo { float: left; margin: 12px 0 10px 15px; width: 150px; }
 
 			.mobilemenu-visible header nav { display: block !important; }
 			.mobilemenu { position: absolute; right: 0; margin: 15px 20px 0 0; display: none; }
@@ -77,7 +77,7 @@
 	<body data---="exec">
 
 		@{if repository.preview}
-			<br /><br />
+			<br /><br /><br />
 			<div class="container">
 				<div id="CMS">
 					@{if repository.page && repository.page.body}
@@ -87,6 +87,7 @@
 					@{fi}
 				</div>
 			</div>
+			<br /><br /><br />
 		@{else}
 
 			<header>
@@ -104,12 +105,14 @@
 					</div>
 				</div>
 			</header>
+
 			<div class="container">
 				<ul class="breadcrumb">
 					@{foreach m in repository.sitemap}
 						<li><a href="@{m.url}">@{if index === 0}<i class="fa fa-home"></i>@{fi}@{m.name}</a></li>
 					@{end}
 				</ul>
+
 			@{if repository.page && repository.page.body}
 				@{!repository.page.body}
 			@{fi}
@@ -121,7 +124,7 @@
 					<a href="@{m.url}">@{m.name}</a>
 				@{end}
 				</nav>
-				<div>@(All rights reserved &copy; 2020)</div>
+				<div>All rights reserved &copy; 2020</div>
 			</footer>
 		@{fi}
 

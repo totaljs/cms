@@ -36,7 +36,7 @@
 			header nav a:hover { text-decoration: none; color: #505050; }
 			header nav .selected { color: white !important; background-color: #78AE4E; }
 			header nav i { margin-right: 8px; }
-			header .logo { float: left; margin: 12px 0 10px 20px; width: 150px; }
+			header .logo { float: left; margin: 12px 0 10px 15px; width: 150px; }
 
 			.mobilemenu-visible header nav { display: block !important; }
 			.mobilemenu { position: absolute; right: 0; margin: 15px 20px 0 0; display: none; }
@@ -89,32 +89,35 @@
 	<body data---="exec">
 
 		@{if repository.preview}
-			<br />
-			<div class="row">
-				<div class="col-md-3">
-					<div class="totaljs">Navigation</div>
-					<br />
-				</div>
-				<div class="col-md-9 layoutborder">
-					<div id="CMS">
-						@{if repository.page && repository.page.body}
-							<!-- RENDER UPDATED CONTENT -->
-							@{!repository.page.body}
-						@{else}
-							<!-- DEFAULT CONTENT FOR NEW PAGES FO THIS TEMPLATE -->
-							<div class="CMS_widgets" data-cms-category="Content,Columns"></div>
-						@{fi}
+			<br /><br /><br />
+			<div class="container">
+				<div class="row">
+					<div class="col-md-3">
+						<div class="totaljs">Navigation</div>
+						<br />
+					</div>
+					<div class="col-md-9 layoutborder">
+						<div id="CMS">
+							@{if repository.page && repository.page.body}
+								<!-- RENDER UPDATED CONTENT -->
+								@{!repository.page.body}
+							@{else}
+								<!-- DEFAULT CONTENT FOR NEW PAGES FO THIS TEMPLATE -->
+								<div class="CMS_widgets" data-cms-category="Content,Columns"></div>
+							@{fi}
+						</div>
 					</div>
 				</div>
 			</div>
+			<br /><br /><br />
 
 		@{else}
 
 			<header>
 				<div class="container">
 					<div class="row">
-						<div class="mainmenubutton">
-							<button id="mainmenubutton"><i class="fa fa-navicon"></i></button>
+						<div class="mobilemenu">
+							<button id="mobilemenu"><i class="fa fa-navicon"></i></button>
 						</div>
 						<a href="/" class="logo"><img src="/logo.png" border="0" class="img-responsive" /></a>
 						<nav>
@@ -164,7 +167,7 @@
 					<a href="@{m.url}">@{m.name}</a>
 				@{end}
 				</nav>
-				<div>@(All rights reserved &copy; 2020)</div>
+				<div>All rights reserved &copy; 2020</div>
 			</footer>
 
 		@{fi}

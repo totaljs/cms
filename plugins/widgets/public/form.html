@@ -20,11 +20,11 @@
 			<div data---="codemirror__?.body__height:500;icon:code;required:true;tabs:true;trim:true">@(Source-code)</div>
 			<div class="row fs12 mt10">
 				<div class="col-xs-6">
-					<span class="link exec mr10" data-exec="?/upload"><i class="far fa-folder mr5"></i>@(Browse files)</span>
-					<span class="link exec hidden" data-exec="?/backups" data-bind="?.id__show"><i class="far fa-clock-o mr5"></i>@(Restore a backup)</span>
+					<span class="link exec mr10" data-exec="widgetsform/upload"><i class="far fa-folder mr5"></i>@(Browse files)</span>
+					<span class="link exec hidden" data-exec="widgetsform/backups" data-bind="?.id__show"><i class="far fa-clock-o mr5"></i>@(Restore a backup)</span>
 				</div>
 				<div class="col-xs-6 right">
-					<span class="link exec mr10" data-exec="?/template"><i class="fa fa-code mr5"></i>@(Preddefined template)</span>
+					<span class="link exec mr10" data-exec="widgetsform/template"><i class="fa fa-code mr5"></i>@(Preddefined template)</span>
 					<a href="https://wiki.totaljs.com/?q=cms%20widgets" class="link" target="_blank"><i class="fa fa-book mr5"></i>@(Documentation)</a>
 				</div>
 			</div>
@@ -119,7 +119,7 @@
 		};
 
 		exports.template = function() {
-			SET('?.body', $('#widgetstemplate').html().replace(/<CSS/g, '<style').replace(/<\/CSS/g, '</style').replace(/<JS/g, '<script').replace(/<\/JS/g, '</script').trim());
+			SET('?.form.body', $('#widgetstemplate').html().replace(/<CSS/g, '<style').replace(/<\/CSS/g, '</style').replace(/<JS/g, '<script').replace(/<\/JS/g, '</script').trim());
 		};
 
 		exports.submit = function(hide) {

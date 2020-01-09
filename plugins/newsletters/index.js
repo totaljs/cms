@@ -4,16 +4,16 @@ exports.position = 80;
 
 exports.install = function() {
 
-	ROUTE('GET     #admin/api/newsletters/                    *Newsletters --> @query');
-	ROUTE('GET     #admin/api/newsletters/{id}/               *Newsletters --> @read');
-	ROUTE('POST    #admin/api/newsletters/                    *Newsletters --> @save');
-	ROUTE('DELETE  #admin/api/newsletters/                    *Newsletters --> @remove');
-	ROUTE('POST    #admin/api/newsletters/test/               *Newsletters --> @test');
-	ROUTE('GET     #admin/api/newsletters/toggle/             *Newsletters --> @toggle');
-	ROUTE('GET     #admin/api/newsletters/stats/              *Newsletters --> @stats');
-	ROUTE('GET     #admin/api/newsletters/{id}/stats/         *Newsletters --> @stats');
-	ROUTE('GET     #admin/api/newsletters/{id}/backups/       *Common --> @backup');
-	ROUTE('GET     #admin/api/newsletters/state/',            state);
+	ROUTE('GET     /admin/api/newsletters/                    *Newsletters --> @query');
+	ROUTE('GET     /admin/api/newsletters/{id}/               *Newsletters --> @read');
+	ROUTE('POST    /admin/api/newsletters/                    *Newsletters --> @save');
+	ROUTE('DELETE  /admin/api/newsletters/                    *Newsletters --> @remove');
+	ROUTE('POST    /admin/api/newsletters/test/               *Newsletters --> @test');
+	ROUTE('GET     /admin/api/newsletters/toggle/             *Newsletters --> @toggle');
+	ROUTE('GET     /admin/api/newsletters/stats/              *Newsletters --> @stats');
+	ROUTE('GET     /admin/api/newsletters/{id}/stats/         *Newsletters --> @stats');
+	ROUTE('GET     /admin/api/newsletters/{id}/backups/       *Common --> @backup');
+	ROUTE('GET     /admin/api/newsletters/state/',            state);
 
 	FILE('/newsletter.gif', stats);
 };

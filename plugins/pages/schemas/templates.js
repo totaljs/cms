@@ -31,6 +31,21 @@ NEWSCHEMA('Templates', function(schema) {
 			db.insert(model).callback(done);
 		}
 	});
+
+	schema.setRemove(function($) {
+		NOSQL('templates').remove().where('id', $.id).callback(function() {
+
+			NOSQL('pages').modify({ template: '' }).where('template', $.id);
+			NOSQL('posts').modify({ template: '' }).where('template', $.id);
+			NOSQL('newsletter').modify({ template: '' }).where('template', $.id);
+
+			var file = 'cms' + $.id;
+			Fs.unlink(PATH.views(file + '.html'), NOOP);
+			Fs.unlink(PATH.public(file + '.css'), NOOP);
+			Fs.unlink(PATH.public(file + '.js'), NOOP);
+			refresh($.done());
+		});
+	});
 });
 
 function refresh(callback) {
@@ -39,8 +54,10 @@ function refresh(callback) {
 	var newsletters = [];
 	var posts = [];
 
-	NOSQL('templates').find().callback(function(err, response) {
+	NOSQL('templates').find().sort('name').callback(function(err, response) {
 		var hash = Date.now();
+		var navigations = {};
+
 		response.wait(function(item, next) {
 			var compiled = compile(item.body);
 			item.file = 'cms' + item.id;
@@ -48,7 +65,7 @@ function refresh(callback) {
 			compiled.html = '@{notranslate}@{nocompress html}' + compiled.html.replace('</body>', item.type === 'newsletter' ? '@{if repository.preview}<script src="//cdn.componentator.com/jquery.min@341.js"></script><script src="@{MAIN.jseditor}"></script>@{fi}' : '@{if repository.preview}<script src="//cdn.componentator.com/jquery.min@341.js"></script><script src="@{MAIN.jseditor}"></script>@{else}<script src="/js/cms.js"></script><script src="@{MAIN.js}"></script><script src="/' + item.file + '.js?ts=' + hash + '"></script>@{fi}</body>');
 
 			if (item.type !== 'newsletter')
-				compiled.html = compiled.html.replace('</head>', '<link rel="stylesheet" href="//cdn.componentator.com/spa.min@18.css" /><link rel="stylesheet" href="@{MAIN.css}" /><link rel="stylesheet" href="/' + item.file + '.css?ts=' + hash + '" />@{if repository.preview}<link rel="stylesheet" href="/css/admin-editor.css" />@{else}<script src="//cdn.componentator.com/spa.min@18.js"></script>@{fi}@{import(\'meta\', \'favicon.ico\', \'head\')}</head>');
+				compiled.html = compiled.html.replace('<html>', '<html@{if repository.preview} class="CMS_preview"@{fi}>').replace('</head>', '<link rel="stylesheet" href="//cdn.componentator.com/spa.min@18.css" /><link rel="stylesheet" href="@{MAIN.css}" /><link rel="stylesheet" href="/' + item.file + '.css?ts=' + hash + '" />@{if repository.preview}<link rel="stylesheet" href="/css/admin-editor.css" />@{else}<script src="//cdn.componentator.com/spa.min@18.js"></script>@{fi}@{import(\'meta\', \'favicon.ico\', \'head\')}</head>');
 
 			Fs.writeFile(PATH.views(item.file + '.html'), U.minifyHTML(compiled.html), function() {
 				Fs.writeFile(PATH.public(item.file + '.js'), compiled.js ? U.minifyScript(compiled.js) : '', function() {
@@ -66,15 +83,11 @@ function refresh(callback) {
 								break;
 						}
 
-						var navigations = PREF.navigations.remove('templateid', item.id);
-
 						for (var i = 0; i < compiled.navigations.length; i++) {
 							var nav = compiled.navigations[i];
-							nav.templateid = item.id;
-							navigations.push(nav);
+							if (!navigations[nav.id])
+								navigations[nav.id] = nav;
 						}
-
-						PREF.set('navigations', navigations);
 
 						// HACK: clears Total.js ViewEngine cache
 						delete F.temporary.views['view#' + item.file + '.html'];
@@ -85,6 +98,11 @@ function refresh(callback) {
 				});
 			});
 		}, function() {
+			var keys = Object.keys(navigations);
+			var navs = [];
+			for (var i = 0; i < keys.length; i++)
+				navs.push(navigations[keys[i]]);
+			PREF.set('navigations', navs);
 			PREF.templates = pages;
 			PREF.templatesposts = posts;
 			PREF.templatesnewsletters = newsletters;

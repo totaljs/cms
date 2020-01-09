@@ -3,6 +3,6 @@ exports.name = 'Events';
 exports.position = 20;
 
 exports.install = function() {
-	ROUTE('GET     #admin/api/events/                         *Events --> @query');
-	ROUTE('GET     #admin/api/events/clear/                   *Events --> @clear');
+	ROUTE('GET     /admin/api/events/                         *Events --> @query');
+	ROUTE('GET     /admin/api/events/clear/                   *Events --> @clear');
 };

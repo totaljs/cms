@@ -1,13 +1,19 @@
-<div data---="form__common.form__if:pagestemplate;width:1100;submit:pagestemplate/submit;title:@(Template source-code);icon:code" class="hidden">
+<div data---="form__common.form__if:pagestemplate;width:1100;submit:pagestemplate/submit;title:@(Template source-code);icon:code;autofocus:1" class="hidden">
 
 	<div data-scope="pagestemplate">
-		<div class="padding bg-smoke">
+		<div class="padding">
 			<div data---="input__?.name__required:true">@(Name)</div>
 			<div class="help">@(Type a name of template)</div>
 		</div>
+
+		<div class="toolbar toolbar2 nmt nmb">
+			<button class="exec highlight" data-exec="?/file"><i class="far fa-images"></i>@(Insert file)</button>
+			<span></span>
+			<button class="exec" data-exec="?/import"><i class="fa fa-scroll"></i>@(Insert template)</button>
+		</div>
+
 		<div class="padding">
-			<div data---="codemirror__?.body__height:500;required:true;tabs:true;trim:true;type:totaljs">@(HTML)</div>
-			<div class="help"><span class="link exec" data-exec="?/import" data-template="default">@(Import default template)</span> @(or) <span class="link exec" data-exec="?/import" data-template="navigation">@(Import template with navigation)</span></div>
+			<div data---="codemirror__?.body__height:500;required:true;tabs:true;trim:true;type:totaljs;$id:codemirrorpagestemplate">@(HTML)</div>
 		</div>
 	</div>
 
@@ -22,6 +28,7 @@
 	PLUGIN('pagestemplate', function(exports) {
 		exports.submit = function(hide) {
 			var model = GETR('?');
+			model.type = 'page';
 			AJAX('POST [url]api/templates/ REPEAT', model, function(response) {
 				if (response.success) {
 					refresh_dependencies();
@@ -31,8 +38,24 @@
 			});
 		};
 
+		exports.file = function() {
+			refresh_filebrowser(function(url, filename) {
+				SETTER('#codemirrorpagestemplate', 'insert', url);
+			});
+		};
+
 		exports.import = function(el) {
-			AJAX('GET @{#}/_pages/template-' + el.attrd('template') + '.txt', '?.body');
+			var opt = {};
+			opt.element = el;
+			opt.offsetY = -3;
+			opt.items = [];
+			opt.items.push({ id: 'default', name: '@(Basic template)', icon: '!far fa-file-text-o' });
+			opt.items.push({ id: 'navigation', name: '@(Template with navigation)', icon: '!far fa-file-text-o' });
+			opt.callback = function(item) {
+				exports.scope();
+				AJAX('GET @{#}/_pages/template-' + item.id + '.txt', '?.body');
+			};
+			SETTER('menu', 'show', opt);
 		};
 	});
 

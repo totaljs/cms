@@ -740,6 +740,11 @@ Controller.prototype.CMSpage = function(callback, cache) {
 		var nosql = NOSQL('pages');
 		nosql.one().where('id', page.id).callback(function(err, response) {
 
+			if (!response.template) {
+				self.invalid('error-pages-template');
+				return;
+			}
+
 			var repo = self.repository;
 			self.meta(response.title, response.description, response.keywords);
 

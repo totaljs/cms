@@ -223,8 +223,8 @@
 								<div data---="barchart__?.stats.visitors__height:250"></div>
 								<div class="mt10" data-bind="?.stats.visitorssum__template">
 									<script type="text/html">
-										<span class="fs11 gray" style="float:right"><b>{{ value.unique | format(0) }}</b> {{ value.unique | pluralize(@('uniques', 'unique', 'uniques', 'uniques')) }}</span>
-										<span class="fs11 gray"><b>{{ value.count | format(0) }}</b> {{ value.count | pluralize(@('visitors', 'visitor', 'visitors', 'visitors')) }}</span>
+										<span class="fs11 gray" style="float:right"><b>{{ value.unique | format(0) | def('0') }}</b> {{ value.unique | pluralize(@('uniques', 'unique', 'uniques', 'uniques')) }}</span>
+										<span class="fs11 gray"><b>{{ value.count | format(0) | def('0') }}</b> {{ value.count | pluralize(@('visitors', 'visitor', 'visitors', 'visitors')) }}</span>
 									</script>
 								</div>
 							</div>
