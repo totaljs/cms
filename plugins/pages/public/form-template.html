@@ -1,11 +1,14 @@
 <div data---="form__common.form__if:pagestemplate;width:1100;submit:pagestemplate/submit;title:@(Template source-code);icon:code" class="hidden">
 
-	<div class="padding bg-smoke">
-		<div data---="input__pagestemplate.name__required:true">@(Name)</div>
-		<div class="help">@(Type a name of template)</div>
-	</div>
-	<div class="padding">
-		<div data---="codemirror__pagestemplate.body__height:500;required:true;tabs:true;trim:true;type:totaljs">@(HTML)</div>
+	<div data-scope="pagestemplate">
+		<div class="padding bg-smoke">
+			<div data---="input__?.name__required:true">@(Name)</div>
+			<div class="help">@(Type a name of template)</div>
+		</div>
+		<div class="padding">
+			<div data---="codemirror__?.body__height:500;required:true;tabs:true;trim:true;type:totaljs">@(HTML)</div>
+			<div class="help"><span class="link exec" data-exec="?/import" data-template="default">@(Import default template)</span> @(or) <span class="link exec" data-exec="?/import" data-template="navigation">@(Import template with navigation)</span></div>
+		</div>
 	</div>
 
 	<nav data---="validation__pagestemplate">
@@ -26,6 +29,10 @@
 					hide();
 				}
 			});
+		};
+
+		exports.import = function(el) {
+			AJAX('GET @{#}/_pages/template-' + el.attrd('template') + '.txt', '?.body');
 		};
 	});
 
