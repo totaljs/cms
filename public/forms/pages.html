@@ -24,7 +24,7 @@
 			</div>
 		</div>
 		<div data-bind="?.draft__show" class="hidden fs11" style="padding:8px 20px;background-color:red;color:white"><span style="color:white;float:right" class="link exec" data-exec="pagesform/removedraft"><i class="fa fa-times-circle mr5"></i>@(Remove draft)</span><i class="fa fa-warning mr5"></i>@(Page <b>content</b> is in draft mode).</div>
-		<div class="cmseditor" data---="cmseditor__?.body" data-import="url:[url]components/cmseditor.html;target:body"></div>
+		<div class="cmseditor" data---="cmseditor__?.body" data-import="url:@{#}/components/cmseditor.html;target:body"></div>
 		<div class="backups hidden hidden-xs bg-smoke" data-bind="?.id__show:!!value">
 			<div class="hidden" data-bind="?.id__show">
 				<div data---="checkbox__?.draft" class="nmb red b" data-bind="?.lockedcontent__show:!value">@(DRAFT)</div>

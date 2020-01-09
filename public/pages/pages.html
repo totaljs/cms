@@ -28,7 +28,9 @@
 					<button class="exec b" data-exec="?/create"><i class="fa fa-plus-circle"></i>@(Add new page)</button>
 					<button class="exec" data-path="common.form" data-value="'pagesglobals'"><i class="fa fa-cog"></i>@(Variables)</button>
 					<button class="exec" data-path="common.form" data-value="'widgetsglobals'"><i class="fa fa-paint-brush"></i>@(Global style/script)</button>
-					<button class="exec b" data-path="common.form" data-value="'pagesredirects'"><i class="fa fa-retweet"></i>@(Redirects)</button>
+					<button class="exec" data-path="common.form" data-value="'pagesredirects'"><i class="fa fa-retweet"></i>@(Redirects)</button>
+					<hr />
+					<button class="exec b" data-path="common.form" data-value="'pagestemplates'"><i class="fa fa-desktop"></i>@(Templates)</button>
 				</nav>
 			</div>
 			<div class="padding" data-bind="common.dependencies.navigations__show:value && value.length">
@@ -64,10 +66,10 @@
 
 </div>
 
-<div data---="importer__common.form__if:pagesform;url:[url]forms/pages.html;cleaner:5"></div>
-<div data---="importer__common.form__if:pagesnavigation;url:[url]forms/pages-navigation.html;cleaner:5"></div>
-<div data---="importer__common.form2__if:pagesnavigationitem;url:[url]forms/pages-navigation-item.html;cleaner:5"></div>
-<div data---="importer__common.form__if:pagesredirects;url:[url]forms/pages-redirects.html;cleaner:5"></div>
+<div data---="importer__common.form__if:pagesform;url:@{#}/forms/pages.html;cleaner:5"></div>
+<div data---="importer__common.form__if:pagesnavigation;url:@{#}/forms/pages-navigation.html;cleaner:5"></div>
+<div data---="importer__common.form2__if:pagesnavigationitem;url:@{#}/forms/pages-navigation-item.html;cleaner:5"></div>
+<div data---="importer__common.form__if:pagesredirects;url:@{#}/forms/pages-redirects.html;cleaner:5"></div>
 
 <script>
 	PLUGIN('pages', function(exports) {

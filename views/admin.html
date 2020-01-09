@@ -10,12 +10,13 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 	<meta name="robots" content="all,follow" />
 	<link rel="stylesheet" href="//cdn.componentator.com/spa.min@18.css" />
-	<script src="//cdn.componentator.com/spa.min@18beta.js"></script>
-	@{import('head', '/admin.css', '/admin.js', 'favicon.ico')}
+	<script src="//cdn.componentator.com/spa.min@18.js"></script>
+	@{import('head', 'admin-ui.css + admin.css', 'admin-ui.js + admin.js', 'favicon.ico')}
 </head>
-<body data---="exec,avatar">
+<body data---="exec">
 
 	@{json(user, 'userprofile', (k,v) => k === 'password' ? undefined : v)}
+	@{json(MAIN.plugins, 'adminplugins')}
 
 	<div data---="LAZY autocomplete"></div>
 	<div data---="LAZY faicons"></div>
@@ -55,39 +56,48 @@
 	</header>
 
 	<div id="parts">
-		<div data---="part__common.page__if:dashboard;url:/admin/pages/dashboard.html;reload:dashboard/reload;hidden:dashboard/hidden;cleaner:10"></div>
-		<div data---="part__common.page__if:events;url:/admin/pages/events.html;reload:events/reload;hidden:events/hidden;cleaner:10"></div>
-		<div data---="part__common.page__if:posts;url:/admin/pages/posts.html;reload:posts/reload;cleaner:10"></div>
-		<div data---="part__common.page__if:notices;url:/admin/pages/notices.html;reload:notices/reload;cleaner:10"></div>
-		<div data---="part__common.page__if:pages;url:/admin/pages/pages.html;reload:pages/reload;cleaner:10"></div>
-		<div data---="part__common.page__if:widgets;url:/admin/pages/widgets.html;reload:widgets/reload;cleaner:10"></div>
-		<div data---="part__common.page__if:newsletters;url:/admin/pages/newsletters.html;reload:newsletters/reload;cleaner:10"></div>
-		<div data---="part__common.page__if:subscribers;url:/admin/pages/subscribers.html;reload:subscribers/reload;cleaner:10"></div>
-		<div data---="part__common.page__if:settings;url:/admin/pages/settings.html;reload:settings/reload;cleaner:10"></div>
+		<div data---="part__common.page__if:dashboard;url:@{#}/pages/dashboard.html;reload:dashboard/reload;hidden:dashboard/hidden;cleaner:10"></div>
+		<div data---="part__common.page__if:events;url:@{#}/pages/events.html;reload:events/reload;hidden:events/hidden;cleaner:10"></div>
+		<div data---="part__common.page__if:posts;url:@{#}/pages/posts.html;reload:posts/reload;cleaner:10"></div>
+		<div data---="part__common.page__if:notices;url:@{#}/pages/notices.html;reload:notices/reload;cleaner:10"></div>
+		<div data---="part__common.page__if:pages;url:@{#}/pages/pages.html;reload:pages/reload;cleaner:10"></div>
+		<div data---="part__common.page__if:widgets;url:@{#}/pages/widgets.html;reload:widgets/reload;cleaner:10"></div>
+		<div data---="part__common.page__if:newsletters;url:@{#}/pages/newsletters.html;reload:newsletters/reload;cleaner:10"></div>
+		<div data---="part__common.page__if:subscribers;url:@{#}/pages/subscribers.html;reload:subscribers/reload;cleaner:10"></div>
+		<div data---="part__common.page__if:settings;url:@{#}/pages/settings.html;reload:settings/reload;cleaner:10"></div>
 	</div>
 
-	<div data---="importer__common.form3__if:filebrowser;url:[url]forms/filebrowser.html"></div>
-	<div data---="importer__common.form3__if:widgetsimport;url:[url]forms/widgets-import.html;cleaner:5"></div>
-	<div data---="importer__common.form__if:widgetsglobals;url:[url]forms/widgets-globals.html;cleaner:5"></div>
-	<div data---="importer__common.form__if:pagesglobals;url:[url]forms/pages-globals.html;cleaner:5"></div>
+	<div data---="importer__common.form3__if:filebrowser;url:@{#}/forms/filebrowser.html"></div>
+	<div data---="importer__common.form3__if:widgetsimport;url:@{#}/forms/widgets-import.html;cleaner:5"></div>
+	<div data---="importer__common.form__if:widgetsglobals;url:@{#}/forms/widgets-globals.html;cleaner:5"></div>
+	<div data---="importer__common.form__if:pagesglobals;url:@{#}/forms/pages-globals.html;cleaner:5"></div>
 
 	<script>
 
 		var user = PARSE($('#userprofile').html());
 		var filebrowser = {};
 
-		common.nav = [];
-		common.nav.push({ role: 'Dashboard', title: '@(Dashboard)', value: 'dashboard', icon: 'fa fa-dashboard' });
-		common.nav.push({ role: 'Events', title: '@(Events)', value: 'events', icon: 'far fa-clock-o' });
-		common.nav.push({ role: 'Pages', title: '@(Pages)', value: 'pages', icon: 'far fa-file-text-o' });
-		common.nav.push({ role: 'Widgets', title: '@(Widgets)', value: 'widgets', icon: 'fa fa-plug' });
-		common.nav.push({ role: 'Posts', title: '@(Posts)', value: 'posts', icon: 'fa fa-newspaper-o' });
-		common.nav.push({ role: 'Notices', title: '@(Notices)', value: 'notices', icon: 'fa fa-bullhorn' });
-		common.nav.push({ role: 'Newsletters', title: '@(Newsletters)', value: 'newsletters', icon: 'far fa-envelope-o' });
-		common.nav.push({ role: 'Subscribers', title: '@(Subscribers)', value: 'subscribers', icon: 'far fa-address-card' });
-		common.nav.push({ role: 'Settings', title: '@(Settings)', value: 'settings', icon: 'fa fa-cog' });
+		common.nav = PARSE($('#adminplugins').html());
+		common.nav.quicksort('position');
 
-		ENV('url', '@{sitemap_url('admin')}');
+		(function() {
+			for (var i = 0; i < common.nav.length; i++) {
+				var nav = common.nav[i];
+				nav.role = nav.value = nav.id;
+			}
+		})();
+
+		// common.nav.push({ role: 'Dashboard', title: '@(Dashboard)', value: 'dashboard', icon: 'fa fa-dashboard' });
+		// common.nav.push({ role: 'Events', title: '@(Events)', value: 'events', icon: 'far fa-clock-o' });
+		// common.nav.push({ role: 'Pages', title: '@(Pages)', value: 'pages', icon: 'far fa-file-text-o' });
+		// common.nav.push({ role: 'Widgets', title: '@(Widgets)', value: 'widgets', icon: 'fa fa-plug' });
+		// common.nav.push({ role: 'Posts', title: '@(Posts)', value: 'posts', icon: 'fa fa-newspaper-o' });
+		// common.nav.push({ role: 'Notices', title: '@(Notices)', value: 'notices', icon: 'fa fa-bullhorn' });
+		// common.nav.push({ role: 'Newsletters', title: '@(Newsletters)', value: 'newsletters', icon: 'far fa-envelope-o' });
+		// common.nav.push({ role: 'Subscribers', title: '@(Subscribers)', value: 'subscribers', icon: 'far fa-address-card' });
+		// common.nav.push({ role: 'Settings', title: '@(Settings)', value: 'settings', icon: 'fa fa-cog' });
+
+		ENV('url', '/admin/');
 		ENV('date', '@(yyyy-MM-dd - HH:mm)');
 
 		WATCH('common.nav', function(path, value) {

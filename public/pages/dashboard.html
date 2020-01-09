@@ -12,6 +12,7 @@
 		.dashboard-online { font-size: 50px; line-height: 50px; }
 	}
 
+	.ui-dashboardvisitors { border: 1px solid #E0E0E0; border-radius: 2px; }
 	.ui-dashboardvisitors table { border: 0; width: 100%; table-layout: fixed; font-size: 12px; }
 	.ui-dashboardvisitors table i { margin-right: 5px; }
 	.ui-dashboardvisitors table tr td { background-color: white; }
@@ -93,7 +94,7 @@
 										<div class="value" data-bind="?.stats.today.desktop__html:?/count(value)"></div>
 										<div class="key"><i class="fa fa-square" style="color:#4781B8"></i>@(Desktop computers)</div>
 									</div>
-									<div data---="statsbarsimple__?.stats.today --> ?/mobiledesktop(value)">
+									<div data---="statsbarsimple__?.stats.today --> ?/mobiledesktop(value)" style="margin-top:7px">
 										<script type="text/html">
 											{{ name }} {{ percentage }}%
 										</script>
@@ -501,7 +502,7 @@
 		});
 	});
 
-	COMPONENT('dashboardvisitors', 'count:15', function(self, config) {
+	COMPONENT('dashboardvisitors', 'count:16', function(self, config, cls) {
 
 		var container, counter = 0, Tempty;
 
@@ -512,7 +513,7 @@
 
 		self.make = function() {
 
-			self.aclass('ui-dashboardvisitors');
+			self.aclass(cls);
 			var el = self.find('script');
 
 			el.each(function(index) {

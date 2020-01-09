@@ -22,7 +22,7 @@
 			<div class="help nmt">@(Check the checkbox below if you want to send this newsletter to all registered subscribers.)</div>
 			<div data---="checkbox__?.send" class="b mt10 red">@(Send mail to all subscribers)</div>
 		</div>
-		<div class="cmseditor" data---="cmseditor__?.body" data-import="url:[url]components/cmseditor.html;target:body"></div>
+		<div class="cmseditor" data---="cmseditor__?.body" data-import="url:@{#}/components/cmseditor.html;target:body"></div>
 		<div class="backups hidden" data-bind="?.id__show"><span class="link exec" data-exec="newslettersform/backups"><i class="fa fa-clock-o mr5"></i>@(Restore a backup)</span></div>
 		<div data-bind="?.id__show:value && value.length" class="hidden">
 			<hr class="nmt" />

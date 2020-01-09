@@ -30,7 +30,7 @@ header { height: 58px; background-color: white; background: linear-gradient(130d
 header nav { float: left; margin: 9px 0 0 10px; }
 header nav button { width: 40px; height: 40px; text-align: center; font-size: 16px; line-height: 39px; border: 1px solid transparent; outline: 0; background-color: transparent; color: rgba(0,0,0,0.6); border-radius: 2px; }
 header nav button:hover { color: black; }
-header nav button.selected { background-color: rgba(0,0,0,0.07); color: black; border: 1px solid rgba(0,0,0,0.05); }
+header nav button.selected { background-color: white; color: black; border: 1px solid white; box-shadow: 0 2px 2px rgba(0,0,0,0.05); }
 
 header .user { float: right; font-size: 12px; line-height: 58px; margin-right: 20px; color: black; font-size: 14px; font-weight: bold; }
 header .user .fa, header .user .fal { margin-right: 5px; }
@@ -40,7 +40,10 @@ header .title .fa, header .title .fal { margin-right: 8px; }
 .smallcaption { font-size: 10px; color: #888; font-weight: bold; margin-bottom: 10px; text-transform: uppercase; }
 .smallcaption i { margin-right: 5px; }
 
+hr { border-color: #E0E0E0; }
+
 .links a, .links button { display: block; border: 0; text-align: left; color: black; font-size: 12px; border-radius: 2px; padding: 2px 5px; margin-bottom: 1px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; position: relative; width: 100%; }
+.links hr { margin: 10px 0; }
 .links .selected { font-weight: bold; color: black; background-color: #F0F0F0; }
 .links a i, .links button i { width: 14px; text-align: center; font-size: 12px; margin-right: 7px; color: $color; }
 .links a:hover, .links button:hover { text-decoration: none; color: black; background-color: #F8F8F8; }
@@ -157,7 +160,7 @@ h3 .fa, h3 .far, h3 .fal { margin-right: 8px; }
 .button .fa, .button .fal, .button .far { margin-right: 5px; }
 .button-small { height: 32px; font-size: 12px; }
 
-.panel { background-color: white; border-radius: 3px; border: 1px solid #E9E9E9; }
+.panel { background-color: white; border-radius: 3px; border: 1px solid #E0E0E0; }
 .panel > label { display: block; padding: 10px 20px; border-bottom: 1px solid #E0E0E0; font-size: 14px; font-weight: bold; }
 .panel > label .fa, .panel > label .fal, .panel > label .far { margin-right: 5px; }
 .panelbody { padding: 20px; position: relative; }

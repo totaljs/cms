@@ -40,56 +40,12 @@ CONF.admin_tracking && ON('visitor', function(obj) {
 exports.install = function() {
 
 	// Internal
-	ROUTE('GET     #admin', '=admin/index');
+	ROUTE('GET     #admin', 'admin');
 	ROUTE('GET     #admin/logout/',                           logout);
 	ROUTE('POST    /api/login/admin/',                        login);
 	ROUTE('POST    #admin/api/upload/',                       upload, ['upload', 10000], 5120); // 5 MB
 	ROUTE('POST    #admin/api/upload/base64/',                upload_base64, [10000], 2048); // 2 MB
 	ROUTE('GET     #admin/api/dependencies/                   *Settings --> @dependencies');
-
-	// Dashboard
-	ROUTE('GET     #admin/api/dashboard/',                    json_dashboard);
-	ROUTE('GET     #admin/api/dashboard/referrers/',          json_dashboard_referrers);
-	ROUTE('GET     #admin/api/dashboard/online/',             json_dashboard_online);
-	ROUTE('GET     #admin/api/dashboard/tracking/             *Tracking --> @stats');
-
-	// MODEL: /schema/widgets.js
-	ROUTE('GET     #admin/api/widgets/                        *Widgets --> @query');
-	ROUTE('GET     #admin/api/widgets/{id}/                   *Widgets --> @read');
-	ROUTE('POST    #admin/api/widgets/                        *Widgets --> @save');
-	ROUTE('DELETE  #admin/api/widgets/{id}/                   *Widgets --> @remove');
-	ROUTE('GET     #admin/api/widgets/{id}/editor/            *Widgets --> @editor');
-	ROUTE('GET     #admin/api/widgets/dependencies/           *Widgets --> @dependencies');
-	ROUTE('GET     #admin/api/widgets/{id}/settings/          *Widgets', json_widget_settings);
-	ROUTE('GET     #admin/api/widgets/{id}/backups/           *Common --> @backup');
-
-	// MODEL: /schema/widgets.js
-	ROUTE('GET     #admin/api/widgets/globals/                *Widgets/Globals --> @read');
-	ROUTE('POST    #admin/api/widgets/globals/                *Widgets/Globals --> @save', 30);
-
-	// MODEL: /schema/pages.js
-	ROUTE('GET     #admin/api/pages/                          *Pages --> @query');
-	ROUTE('GET     #admin/api/pages/{id}/                     *Pages --> @read');
-	ROUTE('POST    #admin/api/pages/                          *Pages --> @url @save (response)');
-	ROUTE('DELETE  #admin/api/pages/                          *Pages --> @remove');
-	ROUTE('GET     #admin/api/pages/stats/                    *Pages --> @stats');
-	ROUTE('GET     #admin/api/pages/{id}/stats/               *Pages --> @stats');
-	ROUTE('GET     #admin/api/pages/{id}/backups/             *Common --> @backup');
-	ROUTE('POST    #admin/api/pages/preview/',                view_pages_preview, ['json'], 512);
-	ROUTE('GET     #admin/api/pages/dependencies/',           json_pages_dependencies);
-	ROUTE('POST    #admin/api/pages/css/',                    css_pages, ['json'], 512);
-
-	ROUTE('POST    #admin/api/parts/                          *Parts --> @save');
-	ROUTE('POST    #admin/api/tracking/                       *Tracking --> @save');
-	ROUTE('GET     #admin/api/tracking/                       *Tracking --> @query');
-	ROUTE('GET     #admin/api/tracking/{id}/                  *Tracking --> @stats');
-	ROUTE('DELETE  #admin/api/tracking/{id}/                  *Tracking --> @remove');
-
-	// MODEL: /schema/pages.js
-	ROUTE('GET     #admin/api/pages/globals/                  *Pages/Globals --> @read');
-	ROUTE('POST    #admin/api/pages/globals/                  *Pages/Globals --> @save', 30);
-	ROUTE('GET     #admin/api/pages/redirects/                *Pages/Redirects --> @read');
-	ROUTE('POST    #admin/api/pages/redirects/                *Pages/Redirects --> @save', 30);
 
 	// MODEL: /schema/events.js
 	ROUTE('GET     #admin/api/events/                         *Events --> @query');
@@ -134,14 +90,6 @@ exports.install = function() {
 	ROUTE('GET     #admin/api/newsletters/{id}/backups/       *Common --> @backup');
 	ROUTE('GET     #admin/api/newsletters/state/',            json_newsletter_state);
 
-	// MODEL: /schema/navigations.js
-	ROUTE('GET     #admin/api/nav/{id}/                       *Navigations --> @read');
-	ROUTE('POST    #admin/api/nav/                            *Navigations --> @save');
-
-	// MODEL: /schema/navigations.js
-	ROUTE('GET     #admin/api/redirects/{id}/                 *Redirects --> @read');
-	ROUTE('POST    #admin/api/redirects/                      *Redirects --> @save');
-
 	// MODEL: /schema/settings.js
 	ROUTE('GET     #admin/api/settings/                       *Settings --> @read');
 	ROUTE('POST    #admin/api/settings/                       *Settings --> @smtp @save (response) @load');
@@ -159,6 +107,8 @@ exports.install = function() {
 
 	// Websocket
 	WEBSOCKET('#admin/live/', socket, ['json']);
+
+	FILE(pluginfiles);
 
 	// System user
 	SYSUSER.name = CONF.admin_superadmin.split(':')[0];
@@ -188,8 +138,7 @@ ON('controller', function(controller) {
 	if (!cookie || !cookie.length) {
 		DDOS[controller.ip] = ddos ? ddos + 1 : 1;
 		controller.cancel();
-		controller.theme('admin');
-		controller.view('~login');
+		controller.view('admin-login');
 		return;
 	}
 
@@ -197,8 +146,7 @@ ON('controller', function(controller) {
 	if (user == null) {
 		DDOS[controller.ip] = ddos ? ddos + 1 : 1;
 		controller.cancel();
-		controller.theme('admin');
-		controller.view('~login');
+		controller.view('admin-login');
 		return;
 	}
 
@@ -234,6 +182,28 @@ ON('controller', function(controller) {
 
 	controller.user = user;
 });
+
+function pluginfiles(req, res, is) {
+
+	if (is)
+		return req.url[1] === '_';
+
+	var path = req.uri.pathname;
+	var index = path.indexOf('/', 2);
+	var name = path.substring(2, index);
+
+	for (var i = 0; i < MAIN.plugins.length; i++) {
+		var plugin = MAIN.plugins[i];
+		if (plugin.id === name) {
+			var file = path.substring(index + 1);
+			var filename = 'plugins/' + name + '/public/' + file;
+			res.file(filename);
+			return;
+		}
+	}
+
+	res.throw404();
+}
 
 ON('service', function(counter) {
 	if (counter % 15 === 0)
@@ -316,62 +286,8 @@ function upload_base64() {
 	FILESTORAGE('files').insert((self.body.name || 'base64').replace(/\.[0-9a-z]+$/i, '').max(40) + ext, data, (err, id) => self.json('/download/' + id + ext));
 }
 
-// Creates a preview
-function view_pages_preview() {
-	var self = this;
-	self.layout('layout-preview');
-	self.repository.preview = true;
-	self.repository.page = self.body;
-	self.view('~cms/' + self.body.template);
-}
-
-function css_pages() {
-	var self = this;
-	self.content(U.minifyStyle('/*auto*/\n' + (self.body.css || '')), 'text/css');
-}
-
-function json_widget_settings(id) {
-	var self = this;
-	var item = MAIN.widgets[id];
-	self.json(item ? item.editor : null);
-}
-
 function json_newsletter_state() {
 	this.json(MAIN.newsletter);
-}
-
-function json_dashboard_online() {
-	var self = this;
-	var data = MODULE('visitors').today();
-	data.memory = process.memoryUsage();
-	data.performance = F.stats.performance;
-	self.json(data);
-}
-
-function json_pages_dependencies() {
-	var self = this;
-	var arr = [];
-
-	for (var i = 0, length = MAIN.pages.length; i < length; i++) {
-		var item = MAIN.pages[i];
-		arr.push({ url: item.url, name: item.name, parent: item.parent });
-	}
-
-	var output = {};
-	output.links = arr;
-
-	NOSQL('parts').find().fields('id', 'name', 'category').callback(function(err, response) {
-		output.parts = response;
-		self.json(output);
-	});
-}
-
-function json_dashboard() {
-	MODULE('visitors').monthly(this.callback());
-}
-
-function json_dashboard_referrers() {
-	NOSQL('visitors').counter.stats_sum(24, NOW.getFullYear(), this.callback());
 }
 
 function view_notices_preview() {

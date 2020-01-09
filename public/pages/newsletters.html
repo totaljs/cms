@@ -39,12 +39,10 @@
 
 </div>
 
-<div data---="importer__common.form__if:newslettersform;url:[url]forms/newsletters.html;cleaner:5"></div>
+<div data---="importer__common.form__if:newslettersform;url:@{#}/forms/newsletters.html;cleaner:5"></div>
 
 <script>
 	PLUGIN('newsletters', function(exports) {
-
-		var toolbar = { btnChecked: exports.element.find('.toolbar button[name="checked"]') };
 
 		exports.refresh = function(type, filter, sort, page) {
 

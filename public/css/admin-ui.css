@@ -997,11 +997,11 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .ui-dark .ui-stats24-bar div span { border-bottom-color: #606060; }
 .ui-dark .ui-stats24-border .ui-stats24-bar { border-left: 1px solid #404040; }
 
-.ui-statsbarsimple { border-radius: 100px; border: 1px solid #E0E0E0; padding: 2px; overflow: hidden; }
-.ui-statsbarsimple-table { height: 20px; display: table; width: 100%; table-layout: fixed; }
-.ui-statsbarsimple-table > div { display: table-cell; cursor: default; font-size: 11px; line-height: 20px; padding: 0 8px; color: white; overflow: hidden; }
-.ui-statsbarsimple-table > div:first-child { border-radius: 100px 0 0 100px; }
-.ui-statsbarsimple-table > div:last-child { border-radius: 0 100px 100px 0; }
+.ui-statsbarsimple { border-radius: 2px; overflow: hidden; }
+.ui-statsbarsimple-table { height: 24px; display: table; width: 100%; table-layout: fixed; }
+.ui-statsbarsimple-table > div { display: table-cell; cursor: default; font-size: 11px; line-height: 24px; padding: 0 8px; color: white; overflow: hidden; }
+.ui-statsbarsimple-table > div:first-child { border-radius: 2px 0 0 2px; }
+.ui-statsbarsimple-table > div:last-child { border-radius: 0 2px 2px 0; }
 .ui-statsbarsimple-table > div:hover { opacity: 0.9; }
 .ui-statsbarsimple-table span { display: block; max-width: 100%; width: 100%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; transform: translate(0,50px); transition: transform 0.2s; }
 .ui-statsbarsimple-table span i { margin-right: 5px; }
