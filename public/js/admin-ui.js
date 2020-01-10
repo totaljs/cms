@@ -145,8 +145,10 @@ COMPONENT('form', 'zindex:12;scrollbar:1', function(self, config) {
 	};
 
 	self.cancel = function() {
-		config.cancel && EXEC(config.cancel, self.hide);
-		self.hide();
+		if (config.cancel)
+			EXEC(config.cancel, self.hide);
+		else
+			self.hide();
 	};
 
 	self.hide = function() {

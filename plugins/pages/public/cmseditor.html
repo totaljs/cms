@@ -1,6 +1,6 @@
 <script type="text/html" id="cmseditortoolbar">
 	<div class="cmseditor-help">
-		<nav><i class="fa fa-desktop"></i> <span class="exec link" data-exec="cmseditor.instance.setDevice" data-device="lg">@(Device width)</span><span class="exec link" data-exec="cmseditor.instance.setDevice" data-device="md">@(Medium)</span><span class="exec link" data-exec="cmseditor.instance.setDevice" data-device="sm">@(Tablet)</span><span class="exec link" data-exec="cmseditor.instance.setDevice" data-device="xs">@(Mobile)</span></nav>
+		<nav><i class="fa fa-desktop"></i> <span class="exec link" data-exec="cmseditor.instance.setDevice" data-device="lg">@(Device width)</span><span class="exec link" data-exec="cmseditor.instance.setDevice" data-device="md">@(Medium)</span><span class="exec link" data-exec="cmseditor.instance.setDevice" data-device="sm">@(Tablet)</span><span class="exec link" data-exec="cmseditor.instance.setDevice" data-device="xs">@(Mobile)</span><span class="exec link red hidden cmsundo" data-exec="cmseditor.instance.undo" data-bind="cmseditor.history__show:value&&value.length"><i class="fa fa-undo"></i>@(Undo removed)</span></nav>
 		<div class="hidden-xs cmseditorsourcecode"><b>@(Formatting:)</b> @(bold) (&#8984+B), @(italic) (&#8984+I), @(underline) (&#8984+U), @(non-breaking space) (&#8984+Spacebar), @(link) (&#8984+L), @(icon) (&#8984+P). <span data-exec="cmseditor.instance.sourcecode" class="exec link black ml5"><i class="fa fa-code mr5"></i>@(Show Source-Code)</span></div>
 	</div>
 </script>
@@ -26,6 +26,7 @@
 		// Current form
 		obj.form = '';
 		obj.filebrowser = {};
+		obj.history = [];
 		obj.link = {};
 		obj.attribute = {};
 		obj.crop = {};
@@ -38,6 +39,7 @@
 		obj.wrap_widgets = null;
 		obj.widgetsettings = {}; // Temporary object for storing of widget settings
 		obj.widgetcachereset = false;
+		obj.cmseditorbackup = document.createElement('DIV');
 	});
 
 	setTimeout(function() {
@@ -83,7 +85,9 @@
 
 		self.make = function() {
 
-			var toolbar = $('#cmseditortoolbar').html();
+			var el = $('#cmseditortoolbar');
+			var toolbar = el.html();
+			el.remove();
 
 			if ((/win/i).test(navigator.platform))
 				toolbar = toolbar.replace(/\&\#8984/g, 'CTRL');
@@ -91,6 +95,8 @@
 			self.html(toolbar + '<div class="cmseditorcontainer" style="margin:0 auto"><iframe src="about:blank"></iframe></div>');
 			iframe = self.find('iframe');
 			container = self.find('.cmseditorcontainer');
+
+			COMPILE(self.find('.cmsundo'));
 		};
 
 		self.autoresize = function() {
@@ -178,7 +184,7 @@
 			w.$cmseditor_save && w.$cmseditor_save(type);
 			w.EMIT && w.EMIT('cmseditor.save', type);
 			setTimeout(callback, 1000);
-			SETTER('loading', 'hide', 1500);
+			FUNC.loading(false, 1500);
 		};
 
 		self.filebrowser = function(target, type) {
@@ -371,6 +377,7 @@
 			self.getToolbar().hide();
 
 			if (target) {
+				self.endedit();
 				target.rattr('contentEditable');
 				target.rclass('CMS_selected');
 				target = null;
@@ -397,6 +404,46 @@
 			return find_keywords(text);
 		};
 
+		self.endedit = function() {
+
+			if (!target.length)
+				return;
+
+			var node = target[0];
+			var tag = target[0].tagName;
+			var a = node;
+			var is = false;
+
+			for (var i = 0; i < 4; i++) {
+				if (a.tagName === 'A') {
+					is = true;
+					break;
+				} else {
+					a = a.parentNode;
+					if (!a)
+						return;
+				}
+			}
+
+			if (!is)
+				return;
+
+			a = $(a);
+
+			var content = target.text().replace(/\s/g, '');
+			var href = a.attr('href');
+
+			if ((/\,/).test(content))
+				return;
+
+			var ismail = /[#|@|\:]/;
+			if (content.indexOf('@') !== -1) {
+				if (!href || ismail.test(href))
+					a.attr('href', 'mailto:' + content);
+			} else if (!(/[a-z]/i).test(content))
+				a.attr('href', 'tel:' + content);
+		};
+
 		self.moveToolbar = function(el) {
 
 			var sel = $(self.getDocument()).find('.CMS_selected');
@@ -404,6 +451,7 @@
 				return;
 
 			if (target) {
+				self.endedit();
 				target.rclass('CMS_selected');
 				target.rattr('contenteditable');
 				target = null;
@@ -477,6 +525,7 @@
 		};
 
 		self.getSourceCode = function() {
+			target && self.endedit();
 			var content = self.getContents();
 			content.find('[contenteditable]').rattr('contenteditable');
 			content.find('.CMS_selected').rclass('CMS_selected');
@@ -484,6 +533,7 @@
 		};
 
 		self.getContent = function() {
+			target && self.endedit();
 			var content = self.getContents().find('#CMS').clone();
 			content.find('[contenteditable]').rattr('contenteditable');
 			content.find('.CMS_selected').rclass('CMS_selected');
@@ -609,6 +659,27 @@
 			});
 		};
 
+		self.undo = function() {
+			var item = cmseditor.history.pop();
+			if (!item)
+				return;
+
+			UPD('cmseditor.history');
+
+			if (!item.parent.children.length) {
+				item.parent.appendChild(item.node);
+				return;
+			}
+
+			var sibling = item.parent.children[item.index];
+			if (sibling)
+				item.parent.insertBefore(item.node, sibling);
+			else
+				item.parent.appendChild(item.node);
+
+			self.autoresize();
+		};
+
 		self.setEvents = function() {
 
 			var body = self.getContents();
@@ -663,6 +734,7 @@
 				var el = $(this);
 
 				if (target && this !== target[0]) {
+					self.endedit();
 					self.check(target);
 					target.rclass('CMS_selected');
 					target.rattr('contenteditable');
@@ -860,6 +932,11 @@
 					return;
 
 				if (e.keyCode === 13 && !target.hclass('CMS_multiline')) {
+					self.endedit();
+					target.rattr('contentEditable');
+					target.rclass('CMS_selected');
+					target = null;
+					self.getToolbar().hide();
 					e.preventDefault();
 					e.stopPropagation();
 					return;
@@ -921,12 +998,13 @@
 						return;
 
 					tmp.attr('class', 'CMS_edit');
+					self.endedit();
 					target.rattr('contentEditable');
 					target.rclass('CMS_selected');
 					target = tmp;
 					target.data('temporary', true);
 
-					var link = cmseditorlink;
+					var link = cmseditor.link;
 
 					link.file = '';
 					link.href = '';
@@ -936,7 +1014,7 @@
 					link.tracking = null;
 					link.idtracking = null;
 
-					UPDATE('cmseditorlink', true);
+					UPDATE('cmseditor.link', true);
 					SET('cmseditor.form', 'link');
 					return;
 				}
@@ -1016,6 +1094,8 @@
 						break;
 
 					case 'paste':
+
+						target && self.endedit();
 						var clone = cmseditor.copypaste.clone();
 						clone = self.updWidgets(clone).rattr('contentEditable').rclass('CMS_selected').aclass('CMS_remove');
 
@@ -1096,6 +1176,7 @@
 
 					case 'hide':
 						self.getToolbar().hide();
+						self.endedit();
 						self.check(target);
 						target.rattr('contentEditable');
 						body.find('.CMS_selected').rclass('CMS_selected');
@@ -1203,7 +1284,7 @@
 							idtracking = tmp.attrd('cms-track');
 						}
 
-						var link = cmseditorlink;
+						var link = cmseditor.link;
 						link.file = '';
 						link.href = href;
 						link.target = targ;
@@ -1212,7 +1293,7 @@
 						link.tracking = null;
 						link.idtracking = idtracking;
 
-						UPDATE('cmseditorlink', true);
+						UPDATE('cmseditor.link', true);
 						SET('cmseditor.form', 'link');
 						return;
 
@@ -1245,6 +1326,7 @@
 					case 'edit':
 
 						if (target.attr('contenteditable')) {
+							self.endedit();
 							self.getToolbar().hide();
 							target.rattr('contentEditable');
 							target.rclass('CMS_selected');
@@ -1252,7 +1334,7 @@
 							return;
 						}
 
-						if (target.hclass('fa') || target.hclass('far') || target.hclass('fal') || target.hclass('fab')) {
+						if (target.hclass('fa') || target.hclass('far') || target.hclass('fal') || target.hclass('fab') || target.hclass('fad') || target.hclass('fas')) {
 							var fa = target.attr('class').match(/fa-[a-z0-9\-]+/i);
 							fa = fa ? fa.toString() : '';
 							SET('cmseditor.icons.icon', fa);
@@ -1313,22 +1395,37 @@
 						if (!tmp.length)
 							tmp = target.prev();
 
-						target.remove();
+						var parent = target[0].parentNode;
+						var node = target[0];
+
+						for (var i = 0; i < parent.children.length; i++) {
+							if (parent.children[i] == node)
+								break;
+						}
+
+
+						$(parent).find('.CMS_selected,.CMS_operation').rclass('CMS_selected CMS_operation');
+						PUSH('cmseditor.history', { parent: parent, index: i, node: node });
+						cmseditor.cmseditorbackup.appendChild(node);
+
 						self.getToolbar().hide();
 						self.change(true);
 
 						if (tmp.length && (tmp.hclass('CMS_edit') || tmp.hclass('CMS_remove')))
 							tmp.trigger('click');
 
+						self.autoresize();
 						break;
 
 					case 'repeat':
 
 						if (target.hclass('CMS_repeat')) {
+							self.endedit();
 							target.after(self.updWidgets(target.clone()).rattr('contentEditable').rclass('CMS_selected').aclass('CMS_remove'));
 						} else {
 							var parent = self.getParent('CMS_repeat');
 							if (parent) {
+								self.endedit();
 								target.rclass('CMS_selected');
 								parent.after(self.updWidgets(parent.clone()).rattr('contentEditable').rclass('CMS_selected').aclass('CMS_remove'));
 							}
@@ -1375,6 +1472,8 @@
 
 			// Sets the current instance of editor to global variable
 			cmseditor.instance = self;
+			SET('cmseditor.history', []);
+			cmseditor.cmseditorbackup.innerHTML = '';
 
 			if (value == null) {
 				self.write('');

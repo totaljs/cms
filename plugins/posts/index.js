@@ -27,5 +27,8 @@ function preview() {
 		self.body.body = '';
 
 	self.repository.page = self.body;
-	self.view('cms' + self.body.template);
+	if (self.body.template)
+		self.view('cms' + self.body.template);
+	else
+		self.content('', 'text/html');
 }

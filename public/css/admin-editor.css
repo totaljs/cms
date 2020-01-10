@@ -1,6 +1,6 @@
 /*auto*/
 
-h1.CMS_selected,h2.CMS_selected,h3.CMS_selected,img.CMS_selected,p.CMS_selected,span.CMS_selected,div.CMS_selected { background-color: rgba(0,0,0,0.05) !important; }
+/*h1.CMS_selected,h2.CMS_selected,h3.CMS_selected,img.CMS_selected,p.CMS_selected,span.CMS_selected,div.CMS_selected { background-color: rgba(0,0,0,0.05) !important; }*/
 iframe.CMS_edit { padding: 5px; border: 15px solid red;}
 
 #CMS { padding: 0; min-height: 30px; }
