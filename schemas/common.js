@@ -4,6 +4,7 @@ NEWSCHEMA('Common', function(schema) {
 	schema.addWorkflow('backup', function($) {
 		var req = $.controller.req;
 		var name = req.split[req.split.length - 3];
+
 		NOSQL(name).backups(n => n.data.id === $.id, function(err, response) {
 
 			if (name === 'widgets') {

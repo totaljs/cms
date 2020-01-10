@@ -260,7 +260,7 @@
 		exports.backups = function(el) {
 
 			FUNC.loading(true);
-			AJAX('GET [url]api/pages/{1}/backups/'.format(GET('?.id')), function(response) {
+			AJAX('GET [url]api/pages/{0}/backups/'.format(GET('?.id')), function(response) {
 
 				FUNC.loading(false, 1000);
 
