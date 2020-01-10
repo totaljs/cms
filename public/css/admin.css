@@ -19,6 +19,7 @@ header .title { height: 40px; border-left: 1px solid #F0F0F0; font-size: 16px; f
 header .title .fa, header .title .fal { margin-right: 8px; }
 
 .mb10 { margin-bottom: 10px; }
+.ui-layout { background-color: #E0E0E0; }
 .ui-layout-section { background-color: white; }
 
 .header { height: 45px; padding: 0 10px 0 0; background-color: #F8F8F8; }

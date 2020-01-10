@@ -112,12 +112,16 @@ NEWSCHEMA('Notices', function(schema) {
 
 function refresh(callback) {
 	NOSQL('notices').scalar('group', 'category').callback(function(err, response) {
-		var keys = Object.keys(response);
-		var arr = [];
-		keys.quicksort();
-		for (var i = 0; i < keys.length; i++)
-			arr.push({ id: keys[i].slug(), name: keys[i] });
-		PREF.set('notices', arr);
+
+		if (response) {
+			var keys = Object.keys(response);
+			var arr = [];
+			keys.quicksort();
+			for (var i = 0; i < keys.length; i++)
+				arr.push({ id: keys[i].slug(), name: keys[i] });
+			PREF.set('notices', arr);
+		}
+
 		callback && callback();
 	});
 }

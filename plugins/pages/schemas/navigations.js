@@ -136,6 +136,7 @@ function refresh() {
 		MAIN.navigations = {};
 
 		var nav = PREF.navigations;
+
 		for (var i = 0; i < nav.length; i++)
 			MAIN.navigations[nav[i].id] = { url: {}, children: [], id: nav[i].id, name: nav[i].name };
 

@@ -62,9 +62,9 @@ NEWSCHEMA('Settings', function(schema) {
 		for (var i = 0; i < keys.length; i++)
 			obj[keys[i]] = undefined;
 
-		obj.templatespages = PREF.templates;
 		obj.navigations = PREF.navigations;
 		obj.signals = PREF.signals;
+		obj.templatespages = PREF.templates;
 		obj.templatesposts = PREF.templatesposts;
 		obj.templatesnewsletters = PREF.templatesnewsletters;
 		obj.posts = PREF.posts;
@@ -124,6 +124,13 @@ NEWSCHEMA('Settings', function(schema) {
 
 		!PREF.signals && PREF.set('signals', []);
 		!PREF.languages && PREF.set('languages', []);
+		!PREF.navigations && PREF.set('navigations', {});
+		!PREF.templatespages && PREF.set('templates', []);
+		!PREF.templatesposts && PREF.set('templatesposts', []);
+		!PREF.templatesnewsletters && PREF.set('templatesnewsletters', []);
+		!PREF.posts && PREF.set('posts', []);
+		!PREF.notices && PREF.set('notices', []);
+
 		PREF.smtp && Mail.use(PREF.smtp, PREF.smtpoptions.parseJSON());
 
 		EMIT('settings', PREF);
