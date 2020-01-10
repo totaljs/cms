@@ -140,7 +140,7 @@ function pluginfiles(req, res, is) {
 		var plugin = MAIN.plugins[i];
 		if (plugin.id === name) {
 			var file = path.substring(index + 1);
-			var filename = 'plugins/' + name + '/public/' + file;
+			var filename = PATH.root('/plugins/' + name + '/public/' + file);
 			res.file(filename);
 			return;
 		}
