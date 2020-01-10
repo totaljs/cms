@@ -1,6 +1,6 @@
-<div data---="form__common.form__if:subscribersimport;width:600;submit:subscribersform/submit;autofocus:true;title:@(Import subscribers);icon:address-book-o" class="hidden">
+<div data---="form__common.form__if:subscribersimport;width:600;submit:subscribersimport/submit;autofocus:true;title:@(Import subscribers);icon:address-book-o" class="hidden">
 
-	<div class="padding" data-scope="subscribersform">
+	<div class="padding" data-scope="subscribersimport">
 		<div data-bind="?.importing__show:!value">
 			<div data---="textarea__?.body__required:true;height:200;placeholder:@(Put all new email addresses)">@(Email addresses)</div>
 		</div>
@@ -10,7 +10,7 @@
 		</div>
 	</div>
 
-	<nav data---="validation__subscribersform">
+	<nav data---="validation__subscribersimport">
 		<button name="submit">@(IMPORT)</button>
 		<button name="cancel">@(Cancel)</button>
 	</nav>
@@ -18,7 +18,7 @@
 </div>
 
 <script>
-	PLUGIN('subscribersform', function(exports) {
+	PLUGIN('subscribersimport', function(exports) {
 
 		exports.submit = function(hide) {
 

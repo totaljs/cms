@@ -50,9 +50,6 @@ exports.install = function() {
 	ROUTE('GET     /admin/api/backups/clear/                  *Common --> @backup_clear');
 	ROUTE('GET     /admin/api/backups/{type}/{id}/            *Common --> @backup_read');
 
-	// Others
-	ROUTE('GET     /admin/api/contactforms/stats/             *Contacts --> stats');
-
 	// Websocket
 	WEBSOCKET('/admin/live/', socket, ['json']);
 

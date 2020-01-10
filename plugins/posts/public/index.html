@@ -12,7 +12,7 @@
 
 		<section data-type="top2">
 			<div class="header">
-				<label><i class="fa fa-bullhorn"></i>@(List of posts)</label>
+				<label><i class="fa fa-newspaper-o"></i>@(List of posts)</label>
 				<nav data-bind="?.checked__enabled .S:value && value.length">
 					<button class="exec" data-exec="?/create"><i class="fa fa-plus-circle"></i>@(Create)</button>
 					<button class="exec" data-exec="?/options"><i class="fa fa-wrench"></i>@(Options)</button>
@@ -42,11 +42,11 @@
 				<script type="text/plain">
 				[
 					{ name: 'name', text: '@(Name)', width: 350, template: '{{ language | language }}{{ if !ispublished }}<span class="badge badge-gray mr5">@(unpublished)</span>{{ fi }}{{ name }}' },
-					{ name: 'category', text: '@(Template)', width: 150, class: 'hidden-xs' },
-					{ name: 'author', text: '@(Author)', width: 150, class: 'hidden-xs' },
-					{ name: 'type', text: '@(Type)', width: 100, align: 1, class: 'hidden-xs silver' },
+					{ name: 'category', text: '@(Template)', width: 150 },
+					{ name: 'author', text: '@(Author)', width: 150 },
+					{ name: 'type', text: '@(Type)', width: 100, align: 1, class: 'silver' },
 					{ name: 'language', text: 'Language', width: 40, title: '@(Language)', filter: false, sort: false, align: 1, hide: true },
-					{ name: 'date', text: '@(From)', align: 1, width: 130, class: 'hidden-xs', template: '{{ date | format(\'@(yyyy-MM-dd)\') }}' },
+					{ name: 'date', text: '@(From)', align: 1, width: 130, template: '{{ date | format(\'@(yyyy-MM-dd)\') }}' },
 					{ name: 'dtupdated', text: '@(Updated)', format: '[date]', width: 150, sort: false, align: 1, hide: true },
 					{ name: 'dtcreated', text: '@(Created)', format: '[date]', width: 150, sort: false, align: 1, hide: true },
 					{ name: '@(Options)', align: 1, filter: false, sort: false, width: 100, template: '<button title="@(Duplicate)" name="duplicate"><i class="far fa-copy"></i></button><button name="update" title="@(Edit)"><i class="fa fa-pencil"></i></button><button class="btn-remove" name="remove" title="@(Remove)"><i class="far fa-trash-o"></i></button>' }

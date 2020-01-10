@@ -10,3 +10,4 @@ error-pages-template       : Page doesn't have defined any template.
 error-newsletters-sending  : Newsletter is already sending mails.
 error-data                 : Invalid data.
 error-users-credentials    : Invalid credentials.
+error-contacforms-404      : Contact form not found.

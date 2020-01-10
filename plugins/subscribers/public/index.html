@@ -11,7 +11,7 @@
 
 		<section data-type="top2">
 			<div class="header">
-				<label><i class="far fa-file-alt"></i>@(List of subscribers)</label>
+				<label><i class="far fa-address-card"></i>@(List of subscribers)</label>
 				<nav data-bind="?.checked__enabled .S:value && value.length">
 					<button class="exec" data-exec="?/import"><i class="fa fa-cloud-upload"></i>@(Import)</button>
 					<button class="exec" data-exec="?/options"><i class="fa fa-wrench"></i>@(Options)</button>
@@ -25,7 +25,7 @@
 				<script type="text/plain">
 					[
 						{ name: 'email', text: '@(Email address)', width: 720, template: '{{ if unsubscribed }}<span class="badge badge-red mr5">@(unsubscribed)</span>{{ fi }}{{ email }}' },
-						{ name: 'datecreated', text: '@(Registered)', width: 200, template: '{{ datecreated | format(\'@(yyyy-MM-dd HH:mm)\') }}', align: 1, class: 'hidden-xs' },
+						{ name: 'datecreated', text: '@(Registered)', width: 200, template: '{{ datecreated | format(\'@(yyyy-MM-dd HH:mm)\') }}', align: 1 },
 						{ name: '@(Options)', align: 1, filter: false, sort: false, width: 100, template: '<button name="ban" title="@(Ban)"><i class="fa fa-ban"></i></button><button class="btn-remove" name="remove" title="@(Remove)"><i class="far fa-trash-o"></i></button>' }
 					]
 				</script>
@@ -66,7 +66,7 @@
 		exports.button = function(name, row, grid) {
 			switch (name) {
 				case 'remove':
-					SETTER('confirm', 'show2', '@(Are you sure you want to remove selected subscriber?)', ['"trash" @(Remove)', '@(No)'], function() {
+					SETTER('confirm', 'show2', '@(Are you sure you want to remove selected subscriber?)', ['"trash" @(Remove)', '@(Cancel)'], function() {
 						FUNC.loading(true);
 						AJAX('DELETE [url]api/subscribers/', { id: row.email }, function(response) {
 							FUNC.loading(false, 1000);
@@ -108,7 +108,7 @@
 						AJAX('GET [url]api/subscribers/toggle/', { id: arr.join(',') }, exports.refresh);
 						break;
 					case 'remove':
-						SETTER('confirm', 'show2', '@(Are you sure you want to remove all selected subscribers?)', ['"trash" @(Remove)', '@(No)'], function() {
+						SETTER('confirm', 'show2', '@(Are you sure you want to remove all selected subscribers?)', ['"trash" @(Remove)', '@(Cancel)'], function() {
 							FUNC.loading(true);
 							var arr = GET('?.checked');
 							arr.wait(function(el, next, index) {
@@ -150,7 +150,7 @@
 		};
 
 		exports.import = function() {
-			SET('?.import', { progress: 0, body: '' }, true);
+			SET('subscribersimport.import', { progress: 0, body: '' }, true);
 			SET('common.form', 'subscribersimport');
 		};
 

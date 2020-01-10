@@ -22,6 +22,7 @@ header .title .fa, header .title .fal { margin-right: 8px; }
 .ui-layout { background-color: #E0E0E0; }
 .ui-layout-section { background-color: white; }
 
+.gray { color: gray; }
 .header { height: 45px; padding: 0 10px 0 0; background-color: #F8F8F8; }
 .header label { float: left; font-size: 14px; font-weight: bold; height: 26px; line-height: 26px; margin: 10px 0 0 5px; padding: 0 10px 0; }
 .header label i { color: $color; }

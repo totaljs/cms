@@ -64,7 +64,7 @@
 				<script type="text/plain">
 				[
 					{ name: 'path', text: '@(Name)', width: 300, template: '{{ language | language }}{{ if icon }}<i class="{{ icon }} mr5"></i>{{ fi }}{{ path | pagespath }}{{ if draft }}<span class="badge badge-red ml5">@(draft)</span>{{ fi }}{{ if ispartial }}<span class="badge badge-green ml5">@(partial)</span>{{ fi }}', classth: 'left', classfilter: 'left' },
-					{ name: 'url', text: '@(URL address)', width: 230, template: '{{ if ispartial }}<span class="silver">{{ url }}</span>{{ else }}{{ url }}{{ fi }}', class: 'hidden-xs' },
+					{ name: 'url', text: '@(URL address)', width: 230, template: '{{ if ispartial }}<span class="silver">{{ url }}</span>{{ else }}{{ url }}{{ fi }}' },
 					{ name: 'language', text: '@(Language)', width: 80, sort: false, align: 1 },
 					{ name: 'dtupdated', text: '@(Updated)', format: '[date]', width: 150, sort: false, align: 1 },
 					{ name: 'dtcreated', text: '@(Created)', format: '[date]', width: 150, sort: false, align: 1, hide: true },
