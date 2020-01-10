@@ -5,9 +5,9 @@ $font    : Arial;
 
 html,body { overflow: hidden; }
 
-body { background-color: #E0E0E0; }
+body { background-color: white; }
 
-header { height: 58px; background-color: white; background: linear-gradient(130deg, #E0E0E0 80%, #F0F0F0 80%); border: 1px solid #DEDEDE; }
+header { height: 58px; background-color: white; background: linear-gradient(130deg, #E0E0E0 80%, #F0F0F0 80%); border: 1px solid #DEDEDE; box-shadow: inset 0 -10px 10px rgba(0,0,0,0.03); }
 header .logout { float: left; font-size: 16px; color: red; border-left: 1px solid #D0D0D0; width: 60px; height: 40px; line-height: 40px; text-align: center; cursor: pointer; margin: 8px 0 0 10px; }
 header nav { float: left; margin: 8px 0 0 10px; }
 header nav button { width: 38px; height: 38px; text-align: center; font-size: 16px; line-height: 37px; border: 1px solid transparent; outline: 0; background-color: transparent; color: rgba(0,0,0,0.6); border-radius: 2px; }
@@ -36,9 +36,6 @@ header .title .fa, header .title .fal { margin-right: 8px; }
 .header button .fa-check-circle, .header button .fa-plus-circle, .header button .fa-check { color: #68B25B; }
 .header button .fa-times, .header button .fa-times-circle, .header button .fa-trash-o { color: #e73323; }
 .header .highlight { background-color: #FFFFD5; }
-
-.smallcaption { font-size: 10px; color: #888; font-weight: bold; margin-bottom: 10px; text-transform: uppercase; }
-.smallcaption i { margin-right: 5px; }
 
 hr { border-color: #E0E0E0; }
 
@@ -82,15 +79,6 @@ hr { border-color: #E0E0E0; }
 .uppercase { text-transform: uppercase; }
 .inline { position: relative; display: inline-block; }
 
-.buttonmenu { border: 1px solid #1A88E0; border-radius: 2px; }
-.buttonmenu button{ display: block; width: 100%; background-color: white; border: 0; text-align: left; padding: 0 10px 0 5px; border-top: 1px solid #1A88E0; height: 26px; font-size: 12px; color: #1A88E0; outline: 0; }
-.buttonmenu button:first-child { border-top: 0; border-top-left-radius: 2px; border-top-right-radius: 2px; }
-.buttonmenu button:last-child { border-bottom-left-radius: 2px; border-bottom-right-radius: 2px; }
-.buttonmenu button:hover { background-color: #1A88E0; color: white; }
-.buttonmenu button:hover .fa, .buttonmenu button:hover .fal, .buttonmenu button:hover .far { border-right-color: white; }
-.buttonmenu button .fa, .buttonmenu button .fal, .buttonmenu button .far { width: 24px; border-right: 1px solid #1A88E0; margin-right: 10px; text-align: center; padding-right: 3px; }
-
-.b { font-weight: bold; }
 .silver { color: #999999 !important; }
 .red { color: #D63B32 !important; }
 .blue { color: $color !important; }
@@ -98,36 +86,26 @@ hr { border-color: #E0E0E0; }
 .green { color: #68B25B !important; }
 
 .fs11 { font-size: 11px !important; }
-.help { font-size: 11px; color: #A0A0A0; margin-top: 8px; line-height: 13px; }
-.help .fa, .help .far, .help .fal { margin-right: 5px; }
-.help code { font: normal normal 11px $font; background-color: #F0F0F0; padding: 1px 3px; border-radius: 2px; border: 1px solid #E0E0E0; }
 
-.m { margin-bottom: 15px; }
 .mt5 { margin-top: 5px; }
 .mr5 { margin-right: 5px; }
 .mr10 { margin-right: 10px; }
 .ml5 { margin-left: 5px; }
-.mt10 { margin-top: 10px; }
-.nmb { margin-bottom: 0 !important; }
-.nmt { margin-top: 0 !important; }
-.npt { padding-top: 0 !important; }
-.npb { padding-bottom: 0 !important; }
 .np { padding: 0; }
 .fs12 { font-size: 12px; }
 
 .ui-layout-section .padding { padding: 10px; }
-.margin { margin: 10px; }
 .singleline { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 h1 { font-weight: 400; font-family: $font; margin: 0 0 20px 0; padding: 0; color: black; font-size: 30px; }
 h1 b { font-weight: 700; }
 
 h2 { font-weight: 700; font-family: $font; margin: 0 0 20px 0; padding: 0; color: black; font-size: 22px; }
-h2 .fa { margin-right: 8px; }
+h2 i { margin-right: 8px; }
 
 h3 { font-weight: 700; font-family: $font; margin: 0 0 20px 0; padding: 0; color: black; font-size: 18px; }
 h3 b { font-weight: 700; }
-h3 .fa, h3 .far, h3 .fal { margin-right: 8px; }
+h3 i { margin-right: 8px; }
 
 .caption { font-size: 12px; text-transform: uppercase; margin-bottom: 15px; color: black; font-weight: bold; border: 1px solid #808080; padding: 0 7px; border-radius: 2px; line-height: 26px; }
 .caption i { margin-right: 5px; border-right: 1px solid black; padding-right: 5px; }

@@ -800,3 +800,15 @@ input { border-radius: 0; }
 .ui-large .ui-statsbarsimple-table > div { line-height: 28px; font-size: 13px; }
 
 .initials { width: 37px; height: 37px; text-align: center; color: white; display: block; padding: 8px 0 0; font-weight: bold; border-radius: 100px; cursor: default; }
+
+.ui-tooltip { position: absolute; z-index: 80; pointer-events: none; z-index: 1000; transition: opacity 0.2s; opacity: 0; }
+.ui-tooltip-visible { opacity: 1; }
+.ui-tooltip-body { padding: 5px 10px; font-size: 11px; background:rgba(0,0,0,0.9); color: white; border-radius: 2px; }
+.ui-tooltip-body::before { content: ''; position: absolute; top: -20px; left: 50%; transform: translateX(-50%); border-width: 5px 7px 0 7px; border-style: solid; border-color: rgba(0,0,0,0.9) transparent transparent transparent; z-index: 1000; }
+.ui-tooltip-arrow-left::before { left: 100%; top: 50%; margin-left: -5px; transform: translatey(-50%) rotate(-90deg); }
+.ui-tooltip-arrow-top::before { left: 50%; top: 100%; }
+.ui-tooltip-arrow-bottom::before { top: -8px; margin-top: 8px; transform: translateX(-50%) translatey(-100%) rotate(-180deg); }
+.ui-tooltip-arrow-right::before { left: -9px; top: 50%; transform: translatey(-50%) rotate(90deg); }
+
+.ui-dark .ui-tooltip-body { background:rgba(255,255,255,0.9); color: black; }
+.ui-dark .ui-tooltip-body::before { border-color: rgba(255,255,255,0.9) transparent transparent transparent; }

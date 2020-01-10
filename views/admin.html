@@ -115,9 +115,16 @@
 			obj.form = '';
 			obj.form2 = ''; // Form 2nd level
 			obj.form3 = ''; // Form 3nd level
+
+			setTimeout(function(obj) {
+				if (obj.pagecache)
+					EXEC('main/plugin', obj.pagecache);
+				else
+					EXEC('main/plugin', common.nav[0].id);
+			}, 100, obj);
 		});
 
-		CACHEPATH('common.page', '1 week');
+		CACHEPATH('common.pagecache', '1 week');
 
 		ON('page', function(item) {
 			SET('common.title', item.name);
@@ -334,6 +341,7 @@
 				var item = common.nav.findItem('value', id);
 				EMIT('page', item);
 				SET('common.page', id);
+				SET('common.pagecache', id);
 			};
 
 			exports.logout = function() {
