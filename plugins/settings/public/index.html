@@ -85,6 +85,18 @@
 										<div class="help">@(Signals can affect a behaviour in pages or posts)</div>
 									</div>
 								</div>
+
+								<div class="row">
+									<div class="col-md-6 m">
+										<div data---="input__?.form.cookie__required:1;maxlength:30">@(Cookie name)</div>
+										<div class="help">@(A cookie name for administration area)</div>
+									</div>
+									<div class="col-md-6 m">
+										<div data---="input__?.form.cdn__required:1;maxlength:150">@(CDN)</div>
+										<div class="help">@(The link will be added to each external resource from Total.js Platform)</div>
+									</div>
+								</div>
+
 							</div>
 
 							<div class="panelbody bg-smoke">
@@ -156,7 +168,12 @@
 						</script>
 					</div>
 				</div>
+
+				<br />
+				<br />
+
 			</div>
+
 		</section>
 	</div>
 </div>
@@ -265,8 +282,7 @@
 		var builder = [];
 		for (var i = 0; i < value.length; i++) {
 			var role = common.roles.findItem('id', value[i]);
-			if (role)
-				builder.push(role.name);
+			role && builder.push(role.name);
 		}
 		return builder.join(', ') || DEF.empty;
 	};

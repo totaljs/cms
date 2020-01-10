@@ -28,7 +28,8 @@ NEWSCHEMA('Settings', function(schema) {
 	schema.define('smtp', String);
 	schema.define('smtpoptions', 'JSON');
 	schema.define('componentator', Boolean);
-	// schema.define('cookie', 'String(30)', true);
+	schema.define('cookie', 'String(30)', true);
+	schema.define('cdn', String, true);
 
 	schema.setGet(function($) {
 		$.callback(PREF);
@@ -93,6 +94,9 @@ NEWSCHEMA('Settings', function(schema) {
 		if (PREF.componentator == null)
 			PREF.componentator = true;
 
+		if (!PREF.cdn)
+			PREF.cdn = '//cdn.componentator.com';
+
 		CONF.url = PREF.url;
 		MAIN.users = [];
 
@@ -133,6 +137,7 @@ NEWSCHEMA('Settings', function(schema) {
 		// Rewrites internal framework settings
 		CONF.mail_address_from = PREF.emailsender;
 		CONF.mail_address_reply = PREF.emailreply;
+		CONF.cdn = PREF.cdn;
 
 		!PREF.signals && PREF.set('signals', []);
 		!PREF.languages && PREF.set('languages', []);
