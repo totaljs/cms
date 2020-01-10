@@ -9,7 +9,9 @@ body { background-color: white; }
 
 header { height: 58px; background-color: white; background: linear-gradient(130deg, #E0E0E0 80%, #F0F0F0 80%); border: 1px solid #DEDEDE; box-shadow: inset 0 -10px 10px rgba(0,0,0,0.03); }
 header .logout { float: left; font-size: 16px; color: red; border-left: 1px solid #D0D0D0; width: 60px; height: 40px; line-height: 40px; text-align: center; cursor: pointer; margin: 8px 0 0 10px; }
-header nav { float: left; margin: 8px 0 0 10px; }
+header > a { float: left; width: 38px; height: 38px; text-align: center; font-size: 22px; line-height: 37px; border: 1px solid transparent; outline: 0; background-color: transparent; color: rgba(0,0,0,0.6); border-radius: 2px; margin: 8px 0 0 4px; color: black; transition: color 0.2s; }
+header > a:hover { color: #505050; }
+header nav { float: left; margin: 8px 0 0 5px; border-left: 1px solid #D0D0D0; padding-left: 10px; }
 header nav button { width: 38px; height: 38px; text-align: center; font-size: 16px; line-height: 37px; border: 1px solid transparent; outline: 0; background-color: transparent; color: rgba(0,0,0,0.6); border-radius: 2px; }
 header nav button:hover { color: black; }
 header nav button.selected { background-color: white; color: black; border: 1px solid white; box-shadow: 0 2px 2px rgba(0,0,0,0.05); }
