@@ -15,7 +15,7 @@
 				<label><i class="fa fa-plug"></i>@(List of widgets)</label>
 				<nav data-bind="?.checked__enabled .S:value && value.length">
 					<button class="exec" data-exec="?/create"><i class="fa fa-plus-circle green"></i>@(Create)</button>
-					<button class="exec" data-exec="?/import"><i class="fa fa-cloud-download"></i>@(Import)</button>
+					<button class="exec" data-exec="?/import" data-bind="common.componentator__show"><i class="fa fa-cloud-download"></i>@(Import)</button>
 					<button class="exec" data-exec="?/options"><i class="fa fa-wrench"></i>@(Options)</button>
 					<button class="exec S" data-exec="?/checked" disabled><i class="fa fa-check-circle"></i>@(Checked)</button>
 				</nav>

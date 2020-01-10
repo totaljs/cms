@@ -1,3 +1,5 @@
+const COOKIE_OPTIONS = { security: 'strict', httponly: true };
+
 NEWSCHEMA('SettingsKeyValue', function(schema) {
 	schema.define('id', 'String(50)', true);
 	schema.define('name', 'String(50)', true);
@@ -109,6 +111,8 @@ NEWSCHEMA('Settings', function(schema) {
 		for (var i = 0, length = MAIN.users.length; i < length; i++) {
 			var user = MAIN.users[i];
 			var key = (user.login + ':' + user.password + ':' + CONF.secret + (user.login + ':' + user.password).hash() + CONF.admin_secret).sha256();
+			if ($.controller && $.user.id === user.id)
+				$.cookie(CONF.admin_cookie, key, '1 month', COOKIE_OPTIONS);
 			users[key] = user;
 		}
 
