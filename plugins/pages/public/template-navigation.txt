@@ -30,7 +30,7 @@
 			h3 { font-family: Arial; margin: 0 0 10px 0; padding: 0; font-weight: 700; font-size: 18px; }
 
 			header { border-bottom: 1px solid #E0E0E0; height: 80px; }
-			header nav { margin: 5px 0 0 30px; padding: 18px 0 18px 30px; float: right; }
+			header nav { margin: 5px 15px 0 30px; padding: 18px 0 18px 30px; float: right; }
 			header nav a { font-size: 14px; color: black; text-transform: uppercase; font-weight: bold; margin-left: 10px; padding: 5px 7px; display: inline-block; position: relative; font-family: Arial; border-radius: 2px; }
 			header nav a:first-child { margin-left: 0; }
 			header nav a:hover { text-decoration: none; color: #505050; }
@@ -44,7 +44,7 @@
 			.mobilemenu button i { transition: all 0.2s; }
 			.mobilemenu button:hover { color: black; }
 			.mobilemenu-visible .mobilemenu i { transform: rotate(-90deg); }
-			.mobilemenu-visible { color: #A0A0A0 !important; border-color: #A0A0A0 !important; }
+			.mobilemenu-visible .mobilemenu button { color: #A0A0A0 !important; border-color: #A0A0A0 !important; }
 
 			.breadcrumb { margin: 5px 0 20px; padding: 8px 0; list-style-type: none; font: normal normal 11px Arial; }
 			.breadcrumb i { margin-right: 5px; }
