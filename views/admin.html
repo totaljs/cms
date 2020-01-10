@@ -59,7 +59,7 @@
 
 	<div id="parts">
 		@{foreach m in MAIN.plugins}
-		<div data---="part__common.page__if:@{m.id};url:@{#}/_@{m.id}/index.html;reload:@{m.id}/reload;hidden:@{m.id}/hidden"></div>
+		<div data---="part__common.page__if:@{m.id};url:@{#}/_@{m.id}/index.html;reload:@{m.id}/reload;hidden:@{m.id}/hidden" data-id="@{m.id}" class="hidden"></div>
 		@{end}
 	</div>
 
@@ -87,14 +87,6 @@
 
 		ENV('url', '/admin/');
 		ENV('date', '@(yyyy-MM-dd - HH:mm)');
-
-		WATCH('common.nav', function(path, value) {
-			var roles = [];
-			for (var i = 0; i < value.length; i++)
-				roles.push({ id: value[i].role, name: value[i].name });
-			// ENV('roles', roles.join(','));
-			SET('common.roles', roles)
-		}, true);
 
 		CONFIG('input', 'dirplaceholder:@(Search)');
 
@@ -124,6 +116,26 @@
 					EXEC('main/plugin', common.nav[0].id);
 			}, 100, obj);
 		});
+
+		(function() {
+
+			var roles = [];
+			var parts = $('#parts');
+
+			if (!user.sa || user.roles.length) {
+				common.nav = common.nav.remove(function(plugin) {
+					var is = user.roles.indexOf(plugin.role) === -1;
+					is && parts.find('div[data-id="{0}"]'.format(plugin.id)).remove();
+					return is;
+				});
+			}
+
+			var value = common.nav;
+			for (var i = 0; i < value.length; i++)
+				roles.push({ id: value[i].role, name: value[i].name });
+			SET('common.roles', roles);
+
+		})();
 
 		CACHEPATH('common.pagecache', '1 week');
 
@@ -340,9 +352,11 @@
 			exports.plugin = function(el) {
 				var id = el instanceof jQuery ? el.attrd('if') : el;
 				var item = common.nav.findItem('value', id);
-				EMIT('page', item);
-				SET('common.page', id);
-				SET('common.pagecache', id);
+				if (item) {
+					EMIT('page', item);
+					SET('common.page', id);
+					SET('common.pagecache', id);
+				}
 			};
 
 			exports.logout = function() {

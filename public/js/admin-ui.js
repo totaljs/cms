@@ -1907,10 +1907,47 @@ COMPONENT('crop', 'dragdrop:true;format:{0}', function(self, config) {
 		return type ? canvas2.toDataURL(type) : !config.background && self.isTransparent(canvas2) ? canvas2.toDataURL('image/png') : canvas2.toDataURL('image/jpeg');
 	};
 
+	self.grayscale = function() {
+
+		var canvas2 = document.createElement('canvas');
+		var ctx2 = canvas2.getContext('2d');
+
+		canvas2.width = config.width;
+		canvas2.height = config.height;
+
+		ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+		if (config.background) {
+			ctx2.fillStyle = config.background;
+			ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
+		}
+
+		var w = img.width;
+		var h = img.height;
+
+		w = ((w / 100) * zoom);
+		h = ((h / 100) * zoom);
+
+		ctx2.drawImage(img, current.x || 0, current.y || 0, w, h);
+
+		var imgdata = ctx2.getImageData(0, 0, canvas2.width, canvas2.height);
+		var data = imgdata.data;
+		for (var i = 0; i < data.length; i += 4) {
+			var brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+			data[i] = brightness;
+			data[i + 1] = brightness;
+			data[i + 2] = brightness;
+		}
+
+		ctx2.putImageData(imgdata, 0, 0);
+		img.src = canvas2.toDataURL();
+		self.redraw();
+	};
+
 	self.make = function() {
 
 		self.aclass('ui-crop');
-		self.append('<ul><li data-type="upload"><span class="fa fa-folder"></span></li><li data-type="plus"><span class="fa fa-plus"></span></li><li data-type="refresh"><span class="fa fa-refresh"></span></li><li data-type="minus"><span class="fa fa-minus"></span></li></ul><div>0x0</div><canvas width="200" height="100"></canvas>');
+		self.append('<ul><li data-type="upload"><span class="fa fa-folder"></span></li><li data-type="plus"><span class="fa fa-plus"></span></li><li data-type="refresh"><span class="fa fa-refresh"></span></li><li data-type="minus"><span class="fa fa-minus"></span></li><li data-type="minus"><span class="fa fa-minus"></span></li><li data-type="grayscale"><span class="fa fa-adjust"></span></li></ul><div>0x0</div><canvas width="200" height="100"></canvas>');
 
 		canvas = self.find('canvas')[0];
 		context = canvas.getContext('2d');
@@ -1923,6 +1960,10 @@ COMPONENT('crop', 'dragdrop:true;format:{0}', function(self, config) {
 			var type = $(this).attr('data-type');
 
 			switch (type) {
+				case 'grayscale':
+					self.grayscale();
+					self.change(true);
+					break;
 				case 'upload':
 					cmseditor.instance.filebrowser(img, (/^image\/*/));
 					self.change(true);

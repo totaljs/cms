@@ -230,7 +230,7 @@ input { border-radius: 0; }
 .ui-crop { text-align: center; padding: 0 0 85px; position: relative; width: 100%; user-select: none; }
 .ui-crop canvas { cursor: crosshair; border: 1px solid #4285F4; }
 .ui-crop-dragdrop canvas { border: 1px dashed red !important; }
-.ui-crop ul { position:absolute; list-style-type: none; margin: 0; padding: 0; left: 50%; margin-left: -60px; bottom: 40px; width: 120px; color: white; text-align: center; }
+.ui-crop ul { position:absolute; list-style-type: none; margin: 0; padding: 0; left: 50%; margin-left: -90px; bottom: 40px; width: 180px; color: white; text-align: center; }
 .ui-crop ul li { font-size: 12px; padding: 3px 0; width: 25px; margin-left: 5px; position: relative; display: inline-block; cursor: pointer; text-align: center; background-color: #4285F4; line-height: 20px; border-radius: 2px; user-select: none; }
 .ui-crop ul li:first-child { border-left: 0; margin-left: 0; }
 .ui-crop ul li:hover { opacity: 0.9;}
