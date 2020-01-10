@@ -1,3 +1,5 @@
+const Fs = require('fs');
+
 NEWSCHEMA('Common', function(schema) {
 
 	// Reads backuped items
@@ -32,11 +34,22 @@ NEWSCHEMA('Common', function(schema) {
 			};
 		};
 
+		var remove = function(name) {
+			return function(next) {
+				Fs.unlink(PATH.databases(name + '.nosql-backup'), next);
+			};
+		};
+
 		var arr = [];
 		arr.push(clean('pagesdata'));
 		arr.push(clean('postsdata'));
 		arr.push(clean('partsdata'));
 		arr.push(clean('newslettersdata'));
+		arr.push(remove('notices'));
+		arr.push(remove('pages'));
+		arr.push(remove('posts'));
+		arr.push(remove('widgets'));
+		arr.push(remove('newsletters'));
 		arr.async();
 
 		$.success();
