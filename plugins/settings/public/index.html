@@ -193,6 +193,9 @@
 
 				var tmp = {};
 
+				if ((/\d\.\d/).test(response.url))
+					response.url = location.protocol + '//' + location.hostname;
+
 				response.languages && response.languages.forEach(function(item) {
 					if (typeof(item) === 'string')
 						tmp[item] = item;
