@@ -2,6 +2,9 @@ name                      : CMS
 version                   : 13.0.0
 author                    : Peter Širka
 
+// CDN
+cdn                       : //cdn.componentator.com
+
 // Hidden super admin in the form username:password
 admin_cookie              : __admin
 
