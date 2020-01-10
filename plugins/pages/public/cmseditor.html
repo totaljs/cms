@@ -5,17 +5,17 @@
 	</div>
 </script>
 
-<div data---="importer__cmseditor.form__if:sourcecode;url:@{#}/_pages/form-cmseditor-sourcecode.html;cleaner:5"></div>
-<div data---="importer__cmseditor.form__if:link;url:@{#}/_pages/form-cmseditor-link.html;cleaner:5"></div>
-<div data---="importer__cmseditor.form__if:attribute;url:@{#}/_pages/form-cmseditor-attribute.html;cleaner:5"></div>
-<div data---="importer__cmseditor.form__if:picture;url:@{#}/_pages/form-cmseditor-picture.html;cleaner:5"></div>
-<div data---="importer__cmseditor.form__if:widgets;url:@{#}/_pages/form-cmseditor-widgets.html;cleaner:5"></div>
-<div data---="importer__cmseditor.form__if:icons;url:@{#}/_pages/form-cmseditor-icons.html;cleaner:5"></div>
-<div data---="importer__cmseditor.form__if:styles;url:@{#}/_pages/form-cmseditor-styles.html;cleaner:5"></div>
-<div data---="importer__cmseditor.form__if:settings;url:@{#}/_pages/form-cmseditor-settings.html;cleaner:5"></div>
-<div data---="importer__cmseditor.form__if:part;url:@{#}/_pages/form-cmseditor-part.html;cleaner:5"></div>
-<div data---="importer__cmseditor.form__if:inject;url:@{#}/_pages/form-cmseditor-inject.html;cleaner:5"></div>
-<div data---="importer__common.form2__if:tracking;url:@{#}/_pages/form-cmseditor-tracking.html;cleaner:5"></div>
+<div data---="importer__cmseditor.form__if:sourcecode;url:@{#}/_pages/form-cmseditor-sourcecode.html"></div>
+<div data---="importer__cmseditor.form__if:link;url:@{#}/_pages/form-cmseditor-link.html"></div>
+<div data---="importer__cmseditor.form__if:attribute;url:@{#}/_pages/form-cmseditor-attribute.html"></div>
+<div data---="importer__cmseditor.form__if:picture;url:@{#}/_pages/form-cmseditor-picture.html"></div>
+<div data---="importer__cmseditor.form__if:widgets;url:@{#}/_pages/form-cmseditor-widgets.html"></div>
+<div data---="importer__cmseditor.form__if:icons;url:@{#}/_pages/form-cmseditor-icons.html"></div>
+<div data---="importer__cmseditor.form__if:styles;url:@{#}/_pages/form-cmseditor-styles.html"></div>
+<div data---="importer__cmseditor.form__if:settings;url:@{#}/_pages/form-cmseditor-settings.html"></div>
+<div data---="importer__cmseditor.form__if:part;url:@{#}/_pages/form-cmseditor-part.html"></div>
+<div data---="importer__cmseditor.form__if:inject;url:@{#}/_pages/form-cmseditor-inject.html"></div>
+<div data---="importer__common.form2__if:tracking;url:@{#}/_pages/form-cmseditor-tracking.html"></div>
 
 <input type="file" class="hidden" id="cmseditor_inlineupload" accept="image/*" />
 
@@ -663,6 +663,15 @@
 			var item = cmseditor.history.pop();
 			if (!item)
 				return;
+
+			self.getToolbar().hide();
+
+			if (target) {
+				self.endedit();
+				target.rattr('contentEditable');
+				target.rclass('CMS_selected');
+				target = null;
+			}
 
 			UPD('cmseditor.history');
 
