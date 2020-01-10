@@ -94,7 +94,7 @@
 										<div class="value" data-bind="?.stats.today.desktop__html:?/count(value)"></div>
 										<div class="key"><i class="fa fa-square" style="color:#4781B8"></i>@(Desktop computers)</div>
 									</div>
-									<div data---="statsbarsimple__?.stats.today --> ?/mobiledesktop(value)" style="margin-top:7px">
+									<div data---="statsbarsimple__?.stats.today.devices" style="margin:7px 0">
 										<script type="text/html">
 											{{ name }} {{ percentage }}%
 										</script>
@@ -341,24 +341,6 @@
 			return (value || 0).format(0) + 'x';
 		};
 
-		exports.mobiledesktop = function(value) {
-
-
-			if (!value)
-				return '';
-
-			var max = value.mobile + value.desktop;
-			var mobile = 0;
-
-			if (max)
-				mobile = (value.mobile / max) * 100;
-			else
-				mobile = 50;
-
-			var p = mobile < 10 ? 10 : mobile;
-			return [{ name: '@(Mobile devices)', value: value.mobile, color: '#EF914E' }, { name: '@(Desktop devices)', value: value.desktop, color: '#4781B8' }]
-		};
-
 		exports.getOnline = function() {
 
 			if (common.page !== 'dashboard')
@@ -367,6 +349,18 @@
 			AJAX('GET [url]api/dashboard/online/', function(response) {
 				//response.hoursavg = response.hours.filter(FN('n => n > 0')).scalar('median') >> 0;
 				SET('?.stats.sources', [{ name: '@(Social networks)', value: response.social, id: 'social' }, { name: '@(Visitors from advert)', value: response.advert, id: 'advert' }, { name: '@(Organic search)', value: response.search, id: 'search' }, { name: '@(Direct visitors)', value: response.direct, id: 'direct' }, { name: '@(From unknown sources)', value: response.unknown, id: 'unknown' }]);
+
+
+				var max = (response.mobile || 0) + (response.desktop || 0);
+				var mobile = 50;
+				var desktop = 50;
+
+				if (max) {
+					mobile = (response.mobile / max) * 100;
+					desktop = (response.desktop / max) * 100;
+				}
+
+				response.devices = [{ name: '@(Mobile devices)', value: mobile, color: '#EF914E' }, { name: '@(Desktop devices)', value: desktop, color: '#4781B8' }];
 				SET('?.stats.today', response);
 			});
 		};
@@ -502,7 +496,7 @@
 		});
 	});
 
-	COMPONENT('dashboardvisitors', 'count:16', function(self, config, cls) {
+	COMPONENT('dashboardvisitors', 'count:15', function(self, config, cls) {
 
 		var container, counter = 0, Tempty;
 
