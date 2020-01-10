@@ -2041,6 +2041,25 @@ COMPONENT('crop', 'dragdrop:true;format:{0}', function(self, config) {
 			samesize = '';
 			self.redraw();
 		});
+
+		$(W).on('paste', self.paste);
+	};
+
+	self.paste = function(e) {
+
+		if (config.disabled)
+			return;
+
+		var item = e.originalEvent.clipboardData.items[0];
+		if (item.kind !== 'file' || item.type.substring(0, 5) !== 'image')
+			return;
+
+		var blob = item.getAsFile();
+		self.load(blob);
+	};
+
+	self.destroy = function() {
+		$(W).off('paste', self.paste);
 	};
 
 	self.redraw = function() {

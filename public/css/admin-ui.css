@@ -227,7 +227,7 @@ input { border-radius: 0; }
 	.ui-confirm button { display: block; margin: 8px 0 0; display: block; width: 100%; }
 }
 
-.ui-crop { text-align: center; padding: 40px 0 85px; background-color: #FFFFF5; position: relative; width: 100%; user-select: none; }
+.ui-crop { text-align: center; padding: 0 0 85px; background-color: #FFFFF5; position: relative; width: 100%; user-select: none; }
 .ui-crop canvas { cursor: crosshair; border: 1px solid #4285F4; }
 .ui-crop-dragdrop canvas { border: 1px dashed red !important; }
 .ui-crop ul { position:absolute; list-style-type: none; margin: 0; padding: 0; left: 50%; margin-left: -60px; bottom: 40px; width: 120px; color: white; text-align: center; }

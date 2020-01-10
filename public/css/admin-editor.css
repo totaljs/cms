@@ -42,7 +42,7 @@ iframe.CMS_edit { padding: 5px; border: 15px solid red;}
 .CMS_preview *[data-jc=checkbox]:before { width: 15px; height: 15px; background-color: #F0F0F0; background-image: repeating-linear-gradient(45deg, #E0E0E0, #E0E0E0 10px, #F0F0F0 10px, #F0F0F0 20px); margin-right: 5px; content: ' '; display: block; float: left; border-radius: 3px; }
 .CMS_preview .CMS_part:before { position: absolute; content: attr(data-cms-part); color: white; background-color: #67C23A; padding: 2px 5px 2px 3px; border-radius: 2px; margin: -15px 0 0 0; font-size: 9px; border-left: 3px solid #5EB436; }
 .CMS_preview [data-cms-info]:before { position: absolute; content: attr(data-cms-info); color: black; background-color: #ebe36a; padding: 2px 5px 2px 3px; border-radius: 2px; margin: -15px 0 0 0; font-size: 9px; }
-.CMS_preview img[alt=""], .CMS_preview a[href=""] { outline: 3px dashed red !important; }
+/*.CMS_preview img[alt=""], .CMS_preview a[href=""] { outline: 3px dashed red !important; }*/
 .CMS_preview a[data-cms-track] { outline: 2px dashed blue; }
 .CMS_remove { min-height: 10px; }
 *[contentEditable] { cursor: text; }

@@ -1,7 +1,8 @@
-<div data---="form__cmseditor.form__if:picture;width:900;submit:cmseditorpicture/submit;scrollbar:true;$id:cmseditor.crop.modal;title:@(Picture editor);icon:picture-o" class="hidden">
+<div data---="form__cmseditor.form__if:picture;width:900;submit:cmseditorpicture/submit;scrollbar:true;$id:cmseditor.crop.modal;title:@(Picture editor);icon:camera" class="hidden">
 	<div data---="crop__cmseditor.crop.url__width:200;height:100;$id:cmseditor.crop"></div>
+	<hr class="nmt nmb" />
 	<div class="padding">
-		<div data---="input__cmseditor.crop.alt">@(Alternate text)</div>
+		<div data---="input__cmseditor.crop.alt__placeholder:@(Describe the picture)">@(Alternate text)</div>
 	</div>
 	<div class="hidden" data-bind="cmseditor.crop.ishref__show:value">
 		<hr class="nmb nmt" />
@@ -11,7 +12,7 @@
 					<div data---="input__cmseditor.crop.href2__dirsource:%links;icon:sitemap;dirkey:path;dirvalue:url">@(URL according to the sitemap)</div>
 				</div>
 				<div class="col-md-6 m">
-					<div data---="input__cmseditor.crop.href">@(URL address)</div>
+					<div data---="input__cmseditor.crop">@(URL address)</div>
 				</div>
 			</div>
 		</div>
