@@ -16,6 +16,8 @@ NEWSCHEMA('Settings/SuperUser', function(schema) {
 
 NEWSCHEMA('Settings', function(schema) {
 
+	schema.define('name', 'String(50)', true);
+	schema.define('author', 'String(50)');
 	schema.define('emailcontactform', 'Email', true);
 	schema.define('emailreply', 'Email', true);
 	schema.define('emailsender', 'Email', true);
@@ -93,7 +95,11 @@ NEWSCHEMA('Settings', function(schema) {
 
 		CONF.url = PREF.url;
 		MAIN.users = [];
-		CONF.admin_cookie = PREF.cookie || '__admin';
+
+		if (!PREF.cookie)
+			PREF.cookie = '__admin';
+
+		CONF.admin_cookie = PREF.cookie;
 
 		// Refreshes internal informations
 		if (PREF.users && PREF.users.length)
@@ -117,6 +123,12 @@ NEWSCHEMA('Settings', function(schema) {
 		}
 
 		MAIN.users = users;
+
+		if (PREF.name)
+			CONF.name = PREF.name;
+
+		if (PREF.author)
+			CONF.author = PREF.author;
 
 		// Rewrites internal framework settings
 		CONF.mail_address_from = PREF.emailsender;

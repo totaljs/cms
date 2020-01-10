@@ -34,17 +34,25 @@
 						<label><i class="fa fa-globe"></i>@(Main settings)</label>
 						<div class="panelbody">
 							<div class="row">
-								<div class="col-md-3 m b">
+								<div class="col-md-4 m b">
+									<div data---="input__?.form.name__required:1;placeholder:@(Total.js Platform)">@(Website name)</div>
+								</div>
+								<div class="col-md-4 m b">
 									<div data---="input__?.form.url__required:1;placeholder:@(https://www.totaljs.com)">@(URL address)</div>
 								</div>
-								<div class="col-md-3 m">
-									<div data---="input__?.form.emailsender__required:1;type:email">@(Email for sending)</div>
+								<div class="col-md-4 m">
+									<div data---="input__?.form.author__required:1;placeholder:@(Total Avengers)">@(Author)</div>
 								</div>
-								<div class="col-md-3 m">
-									<div data---="input__?.form.emailcontactform__required:1;type:email">@(Email for contact form)</div>
+							</div>
+							<div class="row">
+								<div class="col-md-4 m">
+									<div data---="input__?.form.emailsender__required:1;type:email__'@'">@(Email for sending)</div>
 								</div>
-								<div class="col-md-3 m">
-									<div data---="input__?.form.emailreply__required:1;type:email">@(Email for answers)</div>
+								<div class="col-md-4 m">
+									<div data---="input__?.form.emailcontactform__required:1;type:email__'@'">@(Email for contact form)</div>
+								</div>
+								<div class="col-md-4 m">
+									<div data---="input__?.form.emailreply__required:1;type:email__'@'">@(Email for answers)</div>
 								</div>
 							</div>
 						</div>
@@ -89,10 +97,6 @@
 										<div data---="input__?.form.smtpoptions__icon:code;placeholder:@(SMTP options)">@(SMTP options)</div>
 										<div class="help">@(Options need to be defined in JSON format according) <a href="https://docs.totaljs.com/latest/en.html#api~FrameworkConfiguration~mail-smtp-options" target="_blank">Total.js specification</a></div>
 									</div>
-								</div>
-								<hr class="nmt" />
-								<div class="help m">
-									<span class="link b exec" data-exec="?/test"><i class="fa fa-refresh"></i>@(Test SMTP server)</span>
 								</div>
 							</div>
 
