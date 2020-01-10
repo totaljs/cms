@@ -1,7 +1,7 @@
 NEWSCHEMA('Notices', function(schema) {
 
 	schema.define('id', UID);
-	schema.define('categoryid', 'String(50)', true);
+	schema.define('category', 'String(50)', true);
 	schema.define('name', 'String(200)', true);
 	schema.define('author', 'String(30)', true);
 	schema.define('body', String, true);
@@ -85,11 +85,8 @@ NEWSCHEMA('Notices', function(schema) {
 		}
 
 		!model.date && (model.date = NOW);
-
-		var category = PREF.notices.findItem('id', model.categoryid);
-
-		model.category = category ? category.name : '';
 		model.search = ((model.name || '') + ' ' + (model.body || '')).keywords(true, true).join(' ').max(1000);
+		model.linker_category = model.category.slug();
 
 		var db = isUpdate ? nosql.modify(model).where('id', model.id).backup(user).log('Update: ' + model.id, user) : nosql.insert(model).log('Create: ' + model.id, user);
 
@@ -97,7 +94,11 @@ NEWSCHEMA('Notices', function(schema) {
 			$SAVE('Events', { type: 'notices/save', id: model.id, user: user, body: model.name, admin: true }, NOOP, $);
 			EMIT('notices.save', model);
 			F.cache.removeAll('cachecms');
-			$.success();
+			var category = PREF.notices.findItem('name', model.category);
+			if (category)
+				$.success();
+			else
+				refresh($.done());
 		});
 
 	});
@@ -105,9 +106,21 @@ NEWSCHEMA('Notices', function(schema) {
 	// Clears database
 	schema.addWorkflow('clear', function($) {
 		var user = $.user.name;
-		NOSQL('notices').remove().backup(user).log('Clear all notices', user).callback(() => $.success());
+		NOSQL('notices').remove().backup(user).log('Clear all notices', user).callback(() => refresh($.done()));
 	});
 });
+
+function refresh(callback) {
+	NOSQL('notices').scalar('group', 'category').callback(function(err, response) {
+		var keys = Object.keys(response);
+		var arr = [];
+		keys.quicksort();
+		for (var i = 0; i < keys.length; i++)
+			arr.push({ id: keys[i].slug(), name: keys[i] });
+		PREF.set('notices', arr);
+		callback && callback();
+	});
+}
 
 function prepare_body(items) {
 	for (var i = 0, length = items.length; i < length; i++) {
@@ -688,3 +701,5 @@ function prepare_body(items) {
 	};
 
 })();
+
+refresh();

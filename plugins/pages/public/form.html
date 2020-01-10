@@ -10,21 +10,21 @@
 					<div data---="input__?.url__icon:globe;placeholder:@(Page relative URL address);required:true">@(URL address)</div>
 				</div>
 				<div class="col-md-3 m">
-					<div data---="disable__?.lockedtemplate__if:value === true">
-						<div data---="input__?.template__dirsource:common.dependencies.templatespages;dirplaceholder:@(Search templates);dirempty:@(No template)">@(Template)</div>
+					<div>
+						<div data---="input__?.template__dirsource:common.dependencies.templatespages;dirplaceholder:@(Search templates);dirempty:@(No template)" data-bind="?.lockedtemplate__disable">@(Template)</div>
 					</div>
 					<div data-bind="?.lockedtemplate__show:!value || user.sa">
 						<div data---="checkbox__?.lockedtemplate2" class="red b mt10">@(Lock this template for editors)</div>
 					</div>
 				</div>
-				<div class="col-md-3 m" data---="disable__?.ispartial__if:value">
-					<div data---="input__?.parent__dirsource:pages.parents;icon:sitemap;dirplaceholder:@(Search pages)__''">@(Parent)</div>
+				<div class="col-md-3 m">
+					<div data---="input__?.parent__dirsource:pages.parents;icon:sitemap;dirplaceholder:@(Search pages)__''" data-bind="?.ispartial__disable">@(Parent)</div>
 					<div class="help">@(Affects sitemap and breadcrumb.)</div>
 				</div>
 			</div>
 		</div>
 		<div data-bind="?.draft__show" class="hidden fs11" style="padding:8px 20px;background-color:red;color:white"><span style="color:white;float:right" class="link exec" data-exec="pagesform/removedraft"><i class="fa fa-times-circle mr5"></i>@(Remove draft)</span><i class="fa fa-warning mr5"></i>@(Page <b>content</b> is in draft mode).</div>
-		<div class="cmseditor" data---="cmseditor__?.body" data-import="url:@{#}_pages/cmseditor.html;target:body"></div>
+		<div class="cmseditor" data---="cmseditor__?.body" data-import="url:@{#}/_pages/cmseditor.html;target:body"></div>
 		<div class="backups hidden hidden-xs bg-smoke" data-bind="?.id__show:!!value">
 			<div class="hidden" data-bind="?.id__show">
 				<div data---="checkbox__?.draft" class="nmb red b" data-bind="?.lockedcontent__show:!value">@(DRAFT)</div>

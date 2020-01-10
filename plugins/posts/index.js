@@ -18,7 +18,7 @@ exports.install = function() {
 function preview() {
 	var self = this;
 
-	self.layout('layout-preview');
+	self.layout('');
 	self.repository.preview = true;
 
 	if (typeof(self.body.body) === 'string')
@@ -27,5 +27,5 @@ function preview() {
 		self.body.body = '';
 
 	self.repository.page = self.body;
-	self.view('~cms/' + self.body.template);
+	self.view('cms' + self.body.template);
 }

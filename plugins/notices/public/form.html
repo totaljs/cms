@@ -13,19 +13,16 @@
 				</div>
 			</div>
 		</div>
-		<div class="padding bg-smoke">
+		<div class="padding bg-smoke" style="padding-bottom:10px">
 			<div class="row">
 				<div class="col-md-4 m">
-					<div data---="input__?.categoryid__dirsource:common.dependencies.notices;icon:folder-o;required:true;dirplaceholder:@(Search)">@(Category)</div>
-					<div class="help">@(Choose a category)</div>
+					<div data---="input__?.category__dirsource:common.dependencies.notices;icon:folder-o;required:1;dircustom:true;dirplaceholder:@(Search or enter a new);placeholder:@(Choose a category)">@(Category)</div>
 				</div>
-				<div class="col-md-4">
-					<div data---="input__?.author__maxlength:30;icon:user">@(Author)</div>
-					<div class="help">@(Specify an author's name)</div>
+				<div class="col-md-4 m">
+					<div data---="input__?.author__maxlength:30;icon:user;placeholder:@(Who is the autor?)">@(Author)</div>
 				</div>
-				<div class="col-md-4">
+				<div class="col-md-4 m">
 					<div data---="input__?.event__type:date;icon:calendar;placeholder:@(yyyy-MM-dd);align:center">@(Event)</div>
-					<div class="help">@(You can specify a date of event.)</div>
 				</div>
 			</div>
 		</div>
@@ -54,7 +51,7 @@
 						<span class="link exec" data-exec="noticesform/upload"><i class="fa fa-folder-o mr5"></i>@(Browse files)</span>
 					</div>
 					<div class="col-xs-6 right">
-						<div class="help nmt">@(You can type body in markdown format.)</div>
+						<div class="help nmt"><i class="fab fa-markdown"></i>@(Markdown format)</div>
 					</div>
 				</div>
 			</div>
@@ -95,9 +92,14 @@
 
 		exports.submit = function(hide) {
 			FUNC.loading(true);
-			AJAX('POST [url]api/notices/', GETR('?'), function(response) {
+			var model = GETR('?');
+			AJAX('POST [url]api/notices/', model, function(response) {
 				FUNC.loading(false, 1000);
 				if (response.success) {
+
+					if (!common.dependencies.notices.findItem('name', model.category))
+						refresh_dependencies();
+
 					SETTER('snackbar', 'success', '@(Notice has been saved successfully.)');
 					EXEC('notices/refresh');
 					hide();

@@ -1,4 +1,2 @@
-if (RELEASE) {
-	PAUSESERVER('database', true);
-	setTimeout(() => PAUSESERVER('database', false), 2000);
-}
+PAUSESERVER('database', true);
+setTimeout(() => PAUSESERVER('database', false), 1000);

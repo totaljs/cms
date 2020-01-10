@@ -3,21 +3,11 @@
 	<div data-scope="postsform">
 		<div class="padding" style="padding-bottom:10px">
 			<div class="row">
-				<div class="col-md-5 m">
+				<div class="col-md-9 m">
 					<div data---="input__?.name__required:true;maxlength:100">@(Name)</div>
 				</div>
-				<div class="col-md-7">
-					<div class="row">
-						<div class="col-md-4 m">
-							<div data---="input__?.idcategory__dirsource:common.dependencies.posts;icon:folder-o;empty:;required:true">@(Category)</div>
-						</div>
-						<div class="col-md-4 m">
-							<div data---="input__?.template__dirsource:common.dependencies.templatesposts;icon:paint-brush;required:true;empty:">@(Template)</div>
-						</div>
-						<div class="col-md-4 m">
-							<div data---="input__?.date__type:date;icon:clock-o;placeholder:@(yyyy-MM-dd)">@(Publish date)</div>
-						</div>
-					</div>
+				<div class="col-md-3 m">
+					<div data---="input__?.template__dirsource:common.dependencies.templatesposts;icon:paint-brush;required:true;empty:">@(Template)</div>
 				</div>
 			</div>
 		</div>
@@ -51,20 +41,24 @@
 		<div class="backups hidden" data-bind="?.id__show"><span class="link exec" data-exec="?/backups"><i class="fa fa-clock-o mr5"></i>@(Restore a backup)</span></div>
 		<div class="padding bg-smoke">
 			<div class="row mt10">
-				<div class="col-md-4 m">
+				<div class="col-md-3 m">
 					<div data---="input__?.description__maxlength:300">@(Description)</div>
+					<div class="help">@(A quick summarization of this post.)</div>
 				</div>
-				<div class="col-md-8">
+				<div class="col-md-3 m">
+					<div data---="dropdowncheckbox__?.signals__alltext:null;datasource:signals;empty:@(Doesn't contain any signals.);icon:dot-circle-o">@(Signals)</div>
+					<div class="help">@(Signals can start a special action for visitors.)</div>
+				</div>
+				<div class="col-md-6">
 					<div class="row">
-						<div class="col-md-4 m">
-							<div data---="dropdowncheckbox__?.signals__alltext:null;datasource:signals;empty:@(Doesn't contain any signals.);icon:dot-circle-o">@(Signals)</div>
-							<div class="help">@(Signals can start a special action for visitors.)</div>
-						</div>
 						<div class="col-md-4 m">
 							<div data---="input__?.author__maxlength:30;icon:user">@(Author)</div>
 						</div>
-						<div class="col-md-3 m">
+						<div class="col-md-4 m">
 							<div data---="input__?.language__icon:flag;dirsource:common.dependencies.languages;empty:">@(Language)</div>
+						</div>
+						<div class="col-md-4 m">
+							<div data---="input__?.date__type:date;icon:clock-o;placeholder:@(yyyy-MM-dd)">@(Publish date)</div>
 						</div>
 					</div>
 				</div>

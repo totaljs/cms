@@ -122,6 +122,15 @@ function prepare(main, children, parent, level) {
 	}
 }
 
+function empty() {
+	return '';
+}
+
+FUNC.makenavigation = function(id, name) {
+	if (!MAIN.navigations[id])
+		MAIN.navigations[id] = { url: {}, children: [], id: id, name: name, stringify: empty };
+};
+
 function refresh() {
 	NOSQL('navigations').find().callback(function(err, response) {
 		MAIN.navigations = {};

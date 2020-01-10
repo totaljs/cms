@@ -1,5 +1,5 @@
 <style>
-	.event-type { font-weight: bold; height: 20px; }
+	.event-type { font-weight: bold; height: 12px; }
 	.event-type span { float: right; font-weight: normal; font-size: 10px; margin: 2px 0 0; color: gray; }
 	.event-type span i { margin: 0 0 0 5px !important; }
 	.event-user { font-size: 10px; color: gray; margin-top: 5px; height: 20px; }
@@ -43,8 +43,8 @@
 										{{ foreach m in value }}
 											<div class="event">
 												<div class="event-type">{{ if m.user }}<span>{{ m.user }}<i class="fa fa-user"></i></span>{{ fi }}<i class="fa fa-bookmark"></i>{{ m.type }}</div>
+												<div class="event-user"><span>{{ m.dtcreated | time }}<i class="far fa-clock-o"></i></span>{{ m.ua }} / {{ m.ip }}</div>
 												<div class="event-body">{{ m.body }}</div>
-												<div class="event-user"><span>{{ m.dtcreated | time }}<i class="far fa-clock-o"></i></span>IP: {{ m.ip }}</div>
 											</div>
 										{{ end }}
 										{{ if !value || !value.length }}

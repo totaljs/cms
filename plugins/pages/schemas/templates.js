@@ -62,10 +62,12 @@ function refresh(callback) {
 			var compiled = compile(item.body);
 			item.file = 'cms' + item.id;
 
-			compiled.html = '@{notranslate}@{nocompress html}' + compiled.html.replace('</body>', item.type === 'newsletter' ? '@{if repository.preview}<script src="//cdn.componentator.com/jquery.min@341.js"></script><script src="@{MAIN.jseditor}"></script>@{fi}' : '@{if repository.preview}<script src="//cdn.componentator.com/jquery.min@341.js"></script><script src="@{MAIN.jseditor}"></script>@{else}<script src="/js/cms.js"></script><script src="@{MAIN.js}"></script><script src="/' + item.file + '.js?ts=' + hash + '"></script>@{fi}</body>');
+			compiled.html = '@{notranslate}@{nocompress html}' + compiled.html.replace('</body>', item.type === 'newsletter' ? '@{if repository.preview}<script src="//cdn.componentator.com/jquery.min@341.js"></script><script src="@{MAIN.jseditor}"></script>@{fi}</body>' : ('@{if repository.preview}<script src="//cdn.componentator.com/jquery.min@341.js"></script><script src="@{MAIN.jseditor}"></script>@{else}<script src="/js/cms.js"></script><script src="@{MAIN.js}"></script><script src="/' + item.file + '.js?ts=' + hash + '"></script>@{fi}</body>'));
 
-			if (item.type !== 'newsletter')
-				compiled.html = compiled.html.replace('<html>', '<html@{if repository.preview} class="CMS_preview"@{fi}>').replace('</head>', '<link rel="stylesheet" href="//cdn.componentator.com/spa.min@18.css" /><link rel="stylesheet" href="@{MAIN.css}" /><link rel="stylesheet" href="/' + item.file + '.css?ts=' + hash + '" />@{if repository.preview}<link rel="stylesheet" href="/css/admin-editor.css" />@{else}<script src="//cdn.componentator.com/spa.min@18.js"></script>@{fi}@{import(\'meta\', \'favicon.ico\', \'head\')}</head>');
+			if (item.type === 'newsletter')
+				compiled.html = compiled.html.replace('</head>', '@{if repository.preview}<link rel="stylesheet" href="//cdn.componentator.com/spa.min@18.css" /><link rel="stylesheet" href="/css/admin-editor.css" />@{fi}</head>');
+			else
+				compiled.html = compiled.html.replace('<html>', '<html@{if repository.preview} class="CMS_preview"@{fi}>').replace('</head>', '<link rel="stylesheet" href="//cdn.componentator.com/spa.min@18.css" /><link rel="stylesheet" href="/' + item.file + '.css?ts=' + hash + '" /><link rel="stylesheet" href="@{MAIN.css}" />@{if repository.preview}<link rel="stylesheet" href="/css/admin-editor.css" />@{else}<script src="//cdn.componentator.com/spa.min@18.js"></script>@{fi}@{import(\'meta\', \'favicon.ico\', \'head\')}</head>');
 
 			Fs.writeFile(PATH.views(item.file + '.html'), U.minifyHTML(compiled.html), function() {
 				Fs.writeFile(PATH.public(item.file + '.js'), compiled.js ? U.minifyScript(compiled.js) : '', function() {
@@ -100,8 +102,13 @@ function refresh(callback) {
 		}, function() {
 			var keys = Object.keys(navigations);
 			var navs = [];
-			for (var i = 0; i < keys.length; i++)
-				navs.push(navigations[keys[i]]);
+
+			for (var i = 0; i < keys.length; i++) {
+				var nav = navigations[keys[i]];
+				navs.push(nav);
+				FUNC.makenavigation(nav.id, nav.name);
+			}
+
 			PREF.set('navigations', navs);
 			PREF.templates = pages;
 			PREF.templatesposts = posts;

@@ -4,7 +4,8 @@
 		<div class="padding">
 			<div class="row">
 				<div class="col-md-4 m">
-					<div data---="input__?.name__required:true;maxlength:100">@(Subject)</div>
+					<div data---="input__?.name__required:true;maxlength:100;placeholder:@(Discount 50% for our services)">@(Subject)</div>
+					<div class="help">@(Enter a readable and short subject)</div>
 				</div>
 				<div class="col-md-4 m">
 					<div data---="input__?.template__dirsource:common.dependencies.templatesnewsletters;icon:paint-brush">@(Template)</div>
@@ -22,7 +23,7 @@
 			<div class="help nmt">@(Check the checkbox below if you want to send this newsletter to all registered subscribers.)</div>
 			<div data---="checkbox__?.send" class="b mt10 red">@(Send mail to all subscribers)</div>
 		</div>
-		<div class="cmseditor" data---="cmseditor__?.body" data-import="url:@{#}_pages/cmseditor.html;target:body"></div>
+		<div class="cmseditor" data---="cmseditor__?.body" data-import="url:@{#}/_pages/cmseditor.html;target:body"></div>
 		<div class="backups hidden" data-bind="?.id__show"><span class="link exec" data-exec="newslettersform/backups"><i class="fa fa-clock-o mr5"></i>@(Restore a backup)</span></div>
 		<div data-bind="?.id__show:value && value.length" class="hidden">
 			<hr class="nmt" />
@@ -68,8 +69,8 @@
 		<div class="padding">
 			<div data---="input__newsletterstest.email__icon2:envelope-o;maxlength:120;required:true;type:email__'@'">@(Email)</div>
 		</div>
-		<nav data---="validation__newsletters.test">
-			<button name="submit">@(SAVE)</button>
+		<nav data---="validation__newsletterstest">
+			<button name="submit">@(SEND)</button>
 			<button name="cancel">@(Cancel)</button>
 		</nav>
 	</script>
@@ -163,7 +164,7 @@
 
 		exports.submittest = function(hide) {
 
-			var model = CLONE(newsletters.form);
+			var model = CLONE('?');
 			var editor = cmseditor.instance;
 
 			model.pictures = editor.getPictures();
@@ -172,8 +173,9 @@
 			!model.name && (model.name = 'Test email');
 			hide();
 
-			SETTER('loading', 'show')('loading', 'hide', 1000);
-			AJAX('POST [url]api/newsletters/test/?email=' + encodeURIComponent(newsletters.test.email), model, function() {
+			FUNC.loading(true);
+			AJAX('POST [url]api/newsletters/test/?email=' + encodeURIComponent(newsletterstest.email), model, function() {
+				FUNC.loading(false, 500);
 				SETTER('snackbar', 'success', '@(Newsletter has been sent successfully.)');
 			});
 		};

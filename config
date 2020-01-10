@@ -3,7 +3,6 @@ version                   : 13.0.0
 author                    : Peter Širka
 
 // Hidden super admin in the form username:password
-admin_superadmin          : admin:admin
 admin_cookie              : __admin
 
 // Secret for administrators

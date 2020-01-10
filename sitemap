@@ -1,8 +1,0 @@
-// Common
-homepage          : @(Home)            --> /
-posts             : @(Blog)                --> @(/blog/)                 --> homepage
-post              : @(Post)                --> @(/blog/{0}/)             --> posts
-notices           : @(Notices)             --> @(/notices/)              --> homepage
-
-// Admin area
-admin             : @(Admin)               --> @(/admin/*)

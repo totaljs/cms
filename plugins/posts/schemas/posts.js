@@ -3,7 +3,6 @@ const REGEXP_GLOBAL = /\$[0-9a-z-_]+/gi;
 NEWSCHEMA('Posts', function(schema) {
 
 	schema.define('id', UID);
-	schema.define('categoryid', 'String(50)');
 	schema.define('template', 'String(30)', true);
 	schema.define('type', ['html', 'markdown']);
 	schema.define('name', 'String(100)', true);
@@ -35,17 +34,18 @@ NEWSCHEMA('Posts', function(schema) {
 			opt.author && filter.gridfilter('author', opt, String);
 			opt.name && filter.gridfilter('name', opt, String);
 			opt.type && filter.gridfilter('type', opt, String);
+			opt.template && filter.gridfilter('template', opt, String);
 			opt.language && filter.gridfilter('language', opt, String);
 		} else {
-			opt.category && filter.where('linker_category', opt.category);
 			opt.author && filter.where('author', opt.author);
 			opt.language && filter.where('language', opt.language);
+			opt.template && filter.where('template', opt.template);
 			opt.published && filter.where('ispublished', true).where('date', '<=', NOW);
 			opt.search && filter.like('search', opt.search.keywords(true, true));
 			filter.fields('description');
 		}
 
-		filter.fields('id,categoryid,category,name,dtcreated,dtupdated,date,linker,linker_category,pictures,summary,ispublished,signals,author,template,type,language');
+		filter.fields('id,template,category,name,dtcreated,dtupdated,date,linker,pictures,summary,ispublished,signals,author,template,type,language');
 
 		filter.gridsort(opt.sort || 'date_desc');
 		filter.callback($.callback);
@@ -85,9 +85,9 @@ NEWSCHEMA('Posts', function(schema) {
 		var nosql = NOSQL('posts');
 		var filter = nosql.one();
 
-		$.id && filter.where('linker', $.id);
+		$.id && filter.where('template', $.id);
 		$.options.linker && filter.where('linker', $.options.linker);
-		$.options.category && filter.where('linker_category', $.options.category);
+		$.options.template && filter.where('template', $.options.template);
 		filter.where('ispublished', true);
 
 		filter.callback(function(err, response) {
@@ -146,11 +146,11 @@ NEWSCHEMA('Posts', function(schema) {
 		model.linker = model.date.format('yyyyMMdd') + '-' + model.name.slug();
 		model.stamp = new Date().format('yyyyMMddHHmm');
 
-		var category = MAIN.posts.find('id', model.categoryid);
-		if (category) {
-			model.linker_category = category.linker;
-			model.category = category.name;
-		}
+		var template = PREF.templatesposts.findItem('id', model.template);
+		if (template)
+			model.category = template.name;
+		else
+			model.category = '';
 
 		model.search = ((model.name || '') + ' ' + (model.keywords || '') + ' ' + (model.search || '')).keywords(true, true).join(' ').max(1000);
 

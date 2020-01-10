@@ -7,6 +7,17 @@ html,body { overflow: hidden; }
 
 body { background-color: #E0E0E0; }
 
+header { height: 58px; background-color: white; background: linear-gradient(130deg, #E0E0E0 80%, #F0F0F0 80%); border: 1px solid #DEDEDE; }
+header .logout { float: left; font-size: 16px; color: red; border-left: 1px solid #D0D0D0; width: 60px; height: 40px; line-height: 40px; text-align: center; cursor: pointer; margin: 8px 0 0 10px; }
+header nav { float: left; margin: 8px 0 0 10px; }
+header nav button { width: 38px; height: 38px; text-align: center; font-size: 16px; line-height: 37px; border: 1px solid transparent; outline: 0; background-color: transparent; color: rgba(0,0,0,0.6); border-radius: 2px; }
+header nav button:hover { color: black; }
+header nav button.selected { background-color: white; color: black; border: 1px solid white; box-shadow: 0 2px 2px rgba(0,0,0,0.05); }
+header .user { float: right; font-size: 12px; line-height: 58px; margin-right: 20px; color: black; font-size: 14px; font-weight: bold; }
+header .user .fa, header .user .fal { margin-right: 5px; }
+header .title { height: 40px; border-left: 1px solid #F0F0F0; font-size: 16px; float: left; padding: 9px 0 0 20px; color: white; font-weight: bold; }
+header .title .fa, header .title .fal { margin-right: 8px; }
+
 .mb10 { margin-bottom: 10px; }
 .ui-layout-section { background-color: white; }
 
@@ -21,21 +32,10 @@ body { background-color: #E0E0E0; }
 .header nav button:last-child { border-top-right-radius: 2px; border-bottom-right-radius: 2px; }
 .header nav button:hover { background-color: #FAFAFA; }
 .header nav button:disabled { color: silver; cursor: not-allowed; background-color: #F0F0F0; box-shadow: none; }
-.header nav button:disabled i { color: silver; }
+.header nav button:disabled i { color: silver !important; }
 .header button .fa-check-circle, .header button .fa-plus-circle, .header button .fa-check { color: #68B25B; }
 .header button .fa-times, .header button .fa-times-circle, .header button .fa-trash-o { color: #e73323; }
 .header .highlight { background-color: #FFFFD5; }
-
-header { height: 58px; background-color: white; background: linear-gradient(130deg, #E0E0E0 80%, #F0F0F0 80%); border: 1px solid #DEDEDE; }
-header nav { float: left; margin: 8px 0 0 10px; }
-header nav button { width: 38px; height: 38px; text-align: center; font-size: 16px; line-height: 37px; border: 1px solid transparent; outline: 0; background-color: transparent; color: rgba(0,0,0,0.6); border-radius: 2px; }
-header nav button:hover { color: black; }
-header nav button.selected { background-color: white; color: black; border: 1px solid white; box-shadow: 0 2px 2px rgba(0,0,0,0.05); }
-
-header .user { float: right; font-size: 12px; line-height: 58px; margin-right: 20px; color: black; font-size: 14px; font-weight: bold; }
-header .user .fa, header .user .fal { margin-right: 5px; }
-header .title { height: 40px; border-left: 1px solid #F0F0F0; font-size: 16px; float: left; padding: 9px 0 0 20px; color: white; font-weight: bold; }
-header .title .fa, header .title .fal { margin-right: 8px; }
 
 .smallcaption { font-size: 10px; color: #888; font-weight: bold; margin-bottom: 10px; text-transform: uppercase; }
 .smallcaption i { margin-right: 5px; }
@@ -164,17 +164,17 @@ h3 .fa, h3 .far, h3 .fal { margin-right: 8px; }
 .panel { background-color: white; border-radius: 2px; border: 1px solid #E0E0E0; }
 .panel > label { display: block; padding: 10px 20px; border-bottom: 1px solid #E0E0E0; font-size: 14px; font-weight: bold; }
 .panel > label .fa, .panel > label .fal, .panel > label .far { margin-right: 5px; }
-.panelbody { padding: 20px; position: relative; }
+.panelbody { padding: 20px 20px 5px; position: relative; }
 
 .bg-white { background-color: white; }
 .bg-yellow { background-color: #FFFFD5; }
 .bg-yellow-fade { background: #FFFFD5 linear-gradient(#FFFFD5, white); }
 .bg-smoke { background-color: #F8F8F8; }
 
-.oauth2callback { font-size: 11px; white-space: pre-wrap; margin-bottom: 15px; color: silver; }
-.oauth2callback input { width: 100%; color: #505050; padding: 5px; cursor: text; background: #F8F8F8; border: 0; }
-.oauth2callback div { margin-bottom: 3px; }
 .blink { animation: blink 0.4s infinite linear alternate; }
+
+.alert { background-color: #fffad7; border: 1px solid #EDE8C8; padding: 15px; border-radius: 2px; color: #988e56; font-size: 12px; }
+.alert i { margin-right: 5px; }
 
 .tabmenu-container { padding: 5px 20px; background-color: #F0F0F0; }
 .tabmenu { padding: 0; margin: 0; display: block; position: relative; font-size: 12px; border: 0; list-style-type: none; height: 44px; overflow: hidden; user-select: none; }

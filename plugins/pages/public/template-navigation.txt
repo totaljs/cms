@@ -137,7 +137,6 @@
 					@{end}
 				</ul>
 
-				<!-- RENDERING FOR VISITORS -->
 				@{if repository.page && repository.page.body}
 				<div class="row">
 					<div class="col-md-3">

@@ -18,8 +18,10 @@ NEWSCHEMA('Events', function(schema) {
 		if ($.model.body)
 			model.body = $.model.body;
 
-		if ($.ip)
+		if ($.controller) {
 			model.ip = $.ip;
+			model.ua = ($.headers['user-agent'] || '').parseUA();
+		}
 
 		if ($.model.user)
 			model.user = $.model.user;

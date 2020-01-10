@@ -123,7 +123,7 @@ NEWSCHEMA('Newsletters', function(schema) {
 			repository.page.name = newsletter.name;
 			repository.page.body = body;
 			repository.preview = false;
-			newsletter.body = VIEW('~/cms/' + newsletter.template, null, repository);
+			newsletter.body = VIEW('cms' + newsletter.template, null, repository);
 			newsletter.unsubscribe = PREF.url + '/api/unsubscribe/?email=';
 
 			var message = new Mail.Message(newsletter.name, prepare_urladdress(newsletter.body.replace('@@@', $.query.email)));
@@ -164,7 +164,7 @@ NEWSCHEMA('Newsletters', function(schema) {
 			repository.preview = false;
 			repository.page.body = body;
 
-			newsletter.body = VIEW('~/cms/' + newsletter.template, null, repository);
+			newsletter.body = VIEW('cms' + newsletter.template, null, repository);
 			newsletter.unsubscribe = PREF.url + '/api/unsubscribe/?email=';
 
 			NOSQL('subscribers').find().where('unsubscribed', false).skip(cache ? cache.count : 0).callback(function(err, response) {
@@ -220,7 +220,6 @@ NEWSCHEMA('Newsletters', function(schema) {
 					MAIN.newsletter.sending = false;
 					MAIN.newsletter.percentage = 0;
 					MAIN.newsletter.id = null;
-
 				});
 			});
 

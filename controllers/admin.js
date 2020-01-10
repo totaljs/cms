@@ -2,7 +2,6 @@ const MSG_NOTIFY = { TYPE: 'notify' };
 const MSG_ALERT = { TYPE: 'alert' };
 const COOKIE_OPTIONS = { security: 'strict', httponly: true };
 const ALLOW = ['/api/dependencies/', '/api/pages/preview/', '/api/upload/', '/api/nav/', '/api/files/', '/stats/', '/live/', '/api/widgets/'];
-const SYSUSER = {};
 const ADMINURL = '/admin/';
 
 var DDOS = {};
@@ -59,10 +58,6 @@ exports.install = function() {
 
 	FILE(pluginfiles);
 	FILE('/download/', file_read);
-
-	// System user
-	SYSUSER.name = CONF.admin_superadmin.split(':')[0];
-	SYSUSER.token = true;
 };
 
 ON('controller', function(controller) {
@@ -201,13 +196,17 @@ function socket() {
 function logout() {
 	var self = this;
 	self.cookie(CONF.admin_cookie, '', '-1 day');
-	self.redirect(self.sitemap_url('admin'));
+	self.redirect('/admin/');
 }
 
 function login() {
 	var self = this;
-	var key = (self.body.name + ':' + self.body.password + ':' + CONF.secret + (self.body.name + ':' + self.body.password).hash() + CONF.admin_secret).md5();
+	var key = (self.body.name + ':' + self.body.password + ':' + CONF.secret + (self.body.name + ':' + self.body.password).hash() + CONF.admin_secret).sha256();
 	if (MAIN.users[key]) {
+
+		if (!PREF.usersinitialized)
+			PREF.set('usersinitialized', true);
+
 		$SAVE('Event', { type: 'system/login', user: self.body.name, admin: true }, NOOP, self);
 		self.cookie(CONF.admin_cookie, key, '1 month', COOKIE_OPTIONS);
 		self.success();

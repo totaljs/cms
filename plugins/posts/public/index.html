@@ -5,6 +5,7 @@
 		<script type="text/plain">
 			{
 				top: { size: 45 },
+				right: { size: 250 },
 				main: {}
 			}
 		</script>
@@ -20,12 +21,28 @@
 			</div>
 		</section>
 
+		<section data-type="right">
+			<div class="padding">
+				<div class="caption"><i class="fa fa-code"></i>@(Templates)</div>
+				<nav class="links">
+					<div data-bind="common.dependencies.templatesposts__template">
+						<script type="text/html">
+							{{ foreach m in value }}
+								<button data-id="{{ m.id }}" class="exec" data-exec="?/template"><span class="pull-right exec" data-exec="?/removetemplate" data-prevent="true" style="width:12px;margin-right:0"><i class="fa fa-times red"></i></span><i class="far fa-file-text-o"></i>{{ m.name }}</button>
+							{{ end }}
+						</script>
+					</div>
+					<button class="exec b" data-exec="?/template"><i class="fa fa-check-circle green"></i>@(Add a new template)</button>
+				</nav>
+			</div>
+		</section>
+
 		<section data-type="main">
 			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?.checked;button:?/button;noborder:1;height:window;margin:106;exec:?/refresh;dblclick:?/update">
 				<script type="text/plain">
 				[
 					{ name: 'name', text: '@(Name)', width: 350, template: '{{ language | language }}{{ if !ispublished }}<span class="badge badge-gray mr5">@(unpublished)</span>{{ fi }}{{ name }}' },
-					{ name: 'category', text: '@(Category)', width: 150, class: 'hidden-xs' },
+					{ name: 'category', text: '@(Template)', width: 150, class: 'hidden-xs' },
 					{ name: 'author', text: '@(Author)', width: 150, class: 'hidden-xs' },
 					{ name: 'type', text: '@(Type)', width: 100, align: 1, class: 'hidden-xs silver' },
 					{ name: 'language', text: 'Language', width: 40, title: '@(Language)', filter: false, sort: false, align: 1, hide: true },
@@ -67,6 +84,19 @@
 
 		exports.reload = function() {
 			exports.refresh();
+		};
+
+		exports.template = function(el) {
+			var id = el.attrd('id');
+			if (id) {
+				AJAX('GET [url]api/templates/' + id, function(response) {
+					SETR('pagestemplate', response);
+					SET('common.form', 'pagestemplate');
+				});
+			} else {
+				SETR('pagestemplate', { type: 'post' });
+				SET('common.form', 'pagestemplate');
+			}
 		};
 
 		exports.button = function(name, row, grid) {

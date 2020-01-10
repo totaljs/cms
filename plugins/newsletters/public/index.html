@@ -5,6 +5,7 @@
 		<script type="text/plain">
 			{
 				top: { size: 45 },
+				right: { size: 250 },
 				main: {}
 			}
 		</script>
@@ -16,6 +17,22 @@
 					<button class="exec" data-exec="?/create"><i class="fa fa-plus-circle"></i>@(Create)</button>
 					<button class="exec" data-exec="?/options"><i class="fa fa-wrench"></i>@(Options)</button>
 					<button class="exec S" data-exec="?/checked" disabled><i class="fa fa-check-circle"></i>@(Checked)</button>
+				</nav>
+			</div>
+		</section>
+
+		<section data-type="right">
+			<div class="padding">
+				<div class="caption"><i class="fa fa-code"></i>@(Templates)</div>
+				<nav class="links">
+					<div data-bind="common.dependencies.templatesnewsletters__template">
+						<script type="text/html">
+							{{ foreach m in value }}
+								<button data-id="{{ m.id }}" class="exec" data-exec="?/template"><span class="pull-right exec" data-exec="?/removetemplate" data-prevent="true" style="width:12px;margin-right:0"><i class="fa fa-times red"></i></span><i class="far fa-file-text-o"></i>{{ m.name }}</button>
+							{{ end }}
+						</script>
+					</div>
+					<button class="exec b" data-exec="?/template"><i class="fa fa-check-circle green"></i>@(Add a new template)</button>
 				</nav>
 			</div>
 		</section>
@@ -60,6 +77,19 @@
 				SET('?.grid', response);
 				FUNC.loading(false, 200);
 			});
+		};
+
+		exports.template = function(el) {
+			var id = el.attrd('id');
+			if (id) {
+				AJAX('GET [url]api/templates/' + id, function(response) {
+					SETR('pagestemplate', response);
+					SET('common.form', 'pagestemplate');
+				});
+			} else {
+				SETR('pagestemplate', { type: 'newsletter' });
+				SET('common.form', 'pagestemplate');
+			}
 		};
 
 		exports.update = function(row) {

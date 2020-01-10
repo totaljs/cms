@@ -493,5 +493,5 @@ W.load();
 
 ON('settings', function() {
 	W.hostname = getHostname(PREF.url);
-	W.blacklist(F.sitemap('admin', true).url);
+	W.blacklist('/admin/');
 });

@@ -9,6 +9,7 @@ NEWSCHEMA('Settings/SuperUser', function(schema) {
 	schema.define('login', String, true);
 	schema.define('password', String, true);
 	schema.define('roles', '[String]');
+	schema.define('sa', Boolean);
 });
 
 NEWSCHEMA('Settings', function(schema) {
@@ -17,18 +18,13 @@ NEWSCHEMA('Settings', function(schema) {
 	schema.define('emailreply', 'Email', true);
 	schema.define('emailsender', 'Email', true);
 	schema.define('url', 'Url', true);
-	schema.define('templates', '[SettingsKeyValue]');
-	schema.define('templatesposts', '[SettingsKeyValue]');
-	schema.define('templatesnewsletters', '[SettingsKeyValue]');
-	schema.define('posts', '[SettingsKeyValue]');
-	schema.define('notices', '[SettingsKeyValue]');
 	schema.define('users', '[Settings/SuperUser]');
 	schema.define('signals', '[SettingsKeyValue]');
 	schema.define('languages', '[SettingsKeyValue]');
 	schema.define('smtp', String);
 	schema.define('smtpoptions', 'JSON');
 	schema.define('componentator', Boolean);
-	schema.define('cookie', 'String(30)', true);
+	// schema.define('cookie', 'String(30)', true);
 
 	schema.setGet(function($) {
 		$.callback(PREF);
@@ -87,17 +83,11 @@ NEWSCHEMA('Settings', function(schema) {
 	// Loads settings + rewrites framework configuration
 	schema.addWorkflow('load', function($) {
 
-		if (!PREF.url) {
-			// tries to load older settings
-			try {
-				var data = require('fs').readFileSync(PATH.databases('settings.json')).toString('utf8').parseJSON(true);
-				var keys = Object.keys(data);
-				for (var i = 0; i < keys.length; i++)
-					PREF.set(keys[i], data[keys[i]]);
-			} catch (e) {
-				// empty
-			}
-		}
+		if (!PREF.url)
+			PREF.url = 'http://{0}:{1}'.format(F.ip, F.port);
+
+		if (PREF.componentator == null)
+			PREF.componentator = true;
 
 		CONF.url = PREF.url;
 		MAIN.users = [];
@@ -108,14 +98,17 @@ NEWSCHEMA('Settings', function(schema) {
 			MAIN.users.push.apply(MAIN.users, PREF.users);
 
 		// Adds an admin (service) account
-		var sa = (CONF.admin_superadmin || '').split(':');
-		MAIN.users.push({ name: 'Administrator', login: sa[0], password: sa[1], roles: [], sa: true });
+		if (!MAIN.users.length) {
+			MAIN.users.push({ id: GUID(15), name: 'Administrator', login: GUID(10), password: GUID(10), roles: [], sa: true });
+			PREF.set('users', MAIN.users);
+			PREF.set('usersinitialized', false);
+		}
 
 		// Optimized for the performance
 		var users = {};
 		for (var i = 0, length = MAIN.users.length; i < length; i++) {
 			var user = MAIN.users[i];
-			var key = (user.login + ':' + user.password + ':' + CONF.secret + (user.login + ':' + user.password).hash() + CONF.admin_secret).md5();
+			var key = (user.login + ':' + user.password + ':' + CONF.secret + (user.login + ':' + user.password).hash() + CONF.admin_secret).sha256();
 			users[key] = user;
 		}
 
@@ -126,8 +119,6 @@ NEWSCHEMA('Settings', function(schema) {
 		CONF.mail_address_reply = PREF.emailreply;
 
 		!PREF.signals && PREF.set('signals', []);
-		!PREF.navigations && PREF.set('navigations', []);
-		!PREF.notices && PREF.set('notices', []);
 		!PREF.languages && PREF.set('languages', []);
 		PREF.smtp && Mail.use(PREF.smtp, PREF.smtpoptions.parseJSON());
 
@@ -136,8 +127,6 @@ NEWSCHEMA('Settings', function(schema) {
 	});
 });
 
-ON('ready', function() {
-	setTimeout(function() {
-		$WORKFLOW('Settings', 'load');
-	}, 500);
-});
+setTimeout(function() {
+	$WORKFLOW('Settings', 'load');
+}, 500);
