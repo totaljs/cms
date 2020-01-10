@@ -17,7 +17,7 @@
 
 <div data---="form__cmseditor.form__if:attribute;width:540;autofocus:true;submit:cmseditorattribute/submit;icon:quote-left;title:@(Attributes editor)" class="hidden">
 
-	<div data-scope="cmseditorattribute">
+	<div data-scope="cmseditor.attribute">
 
 		<div class="padding npb">
 			<div class="row">
@@ -26,7 +26,7 @@
 				</div>
 				<div class="col-md-6 m">
 					<div data---="input__?.id">@(Element ID)</div>
-					<div class="help"><span class="link exec" data-exec="?/id">@(Make ID from content)</span></div>
+					<div class="help"><span class="link exec" data-exec="cmseditorattribute/id">@(Make ID from content)</span></div>
 				</div>
 			</div>
 		</div>
@@ -74,12 +74,12 @@
 			<hr class="nmt" />
 			<div class="padding npt">
 				<div data---="input__?.src__icon:globe">@(Source URL)</div>
-				<div class="m mt10 fs12"><span class="link exec" data-exec="?/files"><i class="fa fa-folder-o mr5"></i>@(Browse files)</span></div>
+				<div class="m mt10 fs12"><span class="link exec" data-exec="cmseditorattribute/files"><i class="fa fa-folder-o mr5"></i>@(Browse files)</span></div>
 			</div>
 		</div>
 	</div>
 
-	<nav data---="validation__cmseditorattribute">
+	<nav data---="validation__cmseditor.attribute">
 		<button name="submit">@(APPLY)</button>
 		<button name="cancel">@(Cancel)</button>
 	</nav>
@@ -96,14 +96,14 @@
 
 		exports.id = function() {
 			var target = cmseditor.instance.getTarget();
-			SET('?.id', target.text().slug());
+			SET('cmseditor.attribute.id', target.text().slug());
 		};
 
 		exports.submit = function(hide) {
 
 			var instance = cmseditor.instance;
 			var target = instance.getTarget();
-			var attr = cmseditorattribute;
+			var attr = cmseditor.attribute;
 
 			if (target.hclass('CMS_unwrap'))
 				target = target.parent();
@@ -191,7 +191,6 @@
 			target.attr('class', clsnames);
 			instance.change(true);
 			instance.autoresize();
-
 			hide();
 		};
 

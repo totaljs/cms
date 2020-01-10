@@ -39,7 +39,6 @@
 			else
 				link = editor.getParentElement('A');
 
-			console.log(tracking);
 			if (!cmseditor.tracking.id) {
 				tracking.id = GUID(10);
 				AJAX('POST [url]api/tracking/', tracking, NOOP);

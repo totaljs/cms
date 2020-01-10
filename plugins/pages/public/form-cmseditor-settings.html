@@ -38,12 +38,4 @@
 			}, 1200);
 		};
 	});
-
-	WATCH('cmseditor.settings.options', function(path, value) {
-		var height = $('#settings-multioptions').innerHeight();
-		setTimeout2('settingsoptions', function() {
-			SETTER(true, 'modal', 'reconfigure', 'height:' + height);
-		}, 400);
-	});
-
 </script>

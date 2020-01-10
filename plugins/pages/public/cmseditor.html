@@ -1219,7 +1219,7 @@
 						});
 
 						var tag = targettmp[0].nodeName;
-						var cattr = cmseditorattribute;
+						var cattr = cmseditor.attribute;
 
 						cattr.isimage = tag === 'IMG';
 						cattr.config = targettmp.attrd('jc-config');
@@ -1271,7 +1271,7 @@
 							cattr.alt = targettmp.attr('alt') || '';
 						}
 
-						UPDATE('cmseditorattribute', true);
+						UPDATE('cmseditor.attribute', true);
 						SET('cmseditor.form', 'attribute');
 						return;
 
