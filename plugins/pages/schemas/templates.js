@@ -92,7 +92,9 @@ function refresh(callback) {
 						}
 
 						// HACK: clears Total.js ViewEngine cache
+						delete F.temporary.views['view#/cms-default/' + item.file + '.html'];
 						delete F.temporary.views['view#' + item.file + '.html'];
+
 						F.touch('/' + item.file + '.js');
 						F.touch('/' + item.file + '.css');
 						next();
@@ -113,6 +115,7 @@ function refresh(callback) {
 			PREF.templates = pages;
 			PREF.templatesposts = posts;
 			PREF.templatesnewsletters = newsletters;
+
 			F.cache.removeAll('cachecms');
 			callback && callback();
 		});
