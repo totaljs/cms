@@ -28,6 +28,75 @@ NEWSCHEMA('Navigations', function(schema) {
 		});
 	});
 
+	function addpagechildren(child) {
+		var obj = {};
+		obj.id = child.id;
+		obj.pageid = child.id;
+		obj.url = child.url;
+		obj.icon = child.icon;
+		obj.language = child.language;
+		obj.target = child.target;
+		obj.name = child.name;
+		obj.title = child.title;
+		obj.behaviour = child.behaviour;
+		obj.children = [];
+		for (var i = 0; i < child.children.length; i++)
+			obj.children.push(addpagechildren(child.children[i]));
+		return obj;
+	}
+
+	schema.addWorkflow('addpage', function($) {
+		// $.options.navigations
+		// $.options.page
+
+		var navigations = $.options.navigations;
+		var page = $.options.page;
+		var count = 0;
+
+		navigations.wait(function(navid, next) {
+			var nav = MAIN.navigations[navid];
+
+			// Determines if the page exists
+			var item = nav.children.findItem('url', page.url);
+			if (item) {
+				next();
+				return;
+			}
+
+			var children = [];
+			var obj;
+
+			for (var j = 0; j < nav.children.length; j++)
+				children.push(addpagechildren(nav.children[j]));
+
+			obj = {};
+			obj.id = GUID(10);
+			obj.pageid = page.id;
+			obj.url = page.url;
+			obj.icon = page.icon;
+			obj.language = page.language;
+			obj.target = '_self';
+			obj.children = [];
+			obj.name = page.name;
+			obj.title = page.title;
+			obj.behaviour = 'default';
+			children.push(obj);
+
+			count++;
+			NOSQL('navigations').modify({ children: children }).where('id', navid).callback(next);
+
+		}, function() {
+
+			if (count) {
+				F.cache.removeAll('cachecms');
+				refresh();
+			}
+
+			$.success(count);
+		});
+
+	});
+
 	schema.setSave(function($) {
 
 		var user = $.user.name;
@@ -65,7 +134,7 @@ NEWSCHEMA('Navigations', function(schema) {
 				var item = findByPage(page.id, nav.children);
 				if (item) {
 
-					nav.dateupdated = NOW;
+					nav.dtupdated = NOW;
 					item.url = page.url;
 					page.navicon && (item.icon = page.icon);
 
@@ -75,7 +144,7 @@ NEWSCHEMA('Navigations', function(schema) {
 						item.language = page.language;
 					}
 
-					item.dateupdated = NOW;
+					item.dtupdated = NOW;
 					db.update(nav).backup(user).log('Update menu item according to the page {0}: {1}'.format(page.id, page.name)).where('id', nav.id).callback(done);
 				}
 			}
@@ -127,8 +196,10 @@ function empty() {
 }
 
 FUNC.makenavigation = function(id, name) {
-	if (!MAIN.navigations[id])
+	if (!MAIN.navigations[id]) {
 		MAIN.navigations[id] = { url: {}, children: [], id: id, name: name, stringify: empty };
+		NOSQL('navigations').insert({ id: id, children: [], name: name, dtupdated: NOW });
+	}
 };
 
 function refresh() {
@@ -136,6 +207,7 @@ function refresh() {
 		MAIN.navigations = {};
 
 		var nav = PREF.navigations;
+		var rem = [];
 
 		for (var i = 0; i < nav.length; i++)
 			MAIN.navigations[nav[i].id] = { url: {}, children: [], id: nav[i].id, name: nav[i].name };
@@ -146,8 +218,10 @@ function refresh() {
 			var tmp = MAIN.navigations[item.id];
 
 			// Navigation doesn't exist
-			if (!tmp)
+			if (!tmp) {
+				rem.push(item.id);
 				continue;
+			}
 
 			MAIN.navigations[item.id] = item;
 			item.name = tmp.name;
@@ -159,6 +233,9 @@ function refresh() {
 
 			prepare(MAIN.navigations[item.id], item.children, null, 0);
 		}
+
+		if (rem.length)
+			NOSQL('navigations').remove().in('id', rem);
 
 		F.cache.removeAll('cachecms');
 	});

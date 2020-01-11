@@ -33,7 +33,8 @@ NEWSCHEMA('Pages', function(schema) {
 	schema.define('widgets', '[Object]');               // List of dynamic widgets, contains Array of ID widget
 	schema.define('signals', '[String(30)]');           // Registered signals
 	schema.define('navigations', '[String]');           // List of navigation ID (optional, for side rendering)
-	schema.define('language', String);                // Only information
+	schema.define('navigations2', '[String]');          // List of navigation ID
+	schema.define('language', String);                  // Only information
 	schema.define('redirects', '[String]');             // Temporary
 	schema.define('css', String);                       // Custom page styles
 
@@ -120,6 +121,7 @@ NEWSCHEMA('Pages', function(schema) {
 		var oldurl = model.oldurl;
 		var isUpdate = !!model.id;
 		var nosql = NOSQL('pages');
+		var navigations2 = model.ispartial ? null : model.navigations2;
 
 		!model.title && (model.title = model.name);
 
@@ -151,7 +153,7 @@ NEWSCHEMA('Pages', function(schema) {
 
 		redirectsmod && $WORKFLOW('Pages/Redirects', 'update');
 
-		if (!model.navigations.length)
+		if (!model.navigations.length || model.ispartial)
 			model.navigations = null;
 
 		model.stamp = new Date().format('yyyyMMddHHmm');
@@ -167,6 +169,7 @@ NEWSCHEMA('Pages', function(schema) {
 		}
 
 		model.oldurl = undefined;
+		model.navigations2 = undefined;
 
 		if (model.draft) {
 			// Draft can have another widgets
@@ -196,10 +199,13 @@ NEWSCHEMA('Pages', function(schema) {
 			$SAVE('Events', { type: 'pages/save', id: model.id, user: user, body: model.name, admin: true }, NOOP, $);
 			EMIT('pages.save', model);
 
-			if (model.replacelink && model.url !== oldurl && oldurl)
+			if (!model.ispartial && model.replacelink && model.url !== oldurl && oldurl)
 				$WORKFLOW('Pages', 'replacelinks', { url: model.url, oldurl: oldurl });
 			else
 				setTimeout2('pages', refresh, 1000);
+
+			if (!model.ispartial && navigations2.length)
+				$WORKFLOW('Navigations', 'addpage', { page: model, navigations: navigations2 }, NOOP);
 
 			$.success(model.id);
 		});

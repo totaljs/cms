@@ -11,7 +11,7 @@
 				</div>
 				<div class="col-md-3 m">
 					<div>
-						<div data---="input__?.template__dirsource:common.dependencies.templatespages;dirplaceholder:@(Search templates);dirempty:@(No template)" data-bind="?.lockedtemplate__disable">@(Template)</div>
+						<div data---="input__?.template__dirsource:common.dependencies.templatespages;dirplaceholder:@(Search templates);dirempty:@(No template);icon:file-text-o" data-bind="?.lockedtemplate__disable">@(Template)</div>
 					</div>
 					<div data-bind="?.lockedtemplate__show:!value || user.sa">
 						<div data---="checkbox__?.lockedtemplate2" class="red b mt10">@(Lock this template for editors)</div>
@@ -19,7 +19,7 @@
 				</div>
 				<div class="col-md-3 m">
 					<div data---="input__?.parent__dirsource:pages.parents;icon:sitemap;dirplaceholder:@(Search pages)__''" data-bind="?.ispartial__disable">@(Parent)</div>
-					<div class="help">@(Affects sitemap and breadcrumb.)</div>
+					<div class="help">@(Affects sitemap and breadcrumb)</div>
 				</div>
 			</div>
 		</div>
@@ -48,25 +48,25 @@
 			<div class="row mt10">
 				<div class="col-md-4 m">
 					<div data---="input__?.title__maxlength:50">@(Title)</div>
-					<div class="help">@(Meta title, maximum 60 chars.)</div>
+					<div class="help">@(Meta title, maximum 60 chars)</div>
 				</div>
 				<div class="col-md-4">
 					<div data---="input__?.description__maxlength:120">@(Description)</div>
-					<div class="help">@(Meta description, maximum 120 chars.)</div>
+					<div class="help">@(Meta description, maximum 120 chars)</div>
 				</div>
 				<div class="col-md-4 m">
 					<div data---="input__?.keywords__icon:tags;maxlength:80;placeholder:@(company, our team, employees)">@(Keywords)</div>
-					<div class="help">@(Meta keywords, maximum 6 words seperated by comma.)</div>
+					<div class="help">@(Meta keywords, maximum 6 words seperated by comma)</div>
 				</div>
 			</div>
 			<div class="row mt10">
 				<div class="col-md-4 m">
-					<div data---="dropdowncheckbox__?.navigations__alltext:null;datasource:common.dependencies.navigations;empty:@(Doesn't contain any navigations.);icon:navicon;cleaner:false">@(Side navigations)</div>
-					<div class="help">@(Add side navigations.)</div>
+					<div data---="dropdowncheckbox__?.navigations__alltext:null;datasource:common.dependencies.navigations;empty:@(Doesn't contain any navigations.);icon:navicon;cleaner:false" data-bind="?.ispartial__disable">@(Side navigations)</div>
+					<div class="help">@(Add side navigations)</div>
 				</div>
 				<div class="col-md-4 m">
 					<div data---="dropdowncheckbox__?.partial__alltext:null;datasource:pages.partial;empty:@(Doesn't contain any partial pages.);cleaner:false">@(Nested partial pages)</div>
-					<div class="help">@(Join other partial pages with this.)</div>
+					<div class="help">@(Join other partial pages with this)</div>
 				</div>
 				<div class="col-md-2 m">
 					<div data---="input__?.language__dirsource:common.dependencies.languages;dirplaceholder:@(Search language);dirempty:@(No language)">@(Language)</div>
@@ -79,16 +79,19 @@
 		</div>
 		<div class="padding bg-yellow npb">
 			<div class="row">
-				<div class="col-md-6 m">
-					<div data---="dropdowncheckbox__?.signals__alltext:null;datasource:common.dependencies.signals;empty:@(Doesn't contain any signals.);icon:dot-circle-o">@(Signals)</div>
-					<div class="help">@(Signals can start special actions when the page is displayed.)</div>
+				<div class="col-md-4 m">
+					<div data---="dropdowncheckbox__?.navigations2__alltext:null;datasource:common.dependencies.navigations;empty:@(Doesn't contain any navigations.);icon:navicon;cleaner:false" data-bind="?.ispartial__disable">@(Add to navigations)</div>
+					<div class="help">@(This page will be automatically appended into the selected navigations)</div>
 				</div>
-				<div class="col-md-6 m">
-					<div class="b"><i class="fa fa-cog mr5"></i>@(Settings for navigations)</div>
-					<div class="mt5">
-						<div data---="checkbox__?.navicon" class="inline mr10">@(Replace icon in navigations)</div>
-						<div data---="checkbox__?.navname" class="inline mr10">@(Replace name and language in navigations)</div>
-						<div data---="checkbox__?.replacelink" class="inline">@(Replace older URL in all pages)</div>
+				<div class="col-md-4 m">
+					<div data---="dropdowncheckbox__?.signals__alltext:null;datasource:common.dependencies.signals;empty:@(Doesn't contain any signals.);icon:dot-circle-o">@(Signals)</div>
+					<div class="help">@(Signals can start special actions when the page is displayed)</div>
+				</div>
+				<div class="col-md-4 m">
+					<div class="pagesformcheckboxes">
+						<div data---="checkbox__?.navicon">@(Replace icon in navigations)</div>
+						<div data---="checkbox__?.navname">@(Replace name and language in navigations)</div>
+						<div data---="checkbox__?.replacelink">@(Replace older URL in all pages)</div>
 					</div>
 				</div>
 			</div>
@@ -174,6 +177,7 @@
 			model.search = editor.getKeywords();
 			model.bodydraft = undefined;
 			model.bodyraw = undefined;
+			model.navigations2 = undefined;
 
 			var w = editor.getWidgets();
 			model.widgets = w.settings;

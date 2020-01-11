@@ -8,6 +8,7 @@ NEWSCHEMA('Subscribers', function(schema) {
 		var model = $.model;
 		var db = NOSQL('subscribers');
 		var email = model.email.split(',');
+		var ua = $.res ? $.res.useragent() : '';
 
 		for (var i = 0; i < email.length; i++) {
 
@@ -20,6 +21,7 @@ NEWSCHEMA('Subscribers', function(schema) {
 			obj.language = $.language;
 			obj.unsubscribed = false;
 			obj.email = email[i];
+			obj.browser = ua;
 
 			db.modify(obj, obj).where('email', obj.email).callback(function(err, count) {
 				if (count) {
@@ -78,7 +80,7 @@ NEWSCHEMA('Subscribers', function(schema) {
 	});
 
 	schema.addWorkflow('unsubscribe', function($) {
-		NOSQL('subscribers').modify({ unsubscribed: true, dateupdated: NOW }).where('email', $.query.email);
+		NOSQL('subscribers').modify({ unsubscribed: true, dtupdated: NOW }).where('email', $.query.email);
 		$SAVE('Events', { type: 'subscribers/rem', user: $.user ? $.user.name : '', body: $.query.email }, NOOP, $);
 		$.success();
 	});

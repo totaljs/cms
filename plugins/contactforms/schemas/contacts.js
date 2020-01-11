@@ -1,5 +1,6 @@
 NEWSCHEMA('ContactForms', function(schema) {
 
+	schema.define('source', 'String(50)');
 	schema.define('firstname', 'Capitalize(40)', true);
 	schema.define('lastname', 'Capitalize(40)', true);
 	schema.define('email', 'Email', true);
@@ -11,6 +12,7 @@ NEWSCHEMA('ContactForms', function(schema) {
 		var opt = $.options === EMPTYOBJECT ? $.query : $.options;
 		var filter = NOSQL('contactforms').list();
 		filter.paginate(opt.page, opt.limit, 100);
+		opt.source && filter.gridfilter('source', opt, String);
 		opt.email && filter.gridfilter('email', opt, String);
 		opt.firstname && filter.gridfilter('firstname', opt, String);
 		opt.lastname && filter.gridfilter('lastname', opt, String);

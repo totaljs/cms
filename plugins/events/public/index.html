@@ -25,8 +25,8 @@
 		<section data-type="top2">
 			<div class="header">
 				<label><i class="far fa-clock-o"></i>@(Events)</label>
-				<nav>
-					<button class="exec" data-exec="?/clear"><i class="fa fa-trash-o red"></i>@(Clear)</button>
+				<nav data-bind="user.sa__show" class="hidden">
+					<button class="exec" data-exec="?/clear" data-bind="!?__show:value.today.length||value.yesterday.length||value.older.length"><i class="fa fa-trash-o red"></i>@(Clear events)</button>
 				</nav>
 			</div>
 		</section>
@@ -47,9 +47,6 @@
 												<div class="event-body">{{ m.body }}</div>
 											</div>
 										{{ end }}
-										{{ if !value || !value.length }}
-											<div class="padding help center">@(No data)</div>
-										{{ fi }}
 									</script>
 								</div>
 							</div>
@@ -64,13 +61,10 @@
 										{{ foreach m in value }}
 											<div class="event">
 												<div class="event-type">{{ if m.user }}<span>{{ m.user }}<i class="fa fa-user"></i></span>{{ fi }}<i class="fa fa-bookmark"></i>{{ m.type }}</div>
+												<div class="event-user"><span>{{ m.dtcreated | time }}<i class="far fa-clock-o"></i></span>{{ m.ua }} / {{ m.ip }}</div>
 												<div class="event-body">{{ m.body }}</div>
-												<div class="event-user"><span>{{ m.dtcreated | time }}<i class="far fa-clock-o"></i></span>IP: {{ m.ip }}</div>
 											</div>
 										{{ end }}
-										{{ if !value || !value.length }}
-											<div class="padding help center">@(No data)</div>
-										{{ fi }}
 									</script>
 								</div>
 							</div>
@@ -85,13 +79,10 @@
 										{{ foreach m in value }}
 											<div class="event">
 												<div class="event-type">{{ if m.user }}<span>{{ m.user }}<i class="fa fa-user"></i></span>{{ fi }}<i class="fa fa-bookmark"></i>{{ m.type }}</div>
+												<div class="event-user"><span>{{ m.dtcreated | time }}<i class="far fa-clock-o"></i></span>{{ m.ua }} / {{ m.ip }}</div>
 												<div class="event-body">{{ m.body }}</div>
-												<div class="event-user"><span>{{ m.dtcreated | time }}<i class="far fa-clock-o"></i></span>IP: {{ m.ip }}</div>
 											</div>
 										{{ end }}
-										{{ if !value || !value.length }}
-											<div class="padding help center">@(No data)</div>
-										{{ fi }}
 									</script>
 								</div>
 							</div>
@@ -126,17 +117,17 @@
 				data.yesterday = response.findAll(n => n.dtcreated.format(format) === now);
 				now = +now;
 				data.older = response.findAll(n => +n.dtcreated.format(format) < now);
-				SET(exports.scope, data);
+				SET('events', data);
 				FUNC.loading(false, 500);
 			});
 		};
 
 		exports.clear = function() {
-			SETTER('confirm', 'show2', '@(Are you sure you want to perform selected operation?)', ['"trash-o" @(Clear)', '@(Cancel)'], function(index) {
-				AJAX('GET [url]api/events/clear/', function() {
-					SETTER('snackbar', 'success', '@(Done, all events have been removed.)');
-					exports.refresh();
-				});
+			SETTER('confirm', 'show2', '@(Are you sure you want to clear all events?)', ['"trash-o" @(Clear)', '@(Cancel)'], function(index) {
+				AJAX('GET [url]api/events/clear/', FUNC.messageresponse('@(Events have been cleared successfully)', function() {
+					SET('events', { today: [], yesterday: [], older: [] });
+					exports.element.SETTER('*', 'resize');
+				}));
 			});
 		};
 

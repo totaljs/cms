@@ -179,8 +179,14 @@ h3 i { margin-right: 8px; }
 .noticespreview ul { margin: 10px 0 0; }
 .noticespreview img { display: block; margin: 10px 0 0; border-radius: 4px; }
 
-@media(min-width:1200px) {
+.pagesformcheckboxes { border-left:1px solid #EBEBC4; padding: 5px 0 5px 20px; }
+
+@media(min-width: 1200px) {
 	.header-message { display: block; }
+}
+
+@media(max-width: 991px) {
+	.pagesformcheckboxes { border-left: 0; padding: 0; }
 }
 
 @keyframes blink {

@@ -1,11 +1,12 @@
 <style>
 	.widgetext { cursor: pointer; position: relative; }
-	.widgetext img { border: 1px solid #E0E0E0; border-radius: 2px; }
+	.widgetext img { border: 4px solid #E0E0E0; border-radius: 2px; }
+	.widgetext:hover img { border-color: #D0D0D0; }
 	.widgetext-name { font-weight: bold; color: black; line-height: 16px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 	.widgetext-category { font-size: 11px; color: gray; margin-top: 8px;  }
 	.widgetext i { margin-right: 5px; }
 	.widgetext .fa-check-circle { display: none; }
-	.widgetextinstalled .fa-check-circle { display: block; position: absolute; font-size: 40px; right: 10px; bottom: 50px; background-color: white; border-radius: 100px; padding: 0 2px 0; }
+	.widgetextinstalled .fa-check-circle { display: block; position: absolute; font-size: 28px; right: 10px; bottom: 50px; background-color: white; border-radius: 100px; padding: 3px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
 	.widgetextinstalled img { border-color: #79AF65; }
 </style>
 
@@ -84,8 +85,8 @@
 		};
 
 		exports.submit = function(el) {
-			SETTER('confirm', 'show', '@(Are you sure you want to import selected widget?)', ['"cloud-download" @(Import)', '@(Cancel)'], function(index) {
-				!index && AJAX('GET https://componentator.com/api/widgets/{0}/'.format(+el.attrd('id')), function(response) {
+			SETTER('confirm', 'show2', '@(Are you sure you want to import selected widget?)', ['"cloud-download" @(Import)', '@(Cancel)'], function() {
+				AJAX('GET https://componentator.com/api/widgets/{0}/'.format(+el.attrd('id')), function(response) {
 					var data = {};
 					data.name = response.name;
 					data.category = response.category;
