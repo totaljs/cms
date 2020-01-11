@@ -5,7 +5,7 @@
 	.ui-filelistbox li { border-bottom: 1px solid #E0E0E0; padding: 0 10px; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; overflow-scrolling: touch; }
 	.ui-filelistbox-dragdrop { border-color: #6290C8; }
 	.ui-filelistbox-name { padding: 3px 0 0 0; display: block; margin-right: 280px; }
-	.ui-filelistbox li > .fa { width: 30px; font-size: 12px; border-right: 1px solid #E0E0E0; margin-right: 7px; color: #5590CD; float: left; height: 22px; padding: 5px 0 0 7px; }
+	.ui-filelistbox li > i { width: 30px; font-size: 12px; border-right: 1px solid #E0E0E0; margin-right: 7px; color: #5590CD; float: left; height: 22px; padding: 5px 0 0 7px; }
 	.ui-filelistbox li:hover { background-color: #F0F0F0; }
 	.ui-filelistbox-selected { background-color: #FFE7A4 !important; }
 	.ui-filelistbox-search-empty { height: 34px; }
@@ -154,7 +154,7 @@
 		self.readonly();
 		self.nocompile();
 		self.datasource = EMPTYARRAY;
-		self.template = Tangular.compile('<li data-index="{{ index }}"><a href="/download/{{ value }}" target="_blank" class="ui-filelistbox-preview"><i class="fa fa-search"></i></a><span class="ui-filelistbox-size">{{ size | filesize }}</span><span class="ui-filelistbox-dimension">{{ if width }}{{ width }}x{{ height }}{{ else }}{{ fi }}</span><span class="ui-filelistbox-date">{{ mtime | format(\'@(yyyy-MM-dd)\') }}</span>{{ if icon }}<i class="fa fa-{{ icon }}"></i>{{ fi }}<span class="ui-filelistbox-name">{{ text }}</span></li>');
+		self.template = Tangular.compile('<li data-index="{{ index }}"><a href="/download/{{ value }}" target="_blank" class="ui-filelistbox-preview"><i class="fa fa-search"></i></a><span class="ui-filelistbox-size">{{ size | filesize }}</span><span class="ui-filelistbox-dimension">{{ if width }}{{ width }}x{{ height }}{{ else }}{{ fi }}</span><span class="ui-filelistbox-date">{{ mtime | format(\'@(yyyy-MM-dd)\') }}</span>{{ if icon }}<i class="far fa-{{ icon }}"></i>{{ fi }}<span class="ui-filelistbox-name">{{ text }}</span></li>');
 
 		self.make = function() {
 
@@ -318,7 +318,7 @@
 				if (take-- <= 0)
 					break;
 
-				var obj = { text: item.name, value: item.id, index: self.datasource.length, icon: item.type.substring(0, 5) === 'image' ? 'picture-o' : 'file-o', size: item.size, width: item.width, height: item.height, mtime: item.mtime };
+				var obj = { text: item.name, value: item.id, index: self.datasource.length, icon: item.type.substring(0, 5) === 'image' ? 'file-image' : 'file-o', size: item.size, width: item.width, height: item.height, mtime: item.mtime };
 				self.datasource.push(obj);
 				builder.push(self.template(obj));
 			}
