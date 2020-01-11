@@ -702,7 +702,9 @@
 						if (common.form === 'pagesform')
 							EXEC('pagesform/submit');
 					} else if (e.key === 'F10') {
-						if (common.form === 'pagesform')
+						if (common.window)
+							NULL('common.window');
+						else if (common.form === 'pagesform')
 							EXEC('pagesform/preview2');
 						else if (common.form === 'postsform')
 							EXEC('postsform/toolbar', 'preview');
