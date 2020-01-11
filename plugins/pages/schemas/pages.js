@@ -7,7 +7,7 @@ const REGEXP_GLOBAL = /\$[0-9a-z-_]+/gi;
 var loaded = false;
 
 MAIN.pages = [];
-MAIN.sitemap = [];
+MAIN.sitemap = {};
 MAIN.variables = {};
 MAIN.redirects = {};
 
@@ -413,6 +413,7 @@ function refresh() {
 
 			helper[doc.id] = key;
 			sitemap[key] = obj;
+			sitemap[doc.id] = obj;
 
 			if (lng) {
 				key = lng + ' ' + key;
@@ -783,9 +784,14 @@ Controller.prototype.CMSpage = function(callback, cache) {
 				self.head('<style type="text/css">' + response.css + '</style>');
 			}
 
+			if (response.parent) {
+				tmp = MAIN.sitemap[response.parent];
+				response.parenturl = tmp ? tmp.url : '';
+			} else
+				response.parenturl = '';
+
 			repo.page = response;
 			self.layout('');
-
 
 			var obj = {};
 
@@ -863,6 +869,13 @@ Controller.prototype.CMSpagemodel = function(model) {
 		for (var i = 0; i < repo.page.signals.length; i++)
 			obj[repo.page.signals[i]] = 1;
 	}
+
+
+	if (model.parent) {
+		tmp = MAIN.sitemap[model.parent];
+		model.parenturl = tmp ? tmp.url : '';
+	} else
+		model.parenturl = '';
 
 	repo.page.signals = obj;
 	self.layout('');

@@ -173,6 +173,7 @@ function findByPage(id, items) {
 function prepare(main, children, parent, level) {
 	for (var i = 0; i < children.length; i++) {
 		var item = children[i];
+		main.pages[item.id] = item;
 		main.url[item.url] = item;
 		item.parent = parent;
 		item.level = level;
@@ -230,6 +231,7 @@ function refresh() {
 			MAIN.navigations[item.id] = item;
 			item.name = tmp.name;
 			item.url = {};
+			item.pages = {};
 			item.stringify = function() {
 				var skip = { parent: true, url: true };
 				return JSON.stringify(this, (k, v) => skip[k] ? undefined : v);
