@@ -697,6 +697,17 @@ function loadpartial(page, callback, controller) {
 	var nosql = NOSQL('pages');
 	nosql.find().in('id', page.partial).callback(function(err, response) {
 		response.wait(function(item, next) {
+
+
+			var obj = {};
+
+			if (item.signals && item.signals.length) {
+				for (var i = 0; i < item.signals.length; i++)
+					obj[item.signals[i]] = 1;
+			}
+
+			item.signals = obj;
+
 			nosql.counter.hit(item.id);
 			output[item.id] = item;
 			output[item.url] = item;
@@ -767,6 +778,15 @@ Controller.prototype.CMSpage = function(callback, cache) {
 			var DRAFT = !!self.query.DRAFT;
 			response.language && counter.hit(response.language);
 
+			var obj = {};
+
+			if (repo.page.signals && repo.page.signals.length) {
+				for (var i = 0; i < repo.page.signals.length; i++)
+					obj[repo.page.signals[i]] = 1;
+			}
+
+			repo.page.signals = obj;
+
 			if (response.css) {
 				response.css = U.minifyStyle('/*auto*/\n' + response.css);
 				self.head('<style type="text/css">' + response.css + '</style>');
@@ -835,6 +855,15 @@ Controller.prototype.CMSpagemodel = function(model) {
 	}
 
 	repo.page = model;
+
+	var obj = {};
+
+	if (repo.page.signals && repo.page.signals.length) {
+		for (var i = 0; i < repo.page.signals.length; i++)
+			obj[repo.page.signals[i]] = 1;
+	}
+
+	repo.page.signals = obj;
 	self.layout('');
 
 	model.body.CMSrender(DRAFT ? model.dwidgets : model.widgets, function(body) {
@@ -886,6 +915,15 @@ Controller.prototype.CMSrender = function(url, callback) {
 		}
 
 		repo.page = response;
+
+		var obj = {};
+
+		if (repo.page.signals && repo.page.signals.length) {
+			for (var i = 0; i < repo.page.signals.length; i++)
+				obj[repo.page.signals[i]] = 1;
+		}
+
+		repo.page.signals = obj;
 
 		FUNC.read('pages', response.id, function(err, body) {
 			response.body = body;
