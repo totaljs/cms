@@ -14,7 +14,7 @@ $(document).on('click', '#mobilemenu', function() {
 // Online statistics for visitors
 (function() {
 
-	if (navigator.onLine != null && !navigator.onLine)
+	if (W.top !== W || (navigator.onLine != null && !navigator.onLine && W.top))
 		return;
 
 	var options = {};
