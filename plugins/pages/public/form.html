@@ -41,8 +41,8 @@
 			<div class="hidden" data-bind="?.lockedcontent__hide">
 				<span class="link exec inline" data-exec="pagesform/backups"><i class="fa fa-clock-o mr5"></i>@(Restore a backup)</span>
 			</div>
-			<span class="link exec red" data-exec="pagesform/submit" style="float:right"><i class="fa fa-floppy-o mr5"></i>@(Save settings)</span>
-			<sapn class="link exec" data-exec="pagesform/preview2" style="float:right;margin-right:10px"><i class="fa fa-search mr5"></i>@(Preview)</a>
+			<span class="link exec red" data-exec="pagesform/submit" style="float:right"><i class="fa fa-floppy-o mr5"></i>@(Quicksave)</span>
+			<sapn class="link exec" data-exec="pagesform/preview2" style="float:right;margin-right:10px" data-bind="?.ispartial__hide"><i class="fa fa-search mr5"></i>@(Preview)</a>
 		</div>
 		<div class="padding">
 			<div class="row mt10">
@@ -140,7 +140,7 @@
 	<input type="hidden" name="base64" />
 </form>
 
-<div data---="window__common.window___if:pagespreview;title:@(Preview);scrollbar:0" class="iframefull">
+<div data---="window__common.window___if:pagespreview;title:@(Preview);scrollbar:0;icon:search" class="iframefull">
 	<iframe src="about:blank" name="cmspagepreviewiframe" frameborder="0" style="width:100%"></iframe>
 </div>
 
