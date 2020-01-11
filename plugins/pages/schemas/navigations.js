@@ -129,13 +129,10 @@ NEWSCHEMA('Navigations', function(schema) {
 		var user = $.user ? $.user.name : '';
 		var done = () => setTimeout2('navigations', refresh, 500);
 
-		console.log('SOM TU');
-
 		db.find().callback(function(err, response) {
 			for (var i = 0, length = response.length; i < length; i++) {
 				var nav = response[i];
 				var item = findByPage(page.id, nav.children);
-				console.log('item', item == null, page.id, nav);
 				if (item) {
 
 					nav.dtupdated = NOW;
