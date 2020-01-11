@@ -28,7 +28,7 @@ FUNC.alert = function(user, type, value) {
 	}
 };
 
-CONF.admin_tracking && ON('visitor', function(obj) {
+ON('visitor', function(obj) {
 	if (WS) {
 		MSG_NOTIFY.type = 'visitor';
 		MSG_NOTIFY.message = obj;

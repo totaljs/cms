@@ -2,14 +2,8 @@ name                      : CMS
 version                   : 13.0.0
 author                    : Peter Širka
 
-// Hidden super admin in the form username:password
-admin_cookie              : __admin
-
 // Secret for administrators
 admin_secret  (generate)  : 10
-
-// Enables real-time visitor tracking
-admin_tracking            : true
 
 // Image convertor for resizing of pictures
 // Default image converter: im = ImageMagick, gm = GraphicsMagick
