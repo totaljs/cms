@@ -88,7 +88,7 @@
 					@{fi}
 				</div>
 			</div>
-			<br /><br /><br />
+			<br />
 		@{else}
 
 			<header>

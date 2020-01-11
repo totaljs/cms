@@ -432,7 +432,7 @@
 			var content = target.text().replace(/\s/g, '');
 			var href = a.attr('href');
 
-			if ((/\,/).test(content))
+			if ((/\,|\//).test(content) || !content)
 				return;
 
 			var ismail = /[#|@|\:]/;
