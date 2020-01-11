@@ -332,7 +332,9 @@
 		});
 
 		SETTER(true, 'shortcuts', 'register', 'F10', function(e) {
-			if (common.form === 'pagesform')
+			if (common.window)
+				NULL('common.window');
+			else if (common.form === 'pagesform')
 				EXEC('pagesform/preview2');
 			else if (common.form === 'postsform')
 				EXEC('postsform/toolbar', 'preview');
