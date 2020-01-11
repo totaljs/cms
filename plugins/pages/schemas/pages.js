@@ -778,6 +778,15 @@ Controller.prototype.CMSpage = function(callback, cache) {
 			var DRAFT = !!self.query.DRAFT;
 			response.language && counter.hit(response.language);
 
+			if (response.css) {
+				response.css = U.minifyStyle('/*auto*/\n' + response.css);
+				self.head('<style type="text/css">' + response.css + '</style>');
+			}
+
+			repo.page = response;
+			self.layout('');
+
+
 			var obj = {};
 
 			if (repo.page.signals && repo.page.signals.length) {
@@ -786,14 +795,6 @@ Controller.prototype.CMSpage = function(callback, cache) {
 			}
 
 			repo.page.signals = obj;
-
-			if (response.css) {
-				response.css = U.minifyStyle('/*auto*/\n' + response.css);
-				self.head('<style type="text/css">' + response.css + '</style>');
-			}
-
-			repo.page = response;
-			self.layout('');
 
 			FUNC.read('pages', response.id + (DRAFT ? '_draft' : ''), function(err, body) {
 				response.body = body;
