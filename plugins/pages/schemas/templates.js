@@ -69,6 +69,9 @@ function refresh(callback) {
 			else
 				compiled.html = compiled.html.replace('<html>', '<html@{if repository.preview} class="CMS_preview"@{fi}>').replace('</head>', '<link rel="stylesheet" href="@{\'%cdn\'}/spa.min@18.css" /><link rel="stylesheet" href="/' + item.file + '.css?ts=' + hash + '" /><link rel="stylesheet" href="@{MAIN.css}" />@{if repository.preview}<link rel="stylesheet" href="/css/admin-editor.css" />@{else}<script src="@{\'%cdn\'}/spa.min@18.js"></script>@{fi}@{import(\'meta\', \'favicon.ico\', \'head\')}</head>');
 
+			if (CONF.proicons)
+				compiled.html = compiled.html.replace(/@18\.css/g, '@18pro.css');
+
 			Fs.writeFile(PATH.views(item.file + '.html'), U.minifyHTML(compiled.html), function() {
 				Fs.writeFile(PATH.public(item.file + '.js'), compiled.js ? U.minifyScript(compiled.js) : '', function() {
 					Fs.writeFile(PATH.public(item.file + '.css'), compiled.css ? U.minifyStyle('/*auto*/\n' + compiled.css) : '', function() {

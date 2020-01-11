@@ -3,13 +3,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>@(Admin v@{config.version})</title>
+	<title>@{'%name'} v@{'%version'}</title>
 	<meta charset="utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=10" />
 	<meta name="format-detection" content="telephone=no" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 	<meta name="robots" content="all,follow" />
-	<link rel="stylesheet" href="@{'%cdn'}/spa.min@18.css" />
+	<link rel="stylesheet" href="@{'%cdn'}/spa.min@18@{if CONF.proicons}pro@{fi}.css" />
 	<script src="@{'%cdn'}/spa.min@18.js"></script>
 	@{import('head', 'admin-ui.css + admin.css', 'admin-ui.js + admin.js', 'favicon.ico')}
 </head>
