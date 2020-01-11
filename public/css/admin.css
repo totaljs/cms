@@ -23,6 +23,10 @@ header .title .fa, header .title .fal { margin-right: 8px; }
 .iframefull { height: 100%; }
 .iframefull div, .iframefull iframe { height: 100%; }
 
+.linkshortcut { text-decoration: none !important; margin-top: -2px; }
+.linkshortcut:hover { border-bottom: 1px solid $color; }
+.linkshortcut span { text-decoration: none !important; vertical-align: super; color: gray; font-size: 9px; margin-left: 5px; }
+.linkshortcut span:hover { text-decoration: none !important; }
 .link { color: #4474c5; }
 
 .mb10 { margin-bottom: 10px; }
