@@ -45,4 +45,4 @@ iframe.CMS_edit { padding: 5px; border: 15px solid red;}
 /*.CMS_preview img[alt=""], .CMS_preview a[href=""] { outline: 3px dashed red !important; }*/
 .CMS_preview a[data-cms-track] { outline: 2px dashed blue; }
 .CMS_remove { min-height: 10px; }
-*[contentEditable] { cursor: text; }
+*[contentEditable] { cursor: text; outline: 2px solid #4285F4; }
