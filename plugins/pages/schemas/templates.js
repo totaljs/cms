@@ -157,7 +157,7 @@ function compile(html) {
 		var beg = body.indexOf('>') + 1;
 		var type = body.substring(0, beg);
 
-		if (!(/html|plain/i).test(type)) {
+		if (!(/html|plain|src/i).test(type)) {
 			body = body.substring(beg);
 			raw = raw.replace(type + body + '</script>', '');
 			body = body.trim();

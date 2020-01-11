@@ -413,7 +413,6 @@ function refresh() {
 
 			helper[doc.id] = key;
 			sitemap[key] = obj;
-			sitemap[doc.id] = obj;
 
 			if (lng) {
 				key = lng + ' ' + key;
