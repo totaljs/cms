@@ -28,7 +28,7 @@
 		<div data-bind="?.type__show:value==='markdown'__delay:500">
 
 			<div class="toolbar toolbar3">
-				<button class="exec" data-exec="?/toolbar" name="preview"><i class="fa fa-search"></i>@(Preview)</button>
+				<button class="exec" data-exec="?/toolbar" name="preview"><i class="fa fa-search"></i>@(Preview (F10))</button>
 				<span></span>
 				<button class="exec" data-exec="?/toolbar" name="file"><i class="far fa-folder"></i>@(Browse file)</button>
 			</div>
@@ -147,7 +147,8 @@
 		};
 
 		exports.toolbar = function(el) {
-			switch (el[0].name) {
+			var name = el instanceof jQuery ? el[0].name : el;
+			switch (name) {
 				case 'file':
 					refresh_filebrowser(function(file, name) {
 						name = name.replace(/\.[a-z]+$/i, '');

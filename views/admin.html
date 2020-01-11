@@ -317,6 +317,7 @@
 					case 'noticesform':
 					case 'postsform':
 					case 'pagesredirects':
+					case 'pagestemplate':
 						var fields = MODIFIED(common.page + '.form').join(',');
 						if (fields.indexOf('.body') !== -1) {
 							SETTER('confirm', 'show2', '@(Are you sure you want to close this form without saving?)', ['@(Yes)', '@(Cancel)'], function() {
@@ -328,6 +329,14 @@
 				}
 				NULL('common.form');
 			}
+		});
+
+		SETTER(true, 'shortcuts', 'register', 'F10', function(e) {
+			if (common.form === 'pagesform')
+				EXEC('pagesform/preview2');
+			else if (common.form === 'postsform')
+				EXEC('postsform/toolbar', 'preview');
+
 		});
 
 		SETTER(true, 'shortcuts', 'register', 'F1', function(e) {

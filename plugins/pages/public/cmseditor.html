@@ -699,7 +699,16 @@
 				$(self.getWindow()).on('keydown', function(e) {
 					if (e.metaKey && e.which === 83) {
 						e.preventDefault();
-						EXEC('pagesform/submit');
+						if (common.form === 'pagesform')
+							EXEC('pagesform/submit');
+					} else if (e.key === 'F10') {
+						if (common.form === 'pagesform')
+							EXEC('pagesform/preview2');
+						else if (common.form === 'postsform')
+							EXEC('postsform/toolbar', 'preview');
+					} else if (e.which === 27) {
+						if (common.window)
+							NULL('common.window');
 					}
 				});
 			}
