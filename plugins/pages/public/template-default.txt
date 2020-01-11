@@ -15,12 +15,13 @@
 			body { background-color: white; }
 
 			.CMS_hidden { display: none; }
-			.wp { padding-left: 0; padding-right: 0; }
-			.wb .wp { padding-left: 20px; padding-right: 20px; }
-			.wm { margin-bottom: 20px; }
-			.wmi { margin-bottom: 20px; }
+
+			.wb.wp { padding-left: 20px; padding-right: 20px; }
+			.wb.wm { margin-bottom: 20px; }
+			.wbi.wmi { margin-bottom: 20px; }
+			.wbi.wpi { padding-left: 20px; padding-right: 20px; }
+
 			.wnowrap { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
-			.wpi {}
 
 			h1 { font-family: Arial; margin: 0 0 20px 0; padding: 0; font-weight: 700; font-size: 30px; }
 			h2 { font-family: Arial; margin: 0 0 15px 0; padding: 0; font-weight: 700; font-size: 23px; }
