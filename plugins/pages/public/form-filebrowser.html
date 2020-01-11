@@ -70,7 +70,7 @@
 		};
 
 		exports.clear = function() {
-			SETTER('confirm', 'confirm', '@(Are you sure you want to remove all useless files?)', ['"trash" @(Remove)', '@(No)'], function(index) {
+			SETTER('confirm', 'confirm', '@(Are you sure you want to remove all useless files?)', ['"trash" @(Remove)', '@(Cancel)'], function(index) {
 				if (!index) {
 					FUNC.loading(true);
 					AJAX('GET [url]api/files/clear/', function() {

@@ -72,7 +72,7 @@
 	COMPONENT('cmseditor', function(self, config) {
 
 		var target, iframe, container, width;
-		var offsetter = '<span id="cmseditorheight"></span><scr' + 'ipt>window.parent.cmseditor_iframeloaded();</sc' + 'ript>';
+		var offsetter = '<span id="cmseditorheight"></span><scr' + 'ipt>window.parent.cmseditor_iframeloaded()</sc' + 'ript>';
 		var locked = false;
 
 		self.readonly();
@@ -693,7 +693,16 @@
 			var body = self.getContents();
 			var touch = { time: 0, target: null };
 
-			body.off('click touchstart touchmove touchend dblclick');
+			body.off('click touchstart touchmove touchend dblclick keydown');
+
+			if (common.form === 'pagesform') {
+				$(self.getWindow()).on('keydown', function(e) {
+					if (e.metaKey && e.which === 83) {
+						e.preventDefault();
+						EXEC('pagesform/submit');
+					}
+				});
+			}
 
 			body.on('dblclick', '.CMS_edit', function(e) {
 

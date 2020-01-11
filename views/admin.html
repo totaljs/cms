@@ -294,6 +294,11 @@
 			setTimeout(refresh_notifications, item.delay || 3000);
 		}
 
+		SETTER(true, 'shortcuts', 'register', 'cmd + s, ctrl + s', function() {
+			if (common.form === 'pagesform')
+				EXEC('pagesform/submit');
+		}, true);
+
 		SETTER(true, 'shortcuts', 'register', 'ESC', function() {
 			if (common.window)
 				NULL('common.window');
@@ -305,13 +310,13 @@
 				NULL('common.form2');
 			else if (common.form) {
 				switch (common.form) {
-					case 'pages-form':
-					case 'products-form':
-					case 'newsletters-form':
-					case 'widgets-form':
-					case 'notices-form':
-					case 'posts-form':
-					case 'pages-redirects':
+					case 'pagesform':
+					case 'productsform':
+					case 'newslettersform':
+					case 'widgetsform':
+					case 'noticesform':
+					case 'postsform':
+					case 'pagesredirects':
 						var fields = MODIFIED(common.page + '.form').join(',');
 						if (fields.indexOf('.body') !== -1) {
 							SETTER('confirm', 'show2', '@(Are you sure you want to close this form without saving?)', ['@(Yes)', '@(Cancel)'], function() {

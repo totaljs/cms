@@ -140,7 +140,7 @@
 	<input type="hidden" name="base64" />
 </form>
 
-<div data---="window__common.window___if:pagespreview;title:@(Preview);scrollbar:0;icon:search" class="iframefull">
+<div data---="window__common.window___if:pagespreview;title:@(Live preview);scrollbar:0;icon:search" class="iframefull">
 	<iframe src="about:blank" name="cmspagepreviewiframe" frameborder="0" style="width:100%"></iframe>
 </div>
 
@@ -291,7 +291,7 @@
 					if (response.success) {
 						SETTER('snackbar', 'success', '@(Page has been saved successfully.)');
 
-						if (typeof hide === 'function')
+						if (typeof(hide) === 'function')
 							hide();
 						else
 							SET('?.lockedtemplate', locked);
@@ -306,7 +306,7 @@
 			};
 
 			if (model.lockedtemplate && !user.sa)
-				SETTER('confirm', 'show2', '@(Are you sure you want to use always this template?)', ['@(Sure)', '@(No)'], sumit);
+				SETTER('confirm', 'show2', '@(Are you sure you want to use always this template?)', ['@(Sure)', '@(Cancel)'], sumit);
 			else
 				submit();
 		};

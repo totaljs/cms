@@ -74,7 +74,7 @@
 		exports.button = function(name, row, grid) {
 			switch (name) {
 				case 'remove':
-					SETTER('confirm', 'show2', '@(Are you sure you want to remove selected post?)', ['"trash" @(Remove)', '@(No)'], function() {
+					SETTER('confirm', 'show2', '@(Are you sure you want to remove selected post?)', ['"trash" @(Remove)', '@(Cancel)'], function() {
 						FUNC.loading(true);
 						AJAX('DELETE [url]api/notices/' + row.id, function(response) {
 							FUNC.loading(false, 1000);

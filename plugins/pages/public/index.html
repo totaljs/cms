@@ -146,7 +146,7 @@
 		exports.button = function(name, row, grid) {
 			switch (name) {
 				case 'remove':
-					SETTER('confirm', 'show2', '@(Are you sure you want to remove selected page?)', ['"trash"@(Remove)', '@(No)'], function() {
+					SETTER('confirm', 'show2', '@(Are you sure you want to remove selected page?)', ['"trash"@(Remove)', '@(Cancel)'], function() {
 						FUNC.loading(true);
 						AJAX('DELETE [url]api/pages/', row, FUNC.messageresponse('@(Pages has been removed successfully)', exports.refresh));
 					});
@@ -190,7 +190,7 @@
 			options.callback = function(item) {
 				switch (item.id) {
 					case 'remove':
-						SETTER('confirm', 'show2', '@(Are you sure you want to remove all selected pages?)', ['"trash" @(Remove)', '@(No)'], function() {
+						SETTER('confirm', 'show2', '@(Are you sure you want to remove all selected pages?)', ['"trash" @(Remove)', '@(Cancel)'], function() {
 							FUNC.loading(true);
 							var arr = FIND('.pages.grid').checked();
 							arr.wait(function(el, next, index) {

@@ -86,7 +86,7 @@
 		exports.button = function(name, row, grid) {
 			switch (name) {
 				case 'remove':
-					SETTER('confirm', 'show2', '@(Are you sure you want to remove selected widget?)', ['"trash" @(Remove)', '@(No)'], function(index) {
+					SETTER('confirm', 'show2', '@(Are you sure you want to remove selected widget?)', ['"trash" @(Remove)', '@(Cancel)'], function(index) {
 						FUNC.loading(true);
 						AJAX('DELETE [url]api/widgets/{id}/'.arg(row), function(response) {
 							FUNC.loading(false, 1000);
@@ -165,7 +165,7 @@
 			options.callback = function(item) {
 				switch (item.id) {
 					case 'remove':
-						SETTER('confirm', 'show2', '@(Are you sure you want to remove all selected widgets?)', ['"trash" @(Remove)', '@(No)'], function(index) {
+						SETTER('confirm', 'show2', '@(Are you sure you want to remove all selected widgets?)', ['"trash" @(Remove)', '@(Cancel)'], function(index) {
 							var arr = FIND('.widgets.grid').checked();
 							FUNC.loading(true);
 							arr.wait(function(el, next, index) {
