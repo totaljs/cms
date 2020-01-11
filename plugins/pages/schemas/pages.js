@@ -21,7 +21,7 @@ NEWSCHEMA('Pages', function(schema) {
 	schema.define('keywords', 'String(200)');           // Meta keywords
 	schema.define('description', 'String(200)');        // Meta description
 	schema.define('name', 'String(50)', true);          // Name in admin
-	schema.define('parent', 'UID');                     // Parent page for breadcrumb
+	schema.define('parent', UID);                     // Parent page for breadcrumb
 	schema.define('partial', '[UID]');                  // A partial content
 	schema.define('summary', 'String(500)');            // Short page description generated according to the "CMS_summary" class in CMS editor
 	schema.define('pictures', '[String]');              // URL addresses for first 5 pictures
@@ -33,7 +33,7 @@ NEWSCHEMA('Pages', function(schema) {
 	schema.define('widgets', '[Object]');               // List of dynamic widgets, contains Array of ID widget
 	schema.define('signals', '[String(30)]');           // Registered signals
 	schema.define('navigations', '[String]');           // List of navigation ID (optional, for side rendering)
-	schema.define('language', 'String');                // Only information
+	schema.define('language', String);                // Only information
 	schema.define('redirects', '[String]');             // Temporary
 	schema.define('css', String);                       // Custom page styles
 
@@ -796,6 +796,51 @@ Controller.prototype.CMSpage = function(callback, cache) {
 		if (self.repository.page)
 			NOSQL('pages').counter.hit('all').hit(self.repository.page.id);
 	});
+
+	return self;
+};
+
+Controller.prototype.CMSpagemodel = function(model) {
+
+	var self = this;
+
+	if (!model.template) {
+		self.invalid('error-pages-template');
+		return;
+	}
+
+	self.meta(model.title, model.description, model.keywords);
+
+	var repo = self.repository;
+	var DRAFT = !!self.query.DRAFT;
+
+	repo.sitemap = [];
+
+	// Sitemap
+	var tmp = model;
+	while (tmp) {
+		repo.sitemap.unshift(tmp);
+		tmp = MAIN.sitemap[tmp.parent];
+	}
+
+	if (model.css) {
+		model.css = U.minifyStyle('/*auto*/\n' + model.css);
+		self.head('<style type="text/css">' + model.css + '</style>');
+	}
+
+	repo.page = model;
+	self.layout('');
+
+	model.body.CMSrender(DRAFT ? model.dwidgets : model.widgets, function(body) {
+		model.body = body;
+		loadpartial(repo.page, function(partial) {
+			repo.page.partial = partial;
+			self.view('cms' + repo.page.template);
+			repo.page.body = null;
+			repo.page.pictures = EMPTYARRAY;
+			repo.page.search = null;
+		}, self);
+	}, self);
 
 	return self;
 };

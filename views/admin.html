@@ -295,12 +295,14 @@
 		}
 
 		SETTER(true, 'shortcuts', 'register', 'ESC', function() {
-			if (common.form3)
-				SET('common.form3', '');
+			if (common.window)
+				NULL('common.window');
+			else if (common.form3)
+				NULL('common.form3');
 			else if (W.cmseditor && cmseditor.form)
-				SET('cmseditor.form', '');
+				NULL('cmseditor.form');
 			else if (common.form2)
-				SET('common.form2', '');
+				NULL('common.form2');
 			else if (common.form) {
 				switch (common.form) {
 					case 'pages-form':
@@ -312,14 +314,14 @@
 					case 'pages-redirects':
 						var fields = MODIFIED(common.page + '.form').join(',');
 						if (fields.indexOf('.body') !== -1) {
-							SETTER('confirm', 'show', '@(Are you sure you want to close this form without saving?)', ['@(Yes)', '@(Cancel)'], function(index) {
-								!index && SET('common.form', '');
+							SETTER('confirm', 'show2', '@(Are you sure you want to close this form without saving?)', ['@(Yes)', '@(Cancel)'], function() {
+								NULL('common.form');
 							});
 							return;
 						}
 						break;
 				}
-				SET('common.form', '');
+				NULL('common.form');
 			}
 		});
 

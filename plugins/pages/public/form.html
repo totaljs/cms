@@ -42,7 +42,7 @@
 				<span class="link exec inline" data-exec="pagesform/backups"><i class="fa fa-clock-o mr5"></i>@(Restore a backup)</span>
 			</div>
 			<span class="link exec red" data-exec="pagesform/submit" style="float:right"><i class="fa fa-floppy-o mr5"></i>@(Save settings)</span>
-			<a href="javascript:void(0)" data-bind="?.url__href:pagesform/preview" target="_blank" class="mr10" style="float:right" title="@(Preview saved content)"><i class="fa fa-search mr5"></i>@(Preview)</a>
+			<sapn class="link exec" data-exec="pagesform/preview2" style="float:right;margin-right:10px"><i class="fa fa-search mr5"></i>@(Preview)</a>
 		</div>
 		<div class="padding">
 			<div class="row mt10">
@@ -127,10 +127,18 @@
 	</div>
 
 	<nav data---="validation__pagesform">
-		<button name="submit">@(SAVE)</button>
+		<button name="submit" disabled>@(SAVE)</button>
 		<button name="cancel">@(Cancel)</button>
 	</nav>
 
+</div>
+
+<form method="POST" target="cmspagepreviewiframe" id="cmspagepreview" action="@{#}/admin/preview/">
+	<input type="hidden" name="base64" />
+</form>
+
+<div data---="window__common.window___if:pagespreview;title:@(Preview);scrollbar:0" class="iframefull">
+	<iframe src="about:blank" name="cmspagepreviewiframe" frameborder="0" style="width:100%"></iframe>
 </div>
 
 <script>
@@ -153,6 +161,48 @@
 
 		exports.preview = function(value) {
 			return value + (W.pagesform && W.pagesform.draft ? '?DRAFT=1' : '');
+		};
+
+		exports.preview2 = function() {
+
+			var model = CLONE('?');
+			var editor = cmseditor.instance;
+
+			model.pictures = editor.getPictures();
+			model.summary = editor.getSummary();
+			model.body = editor.getContent().replace(/(\r)?\n[\s\t]+(\r)?\n/g, '\n');
+			model.search = editor.getKeywords();
+			model.bodydraft = undefined;
+			model.bodyraw = undefined;
+
+			var w = editor.getWidgets();
+			model.widgets = w.settings;
+			model.bodywidgets = w.widgets;
+
+			var locked = model.lockedtemplate2 === true;
+			model.lockedtemplate = locked;
+			model.lockedtemplate2 = undefined;
+
+			if (model.ispartial) {
+				model.navigations = null;
+				model.partial = null;
+				model.parent = '';
+			}
+
+			if (model.usedefault) {
+				model.widgets = [];
+				model.bodywidgets = [];
+				model.body = '';
+			}
+
+			model.stats = undefined;
+			model.css = cmseditor.css;
+
+			var model = encodeURIComponent(STRINGIFY(model));
+			var form = $('#cmspagepreview');
+			form.find('input').val(btoa(model));
+			form.submit();
+			SET('common.window', 'pagespreview');
 		};
 
 		exports.removedraft = function() {

@@ -12,6 +12,7 @@ exports.install = function() {
 	ROUTE('GET     /admin/api/pages/{id}/stats/               *Pages --> @stats');
 	ROUTE('GET     /admin/api/pages/{id}/backups/             *Common --> @backup');
 	ROUTE('POST    /admin/api/pages/preview/',                preview, ['json'], 512);
+	ROUTE('POST    /admin/preview/'           ,               preview2, 512);
 	ROUTE('GET     /admin/api/pages/dependencies/',           dependencies);
 	ROUTE('POST    /admin/api/pages/css/',                    css, ['json'], 512);
 
@@ -75,6 +76,31 @@ function preview() {
 	self.repository.preview = true;
 	self.repository.page = self.body;
 	self.view('cms' + self.body.template);
+}
+
+function preview2() {
+	var self = this;
+	var data;
+
+	try {
+		data = decodeURIComponent(Buffer.from(self.body.base64 || '', 'base64').toString('utf8')).parseJSON();
+	} catch (e) {}
+
+	if (!data) {
+		self.content('', 'text/html');
+		return;
+	}
+
+	$MAKE('Pages', data, function(err, response) {
+
+		if (err) {
+			self.content('', 'text/html');
+			return;
+		}
+
+		self.layout('');
+		self.CMSpagemodel(response.$clean());
+	});
 }
 
 function dependencies() {

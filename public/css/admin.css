@@ -20,6 +20,9 @@ header .user .fa, header .user .fal { margin-right: 5px; }
 header .title { height: 40px; border-left: 1px solid #F0F0F0; font-size: 16px; float: left; padding: 9px 0 0 20px; color: white; font-weight: bold; }
 header .title .fa, header .title .fal { margin-right: 8px; }
 
+.iframefull { height: 100%; }
+.iframefull div, .iframefull iframe { height: 100%; }
+
 .link { color: #4474c5; }
 
 .mb10 { margin-bottom: 10px; }
