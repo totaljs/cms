@@ -31,7 +31,7 @@ NEWSCHEMA('Navigations', function(schema) {
 	function addpagechildren(child) {
 		var obj = {};
 		obj.id = child.id;
-		obj.pageid = child.id;
+		obj.pageid = child.pageid;
 		obj.url = child.url;
 		obj.icon = child.icon;
 		obj.language = child.language;
@@ -49,6 +49,7 @@ NEWSCHEMA('Navigations', function(schema) {
 		// $.options.navigations
 		// $.options.page
 
+		var user = $.user.name;
 		var navigations = $.options.navigations;
 		var page = $.options.page;
 		var count = 0;
@@ -83,7 +84,7 @@ NEWSCHEMA('Navigations', function(schema) {
 			children.push(obj);
 
 			count++;
-			NOSQL('navigations').modify({ children: children }).where('id', navid).callback(next);
+			NOSQL('navigations').modify({ children: children }).where('id', navid).callback(next).backup(user).log('Add page {0}: {1}'.format(page.id, page.name), user);
 
 		}, function() {
 
@@ -128,10 +129,13 @@ NEWSCHEMA('Navigations', function(schema) {
 		var user = $.user ? $.user.name : '';
 		var done = () => setTimeout2('navigations', refresh, 500);
 
+		console.log('SOM TU');
+
 		db.find().callback(function(err, response) {
 			for (var i = 0, length = response.length; i < length; i++) {
 				var nav = response[i];
 				var item = findByPage(page.id, nav.children);
+				console.log('item', item == null, page.id, nav);
 				if (item) {
 
 					nav.dtupdated = NOW;

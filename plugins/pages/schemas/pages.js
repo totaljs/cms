@@ -192,7 +192,7 @@ NEWSCHEMA('Pages', function(schema) {
 
 		// Update a URL in all navigations where this page is used
 		if (!model.ispartial)
-			$WORKFLOW('Navigations', 'page', { page: model });
+			$WORKFLOW('Navigations', 'page', { page: model }, NOOP, $);
 
 		db.callback(function() {
 
@@ -205,7 +205,7 @@ NEWSCHEMA('Pages', function(schema) {
 				setTimeout2('pages', refresh, 1000);
 
 			if (!model.ispartial && navigations2.length)
-				$WORKFLOW('Navigations', 'addpage', { page: model, navigations: navigations2 }, NOOP);
+				$WORKFLOW('Navigations', 'addpage', { page: model, navigations: navigations2 }, NOOP, $);
 
 			$.success(model.id);
 		});
