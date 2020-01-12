@@ -812,3 +812,5 @@ input { border-radius: 0; }
 
 .ui-dark .ui-tooltip-body { background:rgba(255,255,255,0.9); color: black; }
 .ui-dark .ui-tooltip-body::before { border-color: rgba(255,255,255,0.9) transparent transparent transparent; }
+
+.avatar { overflow: hidden; }

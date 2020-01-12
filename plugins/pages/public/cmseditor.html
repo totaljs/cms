@@ -265,6 +265,9 @@
 
 		self.getParent = function(cls, max) {
 
+			if (!target)
+				return null;
+
 			if (target.hclass(cls))
 				return target;
 

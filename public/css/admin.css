@@ -76,12 +76,12 @@ hr { border-color: #E0E0E0; }
 .toolbar3 { padding: 5px 20px 0; margin-bottom: 15px; }
 .toolbar { margin: 20px 0; }
 .toolbar button { outline: 0; background-color: transparent; border: 1px solid transparent; border-radius: 2px; font-size: 12px; height: 24px; padding: 0 5px; margin: 0; color: black; margin-right: 5px; }
-.toolbar button .fa, .toolbar button .fal, .toolbar button .far { margin-right: 5px; }
+.toolbar button i { margin-right: 5px; }
 .toolbar button.highlight { background-color: #FAFAFA; box-shadow: 0 1px 2px rgba(0,0,0,0.03); }
 .toolbar button:hover { background-color: white; box-shadow: 0 1px 2px rgba(0,0,0,0.03); }
 .toolbar3 button:hover { background-color: #F0F0F0; box-shadow: none; }
 .toolbar button:disabled { color: silver; cursor: not-allowed; background-color: #E0E0E0 !important; box-shadow: none; }
-.toolbar button:disabled .fa { color: silver; }
+.toolbar button:disabled i { color: silver; }
 .toolbar button.right { float: right; margin-left: 5px; margin-right: 0; }
 .toolbar span { margin: 2px 6px 0; border-left: 1px solid #D0D0D0; height: 20px; padding: 0 2px 0 0; vertical-align: middle; display: inline-block; position: relative; }
 .toolbar .selected { background-color: #FFE7A1 !important; box-shadow: 0 2px 3px rgba(0,0,0,0.05); }
@@ -131,12 +131,12 @@ h3 i { margin-right: 8px; }
 .cmseditor-help nav { float: left; }
 .cmseditor-help nav span { margin-right: 8px; padding-right: 8px; border-right: 1px solid #E0E0E0; }
 .cmseditor-help > div { float: right; }
-.cmseditor-help nav .far, .cmseditor-help nav .fa, .cmseditor-help nav .fal { margin-right: 5px; }
+.cmseditor-help nav i { margin-right: 5px; }
 
 .keyvalue { border-bottom: 1px dashed #D0D0D0; padding: 10px 0 5px; }
 .keyvalue .key { font-size: 10px; text-transform: uppercase; font-weight: bold; color: black; }
 .keyvalue .key:after { content: ':'; }
-.keyvalue .key .fa, .keyvalue .key .far, .keyvalue .key .fal { margin-right: 4px; }
+.keyvalue .key i { margin-right: 4px; }
 .keyvalue .value { font-size: 14px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
 
 .stats { border-bottom: 1px solid #E0E0E0; padding: 2px 0 0; font-size: 12px; height: 25px; }
@@ -149,12 +149,12 @@ h3 i { margin-right: 8px; }
 .button { background-color: #4285F4; border: 0; color: white; cursor: pointer; outline: 0; width: 100%; border-radius: 2px; height: 50px; text-transform: uppercase; font-family: Arial; }
 .button:hover { box-shadow: 0 2px 5px rgba(0,0,0,0.1); opacity: 0.9; }
 .button:disabled { background-color: #E0E0E0; color: silver; cursor: not-allowed; box-shadow: none; opacity: 1; }
-.button .fa, .button .fal, .button .far { margin-right: 5px; }
+.button i { margin-right: 5px; }
 .button-small { height: 32px; font-size: 12px; }
 
 .panel { background-color: white; border-radius: 2px; border: 1px solid #E0E0E0; }
 .panel > label { display: block; padding: 10px 20px; border-bottom: 1px solid #E0E0E0; font-size: 14px; font-weight: bold; }
-.panel > label .fa, .panel > label .fal, .panel > label .far { margin-right: 5px; }
+.panel > label i { margin-right: 5px; }
 .panelbody { padding: 20px 20px 5px; position: relative; }
 
 .bg-white { background-color: white; }
