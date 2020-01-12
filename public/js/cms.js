@@ -131,7 +131,7 @@ COMPONENT('exec', function(self, config) {
 	};
 });
 
-COMPONENT('mobilecarousel,mobilecarousel@1', 'count:1;selector:.col-sm-4;margin:15;snapping:true;animate:5000', function(self, config, cls) {
+COMPONENT('mobilecarousel', 'count:1;selector:.col-sm-4;margin:15;snapping:true;animate:5000', function(self, config, cls) {
 
 	var cls2 = '.' + cls;
 	var width = 0;
@@ -149,7 +149,7 @@ COMPONENT('mobilecarousel,mobilecarousel@1', 'count:1;selector:.col-sm-4;margin:
 
 	self.make = function() {
 		self.element.wrapInner('<div class="{0}-container"><div class="{0}-body"></div></div>'.format(cls));
-		$(window).on('resize', self.resize);
+		$(W).on('resize', self.resize);
 		setTimeout(self.resize, 50);
 		setTimeout(self.resize, 500);
 		setTimeout(self.resize, 2000);
