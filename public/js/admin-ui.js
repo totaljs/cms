@@ -6873,7 +6873,7 @@ COMPONENT('message', function(self, config) {
 	};
 });
 
-COMPONENT('window', 'zindex:12;scrollbar:true', function(self, config) {
+COMPONENT('window', 'zindex:80;scrollbar:true', function(self, config) {
 
 	var cls = 'ui-window';
 	var cls2 = '.' + cls;
