@@ -6,7 +6,6 @@ NEWSCHEMA('ContactForms', function(schema) {
 	schema.define('email', 'Email', true);
 	schema.define('body', String, true);
 	schema.define('phone', 'Phone');
-	schema.define('answered', Boolean);
 
 	schema.setQuery(function($) {
 		var opt = $.options === EMPTYOBJECT ? $.query : $.options;
@@ -41,7 +40,7 @@ NEWSCHEMA('ContactForms', function(schema) {
 		var model = $.model;
 		model.id = UID();
 		model.ip = $.ip;
-		model.browser = $.res.useragent();
+		model.browser = $.req.useragent();
 		model.dtcreated = NOW;
 
 		var nosql = NOSQL('contactforms');
@@ -51,8 +50,16 @@ NEWSCHEMA('ContactForms', function(schema) {
 
 		EMIT('contacts.save', model);
 
+		var builder = [];
+
+		builder.push('<b>' + model.firstname.encode() + ' ' + model.lastname.encode() + '</b>');
+		builder.push(model.email);
+		model.phone && builder.push(model.phone);
+		builder.push('');
+		builder.push(model.body);
+
 		// Sends email
-		MAIL(PREF.emailcontactform, '@(Contact form)', '=?/mails/contact', model, $.language).reply(model.email, true);
+		LOGMAIL(PREF.emailcontactform, '📩 ' + CONF.name, builder.join('\n')).reply(model.email, true);
 
 		// Events
 		$SAVE('Events', { type: 'contactforms/add', user: $.user ? $.user.name : '', body: model.firstname + ' ' + model.lastname, id: model.id }, NOOP, $);
