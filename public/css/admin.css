@@ -27,6 +27,8 @@ header .title .fa, header .title .fal { margin-right: 8px; }
 .linkshortcut:hover { border-bottom: 1px solid $color; }
 .linkshortcut span { text-decoration: none !important; vertical-align: super; color: gray; font-size: 9px; margin-left: 5px; }
 .linkshortcut span:hover { text-decoration: none !important; }
+a.linkshortcut { color: gray; }
+a.linkshortcut:hover { border-bottom-color: #A0A0A0; }
 .link { color: #4474c5; }
 
 .mb10 { margin-bottom: 10px; }
