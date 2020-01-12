@@ -35,7 +35,7 @@ iframe.CMS_edit { padding: 5px; border: 15px solid red;}
 .CMS_visible { display: block !important; visibility: visible !important; }
 .CMS_panel_hidden { display: none !important; }
 
-.CMS_preview .totaljs { background-color: #F0F0F0; background-image: repeating-linear-gradient(45deg, #E0E0E0, #E0E0E0 10px, #F0F0F0 10px, #F0F0F0 20px); text-align: center; padding: 30px 0; font-weight: bold; color: black; margin: 1px; text-align: center; font-size: 11px; text-transform: uppercase; border-radius: 3px; }
+.CMS_preview .totaljs { background-color: #F0F0F0; background-image: repeating-linear-gradient(45deg, #E0E0E0, #E0E0E0 10px, #F0F0F0 10px, #F0F0F0 20px); text-align: center; padding: 50px 0; font-weight: bold; color: black; margin: 1px; text-align: center; font-size: 11px; text-transform: uppercase; border-radius: 3px; }
 .CMS_preview *[data---=textbox], .CMS_preview *[data---=input], .CMS_preview *[data---=dropdown], .CMS_preview *[data---=textarea], .CMS_preview *[data---=dropdowncheckbox], .CMS_preview *[data---=checkbox] { font-size: 12px; }
 .CMS_preview *[data---=textbox]:after, .CMS_preview *[data---=input]:after, .CMS_preview *[data---=dropdown]:after, .CMS_preview *[data---=dropdowncheckbox]:after { height: 30px; background-color: #F0F0F0; background-image: repeating-linear-gradient(45deg, #E0E0E0, #E0E0E0 10px, #F0F0F0 10px, #F0F0F0 20px); margin-top: 4px; display: block; content: ' '; border-radius: 3px; }
 .CMS_preview *[data---=textarea]:after { height: 80px; background-color: #F0F0F0; background-image: repeating-linear-gradient(45deg, #E0E0E0, #E0E0E0 10px, #F0F0F0 10px, #F0F0F0 20px); margin-top: 4px; display: block; content: ' '; border-radius: 3px; }

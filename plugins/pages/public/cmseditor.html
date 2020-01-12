@@ -714,6 +714,14 @@
 					} else if (e.which === 27) {
 						if (common.window)
 							NULL('common.window');
+						else if (target) {
+							self.endedit();
+							self.check(target);
+							target.rclass('CMS_selected');
+							target.rattr('contenteditable');
+							self.getToolbar().hide();
+							target = null;
+						}
 					}
 				});
 			}

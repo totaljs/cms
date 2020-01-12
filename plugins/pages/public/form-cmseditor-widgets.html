@@ -1,7 +1,7 @@
 <style>
 	/*auto*/
 	.ui-widgetlist { border-bottom: 1px solid #E0E0E0; font-size: 14px; color: black; position: relative; }
-	.ui-widgetlist ul { list-style-type: none; width: 100%; height: 100%; overflow: auto; margin: 0; padding: 20px 10px; overflow-scrolling: touch; }
+	.ui-widgetlist ul { list-style-type: none; width: 100%; height: 100%; margin: 0; padding: 20px 10px; }
 	.ui-widgetlist li { border: 0; padding: 5px 10px; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; position: relative; display: inline-block; width: 20%; transition: all 0.3s; }
 	.ui-widgetlist li img { display: block; max-width: 100%; height: auto; border-radius: 2px; }
 	.ui-widgetlist li:hover .ui-widgetlist-picture { background-color: #E0E0E0; border-color: #4299F7; }
@@ -32,8 +32,8 @@
 </style>
 
 <div data---="form__cmseditor.form__if:widgets;width:1024;autofocus:true;reload:cmseditorwidgets/reload;icon:plug;title:@(Widgets)" class="hidden">
-	<div data---="widgetlist__null__search:@(Search widgets);datasource:cmseditor.widgets;height:480;exec:cmseditorwidgets/select"></div>
-	<div class="padding bg-smoke" style="padding-top:8px">
+	<div data---="widgetlist__null__search:@(Search widgets);datasource:cmseditor.widgets;height:600;exec:cmseditorwidgets/select"></div>
+	<div class="padding bg-smoke" style="padding-top:13px">
 		<div class="help pull-right"><span class="link exec" data-exec="cmseditorwidgets/inject"><i class="fa fa-code"></i>@(Inject custom HTML)</span></div>
 		<div data-bind="common.componentator__show" class="hidden help pull-left"><span class="link exec" data-exec="cmseditorwidgets/import"><i class="fa fa-download"></i>@(Download existing widgets)</span></div>
 		<div class="clearfix"></div>
@@ -95,18 +95,15 @@
 
 	});
 
-	COMPONENT('widgetlist', function(self, config) {
+	COMPONENT('widgetlist', function(self, config, cls) {
 
-		var Eitems, datasource = null;
+		var Eitems = null;
 		var skip = false;
+		var cls2 = '.' + cls;
 
 		self.datasource = EMPTYARRAY;
-		self.template = Tangular.compile('<li data-search="{{ search }}" data-index="{{ index }}"><div class="ui-widgetlist-picture">{{ if picture }}<img src="{{ picture }}" alt="{{ text }}" border="0" />{{ else }}<div class="ui-widget-avatar"><div class="avatar" data-a="widget">{{ text }}</div></div>{{ fi }}</div><div class="ui-widgetlist-name"><b>{{ text }}</b><br />{{ category }}</div></li>');
+		self.template = Tangular.compile('<li data-search="{{ search }}" data-index="{{ index }}"><div class="{0}-picture">{{ if picture }}<img src="{{ picture }}" alt="{{ text }}" border="0" />{{ else }}<div class="ui-widget-avatar"><div class="avatar" data-a="widget">{{ text }}</div></div>{{ fi }}</div><div class="{0}-name"><b>{{ text }}</b><br />{{ category }}</div></li>'.format(cls));
 		self.nocompile();
-
-		self.validate = function(value) {
-			return config.disabled || !config.required ? true : value ? (config.multiple ? value.length > 0 : true) : false;
-		};
 
 		self.reset = function() {
 			setTimeout(function() {
@@ -116,13 +113,19 @@
 
 		self.make = function() {
 
-			self.aclass('ui-widgetlist');
-			self.redraw();
+			self.aclass(cls);
+			self.append(''.format(cls));
+			self.html('<div class="{0}-search"><span><i class="fa fa-search {0}-search-icon"></i></span><div><input type="text" placeholder="{1}" /></div></div><div><div class="{0}-search-empty"></div><div class="{0}-scrollbar"><div><ul></ul></div></div>'.format(cls, config.search, config.height || '200'));
+			Eitems = self.find('ul');
 
-			config.datasource && self.reconfigure('datasource:' + config.datasource);
-			config.items && self.reconfigure('items:' + config.items);
+			var area = self.find(cls2 + '-scrollbar');
+			area.css('height', config.height);
+			self.scrollbar = new SCROLLBAR(area, { visibleY: true, orientation: 'y' });
+
+			self.watch(config.datasource, self.bind, true);
 
 			self.event('click', 'li', function() {
+
 				if (config.disabled)
 					return;
 
@@ -138,10 +141,10 @@
 					else
 						selected = selected.remove(value.value);
 					self.set(selected);
-					config.exec && EXEC(config.exec, selected);
+					config.exec && EXEC(self.makepath(config.exec), selected);
 				} else {
 					self.set(value.value);
-					config.exec && EXEC(config.exec, value.value);
+					config.exec && EXEC(self.makepath(config.exec), value.value);
 				}
 
 				self.change(true);
@@ -154,59 +157,12 @@
 				}
 			});
 
-			typeof(config.search) === 'string' && self.event('keydown', 'input', function() {
-				!config.disabled && setTimeout2(self.id, self.search, 500);
-			});
-		};
-
-		self.configure = function(key, value, init) {
-			if (init)
-				return;
-
-			var redraw = false;
-
-			switch (key) {
-				case 'type':
-					self.type = value;
-					break;
-				case 'disabled':
-					self.tclass('ui-disabled', value);
-					self.find('input').prop('disabled', value);
-					if (value)
-						self.rclass('ui-widgetlist-invalid');
-					else if (config.required)
-						self.state(1, 1);
-					break;
-				case 'required':
-					!value && self.state(1, 1);
-					break;
-				case 'search':
-					redraw = true;
-					break;
-				case 'height':
-					Eitems.css('height', value + 'px');
-					break;
-				case 'items':
-					var arr = [];
-					value.split(',').forEach(function(item) {
-						item = item.trim().split('|');
-						var obj = {};
-						obj.name = item[0].trim();
-						obj.id = (item[1] == null ? item[0] : item[1]).trim();
-						if (config.type === 'number')
-							obj.id = +obj.id;
-						arr.push(obj);
-					});
-					self.bind('', arr);
-					break;
-				case 'datasource':
-					datasource && self.unwatch(datasource, self.bind);
-					self.watch(value, self.bind, true);
-					datasource = value;
-					break;
+			if (typeof(config.search) === 'string') {
+				self.event('keydown', 'input', function() {
+					if (!config.disabled)
+						setTimeout2(self.id, self.search, 500);
+				});
 			}
-
-			redraw && self.redraw();
 		};
 
 		self.search = function() {
@@ -215,17 +171,12 @@
 			Eitems.find('li').each(function() {
 				var el = $(this);
 				el.tclass('hidden', el.attrd('search').indexOf(search) === -1);
-				if (!first && el.hclass('ui-widgetlist-selected'))
+				if (!first && el.hclass(cls + '-selected'))
 					first = el;
 			});
-			self.find('.ui-widgetlist-search-icon').tclass('fa-search', search.length === 0).tclass('fa-times', search.length > 0);
-			!skip && first && first[0].scrollIntoView(true);
+			self.find(cls2 + '-search-icon').tclass('fa-search', search.length === 0).tclass('fa-times', search.length > 0);
+			self.scrollbar.resize();
 			skip = false;
-		};
-
-		self.redraw = function() {
-			self.html((typeof(config.search) === 'string' ? '<div class="ui-widgetlist-search"><span><i class="fa fa-search ui-widgetlist-search-icon"></i></span><div><input type="text" placeholder="{0}" /></div></div><div><div class="ui-widgetlist-search-empty"></div>'.format(config.search) : '') + '<div><ul style="height:{0}px"></ul></div>'.format(config.height || '200'));
-			Eitems = self.find('ul');
 		};
 
 		self.bind = function(path, value) {
@@ -290,20 +241,10 @@
 				var el = $(this);
 				var index = +el.attrd('index');
 				var is = selected[index] !== undefined;
-				el.tclass('ui-widgetlist-selected', is);
+				el.tclass(cls + '-selected', is);
 			});
 
 			self.search();
-		};
-
-		self.state = function(type) {
-			if (!type)
-				return;
-			var invalid = config.required ? self.isInvalid() : false;
-			if (invalid === self.$oldstate)
-				return;
-			self.$oldstate = invalid;
-			self.tclass('ui-widgetlist-invalid', invalid);
 		};
 	});
 
