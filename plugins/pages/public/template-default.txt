@@ -126,6 +126,7 @@
 				@{end}
 			</nav>
 				<div>All rights reserved &copy; 2020</div>
+				<div class="mt10"><a href="https://www.totaljs.com/cms/">Powered by <strong>Total.js CMS</strong></a></div>
 			</footer>
 		@{fi}
 
