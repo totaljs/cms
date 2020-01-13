@@ -7,7 +7,7 @@
 		</div>
 	</div>
 
-	<nav data---="validation__cmseditorpart">
+	<nav data---="validation__cmseditor.part">
 		<button name="submit">@(APPLY)</button>
 		<button name="cancel">@(Cancel)</button>
 	</nav>
@@ -24,7 +24,7 @@
 				target.rattr('data-cms-part');
 				target.rclass('CMS_part');
 				cmseditor.instance.change(true);
-				SET('cmseditor.form', '');
+				NULL('cmseditor.form');
 			});
 		};
 
@@ -37,11 +37,6 @@
 			editor.change(true);
 			hide();
 		};
-
-		WATCH('?.isnew', function(path, value) {
-			SETTER(true, 'modal', 'reconfigure', 'height:' + (value != null && !value ? 117 : 97));
-		});
-
 	});
 
 </script>

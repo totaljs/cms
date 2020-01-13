@@ -36,6 +36,7 @@
 	<div data---="websocket__null__reconnect:5000;url:[url]live/"></div>
 
 	<header>
+		<span class="version">@{MAIN.version}</span>
 		<a href="/" target="_blank"><i class="fa fa-globe"></i></a>
 		<nav data-bind="common.nav__template" data---="selected__common.page__datasource:common.nav;selector:button">
 			<script type="text/html">
@@ -78,6 +79,7 @@
 
 		common.nav = PARSE($('#adminplugins').html());
 		common.nav.quicksort('position');
+		common.version = @{MAIN.version};
 
 		(function() {
 			for (var i = 0; i < common.nav.length; i++) {

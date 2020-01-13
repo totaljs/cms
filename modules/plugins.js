@@ -2,6 +2,7 @@ const Fs = require('fs');
 
 // List of all plugins
 MAIN.plugins = [];
+MAIN.version = 13;
 
 FUNC.refreshplugins = function(callback) {
 	Fs.readdir(PATH.root('plugins'), function(err, response) {
