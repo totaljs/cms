@@ -82,6 +82,9 @@
 			var after = target.hclass('CMS_widget');
 			FUNC.loading(true);
 			AJAX('GET [url]api/widgets/{0}/editor/'.format(id), function(response) {
+
+				console.log(target.innerHTML);
+
 				var content = '<div class="CMS_widget CMS_remove" data-cms-id="{0}" data-cms-widget="{1}" data-cms-category="{3}">{2}</div>'.format(GUID(10), id, response.body, response.category);
 				if (after)
 					target.after(content);

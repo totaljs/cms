@@ -550,9 +550,9 @@
 		};
 
 		self.check = function(el) {
-			var type = el[0].nodeName;
-			if (type === 'DIV' || type === 'P' || type === 'B' || type.substring(0, 1) === 'H')
-				!el.html() && el.html('&nbsp;');
+			// var type = el[0].tagName;
+			// if (type === 'DIV' || type === 'P' || type === 'B' || type.substring(0, 1) === 'H')
+			// 	!el.html() && el.html('&nbsp;');
 		};
 
 		self.updWidgets = function(parent) {
@@ -1057,6 +1057,8 @@
 						link.href = 'mailto:' + content;
 					else if ((/\d+/).test(content))
 						link.href = 'tel:' + content;
+					else if ((/[^\s,]+/).test(content))
+						link.href = (/http(s):\/\//).test(content) ? content : ('https://' + content);
 
 					link.target = '_self';
 					link.title = '';

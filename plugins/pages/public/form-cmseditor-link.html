@@ -54,6 +54,8 @@
 		exports.reload = function() {
 			var id = cmseditor.link.idtracking;
 			id && exports.tracking(id);
+			if (cmseditor.link.href)
+				CHANGE('cmseditor.link.href', true);
 		};
 
 		exports.type = function(el) {
