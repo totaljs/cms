@@ -814,3 +814,27 @@ input { border-radius: 0; }
 .ui-dark .ui-tooltip-body::before { border-color: rgba(255,255,255,0.9) transparent transparent transparent; }
 
 .avatar { overflow: hidden; }
+
+.ui-colorpicker-container { position: absolute; z-index: 109; }
+.ui-colorpicker { border: 1px solid #E0E0E0; font-size: 14px; color: black; width: 240px; background-color: white; box-shadow: 0 5px 10px rgba(0,0,0,0.08); border-radius: 3px; overflow: hidden; margin: 0; padding: 7px 0 3px; }
+.ui-colorpicker-body { text-align: center; }
+.ui-colorpicker-body div:nth-child(1) { margin-bottom: 0; }
+.ui-colorpicker-body div:nth-child(2) { margin-bottom: 8px; padding-bottom: 2px; border-bottom: 1px solid #E0E0E0; }
+.ui-colorpicker-cell { cursor: pointer; width: 19px; height: 15px; display: inline-block; }
+.ui-colorpicker-cell span { display: block; height: 15px; margin: 0 2px; border-radius: 2px; border: 1px solid rgba(0,0,0,0.1); }
+.ui-colorpicker-body span:hover { border-color: rgba(0,0,0,0.3); }
+
+.ui-dark .ui-colorpicker { background-color: #252525; border-color: #404040; }
+.ui-dark .ui-colorpicker-cell span { border-color: rgba(255,255,255,0.1); }
+.ui-dark .ui-colorpicker-cell span:hover { border-color: rgba(255,255,255,0.5); }
+.ui-dark .ui-colorpicker-body div:nth-child(2) { border-bottom-color: #404040; }
+
+.ui-colorpickerbutton.ui-disabled { cursor: not-allowed !important; color: #A0A0A0 !important; }
+.ui-colorpickerbutton { border: 1px solid #E0E0E0; height: 32px; border-radius: 2px; cursor: pointer; background-color: white; color: black; }
+.ui-colorpickerbutton:hover { border-color: #D0D0D0; }
+.ui-colorpickerbutton-color { height: 24px; margin: 3px 35px 0 3px; border-radius: 2px 0 0 2px; }
+.ui-colorpickerbutton-arrow { width: 32px; float: right; display: block; text-align: center; line-height: 31px; height: 31px; border-left: 1px solid #E0E0E0; }
+
+.ui-dark .ui-colorpickerbutton { border-color: #404040; background-color: #303030; color: white; }
+.ui-dark .ui-colorpickerbutton-arrow { border-left-color: #404040; }
+.ui-dark .ui-colorpickerbutton:hover { border-color: #505050; }

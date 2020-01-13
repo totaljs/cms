@@ -1171,6 +1171,12 @@
 						break;
 
 					case 'up2':
+
+						if (!target) {
+							self.getToolbar().hide();
+							return;
+						}
+
 						if (!target.hclass('CMS_repeat'))
 							target = self.getParent('CMS_repeat');
 						if (!target.length)
@@ -1188,6 +1194,12 @@
 						setTimeout(cmseditor.instance.autoresize, 2000);
 						break;
 					case 'down2':
+
+						if (!target) {
+							self.getToolbar().hide();
+							return;
+						}
+
 						if (!target.hclass('CMS_repeat'))
 							target = self.getParent('CMS_repeat');
 						if (!target.length)
@@ -1229,6 +1241,12 @@
 						break;
 
 					case 'hide':
+
+						if (!target) {
+							self.getToolbar().hide();
+							return;
+						}
+
 						self.getToolbar().hide();
 						self.endedit();
 						self.check(target);
@@ -1254,6 +1272,11 @@
 
 					case 'attribute':
 
+						if (!target) {
+							self.getToolbar().hide();
+							return;
+						}
+
 						var targettmp = target.hclass('CMS_unwrap') ? target.parent() : target;
 						var cls = (targettmp.attr('class') || '').split(' ');
 						var arr = [];
@@ -1277,7 +1300,7 @@
 						cattr.themes = targettmp.attrd('cms-theme');
 
 						if (cattr.themes) {
-							arr = [{ name: '', id: '' }];
+							arr = [];
 							var selected = '';
 							cattr.themes.replace(/;/g, ',').split(',').forEach(function(value) {
 								value = value.trim().split('|');
@@ -1313,6 +1336,7 @@
 							if (cattr.datasize)
 								cattr.datasize += '%';
 							cattr.alt = targettmp.attr('alt') || '';
+							cattr.databg = targettmp.attrd('cms-bg') || '';
 						}
 
 						UPDATE('cmseditor.attribute', true);
@@ -1320,6 +1344,12 @@
 						return;
 
 					case 'link':
+
+						if (!target) {
+							self.getToolbar().hide();
+							return;
+						}
+
 						var href = '';
 						var targ = '';
 						var title = '';
@@ -1352,6 +1382,12 @@
 						return;
 
 					case 'settings':
+
+						if (!target) {
+							self.getToolbar().hide();
+							return;
+						}
+
 						var wel = target.hclass('CMS_widget') ? target : self.getParent('CMS_widget');
 						var id = wel.attrd('cms-id');
 						var opt = cmseditor.widgetsettings[id];
@@ -1378,6 +1414,11 @@
 						return;
 
 					case 'edit':
+
+						if (!target) {
+							self.getToolbar().hide();
+							return;
+						}
 
 						if (target.attr('contenteditable')) {
 							self.endedit();
@@ -1446,6 +1487,11 @@
 
 					case 'remove':
 
+						if (!target) {
+							self.getToolbar().hide();
+							return;
+						}
+
 						if (!target.hclass('CMS_remove')) {
 							target = self.getParent('CMS_remove');
 							if (!target) {
@@ -1466,7 +1512,6 @@
 								break;
 						}
 
-
 						$(parent).find('.CMS_selected,.CMS_operation').rclass('CMS_selected CMS_operation');
 						PUSH('cmseditor.history', { parent: parent, index: i, node: node });
 						cmseditor.cmseditorbackup.appendChild(node);
@@ -1481,6 +1526,11 @@
 						break;
 
 					case 'repeat':
+
+						if (!target) {
+							self.getToolbar().hide();
+							return;
+						}
 
 						if (target.hclass('CMS_repeat')) {
 							self.endedit();

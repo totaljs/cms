@@ -1,10 +1,10 @@
 <style>
-	.ui-style input { width: 100%; border: 0; outline: 0; background-color: white; display: block; font-weight: bold; font-size: 14px; height: 24px; }
+	.ui-style input { width: 100%; border: 0; outline: 0; background-color: white; display: block; font-weight: bold; font-size: 12px; height: 20px; }
 	.ui-style-numeric { margin-bottom: 15px; }
-	.ui-style-numeric span { display: block; font-size: 10px; border-top: 1px solid #E0E0E0; margin-top: 5px; color: #A0A0A0; padding: 2px 0 0 0; }
+	.ui-style-numeric span { display: block; font-size: 10px; border-top: 1px solid #E0E0E0; margin-top: 5px; color: #A0A0A0; padding: 2px 0; background-color: #F8F8F8; border-radius: 0 0 2px 2px; }
 	.ui-style-numeric-control { position: relative; display: inline-block; width: 25%; text-align: center; }
 	.ui-style-numeric-control input { text-align: center; }
-	.ui-style-numeric-control div { border: 1px solid #D0D0D0; border-radius: 3px; margin-right: 10px; padding: 2px 0; background-color: white; }
+	.ui-style-numeric-control div { border: 1px solid #D0D0D0; border-radius: 3px; margin-right: 10px; padding: 2px 0 0; background-color: white; }
 	.ui-style-label { margin-bottom: 5px; font-size: 12px; }
 	.ui-style-color { margin-bottom: 15px; }
 	.ui-style-color ul { margin: 0 -2px; padding: 0; list-style-type: none; }
@@ -19,49 +19,57 @@
 
 	<div data-scope="cmseditor.attribute">
 
-		<div class="padding npb">
+		<div class="padding bg-yellow">
 			<div class="row">
 				<div class="col-md-6 m">
 					<div data---="input__?.cls">@(Class names)</div>
+					<div class="help">@(Type a custom classes)</div>
 				</div>
 				<div class="col-md-6 m">
 					<div data---="input__?.id">@(Element ID)</div>
-					<div class="help"><span class="link exec" data-exec="cmseditorattribute/id">@(Make ID from content)</span></div>
+					<div class="help"><span class="link exec" data-exec="cmseditorattribute/id">@(Generate from the content)</span></div>
 				</div>
 			</div>
+			<div data---="input__?.title">@(Tooltip)</div>
 		</div>
 
 		<div data-bind="?.isimage__show" class="hidden">
-			<hr class="nmb" />
-			<div class="padding">
+			<div class="padding npb">
 				<div class="b m black"><i class="fa fa-camera mr5"></i>@(Image settings)</div>
 
-				<div class="row">
-					<div class="col-md-12">
-						<div data---="input__?.alt" class="m">@(Alternate text)</div>
-					</div>
-				</div>
+				<div data---="input__?.alt">@(Alternate text)</div>
+				<div class="help m">@(Very important for search engines)</div>
 
 				<div class="row">
-					<div class="col-md-4">
+					<div class="col-md-4 m">
 						<div data---="input__?.datawidth__align:center;maxlength:4;placeholder:120" class="m">@(Width)</div>
 					</div>
-					<div class="col-md-4">
+					<div class="col-md-4 m">
 						<div data---="input__?.dataheight__align:center;maxlength:4;placeholder:120" class="m">@(Height)</div>
 					</div>
-					<div class="col-md-4 hidden" data-bind="?.imgdefined__show">
-						<div data---="input__?.datasize__align:center;maxlength:4;placeholder:0%" class="m">@(Percentage)</div>
+				</div>
+
+				<div class="row hidden" data-bind="?.imgdefined__show">
+					<div class="col-md-4 m">
+						<div data---="input__?.datasize__align:center;maxlength:3;placeholder:0%">@(Downsize in percent)</div>
+						<div class="help">@(It is used in galleries)</div>
+					</div>
+					<div class="col-md-8 m">
+						<div style="font-size:12px;margin-bottom:3px">@(Background color):</div>
+						<div data---="colorpickerbutton__?.databg"></div>
+						<div class="help">@(It is used if the image does not have a good resolution)</div>
 					</div>
 				</div>
+
 			</div>
+			<hr class="nmb npt" />
 		</div>
 
-		<div class="padding bg-yellow npb">
-			<div data-bind="?.themes__show:value && value.length">
-				<div data---="input__?.theme__dirsource:?.themes;icon:paint-brush" class="m b">@(Theme)</div>
+		<div class="padding npb">
+			<div data-bind="?.themes__show:value && value.length" class="m">
+				<div data---="input__?.theme__dirsource:?.themes;icon:paint-brush;placeholder:@(Choose a theme)">@(Theme)</div>
 			</div>
-			<div data---="input__?.title" class="m">@(Tooltip)</div>
-			<div data---="input__?.css" class="m">@(Custom styles)</div>
+			<div data---="input__?.css__icon:brush" class="m">@(Custom styles)</div>
 			<div data---="style__?.css"></div>
 		</div>
 
@@ -74,7 +82,7 @@
 			<hr class="nmt" />
 			<div class="padding npt">
 				<div data---="input__?.src__icon:globe">@(Source URL)</div>
-				<div class="m mt10 fs12"><span class="link exec" data-exec="cmseditorattribute/files"><i class="fa fa-folder-o mr5"></i>@(Browse files)</span></div>
+				<div class="mt10 fs12"><span class="link exec" data-exec="cmseditorattribute/files"><i class="far fa-folder-o mr5"></i>@(Browse files)</span></div>
 			</div>
 		</div>
 	</div>
@@ -157,6 +165,11 @@
 					else
 						target.rattrd('cms-size');
 
+					if (attr.databg)
+						target.attrd('cms-bg', attr.databg);
+					else
+						target.rattrd('cms-bg');
+
 				} else {
 					if (attr.datawidth)
 						target.attr('width', attr.datawidth);
@@ -174,7 +187,7 @@
 			else
 				target.rattr('style');
 
-			attr.cls && cls.push(attr.cls.trim());
+			attr.cls && cls.push(attr.cls.replace(/\,(\s)+|\s{2,}/g, ' ').trim());
 
 			var clsnames = cls.join(' ');
 
@@ -212,18 +225,18 @@
 			var a = panels.eq(0);
 			var b = panels.eq(1);
 
-			a.append(numeric.format(config.radius, 'border-radius'));
 			a.append(numeric.format(config.margin, 'margin'));
-			a.append(numeric.format(config.padding, 'padding'));
-			a.append('<div class="ui-style-numeric" data-name="font"><div class="ui-style-label">{0}</div><div class="ui-style-numeric-controls"><div class="ui-style-numeric-control"><div><input type="text" maxlength="3" placeholder="px" name="size" /><span>size</span></div></div><div class="ui-style-numeric-control"><div><input type="text" maxlength="3" placeholder="px" name="line" /><span>line h.</span></div></div></div>'.format(config.font));
+			b.append(numeric.format(config.padding, 'padding'));
+			a.append(numeric.format(config.radius, 'border-radius'));
+			b.append('<div class="ui-style-numeric" data-name="font"><div class="ui-style-label">{0}</div><div class="ui-style-numeric-controls"><div class="ui-style-numeric-control"><div><input type="text" maxlength="3" placeholder="px" name="size" /><span>size</span></div></div><div class="ui-style-numeric-control"><div><input type="text" maxlength="3" placeholder="px" name="line" /><span>line h.</span></div></div></div>'.format(config.font));
 
-			var colors = '4D4D4D,999999,FFFFFF,F44E3B,FE9200,FCDC00,DBDF00,A4DD00,68CCCA,73D8FF,AEA1FF,FDA1FF,333333,808080,CCCCCC,D33115,E27300,FCC400,B0BC00,68BC00,16A5A5,009CE0,7B64FF,FA28FF,000000,666666,B3B3B3,9F0500,C45100,FB9E00,808900,194D33,0C797D,0062B1,653294,AB149E'.split(',');
+			var colors = '4D4D4D,999999,FFFFFF,F44E3B,FE9200,FCDC00,DBDF00,A4DD00,68CCCA,73D8FF,AEA1FF,FDA1FF,333333,808080,CCCCCC,D33115,E27300,FCC400,B0BC00,68BC00,16A5A5,009CE0,7B64FF,FA28FF,000000,666666,B3B3B3,9F0500,C45100,FB9E00,808900,194D33,0C797D,0062B1,653294,AB149E,F6CECD,FAE6CF,FFFED1,EBFED1,D7FDD0,D7FDE7,D8FEFE,D1E5FD,CCCDFB,E1CEFB,F6CFFC,F6CEE4'.split(',');
 			var output = [];
 
 			for (var i = 0; i < colors.length; i++)
 				output.push('<li><div class="ui-style-color-hex" data-color="{0}" style="background-color:#{0}"><i class="fa fa-circle"></i></div></li>'.format(colors[i]));
 
-			b.append('<div class="ui-style-color" data-name="color"><div class="ui-style-label">{0}</div><ul>{1}</ul></div>'.format(config.color, output.join('')));
+			a.append('<div class="ui-style-color" data-name="color"><div class="ui-style-label">{0}</div><ul>{1}</ul></div>'.format(config.color, output.join('')));
 			b.append('<div class="ui-style-color" data-name="background-color"><div class="ui-style-label">{0}</div><ul>{1}</ul></div>'.format(config.background, output.join('')));
 
 			self.event('input', 'input', function() {
