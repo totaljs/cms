@@ -1042,13 +1042,22 @@
 					self.endedit();
 					target.rattr('contentEditable');
 					target.rclass('CMS_selected');
+
+					var content = tmp.text();
 					target = tmp;
 					target.data('temporary', true);
+
 
 					var link = cmseditor.link;
 
 					link.file = '';
 					link.href = '';
+
+					if (content.indexOf('@') !== -1)
+						link.href = 'mailto:' + content;
+					else if ((/\d+/).test(content))
+						link.href = 'tel:' + content;
+
 					link.target = '_self';
 					link.title = '';
 					link.alllinks = false;
