@@ -21,8 +21,6 @@
 			.wbi.wmi { margin-bottom: 15px; }
 			.wbi.wpi { padding-left: 20px; padding-right: 20px; }
 
-			.wnowrap { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
-
 			h1 { font-family: Arial; margin: 0 0 20px 0; padding: 0; font-weight: 700; font-size: 30px; }
 			h2 { font-family: Arial; margin: 0 0 15px 0; padding: 0; font-weight: 700; font-size: 23px; }
 			h3 { font-family: Arial; margin: 0 0 10px 0; padding: 0; font-weight: 700; font-size: 18px; }

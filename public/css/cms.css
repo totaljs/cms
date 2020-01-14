@@ -4,3 +4,4 @@
 .ui-mobilecarousel .row { margin: 0; }
 
 .jcomponent { display: none; visibility: hidden; }
+.nowrap, .wnowrap { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
