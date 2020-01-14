@@ -56,7 +56,7 @@
 			footer { text-align: center; padding: 20px 0; margin: 50px auto 0; border-top: 1px solid #E0E0E0; font-size: 11px; color: gray; max-width: 500px; }
 			footer nav { margin-bottom: 3px; }
 			footer nav a { margin: 0 5px; font-size: 12px; font-weight: bold; color: black; }
-			footer > a { color: black; }
+			footer > a { color: gray; font-size: 10px; }
 
 			@media(max-width: 768px) {
 				.wp { padding-left: 15px; padding-right: 15px; }
@@ -124,9 +124,9 @@
 				@{foreach m in MAIN.navigations.footer.children}
 					<a href="@{m.url}">@{m.name}</a>
 				@{end}
-			</nav>
-				<div>All rights reserved &copy; 2020</div>
-				<div class="mt10"><a href="https://www.totaljs.com/cms/">Powered by <strong>Total.js CMS</strong></a></div>
+				</nav>
+				<div>All rights reserved &copy; @{NOW.getFullYear()}</div>
+				<a href="https://www.totaljs.com/cms/" target="_blank">Powered by <strong>Total.js CMS</strong></a>
 			</footer>
 		@{fi}
 
