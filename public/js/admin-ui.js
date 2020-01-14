@@ -6833,6 +6833,7 @@ COMPONENT('message', function(self, config) {
 
 	FUNC.messageresponse = function(success, callback) {
 		return function(response, err) {
+			FUNC.loading(false, 1000);
 			if (err || response instanceof Array) {
 
 				var msg = [];

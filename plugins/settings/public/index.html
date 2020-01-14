@@ -203,7 +203,6 @@
 
 			FUNC.loading(true);
 			AJAX('POST [url]api/settings/ REPEAT', data, FUNC.messageresponse('@(Settings have been saved successfully.)', function() {
-				FUNC.loading(false, 1000);
 				refresh_dependencies();
 				SET('common.componentator', data.componentator);
 			}));
