@@ -21,7 +21,7 @@
 		</section>
 
 		<section data-type="main">
-			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?.checked;button:?/button;noborder:1;height:window;margin:106;dblclick:?/update;exec:?/refresh">
+			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?.checked;button:?/button;noborder:1;height:window;margin:106;exec:?/refresh">
 				<script type="text/plain">
 					[
 						{ name: 'email', text: '@(Email address)', width: 720, template: '{{ if unsubscribed }}<span class="badge badge-red mr5">@(unsubscribed)</span>{{ fi }}{{ email }}' },
@@ -83,10 +83,6 @@
 					AJAX('GET [url]api/subscribers/toggle/', { id: row.email }, exports.refresh);
 		 			break;
 			}
-		};
-
-		exports.update = function(row) {
-			exports.button('update', row);
 		};
 
 		exports.checked = function(el) {
