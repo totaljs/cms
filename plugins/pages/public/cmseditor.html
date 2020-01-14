@@ -1289,7 +1289,13 @@
 						var cattr = cmseditor.attribute;
 
 						cattr.isimage = tag === 'IMG';
-						cattr.config = targettmp.attrd('jc-config');
+						cattr.config = targettmp.attrd('---');
+
+						if (cattr.config)
+							cattr.config = cattr.config.split('__')[2] || '';
+						else
+							cattr.config = null;
+
 						cattr.isconfig = cattr.config != null;
 						cattr.isiframe = tag === 'IFRAME';
 						cattr.isnone = !cattr.isimage && !cattr.isiframe;

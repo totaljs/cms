@@ -8,7 +8,7 @@ NEWSCHEMA('Subscribers', function(schema) {
 		var model = $.model;
 		var db = NOSQL('subscribers');
 		var email = model.email.split(',');
-		var ua = $.res ? $.res.useragent() : '';
+		var ua = $.req ? $.req.useragent() : '';
 
 		for (var i = 0; i < email.length; i++) {
 
