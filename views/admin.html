@@ -193,7 +193,6 @@
 		});
 
 		ON('online', function(is) {
-			console.log(is);
 			$('header .user .fa').tclass('green', is).tclass('red', !is);
 			if (common.init)
 				FUNC.loading(!is);
