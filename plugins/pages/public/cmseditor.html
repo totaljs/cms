@@ -1395,17 +1395,19 @@
 						cmseditor.settings.options = opt ? CLONE(opt) : {};
 						cmseditor.settings.target = wel;
 						cmseditor.settings.id = id;
+						cmseditor.settings.exports = null;
 
-						cmseditor.settings.hiddenxs = wel.hclass('hidden-xs');
-						cmseditor.settings.hiddensm = wel.hclass('hidden-sm');
-						cmseditor.settings.hiddenmd = wel.hclass('hidden-md');
-						cmseditor.settings.hiddenlg = wel.hclass('hidden-lg');
+						SET('cmseditor.settings.hiddenxs', wel.hclass('hidden-xs'));
+						SET('cmseditor.settings.hiddensm', wel.hclass('hidden-sm'));
+						SET('cmseditor.settings.hiddenmd', wel.hclass('hidden-md'));
+						SET('cmseditor.settings.hiddenlg', wel.hclass('hidden-lg'));
 						cmseditor.settings.element = wel;
 
 						AJAX('GET [url]api/widgets/{0}/settings/'.format(wel.attrd('cms-widget')), function(response, err) {
 
 							if (!response) {
 								cmseditor.settings.options = null;
+								SETTER(true, '#cmseditor.settings', 'remapempty');
 								SET('cmseditor.form', 'settings');
 								return;
 							}

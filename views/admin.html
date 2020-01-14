@@ -81,6 +81,7 @@
 		common.nav = PARSE($('#adminplugins').html());
 		common.nav.quicksort('position');
 		common.version = @{MAIN.version};
+		common.init = false;
 
 		(function() {
 			for (var i = 0; i < common.nav.length; i++) {
@@ -192,7 +193,12 @@
 		});
 
 		ON('online', function(is) {
-			$('.user .fa').tclass('green', is).tclass('red', !is);
+			console.log(is);
+			$('header .user .fa').tclass('green', is).tclass('red', !is);
+			if (common.init)
+				FUNC.loading(!is);
+			else
+				common.init = true;
 		});
 
 		function refresh_notifications() {

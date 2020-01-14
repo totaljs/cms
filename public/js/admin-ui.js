@@ -2342,6 +2342,13 @@ COMPONENT('multioptions', function(self) {
 		});
 	};
 
+	self.remapempty = function() {
+		mapping = {};
+		dep = {};
+		pending = 0;
+		self.redraw();
+	};
+
 	self.remap = function(js) {
 		var fn = new Function('option', js);
 		mapping = {};
