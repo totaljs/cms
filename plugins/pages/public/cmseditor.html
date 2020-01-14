@@ -1396,10 +1396,17 @@
 						cmseditor.settings.target = wel;
 						cmseditor.settings.id = id;
 
+						cmseditor.settings.hiddenxs = wel.hclass('hidden-xs');
+						cmseditor.settings.hiddensm = wel.hclass('hidden-sm');
+						cmseditor.settings.hiddenmd = wel.hclass('hidden-md');
+						cmseditor.settings.hiddenlg = wel.hclass('hidden-lg');
+						cmseditor.settings.element = wel;
+
 						AJAX('GET [url]api/widgets/{0}/settings/'.format(wel.attrd('cms-widget')), function(response, err) {
 
 							if (!response) {
-								SETTER('snackbar', 'warning', '@(Widget doesn\'t contain any settings.)');
+								cmseditor.settings.options = null;
+								SET('cmseditor.form', 'settings');
 								return;
 							}
 

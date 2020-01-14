@@ -1,7 +1,14 @@
 <div data---="form__cmseditor.form__if:settings;width:500;submit:cmseditorsettings/submit;icon:cog;title:@(Widget settings)" class="hidden">
 
-	<div class="padding" id="settings-multioptions">
-		<div data---="multioptions__cmseditor.settings.options__$id:cmseditor.settings"></div>
+	<div class="padding" id="settings-multioptions" data-scope="cmseditor.settings">
+		<div data-bind="?.options__show" class="hidden">
+			<div data---="multioptions__?.options__$id:cmseditor.settings"></div>
+		</div>
+		<div class="caption mt10">@(Additional settings)</div>
+		<div data---="checkbox__?.hiddenlg">@(Hide in large display)</div>
+		<div data---="checkbox__?.hiddenmd">@(Hide in medium display)</div>
+		<div data---="checkbox__?.hiddensm">@(Hide in small display)</div>
+		<div data---="checkbox__?.hiddenxs">@(Hide in extra small display)</div>
 	</div>
 	<nav>
 		<button name="submit">@(APPLY)</button>
@@ -22,9 +29,11 @@
 				var dep = FIND('#cmseditor.settings').dependencies();
 
 				// dep === Code lists
+				if (form.exports) {
+					form.exports.configure && form.exports.configure.call(dep, form.options, cmseditor.settings.target, prev);
+					cmseditor.widgetsettings[form.id] = form.options;
+				}
 
-				form.exports.configure && form.exports.configure.call(dep, form.options, cmseditor.settings.target, prev);
-				cmseditor.widgetsettings[form.id] = form.options;
 				var editor = cmseditor.instance;
 				editor.change(true);
 
@@ -32,6 +41,11 @@
 					editor.autoresize();
 				}, 500);
 
+				var el = form.element;
+				el.tclass('hidden-xs', form.hiddenxs);
+				el.tclass('hidden-md', form.hiddenmd);
+				el.tclass('hidden-sm', form.hiddensm);
+				el.tclass('hidden-lg', form.hiddenlg);
 				var target = editor.getTarget();
 				editor.setTarget(null);
 				target && target.trigger('click');
