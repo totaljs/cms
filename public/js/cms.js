@@ -5,62 +5,69 @@ $(document).on('mousedown touchstart', 'a[data-cms-track]', function(e) {
 		target = target.closest('a');
 	var id = target.attrd('cms-track');
 	id && AJAX('GET /api/track/' + id, NOOP);
-});
-
-$(document).on('click', '#mobilemenu', function() {
+}).on('click', '#mobilemenu', function() {
 	$('body').tclass('mobilemenu-visible');
 });
 
-// Online statistics for visitors
-(function() {
+$(document).ready(function() {
 
-	if (W.top !== W || (navigator.onLine != null && !navigator.onLine && W.top))
-		return;
+	// Online statistics for visitors
+	(function() {
 
-	var options = {};
-	options.type = 'GET';
-	options.headers = { 'x-ping': location.pathname, 'x-cookies': navigator.cookieEnabled ? '1' : '0', 'x-referrer': document.referrer };
+		if (W.top !== W || (navigator.onLine != null && !navigator.onLine && W.top))
+			return;
 
-	options.success = function(r) {
-		if (r) {
-			try {
-				(new Function(r))();
-			} catch (e) {}
-		}
-	};
+		var options = {};
+		options.type = 'GET';
+		options.headers = { 'x-ping': location.pathname, 'x-cookies': navigator.cookieEnabled ? '1' : '0', 'x-referrer': document.referrer };
 
-	options.error = function() {
-		setTimeout(function() {
-			location.reload(true);
-		}, 2000);
-	};
+		options.success = function(r) {
+			if (r) {
+				try {
+					(new Function(r))();
+				} catch (e) {}
+			}
+		};
 
-	if (W.$visitorscounter)
-		W.$visitorscounter++;
-	else
-		W.$visitorscounter = 1;
+		options.error = function() {
+			setTimeout(function() {
+				location.reload(true);
+			}, 2000);
+		};
 
-	// 5 minutes
-	if (W.$visitorscounter === 10) {
-		// It waits 1 hour and then reloads the site
-		setTimeout(function() {
-			location.reload(true);
-		}, (1000 * 60) * 60);
-		clearInterval(W.$visitorsinterval);
-		return;
-	} else if (!document.hasFocus())
-		return;
+		if (W.$visitorscounter)
+			W.$visitorscounter++;
+		else
+			W.$visitorscounter = 1;
 
-	var url = '/$visitors/';
+		// 5 minutes
+		if (W.$visitorscounter === 10) {
+			// It waits 1 hour and then reloads the site
+			setTimeout(function() {
+				location.reload(true);
+			}, (1000 * 60) * 60);
+			clearInterval(W.$visitorsinterval);
+			return;
+		} else if (!document.hasFocus())
+			return;
 
-	$.ajax(url + (NAV.query.utm_medium || NAV.query.utm_source || NAV.query.campaign_id ? '?utm_medium=1' : ''), options);
+		var url = '/$visitors/';
 
-	W.$visitorsinterval = setInterval(function() {
-		options.headers['x-reading'] = '1';
-		$.ajax(url, options);
-	}, 30000);
+		$.ajax(url + (NAV.query.utm_medium || NAV.query.utm_source || NAV.query.campaign_id ? '?utm_medium=1' : ''), options);
 
-})();
+		W.$visitorsinterval = setInterval(function() {
+			options.headers['x-reading'] = '1';
+			$.ajax(url, options);
+		}, 30000);
+
+	})();
+
+	setTimeout(function() {
+		var cls = 'jcomponent';
+		$('.' + cls).rclass(cls);
+	}, 1000);
+
+});
 
 COMPONENT('exec', function(self, config) {
 	self.readonly();

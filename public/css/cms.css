@@ -2,3 +2,5 @@
 .ui-mobilecarousel .ui-mobilecarousel-container { width: 100%; overflow-x: scroll; overflow-y: hidden; overflow-scrolling: touch; -webkit-overflow-scrolling: touch; }
 .ui-mobilecarousel .ui-mobilecarousel-body { padding-bottom: 35px; }
 .ui-mobilecarousel .row { margin: 0; }
+
+.jcomponent { display: none; visibility: hidden; }

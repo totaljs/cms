@@ -32,7 +32,7 @@ iframe.CMS_edit { padding: 5px; border: 15px solid red;}
 .CMS_widgets:nth-child(4) { border-top-color: #A0A0A0; }
 .CMS_widgets:nth-child(4) { border-top-color: #909090; }
 .CMS_hidden { display: none !important; }
-.CMS_visible { display: block !important; visibility: visible !important; }
+.CMS_visible, .jcomponent { display: block !important; visibility: visible !important; }
 .CMS_panel_hidden { display: none !important; }
 
 .CMS_preview .totaljs { background-color: #F0F0F0; background-image: repeating-linear-gradient(45deg, #E0E0E0, #E0E0E0 10px, #F0F0F0 10px, #F0F0F0 20px); text-align: center; padding: 50px 0; font-weight: bold; color: black; margin: 1px; text-align: center; font-size: 11px; text-transform: uppercase; border-radius: 3px; }
