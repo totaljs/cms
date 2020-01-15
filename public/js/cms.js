@@ -154,6 +154,11 @@ COMPONENT('mobilecarousel', 'count:1;selector:.col-sm-4;margin:15;snapping:true;
 	self.readonly();
 	self.blind();
 
+	if (W.mobilecarouselindex)
+		W.mobilecarouselindex++;
+	else
+		W.mobilecarouselindex = 1;
+
 	self.make = function() {
 		self.element.wrapInner('<div class="{0}-container"><div class="{0}-body"></div></div>'.format(cls));
 		$(W).on('resize', self.resize);
@@ -167,13 +172,18 @@ COMPONENT('mobilecarousel', 'count:1;selector:.col-sm-4;margin:15;snapping:true;
 		}).on('touchmove', function() {
 			clearTimeout(anim);
 		});
-		config.animate && (anim = setTimeout(self.animate, config.animate));
+		config.animate && (anim = setTimeout(self.animate, config.animate * (W.mobilecarouselindex + 0.5)));
 	};
 
 	self.animate = function() {
 
 		if (!count || move)
 			return;
+
+		if (!document.hasFocus()) {
+			anim = setTimeout(self.animate, config.animate);
+			return;
+		}
 
 		index += increment;
 
@@ -184,13 +194,14 @@ COMPONENT('mobilecarousel', 'count:1;selector:.col-sm-4;margin:15;snapping:true;
 
 		skip = true;
 		anim = true;
+
 		container.animate({ scrollLeft: index * (width + config.margin) }, 200);
 		setTimeout(function() {
 			skip = false;
 			anim = false;
 		}, 400);
 
-		anim = setTimeout(self.animate, 2000);
+		anim = setTimeout(self.animate, config.animate);
 	};
 
 	self.snap = function() {
