@@ -24,9 +24,10 @@ NEWSCHEMA('Subscribers', function(schema) {
 			obj.browser = ua;
 
 			db.modify(obj, obj).where('email', obj.email).callback(function(err, count) {
+				console.log(count, email.length);
 				if (count) {
 					if (email.length === 1)
-						$SAVE('Events', { type: 'subscribers/add', user: $.user ? $.user.name : '', body: obj.email }, NOOP, $);
+						$SAVE('Events', { id: obj.email.hash(true) + '', type: 'subscribers/add', user: $.user ? $.user.name : '', body: obj.email }, console.log, $);
 					EMIT('subscribers.save', obj);
 					db.counter.hit('all', 1);
 				}

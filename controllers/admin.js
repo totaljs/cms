@@ -1,7 +1,7 @@
 const MSG_NOTIFY = { TYPE: 'notify' };
 const MSG_ALERT = { TYPE: 'alert' };
 const COOKIE_OPTIONS = { security: 'strict', httponly: true };
-const ALLOW = ['/api/dependencies/', '/api/pages/preview/', '/api/upload/', '/api/nav/', '/api/files/', '/stats/', '/live/', '/api/widgets/'];
+const ALLOW = ['/api/dependencies/', '/api/pages/preview/', '/api/upload/', '/api/nav/', '/api/files/', '/stats/', '/live/', '/api/widgets/', '/logout/'];
 const ADMINURL = '/admin/';
 
 var DDOS = {};
@@ -95,12 +95,13 @@ ON('controller', function(controller) {
 	}
 
 	// Roles
-	if (!user.sa && user.roles.length && controller.url !== (ADMINURL + '/')) {
+	if (!user.sa && user.roles.length && controller.url !== ADMINURL) {
 
 		var cancel = true;
 
 		for (var i = 0, length = user.roles.length; i < length; i++) {
 			var role = user.roles[i];
+
 			if (controller.url.indexOf(role.toLowerCase()) !== -1) {
 				cancel = false;
 				break;
@@ -199,7 +200,8 @@ function logout() {
 
 function login() {
 	var self = this;
-	var key = (self.body.name + ':' + self.body.password + ':' + CONF.secret + (self.body.name + ':' + self.body.password).hash() + CONF.admin_secret).sha256();
+	var pwd = self.body.password.sha256(CONF.admin_secret);
+	var key = (self.body.name + ':' + pwd + ':' + CONF.secret + (self.body.name + ':' + pwd).hash()).sha256(CONF.admin_secret);
 	if (MAIN.users[key]) {
 
 		if (!PREF.usersinitialized)

@@ -258,7 +258,9 @@
 		};
 
 		exports.edit = function(el) {
-			SETR('settingsadmin', CLONE(settings.form.users.findItem('id', el.attrd('id'))));
+			var model = CLONE(settings.form.users.findItem('id', el.attrd('id')));
+			model.password = '';
+			SETR('settingsadmin', model);
 			SET('common.form', 'settingsadmin');
 		};
 

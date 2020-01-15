@@ -12,7 +12,7 @@
 					<div class="help"><span class="link exec" data-exec="settingsadmin/make">@(Make from name)</span></div>
 				</div>
 				<div class="col-md-6 m">
-					<div data---="input__?.password__required:1;camouflage:1">@(Login password)</div>
+					<div data---="input__?.password__required:1" data-bind="?.id__config:'required:'+(value?0:1)">@(Login password)</div>
 					<div class="help"><span class="link exec" data-exec="settingsadmin/password">@(Generate password)</span></div>
 				</div>
 			</div>
@@ -55,12 +55,14 @@
 				var user = settings.form.users.findItem('id', model.id);
 				user.name = model.name;
 				user.login = model.login;
-				user.password = model.password;
+				if (model.password)
+					user.password = '#' + model.password;
 				user.roles = model.roles;
 				user.sa = model.sa;
 				UPDATE('settings.form.users');
 			} else {
 				model.id = GUID(15);
+				model.password = '#' + model.password;
 				PUSH('settings.form.users', model);
 			}
 

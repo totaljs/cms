@@ -44,10 +44,16 @@ NEWSCHEMA('Settings', function(schema) {
 		if (model.url.endsWith('/'))
 			model.url = model.url.substring(0, model.url.length - 1);
 
+		for (var i = 0; i < model.users.length; i++) {
+			var usr = model.users[i];
+			if (usr.password[0] === '#')
+				usr.password = usr.password.substring(1).sha256(CONF.admin_secret);
+		}
+
 		for (var i = 0; i < keys.length; i++)
 			PREF.set(keys[i], model[keys[i]]);
 
-		model.dtbackup = F.datetime;
+		model.dtbackup = NOW;
 		NOSQL('settings_backup').insert(JSON.parse(JSON.stringify(model)));
 		model.dtbackup = undefined;
 
@@ -111,7 +117,8 @@ NEWSCHEMA('Settings', function(schema) {
 
 		// Adds an admin (service) account
 		if (!MAIN.users.length) {
-			MAIN.users.push({ id: GUID(15), name: 'Administrator', login: GUID(10), password: GUID(10), roles: [], sa: true });
+			var pwd = GUID(10);
+			MAIN.users.push({ id: GUID(15), name: 'Administrator', login: GUID(10), password: pwd.sha256(CONF.admin_secret), roles: [], sa: true, passwordinit: pwd });
 			PREF.set('users', MAIN.users);
 			PREF.set('usersinitialized', false);
 		}
@@ -120,7 +127,7 @@ NEWSCHEMA('Settings', function(schema) {
 		var users = {};
 		for (var i = 0, length = MAIN.users.length; i < length; i++) {
 			var user = MAIN.users[i];
-			var key = (user.login + ':' + user.password + ':' + CONF.secret + (user.login + ':' + user.password).hash() + CONF.admin_secret).sha256();
+			var key = (user.login + ':' + user.password + ':' + CONF.secret + (user.login + ':' + user.password).hash()).sha256(CONF.admin_secret);
 			if ($.controller && $.user.id === user.id)
 				$.cookie(CONF.admin_cookie, key, '1 month', COOKIE_OPTIONS);
 			users[key] = user;
