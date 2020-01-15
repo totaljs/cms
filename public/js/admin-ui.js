@@ -8639,7 +8639,7 @@ COMPONENT('faicons', 'search:Search', function(self, config) {
 	};
 
 	self.rendericons = function() {
-		var builder = [];
+		var builder = [template.format('', '')];
 		var arr = ispro ? iconspro : icons;
 		for (var i = 0; i < arr.length; i++)
 			builder.push(template.format(arr[i].replace(/^.*?-/, '').replace(/-/g, ' ').toSearch(), arr[i]));

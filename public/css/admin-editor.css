@@ -25,7 +25,7 @@ iframe.CMS_edit { padding: 5px; border: 15px solid red;}
 .CMS_selected_template { background-color: rgba(225,29,0,0.05) !important; border-color: #D42C1A !important; }
 .CMS_operation { opacity: 0.35; outline: 3px solid red; }
 .CMS_edit { cursor: crosshair; }
-.CMS_widgets { border-top: 6px solid #E0E0E0; cursor: crosshair; padding-top: 5px; }
+.CMS_widgets { border-top: 6px solid rgba(100,100,100,0.5); cursor: crosshair; padding-top: 5px; }
 .CMS_widgets:nth-child(1) { border-top-color: #D0D0D0; }
 .CMS_widgets:nth-child(2) { border-top-color: #C0C0C0; }
 .CMS_widgets:nth-child(3) { border-top-color: #B0B0B0; }
