@@ -172,7 +172,7 @@ COMPONENT('mobilecarousel', 'count:1;selector:.col-sm-4;margin:15;snapping:true;
 		}).on('touchmove', function() {
 			clearTimeout(anim);
 		});
-		config.animate && (anim = setTimeout(self.animate, config.animate * (W.mobilecarouselindex + 0.5)));
+		config.animate && (anim = setTimeout(self.animate, config.animate * (W.mobilecarouselindex + 0.1)));
 	};
 
 	self.animate = function() {
