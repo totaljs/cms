@@ -8573,7 +8573,7 @@ COMPONENT('selected', 'class:selected;selector:a;attr:if', function(self, config
 	};
 });
 
-COMPONENT('faiconsbutton', 'default:#FFFFFF;align:left;position:top', function(self, config) {
+COMPONENT('faiconsbutton', 'default:#FFFFFF;align:left;position:top;empty:1', function(self, config) {
 
 	var cls = 'ui-faiconsbutton';
 	var icon;
@@ -8594,6 +8594,7 @@ COMPONENT('faiconsbutton', 'default:#FFFFFF;align:left;position:top', function(s
 			opt.offsetX = config.offsetX;
 			opt.offsetY = config.offsetY;
 			opt.element = self.element;
+			opt.empty = config.empty;
 			opt.callback = function(icon) {
 				self.set(icon);
 				self.change(true);
@@ -8627,6 +8628,7 @@ COMPONENT('faicons', 'search:Search', function(self, config) {
 	var container;
 	var is = false;
 	var ispro = false;
+	var cachekey;
 
 	self.singleton();
 	self.readonly();
@@ -8638,8 +8640,17 @@ COMPONENT('faicons', 'search:Search', function(self, config) {
 		container = self.find(cls2 + '-content');
 	};
 
-	self.rendericons = function() {
-		var builder = [template.format('', '')];
+	self.rendericons = function(empty) {
+
+		var key = empty ? '1' : '0';
+		if (cachekey === key)
+			return;
+
+		cachekey = key;
+		var builder = [];
+
+		empty && builder.push(template.format('', ''));
+
 		var arr = ispro ? iconspro : icons;
 		for (var i = 0; i < arr.length; i++)
 			builder.push(template.format(arr[i].replace(/^.*?-/, '').replace(/-/g, ' ').toSearch(), arr[i]));
@@ -8809,20 +8820,29 @@ COMPONENT('faicons', 'search:Search', function(self, config) {
 			css.top += opt.offsetY;
 
 		is = true;
-		self.rendericons();
-		self.find('.noscrollbar').noscrollbar();
+		self.rendericons(opt.empty);
+		var scrollarea = self.find('.noscrollbar').noscrollbar();
 		self.css(css);
+		if (opt.scrolltop == null || opt.scrolltop)
+			scrollarea[0].scrollTop = 0;
 		search.focus();
 		setTimeout(self.bindevents, 50);
+		clearTimeout2(self.ID);
+	};
+
+	self.clear = function() {
+		container.empty();
+		cachekey = null;
 	};
 
 	self.hide = function() {
 		is = false;
 		self.target = null;
 		self.opt = null;
-		container.empty();
 		self.unbindevents();
 		self.aclass('hidden');
+		container.find('.hidden').rclass('hidden');
+		setTimeout2(self.ID, self.clear, 1000 * 10);
 	};
 });
 
