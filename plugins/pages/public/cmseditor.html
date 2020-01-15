@@ -1057,7 +1057,7 @@
 						link.href = 'mailto:' + content;
 					else if ((/\d+/).test(content))
 						link.href = 'tel:' + content;
-					else if ((/[^\s,]+/).test(content))
+					else if (content.indexOf(' ') === -1 && content.indexOf(',') === -1)
 						link.href = (/http(s):\/\//).test(content) ? content : ('https://' + content);
 
 					link.target = '_self';
