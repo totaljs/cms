@@ -6,7 +6,10 @@
 			{
 				right: { size: 250 },
 				top: { size: 45 },
-				main: {}
+				main: {},
+				xs: {
+					right: { show: false }
+				}
 			}
 		</script>
 
@@ -14,10 +17,10 @@
 			<div class="header">
 				<label><i class="fa fa-plug"></i>@(List of widgets)</label>
 				<nav data-bind="?.checked__enabled .S:value && value.length">
-					<button class="exec" data-exec="?/create"><i class="fa fa-plus-circle green"></i>@(Create)</button>
-					<button class="exec" data-exec="?/import" data-bind="common.componentator__show"><i class="fa fa-cloud-download"></i>@(Import)</button>
-					<button class="exec" data-exec="?/options"><i class="fa fa-wrench"></i>@(Options)</button>
-					<button class="exec S" data-exec="?/checked" disabled><i class="fa fa-check-circle"></i>@(Checked)</button>
+					<button class="exec" data-exec="?/create"><i class="fa fa-plus-circle green"></i><span>@(Create)</span></button>
+					<button class="exec" data-exec="?/import" data-bind="common.componentator__show"><i class="fa fa-cloud-download"></i><span>@(Import)</span></button>
+					<button class="exec" data-exec="?/options"><i class="fa fa-wrench"></i><span>@(Options)</span></button>
+					<button class="exec S hidden-xs" data-exec="?/checked" disabled><i class="fa fa-check-circle"></i><span>@(Checked)</span></button>
 				</nav>
 			</div>
 		</section>
@@ -125,6 +128,7 @@
 
 		exports.options = function(el) {
 			var options = {};
+			options.align = 'right';
 			options.element = el;
 			options.items = [];
 			options.items.push({ id: 'create', name: '@(Create widget)', icon: 'plus-circle green' });

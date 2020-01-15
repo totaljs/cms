@@ -46,9 +46,10 @@
 			{{ end }}
 			</script>
 		</nav>
+		<div class="mobilemenu exec" data-exec="main/menu"><i class="fa fa-navicon"></i></div>
 		<div class="logout exec" data-exec="main/logout"><i class="fa fa-power-off"></i></div>
-		<div class="user hidden-xs">
-			<i class="fa fa-circle"></i><span data-bind="user.name__html"></span>
+		<div class="user">
+			<i class="fa fa-circle"></i><span class="hidden-xs" data-bind="user.name__html"></span>
 		</div>
 		<div class="header-message">
 			<i class="fa fa-bell"></i>
@@ -384,6 +385,21 @@
 					SET('common.page', id);
 					SET('common.pagecache', id);
 				}
+			};
+
+			exports.menu = function(el) {
+				var opt = {};
+				opt.element = el;
+				opt.items = [];
+				for (var i = 0; i < common.nav.length; i++) {
+					var item = common.nav[i];
+					opt.items.push({ icon: '!' + item.icon, name: item.name, id: item.id });
+				}
+				opt.callback = function(item) {
+					exports.plugin(item.id);
+				};
+
+				SETTER('menu', 'show', opt);
 			};
 
 			exports.logout = function() {

@@ -6,7 +6,10 @@
 			{
 				right: { size: 250 },
 				top: { size: 45 },
-				main: {}
+				main: {},
+				xs: {
+					right: { show: false }
+				}
 			}
 		</script>
 
@@ -211,6 +214,7 @@
 
 		exports.options = function(el) {
 			var options = {};
+			options.align = 'right';
 			options.items = [];
 			options.items.push({ id: 'create', name: '@(Create page)', icon: 'plus-circle green', classname: 'b' });
 			options.items.push({ id: 'refresh', name: '@(Refresh)', icon: 'refresh' });
