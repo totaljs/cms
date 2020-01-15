@@ -12,7 +12,7 @@
 	.event-bg-today { background: linear-gradient(#FFFFD5,white); }
 </style>
 
-<div data-scope="events">
+<div data-scope="events" class="events">
 	<div data---="layout__null__parent:window;margin:58" class="invisible">
 
 		<script type="text/plain">
@@ -32,65 +32,67 @@
 		</section>
 
 		<section data-type="main">
-			<div style="padding:30px">
-				<div class="row">
-					<div class="col-sm-4">
-						<div class="panel">
-							<label><i class="fa fa-circle green blink fs11"></i> @(Today events)</label>
-							<div data---="viewbox__common.page__parent:.ui-layout-section;scrollbar:1;margin:100">
-								<div data-bind="events.today__template">
-									<script type="text/html">
-										{{ foreach m in value }}
-											<div class="event">
-												<div class="event-type">{{ if m.user }}<span>{{ m.user }}<i class="fa fa-user"></i></span>{{ fi }}<i class="fa fa-bookmark"></i>{{ m.type }}</div>
-												<div class="event-user"><span>{{ m.dtcreated | time }}<i class="far fa-clock-o"></i></span>{{ m.ua }} / {{ m.ip }}</div>
-												<div class="event-body">{{ m.body }}</div>
-											</div>
-										{{ end }}
-									</script>
+			<div class="padding-events">
+				<div data---="mobilecarousel__null__selecotr:.col-sm-4">
+					<div class="row">
+						<div class="col-sm-4">
+							<div class="panel">
+								<label><i class="fa fa-circle green blink fs11"></i> @(Today events)</label>
+								<div data---="viewbox__common.page__parent:.ui-layout-section;scrollbar:1;margin:100">
+									<div data-bind="events.today__template">
+										<script type="text/html">
+											{{ foreach m in value }}
+												<div class="event">
+													<div class="event-type">{{ if m.user }}<span>{{ m.user }}<i class="fa fa-user"></i></span>{{ fi }}<i class="fa fa-bookmark"></i>{{ m.type }}</div>
+													<div class="event-user"><span>{{ m.dtcreated | time }}<i class="far fa-clock-o"></i></span>{{ m.ua }} / {{ m.ip }}</div>
+													<div class="event-body">{{ m.body }}</div>
+												</div>
+											{{ end }}
+										</script>
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
-					<div class="col-sm-4">
-						<div class="panel">
-						<label>@(Yesterday events)</label>
-							<div data---="viewbox__common.page__parent:.ui-layout-section;scrollbar:1;margin:100">
-								<div data-bind="events.yesterday__template">
-									<script type="text/html">
-										{{ foreach m in value }}
-											<div class="event">
-												<div class="event-type">{{ if m.user }}<span>{{ m.user }}<i class="fa fa-user"></i></span>{{ fi }}<i class="fa fa-bookmark"></i>{{ m.type }}</div>
-												<div class="event-user"><span>{{ m.dtcreated | time }}<i class="far fa-clock-o"></i></span>{{ m.ua }} / {{ m.ip }}</div>
-												<div class="event-body">{{ m.body }}</div>
-											</div>
-										{{ end }}
-									</script>
+						<div class="col-sm-4">
+							<div class="panel">
+							<label>@(Yesterday events)</label>
+								<div data---="viewbox__common.page__parent:.ui-layout-section;scrollbar:1;margin:100">
+									<div data-bind="events.yesterday__template">
+										<script type="text/html">
+											{{ foreach m in value }}
+												<div class="event">
+													<div class="event-type">{{ if m.user }}<span>{{ m.user }}<i class="fa fa-user"></i></span>{{ fi }}<i class="fa fa-bookmark"></i>{{ m.type }}</div>
+													<div class="event-user"><span>{{ m.dtcreated | time }}<i class="far fa-clock-o"></i></span>{{ m.ua }} / {{ m.ip }}</div>
+													<div class="event-body">{{ m.body }}</div>
+												</div>
+											{{ end }}
+										</script>
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
-					<div class="col-sm-4">
-						<div class="panel">
-							<label>@(Older events)</label>
-							<div data---="viewbox__common.page__parent:.ui-layout-section;scrollbar:1;margin:100">
-								<div data-bind="events.older__template">
-									<script type="text/html">
-										{{ foreach m in value }}
-											<div class="event">
-												<div class="event-type">{{ if m.user }}<span>{{ m.user }}<i class="fa fa-user"></i></span>{{ fi }}<i class="fa fa-bookmark"></i>{{ m.type }}</div>
-												<div class="event-user"><span>{{ m.dtcreated | time }}<i class="far fa-clock-o"></i></span>{{ m.ua }} / {{ m.ip }}</div>
-												<div class="event-body">{{ m.body }}</div>
-											</div>
-										{{ end }}
-									</script>
+						<div class="col-sm-4">
+							<div class="panel">
+								<label>@(Older events)</label>
+								<div data---="viewbox__common.page__parent:.ui-layout-section;scrollbar:1;margin:100">
+									<div data-bind="events.older__template">
+										<script type="text/html">
+											{{ foreach m in value }}
+												<div class="event">
+													<div class="event-type">{{ if m.user }}<span>{{ m.user }}<i class="fa fa-user"></i></span>{{ fi }}<i class="fa fa-bookmark"></i>{{ m.type }}</div>
+													<div class="event-user"><span>{{ m.dtcreated | time }}<i class="far fa-clock-o"></i></span>{{ m.ua }} / {{ m.ip }}</div>
+													<div class="event-body">{{ m.body }}</div>
+												</div>
+											{{ end }}
+										</script>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
+				<div class="clearfix"></div>
 			</div>
-			<div class="clearfix"></div>
 		</section>
 	</div>
 

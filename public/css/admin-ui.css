@@ -838,3 +838,8 @@ input { border-radius: 0; }
 .ui-dark .ui-colorpickerbutton { border-color: #404040; background-color: #303030; color: white; }
 .ui-dark .ui-colorpickerbutton-arrow { border-left-color: #404040; }
 .ui-dark .ui-colorpickerbutton:hover { border-color: #505050; }
+
+.ui-mobilecarousel { overflow: hidden; visibility: visible; }
+.ui-mobilecarousel .ui-mobilecarousel-container { width: 100%; overflow-x: scroll; overflow-y: hidden; overflow-scrolling: touch; -webkit-overflow-scrolling: touch; }
+.ui-mobilecarousel .ui-mobilecarousel-body { padding-bottom: 35px; }
+.ui-mobilecarousel .row { margin: 0; }

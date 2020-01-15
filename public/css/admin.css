@@ -198,10 +198,12 @@ h3 i { margin-right: 8px; }
 }
 
 @media(max-width: 768px) {
-	.header nav button { overflow: hidden; width: 32px; min-width: inherit; }
+	.header-message { display: none; }
+	.header nav button { overflow: hidden; width: 30px; min-width: inherit; }
 	header nav { display: none; }
 	header .logout { margin-left: 0; width: 50px; }
 	header .mobilemenu { display: block; }
+	.padding-events { padding: 20px 20px 0; }
 }
 
 @keyframes blink {
