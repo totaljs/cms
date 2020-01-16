@@ -1033,8 +1033,19 @@
 					e.stopPropagation();
 
 					var url = '#' + Date.now();
+					var mt = self.getTarget();
+					var mtd = mt[0];
+
+					for (var i = 0; i < 5; i++) {
+						if (mtd.tagName === 'A')
+							return;
+						mtd = mtd.parentNode;
+						if (!mtd)
+							break;
+					}
+
 					self.getDocument().execCommand('CreateLink', false, url);
-					var tmp = self.getTarget().find('a[href="' + url + '"]');
+					var tmp = mt.find('a[href="' + url + '"]');
 					if (!tmp.length)
 						return;
 
