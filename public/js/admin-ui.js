@@ -1947,7 +1947,7 @@ COMPONENT('crop', 'dragdrop:true;format:{0}', function(self, config) {
 	self.make = function() {
 
 		self.aclass('ui-crop');
-		self.append('<ul><li data-type="upload"><span class="fa fa-folder"></span></li><li data-type="plus"><span class="fa fa-plus"></span></li><li data-type="refresh"><span class="fa fa-refresh"></span></li><li data-type="minus"><span class="fa fa-minus"></span></li><li data-type="minus"><span class="fa fa-minus"></span></li><li data-type="grayscale"><span class="fa fa-adjust"></span></li></ul><div>0x0</div><canvas width="200" height="100"></canvas>');
+		self.append('<ul><li data-type="upload"><span class="fa fa-folder"></span></li><li data-type="plus"><span class="fa fa-plus"></span></li><li data-type="refresh"><span class="fa fa-refresh"></span></li><li data-type="minus"><span class="fa fa-minus"></span></li><li data-type="grayscale"><span class="fa fa-adjust"></span></li></ul><div>0x0</div><canvas width="200" height="100"></canvas>');
 
 		canvas = self.find('canvas')[0];
 		context = canvas.getContext('2d');
