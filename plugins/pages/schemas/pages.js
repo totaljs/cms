@@ -16,12 +16,12 @@ NEWSCHEMA('Pages', function(schema) {
 	schema.define('id', UID);
 	schema.define('body', String);                      // RAW html
 	schema.define('bodywidgets', '[String(22)]');       // List of all used widgets
-	schema.define('icon', 'Lower(40)');                // Font-Awesome icon name
+	schema.define('icon', 'Lower(40)');                 // Font-Awesome icon name
 	schema.define('ispartial', Boolean);                // Is only partial page (the page will be shown in another page)
 	schema.define('keywords', 'String(200)');           // Meta keywords
 	schema.define('description', 'String(200)');        // Meta description
 	schema.define('name', 'String(50)', true);          // Name in admin
-	schema.define('parent', UID);                     // Parent page for breadcrumb
+	schema.define('parent', UID);                       // Parent page for breadcrumb
 	schema.define('partial', '[UID]');                  // A partial content
 	schema.define('summary', 'String(500)');            // Short page description generated according to the "CMS_summary" class in CMS editor
 	schema.define('pictures', '[String]');              // URL addresses for first 5 pictures
