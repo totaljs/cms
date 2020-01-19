@@ -155,6 +155,7 @@ h3 i { margin-right: 8px; }
 .button:disabled { background-color: #E0E0E0; color: silver; cursor: not-allowed; box-shadow: none; opacity: 1; }
 .button i { margin-right: 5px; }
 .button-small { height: 32px; font-size: 12px; }
+.button-clear { background-color: #CA3F3F; }
 
 .panel { background-color: white; border-radius: 2px; border: 1px solid #E0E0E0; }
 .panel > label { display: block; padding: 10px 20px; border-bottom: 1px solid #E0E0E0; font-size: 14px; font-weight: bold; }

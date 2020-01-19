@@ -115,25 +115,32 @@
 							<div class="panelbody">
 								<div class="padding">
 									<div class="row">
-										<div class="col-sm-4 m">
+										<div class="col-sm-3 m">
 											<div>
 												<h3 class="nmb"><i class="far fa-window-restore"></i>@(Backups)</h3>
 												<p>@(This operation will remove all backed up records from all database.)</p>
-												<button class="button button-small b exec" data-exec="settings/operation" data-name="backups"><i class="fa fa-trash-o mr5"></i>@(Clear backups)</button>
+												<button class="button button-small button-clear b exec" data-exec="settings/operation" data-name="backups"><i class="fa fa-trash-o mr5"></i>@(Clear backups)</button>
 											</div>
 										</div>
-										<div class="col-sm-4 m">
+										<div class="col-sm-3 m">
 											<div>
 												<h3 class="nmb"><i class="far fa-copy"></i>@(Unused files)</h3>
 												<p>@(This operation will remove all files which aren't used in the content.)</p>
-												<button class="button button-small b exec" data-exec="settings/operation" data-name="files"><i class="fa fa-trash-o mr5"></i>@(Clear unused files)</button>
+												<button class="button button-small button-clear b exec" data-exec="settings/operation" data-name="files"><i class="fa fa-trash-o mr5"></i>@(Clear unused files)</button>
 											</div>
 										</div>
-										<div class="col-sm-4 m">
+										<div class="col-sm-3 m">
+											<div>
+												<h3 class="nmb"><i class="far fa-chart-bar"></i>@(Counters)</h3>
+												<p>@(This operation will clear all today counters from all sections.)</p>
+												<button class="button button-small button-clear b exec" data-exec="settings/operation_clear" data-name="dashboard"><i class="fa fa-trash-o mr5"></i>@(Clear counters)</button>
+											</div>
+										</div>
+										<div class="col-sm-3 m">
 											<div>
 												<h3 class="nmb"><i class="far fa-clock"></i>@(Events)</h3>
 												<p>@(This operation will remove all recorded events in <b>Events section</b>.)</p>
-												<button class="button button-small b exec" data-exec="settings/operation" data-name="events"><i class="fa fa-trash-o mr5"></i>@(Clear events)</button>
+												<button class="button button-small button-clear b exec" data-exec="settings/operation" data-name="events"><i class="fa fa-trash-o mr5"></i>@(Clear events)</button>
 											</div>
 										</div>
 									</div>
@@ -250,6 +257,26 @@
 					SETTER('snackbar', 'success', '@(Done, operation has been completed.)');
 				});
 			})
+		};
+
+		exports.operation_clear = function(el) {
+			var type = el.attrd('name');
+			var opt = {};
+			opt.element = el;
+			opt.items = [];
+			opt.items.push({ id: 'today', name: '@(Clear today)', icon: 'trash-o' });
+			opt.items.push({ id: 'month', name: '@(Clear this month)', icon: 'trash-o' });
+			opt.items.push({ id: 'year', name: '@(Clear this year)', icon: 'trash-o' });
+			opt.items.push('-');
+			opt.items.push({ id: 'all', name: '@(Clear all)', icon: 'trash-o' });
+			opt.callback = function(item) {
+				SETTER('confirm', 'show2', '@(Are you sure you want to perform selected operation?)', ['"play-o" @(Yes, continue)', '@(Cancel)'], function() {
+					AJAX('GET [url]api/{0}/clear/'.format(type), { id: item.id }, function() {
+						SETTER('snackbar', 'success', '@(Done, the counters will be removed in 5 minutes.)');
+					});
+				});
+			};
+			SETTER('menu', 'show', opt);
 		};
 
 		exports.create = function() {

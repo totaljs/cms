@@ -3,13 +3,14 @@ exports.name = 'Dashboard';
 exports.position = 0;
 
 exports.install = function() {
-	ROUTE('GET    /admin/api/dashboard/',                    json_dashboard);
-	ROUTE('GET    /admin/api/dashboard/referrers/',          json_dashboard_referrers);
-	ROUTE('GET    /admin/api/dashboard/online/',             json_dashboard_online);
+	ROUTE('GET    /admin/api/dashboard/',                    stats);
+	ROUTE('GET    /admin/api/dashboard/referrers/',          referrers);
+	ROUTE('GET    /admin/api/dashboard/online/',             online);
 	ROUTE('GET    /admin/api/dashboard/tracking/             *Tracking --> @stats');
+	ROUTE('GET    /admin/api/dashboard/clear/',              clear);
 };
 
-function json_dashboard_online() {
+function online() {
 	var self = this;
 	var data = MODULE('visitors').today();
 	data.memory = process.memoryUsage();
@@ -17,10 +18,19 @@ function json_dashboard_online() {
 	self.json(data);
 }
 
-function json_dashboard() {
+function stats() {
 	MODULE('visitors').monthly(this.callback());
 }
 
-function json_dashboard_referrers() {
+function referrers() {
 	NOSQL('visitors').counter.stats_sum(24, NOW.getFullYear(), this.callback());
+}
+
+function clear() {
+	var self = this;
+	var db = ['pages', 'posts', 'products', 'newsletters', 'subscribers', 'contactforms'];
+	var id = self.query.id || 'today';
+	var date = id === 'today' ? NOW.format('yyyy-MM-dd') : id === 'month' ? NOW.format('yyyy-MM') : id === 'year' ? NOW.format('yyyy') : id === 'all' ? null : 'today';
+	db.wait((name, next) => NOSQLCOUNTER(name).reset(null, null, date, next));
+	self.success();
 }
