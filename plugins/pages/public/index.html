@@ -151,7 +151,13 @@
 				case 'remove':
 					SETTER('confirm', 'show2', '@(Are you sure you want to remove selected page?)', ['"trash"@(Remove)', '@(Cancel)'], function() {
 						FUNC.loading(true);
-						AJAX('DELETE [url]api/pages/', row, FUNC.messageresponse('@(Pages has been removed successfully)', exports.refresh));
+						AJAX('DELETE [url]api/pages/', row, FUNC.messageresponse('@(Pages has been removed successfully)', function() {
+							pages.grid.items = pages.grid.items.remove('id', row.id);
+							pages.list = pages.list.remove('id', row.id);
+							UPD('?.grid');
+							UPD('?.list');
+							setTimeout2('pages_refresh', exports.refresh, 3000);
+						}));
 					});
 					break;
 				case 'update':
