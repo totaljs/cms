@@ -69,7 +69,7 @@ NEWSCHEMA('ContactForms', function(schema) {
 		LOGMAIL(PREF.emailcontactform, '📩 ' + CONF.name, builder.join('\n')).reply(model.email, true);
 
 		// Events
-		$SAVE('Events', { type: 'contactforms/add', user: $.user ? $.user.name : '', body: model.firstname + ' ' + model.lastname, id: model.id }, NOOP, $);
+		$SAVE('Events', { type: 'contactforms/add', user: $.user ? $.user.name : '', body: model.name, id: model.id }, NOOP, $);
 	});
 
 	// Stats
