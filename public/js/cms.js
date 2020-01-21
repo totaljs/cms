@@ -1,3 +1,5 @@
+DEF.fallbackcache = '1 day';
+
 // Link tracking
 $(document).on('mousedown touchstart', 'a[data-cms-track]', function(e) {
 	var target = $(e.target);

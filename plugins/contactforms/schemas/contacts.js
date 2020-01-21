@@ -1,11 +1,15 @@
 NEWSCHEMA('ContactForms', function(schema) {
 
 	schema.define('source', 'String(50)');
+	schema.define('name', 'String(60)', true);
 	schema.define('firstname', 'Capitalize(40)', true);
 	schema.define('lastname', 'Capitalize(40)', true);
 	schema.define('email', 'Email', true);
 	schema.define('body', String, true);
 	schema.define('phone', 'Phone');
+
+	schema.required('firstname, lastname', m => !m.name);
+	schema.required('name', m => !m.firstname && !m.lastname);
 
 	schema.setQuery(function($) {
 		var opt = $.options === EMPTYOBJECT ? $.query : $.options;
@@ -43,6 +47,9 @@ NEWSCHEMA('ContactForms', function(schema) {
 		model.browser = $.req.useragent();
 		model.dtcreated = NOW;
 
+		if (!model.name)
+			model.name = model.lastname + ' ' + model.firstname;
+
 		var nosql = NOSQL('contactforms');
 		nosql.insert(model.$clean());
 		nosql.counter.hit('all');
@@ -52,7 +59,7 @@ NEWSCHEMA('ContactForms', function(schema) {
 
 		var builder = [];
 
-		builder.push('<b>' + model.firstname.encode() + ' ' + model.lastname.encode() + '</b>');
+		builder.push('<b>' + model.name.encode() + '</b>');
 		builder.push(model.email);
 		model.phone && builder.push(model.phone);
 		builder.push('');
