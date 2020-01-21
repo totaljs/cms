@@ -1,6 +1,7 @@
 NEWSCHEMA('Subscribers', function(schema) {
 
 	schema.define('email', String, true);
+	schema.define('source', 'String(100)');
 
 	// Saves the model into the database
 	schema.setSave(function($) {
@@ -20,6 +21,7 @@ NEWSCHEMA('Subscribers', function(schema) {
 			obj.ip = $.ip;
 			obj.language = $.language;
 			obj.unsubscribed = false;
+			obj.source = model.source;
 			obj.email = email[i];
 			obj.browser = ua;
 

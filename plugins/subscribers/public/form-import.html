@@ -31,6 +31,7 @@
 
 			arr.limit(100, function(items, next) {
 				data.email = items.join(',');
+				data.source = 'Imported';
 				AJAX('POST /api/subscribers/', data, function() {
 					count += items.length;
 					SET('?.progress', ((count / arr.length) * 100) >> 0);
