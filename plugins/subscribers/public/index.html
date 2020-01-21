@@ -24,8 +24,8 @@
 			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?.checked;button:?/button;noborder:1;height:window;margin:106;exec:?/refresh">
 				<script type="text/plain">
 					[
-						{ name: 'email', text: '@(Email address)', width: 480, template: '{{ if unsubscribed }}<span class="badge badge-red mr5">@(unsubscribed)</span>{{ fi }}{{ email }}' },
-						{ name: 'source', text: '@(Source)', width: 150 },
+						{ name: 'email', text: '@(Email address)', width: 300, template: '{{ if unsubscribed }}<span class="badge badge-red mr5">@(unsubscribed)</span>{{ fi }}{{ email }}' },
+						{ name: 'source', text: '@(Source)', width: 200 },
 						{ name: 'browser', text: '@(Device)', width: 150 },
 						{ name: 'dtcreated', text: '@(Logged)', width: 200, template: '{{ dtcreated | format(\'@(yyyy-MM-dd HH:mm)\') }}', align: 1 },
 						{ name: '@(Options)', align: 1, filter: false, sort: false, width: 100, template: '<button name="ban" title="@(Ban)"><i class="fa fa-ban"></i></button><button class="btn-remove" name="remove" title="@(Remove)"><i class="far fa-trash-o"></i></button>' }
