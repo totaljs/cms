@@ -308,6 +308,7 @@ function refresh(callback, force) {
 
 			var obj = compile(item.body);
 
+			obj.name = item.name;
 			obj.category = item.category;
 			obj.css && css.push(obj.css);
 
@@ -353,7 +354,7 @@ function refresh(callback, force) {
 					try {
 						(new Function('exports', obj.total))(o);
 					} catch (e) {
-						WARNING.message = 'Widget <b>{0}</b> exception: <b>{1}</b>'.format(item.name, e.message);
+						WARNING.message = 'Widget "{0}" exception: "{1}"'.format(item.name, e.message);
 						FUNC.notify(WARNING);
 					}
 					obj.total = o;

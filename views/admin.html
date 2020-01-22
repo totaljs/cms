@@ -184,6 +184,7 @@
 		};
 
 		ON('message', function(message) {
+
 			if (message.type === 'visitor') {
 				EMIT('visitor', message.message);
 			} else {
@@ -284,7 +285,10 @@
 					break;
 				case 'success':
 				case 'warning':
-					SETTER('snackbar', item.type, item.message);
+					if (item.type === 'warning')
+						SETTER('message', 'warning', item.message);
+					else
+						SETTER('snackbar', item.type, item.message);
 					break;
 				default:
 					if (item.TYPE === 'event')
