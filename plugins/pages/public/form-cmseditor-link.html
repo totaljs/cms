@@ -47,7 +47,7 @@
 
 		WATCH('cmseditor.link.href', function(path, value, type) {
 			SET('cmseditor.link.href2', value);
-			if (type === 2 && cmseditor.link.target !== '_blank' && (/^(http|https)\:\/\//i).test(value))
+			if (type === 2 && cmseditor.link.target !== '_blank' && value.length > 12 && (/^(http|https)\:\/\//i).test(value))
 				SET('cmseditor.link.target', '_blank');
 		}, true);
 
@@ -208,7 +208,7 @@
 				render(output);
 
 			}, function(value) {
-				SET('cmseditor.link.href', value.name);
+				SET('cmseditor.link.href', value.name, 2);
 			});
 		};
 
