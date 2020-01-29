@@ -736,8 +736,13 @@ Controller.prototype.CMSpage = function(callback, cache) {
 		if (MAIN.redirects && MAIN.redirects[self.url]) {
 			self.redirect(MAIN.redirects[self.url], RELEASE);
 			NOSQL('pages').counter.hit('redirect');
-		} else
-			self.throw404();
+		} else {
+			// tries to redirect to admin
+			if (self.url === '/')
+				self.redirect('/admin/');
+			else
+				self.throw404();
+		}
 		return self;
 	}
 
