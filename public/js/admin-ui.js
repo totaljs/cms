@@ -193,7 +193,7 @@ COMPONENT('form', 'zindex:12;scrollbar:1', function(self, config) {
 
 		if (config.scrollbar) {
 			el.css('overflow', 'hidden');
-			self.scrollbar = SCROLLBAR(el.find(cls2 + '-scrollbar'), { visibleY: 1 });
+			self.scrollbar = SCROLLBAR(el.find(cls2 + '-scrollbar'), { visibleY: 1, orientation: 'y' });
 		}
 
 		while (self.dom.children.length)
@@ -1890,6 +1890,11 @@ COMPONENT('crop', 'dragdrop:true;format:{0}', function(self, config) {
 		canvas2.width = config.width;
 		canvas2.height = config.height;
 
+		ctx2.mozImageSmoothingEnabled = true;
+		ctx2.imageSmoothingQuality = 'low';
+		ctx2.webkitImageSmoothingEnable = true;
+		ctx2.msImageSmoothingEnabled = true;
+		ctx2.imageSmoothingEnabled = true;
 		ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
 
 		if (config.background) {
@@ -1951,6 +1956,12 @@ COMPONENT('crop', 'dragdrop:true;format:{0}', function(self, config) {
 
 		canvas = self.find('canvas')[0];
 		context = canvas.getContext('2d');
+
+		context.mozImageSmoothingEnabled = true;
+		context.imageSmoothingQuality = 'low';
+		context.webkitImageSmoothingEnable = true;
+		context.msImageSmoothingEnabled = true;
+		context.imageSmoothingEnabled = true;
 
 		self.event('click', 'li', function(e) {
 
