@@ -30,12 +30,9 @@ $(document).ready(function() {
 			else
 				W.$visitorscounter = 1;
 
-			// 5 minutes
-			if (W.$visitorscounter === 10) {
+			// 3 minutes
+			if (W.$visitorscounter === 6) {
 				// It waits 1 hour and then it will reload the current
-				setTimeout(function() {
-					location.reload(true);
-				}, (1000 * 60) * 60);
 				clearInterval(W.$visitorsinterval);
 				return;
 			}
@@ -53,9 +50,6 @@ $(document).ready(function() {
 			}, 2000);
 		};
 
-		if (!document.hasFocus())
-			return;
-
 		var url = '/$visitors/';
 		var params = '';
 
@@ -71,9 +65,11 @@ $(document).ready(function() {
 				un = W.user.nick + '';
 		} else if (W.username)
 			un = W.username + '';
+		else if (NAV.query.utm_user)
+			un = NAV.query.utm_user;
 
 		if (un)
-			params += (params ? '&' : '') + encodeURIComponent(un);
+			params += (params ? '&' : '') + 'utm_user=' + encodeURIComponent(un);
 
 		$.ajax(url + (params ? ('?' + params) : ''), options);
 		W.$visitorsinterval = setInterval(function() {
