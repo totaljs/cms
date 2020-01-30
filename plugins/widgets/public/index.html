@@ -162,9 +162,10 @@
 
 		exports.checked = function(el) {
 			var options = {};
+			options.align = 'right';
 			options.element = el;
 			options.items = [];
-			options.items.push({ id: 'remove', name: '@(Remove widgets)', icon: 'trash' });
+			options.items.push({ id: 'remove', name: '@(Remove widgets)', icon: 'trash red' });
 
 			options.callback = function(item) {
 				switch (item.id) {

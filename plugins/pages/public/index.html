@@ -151,7 +151,7 @@
 				case 'remove':
 					SETTER('confirm', 'show2', '@(Are you sure you want to remove selected page?)', ['"trash"@(Remove)', '@(Cancel)'], function() {
 						FUNC.loading(true);
-						AJAX('DELETE [url]api/pages/', row, FUNC.messageresponse('@(Pages has been removed successfully)', function() {
+						AJAX('DELETE [url]api/pages/', row, FUNC.messageresponse('@(Page has been removed successfully)', function() {
 							pages.grid.items = pages.grid.items.remove('id', row.id);
 							pages.list = pages.list.remove('id', row.id);
 							UPD('?.grid');
@@ -193,9 +193,10 @@
 
 		exports.checked = function(el) {
 			var options = {};
+			options.align = 'right';
 			options.element = el;
 			options.items = [];
-			options.items.push({ id: 'remove', name: '@(Remove pages)', icon: 'trash' });
+			options.items.push({ id: 'remove', name: '@(Remove pages)', icon: 'trash red' });
 			options.callback = function(item) {
 				switch (item.id) {
 					case 'remove':

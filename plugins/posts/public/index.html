@@ -141,10 +141,11 @@
 
 		exports.checked = function(el) {
 			var options = {};
+			options.align = 'right';
 			options.element = el;
 			options.items = [];
 			options.items.push({ id: 'toggle', name: '@(Publish / Unpublish)', icon: 'globe' });
-			options.items.push({ id: 'remove', name: '@(Remove posts)', icon: 'trash' });
+			options.items.push({ id: 'remove', name: '@(Remove posts)', icon: 'trash red' });
 
 			options.callback = function(item) {
 				switch (item.id) {
@@ -179,6 +180,7 @@
 
 		exports.options = function(el) {
 			var options = {};
+			options.align = 'right';
 			options.element = el;
 			options.items = [];
 			options.items.push({ id: 'refresh', name: '@(Refresh)', icon: 'refresh' });

@@ -74,12 +74,12 @@
 		exports.button = function(name, row, grid) {
 			switch (name) {
 				case 'remove':
-					SETTER('confirm', 'show2', '@(Are you sure you want to remove selected post?)', ['"trash" @(Remove)', '@(Cancel)'], function() {
+					SETTER('confirm', 'show2', '@(Are you sure you want to remove selected notice?)', ['"trash" @(Remove)', '@(Cancel)'], function() {
 						FUNC.loading(true);
 						AJAX('DELETE [url]api/notices/' + row.id, function(response) {
 							FUNC.loading(false, 1000);
 							if (response.success) {
-								SETTER('snackbar', 'success', '@(Post has been removed successfully.)');
+								SETTER('snackbar', 'success', '@(Notice has been removed successfully.)');
 								NULL('?.grid');
 							}
 						});
@@ -103,9 +103,10 @@
 
 		exports.checked = function(el) {
 			var options = {};
+			options.align = 'right';
 			options.element = el;
 			options.items = [];
-			options.items.push({ id: 'remove', name: '@(Remove notices)', icon: 'trash' });
+			options.items.push({ id: 'remove', name: '@(Remove notices)', icon: 'trash red' });
 
 			options.callback = function(item) {
 				switch (item.id) {
@@ -133,6 +134,7 @@
 
 		exports.options = function(el) {
 			var options = {};
+			options.align = 'right';
 			options.element = el;
 			options.items = [];
 			options.items.push({ id: 'refresh', name: '@(Refresh)', icon: 'refresh' });

@@ -126,10 +126,10 @@
 
 		exports.clear = function() {
 			SETTER('confirm', 'show2', '@(Are you sure you want to clear all events?)', ['"trash-o" @(Clear)', '@(Cancel)'], function(index) {
-				AJAX('GET [url]api/events/clear/', FUNC.messageresponse('@(Events have been cleared successfully)', function() {
+				AJAX('GET [url]api/events/clear/', function() {
 					SET('events', { today: [], yesterday: [], older: [] });
 					exports.element.SETTER('*', 'resize');
-				}));
+				});
 			});
 		};
 
