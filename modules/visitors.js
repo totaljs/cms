@@ -241,7 +241,7 @@ W.emitvisitor = function(type, req) {
 	VISITOR.type = type;
 	VISITOR.online = W.arr[0] + W.arr[1];
 	VISITOR.mobile = req.mobile;
-	VISITOR.user = req.user ? (req.user.name || req.user.alias) : null;
+	VISITOR.user = req.user ? (req.user.name || req.user.nick || req.user.alias) : req.query.utm_user;
 	EMIT('visitor', VISITOR);
 };
 

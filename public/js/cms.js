@@ -14,9 +14,9 @@ $(document).on('mousedown touchstart', 'a[data-cms-track]', function(e) {
 $(document).ready(function() {
 
 	// Online statistics for visitors
-	(function() {
+	var visitors = function() {
 
-		if (W.top !== W || (navigator.onLine != null && !navigator.onLine && W.top))
+		if ((navigator.onLine != null && !navigator.onLine) || !navigator.cookieEnabled)
 			return;
 
 		var options = {};
@@ -24,6 +24,22 @@ $(document).ready(function() {
 		options.headers = { 'x-ping': location.pathname, 'x-cookies': navigator.cookieEnabled ? '1' : '0', 'x-referrer': document.referrer };
 
 		options.success = function(r) {
+
+			if (W.$visitorscounter)
+				W.$visitorscounter++;
+			else
+				W.$visitorscounter = 1;
+
+			// 5 minutes
+			if (W.$visitorscounter === 10) {
+				// It waits 1 hour and then it will reload the current
+				setTimeout(function() {
+					location.reload(true);
+				}, (1000 * 60) * 60);
+				clearInterval(W.$visitorsinterval);
+				return;
+			}
+
 			if (r) {
 				try {
 					(new Function(r))();
@@ -37,32 +53,44 @@ $(document).ready(function() {
 			}, 2000);
 		};
 
-		if (W.$visitorscounter)
-			W.$visitorscounter++;
-		else
-			W.$visitorscounter = 1;
-
-		// 5 minutes
-		if (W.$visitorscounter === 10) {
-			// It waits 1 hour and then reloads the site
-			setTimeout(function() {
-				location.reload(true);
-			}, (1000 * 60) * 60);
-			clearInterval(W.$visitorsinterval);
-			return;
-		} else if (!document.hasFocus())
+		if (!document.hasFocus())
 			return;
 
 		var url = '/$visitors/';
+		var params = '';
 
-		$.ajax(url + (NAV.query.utm_medium || NAV.query.utm_source || NAV.query.campaign_id ? '?utm_medium=1' : ''), options);
+		if (NAV.query.utm_medium || NAV.query.utm_source || NAV.query.campaign_id)
+			params = 'utm_medium=1';
 
+		var un;
+
+		if (W.user) {
+			if (W.user.name)
+				un = W.user.name + '';
+			else if (W.user.nick)
+				un = W.user.nick + '';
+		} else if (W.username)
+			un = W.username + '';
+
+		if (un)
+			params += (params ? '&' : '') + encodeURIComponent(un);
+
+		$.ajax(url + (params ? ('?' + params) : ''), options);
 		W.$visitorsinterval = setInterval(function() {
 			options.headers['x-reading'] = '1';
-			$.ajax(url, options);
+			$.ajax(url + (un ? ('?utm_user=' + encodeURIComponent(un)) : ''), options);
 		}, 30000);
+	};
 
-	})();
+	// Determines OpenPlatform
+	if (W.OP && W.OP.init) {
+		W.OP.init(function(err, profile) {
+			if (profile)
+				W.username = profile.username;
+			visitors();
+		});
+	} else
+		visitors();
 
 	setTimeout(function() {
 		var cls = 'jcomponent';
