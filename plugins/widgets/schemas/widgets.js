@@ -10,7 +10,7 @@ MAIN.widgets = {};
 function WidgetInstace() {
 }
 
-WidgetInstace.prototype.globals = WidgetInstace.prototype.variables = function(name, value) {
+WidgetInstace.prototype.globals = WidgetInstace.prototype.variables = WidgetInstace.prototype.variable = function(name, value) {
 	$WORKFLOW('Pages/Globals', 'add', { name: name, value: value }, NOOP);
 };
 
