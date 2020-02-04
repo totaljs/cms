@@ -1,3 +1,5 @@
+const REG_SPACE = /\s/g;
+
 NEWSCHEMA('Subscribers', function(schema) {
 
 	schema.define('email', String, true);
@@ -22,7 +24,7 @@ NEWSCHEMA('Subscribers', function(schema) {
 			obj.language = $.language;
 			obj.unsubscribed = false;
 			obj.source = model.source;
-			obj.email = email[i];
+			obj.email = email[i].toLowerCase().replace(REG_SPACE, '');
 			obj.browser = ua;
 
 			db.modify(obj, obj).where('email', obj.email).callback(function(err, count) {
