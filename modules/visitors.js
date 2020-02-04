@@ -158,6 +158,7 @@ W.counter = function(req) {
 	VISITOR.id = req.visitorid;
 	VISITOR.unique = false;
 	VISITOR.ping = h['x-reading'] === '1';
+	VISITOR.browser = req.ua;
 
 	if (exists) {
 		F.$events.visitor && W.emitvisitor('browse', req);
@@ -222,7 +223,11 @@ W.counter = function(req) {
 		return W.checksum(ticks.toString(16) + req.visitorid);
 	}
 
-	VISITOR.referer && VISITOR.unique && NOSQL(DBNAME).counter.hit(VISITOR.referer);
+	if (VISITOR.referer && VISITOR.unique) {
+		var counter = NOSQL(DBNAME).counter;
+		counter.hit(VISITOR.referer);
+		VISITOR.browser && counter.hit(VISITOR.browser);
+	}
 
 	for (var i = 0, length = W.social.length; i < length; i++) {
 		if (VISITOR.referer.indexOf(W.social[i]) !== -1) {

@@ -169,7 +169,7 @@
 										<script type="text/html">
 											<tr>
 												<td><div class="singline">{{ if newbie }}<i class="fa fa-plus-circle green"></i>{{ fi }}{{ type }}</div></td>
-												<td><div class="singline"><span class="badge badge-silver badge-small mr5">{{ id }}</span>{{ if unique }}<span class="badge badge-green mr5">@(+new)</span>{{ fi }}{{ if mobile }}<i class="fa fa-mobile"></i>{{ fi }}<a href="{{ url }}" target="_blank">{{ url }}</a></div></td>
+												<td><div class="singline"><span class="badge badge-silver badge-small mr5">{{ id }}</span>{{ if unique }}<span class="badge badge-green mr5">@(+new)</span>{{ fi }}{{ if mobile }}<i class="fa fa-mobile"></i>{{ fi }}<a href="{{ url }}" target="_blank">{{ url }}</a>{{ if browser }} <span class="gray">{{ browser }}</span>{{ fi }}</div></td>
 												<td class="hidden-xs"><div class="singline">{{ user }}</div></td>
 												<td class="hidden-xs">{{ ip }}</td>
 												<td class="hidden-xs center">{{ date | format('HH:mm:ss') }}</td>
