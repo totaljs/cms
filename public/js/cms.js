@@ -16,14 +16,24 @@ $(document).ready(function() {
 	// Online statistics for visitors
 	var visitors = function() {
 
-		if ((navigator.onLine != null && !navigator.onLine) || !navigator.cookieEnabled)
+		var n = navigator;
+		var W = window;
+		var LS = W.localStorage;
+
+		if ((n.onLine != null && !n.onLine) || !n.cookieEnabled)
 			return;
 
+		var key = 'visited';
 		var options = {};
+		var ticks = LS.getItem('visited') || '';
+
 		options.type = 'GET';
-		options.headers = { 'x-ping': location.pathname, 'x-cookies': navigator.cookieEnabled ? '1' : '0', 'x-referrer': document.referrer };
+		options.headers = { 'X-Ping': location.pathname, 'X-Referrer': document.referrer };
 
 		options.success = function(r) {
+
+			ticks = r;
+			r && LS.setItem(key, r);
 
 			if (W.$visitorscounter)
 				W.$visitorscounter++;
@@ -31,17 +41,8 @@ $(document).ready(function() {
 				W.$visitorscounter = 1;
 
 			// 3 minutes
-			if (W.$visitorscounter === 6) {
-				// It waits 1 hour and then it will reload the current
+			if (W.$visitorscounter === 6)
 				clearInterval(W.$visitorsinterval);
-				return;
-			}
-
-			if (r) {
-				try {
-					(new Function(r))();
-				} catch (e) {}
-			}
 		};
 
 		options.error = function() {
@@ -51,12 +52,24 @@ $(document).ready(function() {
 		};
 
 		var url = '/$visitors/';
-		var params = '';
+
+		try {
+			var key2 = key + 'test';
+			localStorage.setItem(key2, '1');
+			var is = LS.getItem(key2) === '1';
+			LS.removeItem(key2);
+			if (!is)
+				return;
+		} catch (e) {
+			// disabled localStorage (skip user)
+			return;
+		}
+
+		var params = '?id=' + ticks;
+		var un;
 
 		if (NAV.query.utm_medium || NAV.query.utm_source || NAV.query.campaign_id)
-			params = 'utm_medium=1';
-
-		var un;
+			params = '&utm_medium=1';
 
 		if (W.user) {
 			if (W.user.name)
@@ -69,12 +82,12 @@ $(document).ready(function() {
 			un = NAV.query.utm_user;
 
 		if (un)
-			params += (params ? '&' : '') + 'utm_user=' + encodeURIComponent(un);
+			params += '&utm_user=' + encodeURIComponent(un);
 
-		$.ajax(url + (params ? ('?' + params) : ''), options);
+		$.ajax(url + params, options);
 		W.$visitorsinterval = setInterval(function() {
 			options.headers['x-reading'] = '1';
-			$.ajax(url + (un ? ('?utm_user=' + encodeURIComponent(un)) : ''), options);
+			$.ajax(url + '?id=' + ticks + (un ? ('&utm_user=' + encodeURIComponent(un)) : ''), options);
 		}, 30000);
 	};
 

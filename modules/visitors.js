@@ -2,7 +2,6 @@
 // Copyright 2017 (c) Peter Širka <petersirka@gmail.com>
 
 const CONCAT = [];
-const COOKIE = 'visit';
 const DBNAME = 'visitors';
 const REG_ROBOT = /search|agent|bot|crawler/i;
 const TIMEOUT_VISITORS = 1200; // 20 MINUTES
@@ -89,7 +88,11 @@ W.increment = W.inc = function(type) {
 	return W;
 };
 
-W.counter = function(req, res) {
+W.checksum = function(value) {
+	return value + ((value + CONF.secret).hash(true) + '').substring(0, 5);
+};
+
+W.counter = function(req) {
 
 	var h = req.headers;
 	var agent = h['user-agent'];
@@ -100,56 +103,65 @@ W.counter = function(req, res) {
 	// Custom header defined on client-side:
 	var url = h['x-ping'];
 	if (!url)
-		return false;
+		return '';
 
 	if (!agent || (W.$blacklist && isBlacklist(url)))
-		return false;
+		return '';
 
 	if (REG_ROBOT.test(agent)) {
 		W.stats.robots++;
-		return false;
+		return '';
 	}
 
 	if (!h['accept'] || !h['accept-language'])
-		return false;
-
-	var cookies = h['x-cookies'];
-
-	// CORS request
-	if (!cookies || cookies === '0') {
-		// Writes referrer only
-		VISITOR.referer = getHostname(h['x-referrer'] || h['x-referer'] || h['referer']);
-		VISITOR.referer && VISITOR.referer.indexOf(W.hostname) === -1 && NOSQL(DBNAME).counter.hit(VISITOR.referer);
-		return false;
-	}
+		return '';
 
 	NOW = new Date();
 
-	var cookie = req.cookie(COOKIE);
-	req.idvisitor = cookie ? cookie.substring(cookie.length - 5) : Math.random().toString().substring(2, 7);
+	var meta = (req.query.id || '');
 
-	var user = cookie ? cookie.substring(0, cookie.length - 5).parseInt() : 0;
+	var metats = meta.substring(0, meta.length - 10);
+	var metaid = meta.substring(meta.length - 10, meta.length - 5);
+
+	// Not valid checksum
+	if (meta !== W.checksum(metats + metaid)) {
+		metats = '';
+		metaid = '';
+	}
+
+	req.visitorid = metaid || Math.random().toString(16).substring(2, 7);
+	var user = metats ? parseInt(metats, 16) : 0;
 	var ticks = NOW.getTime();
 	var sum = user ? (ticks - user) / 1000 : 1000;
+
+	if (!(user > 0))
+		user = 0;
+
+	// More than 30 days
+	// Reset
+	if (sum > 2419200) {
+		sum = 1000;
+		user = 0;
+	}
+
 	var exists = sum < 91;
 
-	req.lastvisit = user;
+	req.visited = user;
 
 	if (user)
 		sum = Math.abs(W.current - user) / 1000;
 
 	var isHits = user ? sum >= TIMEOUT_VISITORS : true;
-
 	if (isHits)
 		W.stats.hits++;
 
-	VISITOR.id = req.idvisitor;
+	VISITOR.id = req.visitorid;
 	VISITOR.unique = false;
 	VISITOR.ping = h['x-reading'] === '1';
 
 	if (exists) {
 		F.$events.visitor && W.emitvisitor('browse', req);
-		return true;
+		return meta;
 	}
 
 	if (user) {
@@ -158,9 +170,8 @@ W.counter = function(req, res) {
 		if (sum < TIMEOUT_VISITORS) {
 			W.arr[1]++;
 			W.lastvisit = NOW;
-			res.cookie(COOKIE, ticks + req.idvisitor, NOW.add('5 days'));
 			F.$events.visitor && W.emitvisitor('visitor', req);
-			return true;
+			return W.checksum(ticks.toString(16) + req.visitorid);
 		}
 
 		var date = new Date(user);
@@ -184,7 +195,6 @@ W.counter = function(req, res) {
 
 	W.arr[1]++;
 	W.lastvisit = NOW;
-	res.cookie(COOKIE, ticks + req.idvisitor, NOW.add('5 days'));
 
 	var online = W.arr[0] + W.arr[1];
 	var hours = NOW.getHours();
@@ -201,7 +211,7 @@ W.counter = function(req, res) {
 	if (req.query.utm_medium || req.query.utm_source) {
 		W.stats.advert++;
 		F.$events.visitor && W.emitvisitor('advert', req);
-		return true;
+		return W.checksum(ticks.toString(16) + req.visitorid);
 	}
 
 	VISITOR.referer = getHostname(h['x-referrer'] || h['x-referer'] || h['referer']);
@@ -209,7 +219,7 @@ W.counter = function(req, res) {
 	if (!VISITOR.referer || (W.hostname && VISITOR.referer.indexOf(W.hostname) !== -1)) {
 		W.stats.direct++;
 		F.$events.visitor && W.emitvisitor('direct', req);
-		return true;
+		return W.checksum(ticks.toString(16) + req.visitorid);
 	}
 
 	VISITOR.referer && VISITOR.unique && NOSQL(DBNAME).counter.hit(VISITOR.referer);
@@ -218,7 +228,7 @@ W.counter = function(req, res) {
 		if (VISITOR.referer.indexOf(W.social[i]) !== -1) {
 			W.stats.social++;
 			F.$events.visitor && W.emitvisitor('social', req);
-			return true;
+			return W.checksum(ticks.toString(16) + req.visitorid);
 		}
 	}
 
@@ -226,13 +236,13 @@ W.counter = function(req, res) {
 		if (VISITOR.referer.indexOf(W.search[i]) !== -1) {
 			W.stats.search++;
 			F.$events.visitor && W.emitvisitor('search', req);
-			return true;
+			return W.checksum(ticks.toString(16) + req.visitorid);
 		}
 	}
 
 	W.stats.unknown++;
 	F.$events.visitor && W.emitvisitor('unknown', req);
-	return true;
+	return W.checksum(ticks.toString(16) + req.visitorid);
 };
 
 W.emitvisitor = function(type, req) {
@@ -428,8 +438,11 @@ exports.install = function() {
 	setTimeout(refresh_hostname, 10000);
 	ON('service', delegate_service);
 	ROUTE('/$visitors/', function() {
-		W.counter(this.req, this.res);
-		this.empty();
+		var r = W.counter(this.req, this.res);
+		if (r)
+			this.plain(r);
+		else
+			this.empty();
 	});
 };
 

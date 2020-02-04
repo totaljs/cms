@@ -152,6 +152,7 @@
 
 		Thelpers.time = function(value) {
 
+
 			if (!value)
 				return;
 
@@ -165,7 +166,7 @@
 			}
 
 			if (minutes < 60)
-				return minutes < 3 ? '@(now)' : @(minutes + ' minutes ago');
+				return minutes < 2 ? '@(less than minute ago)' : @(minutes + ' minutes ago');
 
 			var hours = (minutes / 60) >> 0;
 			if (hours < 24)
