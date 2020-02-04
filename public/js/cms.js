@@ -20,7 +20,7 @@ $(document).ready(function() {
 		var W = window;
 		var LS = W.localStorage;
 
-		if ((n.onLine != null && !n.onLine) || !n.cookieEnabled)
+		if ((n.onLine != null && !n.onLine) || !LS)
 			return;
 
 		var key = 'visited';
@@ -29,6 +29,20 @@ $(document).ready(function() {
 
 		options.type = 'GET';
 		options.headers = { 'X-Ping': location.pathname, 'X-Referrer': document.referrer };
+
+		var url = '/$visitors/';
+
+		try {
+			var key2 = key + 'test';
+			localStorage.setItem(key2, '1');
+			var is = LS.getItem(key2) === '1';
+			LS.removeItem(key2);
+			if (!is)
+				return;
+		} catch (e) {
+			// disabled localStorage (skip user)
+			return;
+		}
 
 		options.success = function(r) {
 
@@ -50,20 +64,6 @@ $(document).ready(function() {
 				location.reload(true);
 			}, 2000);
 		};
-
-		var url = '/$visitors/';
-
-		try {
-			var key2 = key + 'test';
-			localStorage.setItem(key2, '1');
-			var is = LS.getItem(key2) === '1';
-			LS.removeItem(key2);
-			if (!is)
-				return;
-		} catch (e) {
-			// disabled localStorage (skip user)
-			return;
-		}
 
 		var params = '?id=' + ticks;
 		var un;
