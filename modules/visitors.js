@@ -220,13 +220,14 @@ W.counter = function(req) {
 	if (!VISITOR.referer || (W.hostname && VISITOR.referer.indexOf(W.hostname) !== -1)) {
 		W.stats.direct++;
 		F.$events.visitor && W.emitvisitor('direct', req);
+		VISITOR.unique && VISITOR.browser && NOSQL(DBNAME).counter.hit('!' + VISITOR.browser);
 		return W.checksum(ticks.toString(16) + req.visitorid);
 	}
 
 	if (VISITOR.referer && VISITOR.unique) {
 		var counter = NOSQL(DBNAME).counter;
 		counter.hit(VISITOR.referer);
-		VISITOR.browser && counter.hit(VISITOR.browser);
+		VISITOR.browser && counter.hit('!' + VISITOR.browser);
 	}
 
 	for (var i = 0, length = W.social.length; i < length; i++) {

@@ -172,7 +172,7 @@
 												<td><div class="singline">{{ if newbie }}<i class="fa fa-plus-circle green"></i>{{ fi }}{{ type }}</div></td>
 												<td><div class="singline">{{ if browser }}<span class="browser">{{ browser }}</span>{{ fi }}<span class="badge badge-silver badge-small mr5">{{ id }}</span>{{ if unique }}<span class="badge badge-green mr5">@(+new)</span>{{ fi }}{{ if mobile }}<i class="fa fa-mobile"></i>{{ fi }}<a href="{{ url }}" target="_blank">{{ url }}</a></div></td>
 												<td class="hidden-xs"><div class="singline">{{ user }}</div></td>
-												<td class="hidden-xs">{{ ip }}</td>
+												<td class="hidden-xs"><a href="https://tools.keycdn.com/geo?host={{ ip }}" target="_blank">{{ ip }}</a></td>
 												<td class="hidden-xs center">{{ date | format('HH:mm:ss') }}</td>
 											</tr>
 										</script>
@@ -263,6 +263,30 @@
 							<div class="row">
 								<div class="col-md-4">
 									<div class="caption"><i class="fa fa-exchange"></i>@(Top referrers)</div>
+								</div>
+							</div>
+							<div class="row">
+								{{ foreach m in value }}
+								<div class="col-md-3 col-xs-6">
+									<div class="dashboard-referrer">
+										<div>{{ m.count }}</div>
+										<div>{{ m.id }}</div>
+									</div>
+								</div>
+								{{ end }}
+							</div>
+							<br />
+							<br />
+							{{ fi }}
+						</script>
+					</div>
+
+					<div data-bind="?.stats.browsers__template">
+						<script type="text/html">
+							{{ if value && value.length }}
+							<div class="row">
+								<div class="col-md-4">
+									<div class="caption"><i class="fa fa-desktop"></i>@(Top devices)</div>
 								</div>
 							</div>
 							<div class="row">
@@ -406,7 +430,24 @@
 					years.length && exports.history(years.last());
 				});
 
-				AJAX('GET [url]api/dashboard/referrers/', '?.stats.referrers');
+				AJAX('GET [url]api/dashboard/referrers/', function(response) {
+
+					var ref = [];
+					var brw = [];
+
+					for (var i = 0; i < response.length; i++) {
+						var item = response[i];
+						if (item.id.charAt(0) === '!') {
+							item.id = item.id.substring(1);
+							brw.push(item);
+						} else
+							ref.push(item);
+					}
+
+					SET('?.stats.referrers', ref);
+					SET('?.stats.browsers', brw);
+				});
+
 				AJAX('GET [url]api/dashboard/tracking/', '?.stats.tracking');
 
 			}, 500);
