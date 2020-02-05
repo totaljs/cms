@@ -66,9 +66,12 @@
 			.sidemenu { margin-bottom: 20px; background-color: #F0F0F0; padding: 10px 15px; border-radius: 2px; margin-right: 10px; }
 
 			@media(max-width: 768px) {
-				.layoutborder { padding-left: 15px; }
+				h1 { line-height: 25px; font-size: 24px; margin-bottom: 15px; }
+				h2 { line-height: 22px; font-size: 20px; margin-bottom: 15px; }
+				h3 { line-height: 20px; font-size: 18px; margin-bottom: 10px; }
+				.layoutborder { padding-left: 15px; border-left: 0; }
 				.wp { padding-left: 15px; padding-right: 15px; }
-				.sidemenu { background-color: #F0F0F0; border-radius: 2px; padding: 15px; margin-bottom: 0; }
+				.sidemenu { background-color: #F0F0F0; border-radius: 2px; padding: 15px; margin-bottom: 0; margin-right: 0; }
 				.nowrap { overflow-x: auto; text-overflow: clip; overflow-scrolling: touch; }
 				.mainmenubutton { display: block; }
 				header { border-radius: 0; box-shadow: none; margin: 0; padding: 15px 0 0 0; min-height: 100px; }
