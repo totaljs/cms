@@ -60,9 +60,8 @@ $(document).ready(function() {
 		};
 
 		options.error = function() {
-			setTimeout(function() {
-				location.reload(true);
-			}, 2000);
+			// Maybe a broken network
+			clearInterval(W.$visitorsinterval);
 		};
 
 		var params = '?id=' + ticks;
@@ -85,9 +84,12 @@ $(document).ready(function() {
 			params += '&utm_user=' + encodeURIComponent(un);
 
 		$.ajax(url + params, options);
+
 		W.$visitorsinterval = setInterval(function() {
-			options.headers['x-reading'] = '1';
-			$.ajax(url + '?id=' + ticks + (un ? ('&utm_user=' + encodeURIComponent(un)) : ''), options);
+			if (document.hasFocus()) {
+				options.headers['x-reading'] = '1';
+				$.ajax(url + '?id=' + ticks + (un ? ('&utm_user=' + encodeURIComponent(un)) : ''), options);
+			}
 		}, 30000);
 	};
 
