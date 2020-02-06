@@ -93,7 +93,7 @@
 									</div>
 									<div class="stats" style="border-bottom:0">
 										<div class="value" data-bind="?.stats.today.desktop__html:?/count(value)"></div>
-										<div class="key"><i class="fa fa-square" style="color:#4781B8"></i>@(Desktop computers)</div>
+										<div class="key"><i class="fa fa-square" style="color:#4781B8"></i>@(Desktop)</div>
 									</div>
 									<div data---="statsbarsimple__?.stats.today.devices" style="margin:7px 0">
 										<script type="text/html">
@@ -374,7 +374,6 @@
 			AJAX('GET [url]api/dashboard/online/', function(response) {
 				//response.hoursavg = response.hours.filter(FN('n => n > 0')).scalar('median') >> 0;
 				SET('?.stats.sources', [{ name: '@(Social networks)', value: response.social, id: 'social' }, { name: '@(Visitors from advert)', value: response.advert, id: 'advert' }, { name: '@(Organic search)', value: response.search, id: 'search' }, { name: '@(Direct visitors)', value: response.direct, id: 'direct' }, { name: '@(From unknown sources)', value: response.unknown, id: 'unknown' }]);
-
 
 				var max = (response.mobile || 0) + (response.desktop || 0);
 				var mobile = 50;
