@@ -23,9 +23,9 @@ $(document).ready(function() {
 		if ((n.onLine != null && !n.onLine) || !LS)
 			return;
 
-		var key = 'visited';
+		var key = 'cmsvisitor';
 		var options = {};
-		var ticks = LS.getItem('visited') || '';
+		var ticks = LS.getItem('cmsvisitor') || '';
 
 		options.type = 'GET';
 		options.headers = { 'X-Ping': location.pathname, 'X-Referrer': document.referrer };
