@@ -1,26 +1,28 @@
 // MIT License
-// Copyright 2017 (c) Peter Širka <petersirka@gmail.com>
+// Copyright 2017-2020 (c) Peter Širka <petersirka@gmail.com>
 
 const CONCAT = [];
 const DBNAME = 'visitors';
 const REG_ROBOT = /search|agent|bot|crawler/i;
 const TIMEOUT_VISITORS = 1200; // 20 MINUTES
-const VISITOR = {};
 const Fs = require('fs');
+const REGIP = /\d+\.\d+\.\d+|localhost/i;
 
 var FILE_CACHE = 'visitors.cache';
 var W = {};
+var VISITOR;
 
 W.stats = { pages: 0, day: 0, month: 0, year: 0, hits: 0, unique: 0, uniquemonth: 0, count: 0, search: 0, direct: 0, social: 0, unknown: 0, advert: 0, mobile: 0, desktop: 0, visitors: 0, robots: 0, hours: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] };
 W.online = 0;
 W.arr = [0, 0];
 W.interval = 0;
 W.index = 0;
-W.current = 0;
+W.current = Date.now();
 W.last = 0;
 W.lastvisit = null;
 W.social = ['plus.url.google', 'plus.google', 'twitter', 'facebook', 'linkedin', 'tumblr', 'flickr', 'instagram', 'vkontakte', 'snapchat', 'skype', 'whatsapp', 'wechat'];
 W.search = ['google', 'bing', 'yahoo', 'duckduckgo', 'yandex', 'seznam'];
+W.visitors = [];
 
 W.$blacklist = null;
 W.$blacklistlength = 0;
@@ -74,7 +76,7 @@ W.clean = function() {
 	arr[0] = tmp1;
 
 	if (tmp0 !== arr[0] || tmp1 !== arr[1]) {
-		var online = arr[0] + arr[1];
+		var online = arr[0];
 		if (online != W.last)
 			W.last = online;
 	}
@@ -151,10 +153,13 @@ W.counter = function(req) {
 	if (user)
 		sum = Math.abs(W.current - user) / 1000;
 
+	console.log(W.current, sum, user);
+
 	var isHits = user ? sum >= TIMEOUT_VISITORS : true;
 	if (isHits)
 		W.stats.hits++;
 
+	VISITOR = {};
 	VISITOR.id = req.visitorid;
 	VISITOR.unique = false;
 	VISITOR.ping = h['x-reading'] === '1';
@@ -258,6 +263,12 @@ W.emitvisitor = function(type, req) {
 	VISITOR.online = W.arr[0] + W.arr[1];
 	VISITOR.mobile = req.mobile;
 	VISITOR.user = req.user ? (req.user.name || req.user.nick || req.user.alias) : req.query.utm_user;
+
+	W.visitors.unshift(VISITOR);
+
+	if (W.visitors.length > 20)
+		W.visitors.pop();
+
 	EMIT('visitor', VISITOR);
 };
 
@@ -333,7 +344,7 @@ W.monthly = function(callback) {
 	W.statistics(function(arr) {
 
 		if (!arr.length)
-			return callback(EMPTYOBJECT);
+			return callback({});
 
 		var stats = {};
 
@@ -434,7 +445,7 @@ function getHostname(host) {
 	var end = host.indexOf('/', beg);
 	if (end === -1)
 		end = host.length;
-	return host.substring(beg, end).toLowerCase();
+	return REGIP.test(host) ? null : host.substring(beg, end).toLowerCase();
 }
 
 exports.version = 'v1.1.0';

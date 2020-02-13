@@ -153,7 +153,7 @@
 									</div>
 								</div>
 							</div>
-							<div data---="dashboardvisitors">
+							<div data---="dashboardvisitors__?.visitors">
 								<table>
 									<thead>
 										<tr>
@@ -205,14 +205,14 @@
 					</div>
 					<div data---="stats24__?.stats.today.hours" class="m"></div>
 
-					<div data-bind="?.stats.visitors__show:value" class="hidden m">
+					<div data-bind="?.stats.visitors__show" class="hidden m">
 						<div class="row">
 							<div class="col-md-6 m">
 
 								<div style="float:right;margin-top:-3px" data-bind="?.stats.history__template">
 									<script type="text/html">
 									{{ foreach m in value }}
-										<a href="javascript:void(0)" class="exec fs12" style="margin-left:15px" data-exec="?/history" data-year="{{ m }}"><i class="fa fa-calendar mr5"></i>{{ m }}</a>
+										<span class="exec fs12 link" style="margin-left:15px" data-exec="?/history" data-year="{{ m }}"><i class="fa fa-calendar mr5"></i>{{ m }}</span>
 									{{ end }}
 									</script>
 								</div>
@@ -406,7 +406,8 @@
 
 					for (var i = 0, length = keys.length; i < length; i++) {
 						var item = response[keys[i]];
-						years[item.year] = true;
+						if (keys[i] !== 'visitors')
+							years[item.year] = true;
 					}
 
 					years = Object.keys(years);
@@ -424,6 +425,9 @@
 						SETTER('barchart .dashboard.stats.visitors', 'reconfigure', 'limit:' + (Math.ceil(internalstats.visitors / 10000) * 10000));
 						SETTER('barchart .dashboard.stats.devices', 'reconfigure', 'limit:' + (Math.ceil(internalstats.devices / 10000) * 10000));
 					}
+
+					SET('?.visitors', response.visitors || []);
+					delete response.visitors;
 
 					SET('?.stats.history', years);
 					years.length && exports.history(years.last());
@@ -544,7 +548,6 @@
 		self.singleton();
 		self.nocompile();
 		self.readonly();
-		self.blind();
 
 		self.make = function() {
 
@@ -607,6 +610,13 @@
 			counter++;
 			container.prepend(self.template(item));
 			counter >= config.count && container.find('tr:last-child').remove();
+		};
+
+		self.setter = function(value, path) {
+			if (value) {
+				for (var i = 0; i < value.length; i++)
+					self.add(value[i]);
+			}
 		};
 	});
 

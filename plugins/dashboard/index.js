@@ -19,7 +19,12 @@ function online() {
 }
 
 function stats() {
-	MODULE('visitors').monthly(this.callback());
+	var self = this;
+	var module = MODULE('visitors');
+	module.monthly(function(response) {
+		response.visitors = module.instance.visitors;
+		self.json(response);
+	});
 }
 
 function referrers() {
