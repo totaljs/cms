@@ -1,7 +1,2 @@
-// Reads custom settings
-$WORKFLOW('Settings', 'load');
-
-if (RELEASE) {
-	F.wait('database', true);
-	setTimeout(() => F.wait('database', false), 2000);
-}
+PAUSESERVER('database', true);
+setTimeout(() => PAUSESERVER('database', false), 1000);

@@ -1,0 +1,318 @@
+<style type="text/css">
+	.settings-user { border: 1px solid #E0E0E0; text-align: center; padding: 25px 10px; border-radius: 2px; cursor: pointer; }
+	.settings-user .initials { margin: 0 auto 10px; }
+	.settings-user:hover { background-color: #F5F5F5; }
+	.settings-user-roles { font-size: 11px; color: gray; }
+	.settings-user .fa-times { position: absolute; color: red; right: 25px; top: 10px; cursor: pointer; }
+</style>
+
+<div data-scope="settings">
+	<div data---="layout__null__parent:window;margin:58" class="invisible">
+
+		<script type="text/plain">
+			{
+				top: { size: 45 },
+				main: {}
+			}
+		</script>
+
+		<section data-type="top2">
+			<div class="header">
+				<label><i class="fa fa-cog"></i>@(Settings)</label>
+				<nav data---="validation__?">
+					<button class="exec" name="submit" data-exec="?/save" disabled><i class="fa fa-floppy-o blue"></i>@(<b>APPLY</b> SETTINGS)</button>
+				</nav>
+			</div>
+		</section>
+
+		<section data-type="main">
+			<div data---="viewbox__common.page__parent:.ui-layout-section;scrollbar:1">
+				<br />
+				<div class="container">
+					<br />
+					<div class="panel">
+						<label><i class="fa fa-globe"></i>@(Main settings)</label>
+						<div class="panelbody">
+							<div class="row">
+								<div class="col-md-4 m b">
+									<div data---="input__?.form.name__required:1;placeholder:@(Total.js Platform)">@(Website name)</div>
+								</div>
+								<div class="col-md-4 m b">
+									<div data---="input__?.form.url__required:1;placeholder:@(https://www.totaljs.com)">@(URL address)</div>
+								</div>
+								<div class="col-md-4 m">
+									<div data---="input__?.form.author__required:1;placeholder:@(Total Avengers)">@(Author)</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-4 m">
+									<div data---="input__?.form.emailsender__required:1;type:email__'@'">@(Email for sending)</div>
+								</div>
+								<div class="col-md-4 m">
+									<div data---="input__?.form.emailcontactform__required:1;type:email__'@'">@(Email for contact form)</div>
+								</div>
+								<div class="col-md-4 m">
+									<div data---="input__?.form.emailreply__required:1;type:email__'@'">@(Email for answers)</div>
+								</div>
+							</div>
+						</div>
+						<div class="panelbody bg-smoke" style="padding-bottom:14px">
+							<div data---="checkbox__?.form.componentator">@(Allow users to download widgets and templates from <b>componentator.com</b>)</div>
+						</div>
+					</div>
+				</div>
+				<br />
+				<br />
+
+				<div data-bind="user__show:value.sa">
+
+					<div class="container">
+
+						<div class="panel">
+							<label><i class="fa fa-wrench"></i>@(Additional settings)</label>
+							<div class="panelbody m">
+								<div class="alert m">
+									<div class="b"><i class="fa fa-warning"></i>@(IMPORTANT)</div>
+									@(All new values below must be confirmed manully via <i class="fa fa-keyboard-o"></i>ENTER).
+								</div>
+								<div class="row">
+									<div class="col-sm-6 m">
+										<div data---="keyvalue__?.form.languages__placeholderkey:@(A language name);placeholdervalue:en">@(Languages)</div>
+										<div class="help">@(Languages must be implemented manually)</div>
+									</div>
+									<div class="col-sm-6 m">
+										<div data---="keyvalue__?.form.signals__placeholderkey:@(A signal name);placeholdervalue:@(Type an identificator and press enter)">@(Signals)</div>
+										<div class="help">@(Signals can affect a behaviour in pages or posts)</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6 m">
+										<div data---="input__?.form.cookie__required:1;maxlength:30">@(Cookie name)</div>
+										<div class="help">@(A cookie name for administration area)</div>
+									</div>
+									<div class="col-md-6 m">
+										<div data---="input__?.form.cdn__required:1;maxlength:150">@(CDN)</div>
+										<div class="help">@(The link will be added to each external resource from Total.js Platform)</div>
+									</div>
+								</div>
+
+							</div>
+
+							<div class="panelbody bg-smoke">
+								<div class="row">
+									<div class="col-md-4 m">
+										<div data---="input__?.form.smtp__icon:server;placeholder:@(smtp.yourdomain.com)">@(SMTP server)</div>
+										<div class="help">@(IP address or hostname)</div>
+									</div>
+									<div class="col-md-8 m">
+										<div data---="input__?.form.smtpoptions__icon:code;camouflage:true;placeholder:@(SMTP options)">@(SMTP options)</div>
+										<div class="help">@(Options need to be defined in JSON format according) <a href="https://docs.totaljs.com/latest/en.html#api~FrameworkConfiguration~mail-smtp-options" target="_blank">Total.js specification</a></div>
+									</div>
+								</div>
+							</div>
+
+							<div class="panelbody">
+								<div class="padding">
+									<div class="row">
+										<div class="col-sm-3 m">
+											<div>
+												<h3 class="nmb"><i class="far fa-window-restore"></i>@(Backups)</h3>
+												<p>@(This operation will remove all backed up records from all database.)</p>
+												<button class="button button-small button-clear b exec" data-exec="settings/operation" data-name="backups"><i class="fa fa-trash-o mr5"></i>@(Clear backups)</button>
+											</div>
+										</div>
+										<div class="col-sm-3 m">
+											<div>
+												<h3 class="nmb"><i class="far fa-copy"></i>@(Unused files)</h3>
+												<p>@(This operation will remove all files which aren't used in the content.)</p>
+												<button class="button button-small button-clear b exec" data-exec="settings/operation" data-name="files"><i class="fa fa-trash-o mr5"></i>@(Clear unused files)</button>
+											</div>
+										</div>
+										<div class="col-sm-3 m">
+											<div>
+												<h3 class="nmb"><i class="far fa-chart-bar"></i>@(Counters)</h3>
+												<p>@(This operation will clear all today counters from all sections.)</p>
+												<button class="button button-small button-clear b exec" data-exec="settings/operation_clear" data-name="dashboard"><i class="fa fa-trash-o mr5"></i>@(Clear counters)</button>
+											</div>
+										</div>
+										<div class="col-sm-3 m">
+											<div>
+												<h3 class="nmb"><i class="far fa-clock"></i>@(Events)</h3>
+												<p>@(This operation will remove all recorded events in <b>Events section</b>.)</p>
+												<button class="button button-small button-clear b exec" data-exec="settings/operation" data-name="events"><i class="fa fa-trash-o mr5"></i>@(Clear events)</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<br />
+				<hr />
+
+				<div class="container">
+					<div class="pull-right">
+						<span class="exec highlight b link" data-exec="?/create"><i class="far fa-user mr5"></i>@(Add user)</span>
+					</div>
+					<h3><i class="fa fa-users"></i>@(Administrators)</h3>
+					<div data-bind="?.form.users__template__show:value&&value.length" class="row">
+						<script type="text/html">
+							{{ foreach m in value }}
+							<div class="col-sm-3 m">
+								<div class="settings-user exec" data-id="{{ m.id }}" data-exec="?/edit">
+									{{ if !m.owner }}
+									<i class="fa fa-times red exec" data-exec="?/remove" data-prevent="true"></i>
+									{{ fi }}
+									<div>{{ m.name | initials }}</div>
+									<div class="settings-user-name{{ if m.owner }} b{{ fi }}">{{ m.name }}</div>
+									<div class="settings-user-roles">{{ if m.sa }}@(Super administrator){{ else }}{{ m.roles | settingsroles }}{{ fi }}</div>
+								</div>
+							</div>
+							{{ end }}
+						</script>
+					</div>
+				</div>
+
+				<br />
+				<br />
+
+			</div>
+
+		</section>
+	</div>
+</div>
+
+<div data---="importer__common.form__if:settingsadmin;url:@{#}/_settings/form.html"></div>
+
+<script>
+
+	PLUGIN('settings', function(exports) {
+
+		exports.save = function() {
+
+			// Prepare users
+			var data = CLONE(GETR('?.form'));
+
+			tmp = [];
+			Object.keys(data.signals).forEach(function(key) {
+				tmp.push({ name: key, id: data.signals[key] });
+			});
+			data.signals = tmp;
+
+			tmp = [];
+			Object.keys(data.languages).forEach(function(key) {
+				tmp.push({ name: key, id: data.languages[key] });
+			});
+			data.languages = tmp;
+
+			FUNC.loading(true);
+			AJAX('POST [url]api/settings/ REPEAT', data, FUNC.messageresponse('@(Settings have been saved successfully.)', function() {
+				refresh_dependencies();
+				SET('common.componentator', data.componentator);
+			}));
+		};
+
+		exports.reload = function() {
+			AJAX('GET [url]api/settings/', function(response) {
+
+				var tmp = {};
+
+				if ((/\d\.\d/).test(response.url))
+					response.url = location.protocol + '//' + location.hostname;
+
+				response.languages && response.languages.forEach(function(item) {
+					if (typeof(item) === 'string')
+						tmp[item] = item;
+					else
+						tmp[item.name] = item.id;
+				});
+				response.languages = tmp;
+
+				tmp = {};
+				response.signals && response.signals.forEach(function(item) {
+					if (typeof(item) === 'string')
+						tmp[item] = item;
+					else
+						tmp[item.name] = item.id;
+				});
+				response.signals = tmp;
+
+				for (var i = 0; i < response.users.length; i++) {
+					var usr = response.users[i];
+					usr.owner = usr.id === user.id;
+				}
+
+				SET('?.form', response, true);
+			});
+
+		};
+
+		exports.operation = function(el) {
+			var type = el.attrd('name');
+			SETTER('confirm', 'show2', '@(Are you sure you want to perform selected operation?)', ['"play-o" @(Yes, continue)', '@(Cancel)'], function() {
+				AJAX('GET [url]api/{0}/clear/'.format(type), function() {
+					SETTER('snackbar', 'success', '@(Done, operation has been completed.)');
+				});
+			})
+		};
+
+		exports.operation_clear = function(el) {
+			var type = el.attrd('name');
+			var opt = {};
+			opt.element = el;
+			opt.items = [];
+			opt.items.push({ id: 'today', name: '@(Clear today)', icon: 'trash-o' });
+			opt.items.push({ id: 'month', name: '@(Clear this month)', icon: 'trash-o' });
+			opt.items.push({ id: 'year', name: '@(Clear this year)', icon: 'trash-o' });
+			opt.items.push('-');
+			opt.items.push({ id: 'all', name: '@(Clear all)', icon: 'trash-o' });
+			opt.callback = function(item) {
+				SETTER('confirm', 'show2', '@(Are you sure you want to perform selected operation?)', ['"play-o" @(Yes, continue)', '@(Cancel)'], function() {
+					AJAX('GET [url]api/{0}/clear/'.format(type), { id: item.id }, function() {
+						SETTER('snackbar', 'success', '@(Done, the counters will be removed in 5 minutes.)');
+					});
+				});
+			};
+			SETTER('menu', 'show', opt);
+		};
+
+		exports.create = function() {
+			SETR('settingsadmin', {});
+			SET('common.form', 'settingsadmin');
+		};
+
+		exports.edit = function(el) {
+			var model = CLONE(settings.form.users.findItem('id', el.attrd('id')));
+			model.password = '';
+			SETR('settingsadmin', model);
+			SET('common.form', 'settingsadmin');
+		};
+
+		exports.remove = function(el) {
+
+			var users = settings.form.users;
+			var index = users.findIndex('id', el.parent().attrd('id'));
+			var user = users[index];
+
+			SETTER('confirm', 'show2', '@(Are you sure you want to remove the user <b>"{0}"</b>?)'.format(user.name), ['"times-circle" @(Remove)', '@(Cancel)'], function() {
+				users.splice(index, 1);
+				exports.scope();
+				UPDATE('?.form.users');
+				CHANGE('?.form.url');
+			});
+		};
+	});
+
+	Thelpers.settingsroles = function(value) {
+		var builder = [];
+		for (var i = 0; i < value.length; i++) {
+			var role = common.roles.findItem('id', value[i]);
+			role && builder.push(role.name);
+		}
+		return builder.join(', ') || DEF.empty;
+	};
+
+</script>

@@ -1,0 +1,277 @@
+<div data-scope="pages">
+
+	<div data---="layout__null__parent:window;margin:58" class="invisible">
+
+		<script type="text/plain">
+			{
+				right: { size: 250 },
+				top: { size: 45 },
+				main: {},
+				xs: {
+					right: { show: false }
+				}
+			}
+		</script>
+
+		<section data-type="top2">
+			<div class="header">
+				<label><i class="far fa-file-alt"></i>@(List of pages)</label>
+				<nav data-bind="?.checked__enabled .S:value && value.length">
+					<button class="exec" data-exec="?/create"><i class="fa fa-plus-circle"></i>@(Create)</button>
+					<button class="exec" data-exec="?/options"><i class="fa fa-wrench"></i>@(Options)</button>
+					<button class="exec S" data-exec="?/checked" disabled><i class="fa fa-check-circle"></i>@(Checked)</button>
+				</nav>
+			</div>
+		</section>
+
+		<section data-type="right">
+			<div class="padding">
+				<div class="caption"><i class="fa fa-clone"></i>@(Options)</div>
+				<nav class="links">
+					<button class="exec b" data-exec="?/create"><i class="fa fa-plus-circle green"></i>@(Add a new page)</button>
+					<button class="exec" data-path="common.form" data-value="'pagesglobals'"><i class="fa fa-cog"></i>@(Variables)</button>
+					<button class="exec" data-path="common.form" data-value="'widgetsglobals'"><i class="fa fa-paint-brush"></i>@(Global style/script)</button>
+					<button class="exec" data-path="common.form" data-value="'pagesredirects'"><i class="fa fa-retweet"></i>@(Redirects)</button>
+				</nav>
+			</div>
+			<div class="padding">
+				<div class="caption"><i class="fa fa-code"></i>@(Templates)</div>
+				<nav class="links">
+					<div data-bind="common.dependencies.templatespages__template">
+						<script type="text/html">
+							{{ foreach m in value }}
+								<button data-id="{{ m.id }}" class="exec" data-exec="?/template"><span class="pull-right exec" data-exec="?/removetemplate" data-prevent="true" style="width:12px;margin-right:0"><i class="fa fa-times red"></i></span><i class="far fa-file-text-o"></i>{{ m.name }}</button>
+							{{ end }}
+						</script>
+					</div>
+					<button class="exec b" data-exec="?/template"><i class="fa fa-check-circle green"></i>@(Add a new template)</button>
+				</nav>
+			</div>
+
+			<div class="padding" data-bind="common.dependencies.navigations__show:value && value.length">
+				<div class="caption"><i class="fa fa-sitemap"></i>@(Navigations)</div>
+				<nav data-bind="common.dependencies.navigations__template" class="links">
+					<script type="text/html">
+						{{ if value }}
+							{{ foreach m in value }}
+								<button data-id="{{ m.id }}" class="exec" data-exec="?/navigation"><i class="fa fa-navicon"></i>{{ m.name }}</button>
+							{{ end }}
+						{{ fi }}
+					</script>
+				</nav>
+			</div>
+		</section>
+
+		<section data-type="main">
+			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?.checked;button:?/button;noborder:1;height:window;margin:103;dblclick:?/update">
+				<script type="text/plain">
+				[
+					{ name: 'path', text: '@(Name)', width: 300, template: '{{ language | language }}{{ if icon }}<i class="{{ icon }} mr5"></i>{{ fi }}{{ path | pagespath }}{{ if draft }}<span class="badge badge-red ml5">@(draft)</span>{{ fi }}{{ if ispartial }}<span class="badge badge-green ml5">@(partial)</span>{{ fi }}', classth: 'left', classfilter: 'left' },
+					{ name: 'url', text: '@(URL address)', width: 230, template: '{{ if ispartial }}<span class="silver">{{ url }}</span>{{ else }}{{ url }}{{ fi }}' },
+					{ name: 'language', text: '@(Language)', width: 80, sort: false, align: 1 },
+					{ name: 'dtupdated', text: '@(Updated)', format: '[date]', width: 150, sort: false, align: 1 },
+					{ name: 'dtcreated', text: '@(Created)', format: '[date]', width: 150, sort: false, align: 1, hide: true },
+					{ name: '@(Options)', filter: false, align: 2, sort: false, width: 150, template: '{{ if !ispartial }}<a href="{{ url }}" class="fs11 mr5" target="_blank">@(show)</a>{{ fi }}<div class="inline mr10"><button title="@(Duplicate)" name="duplicate"><i class="far fa-copy"></i></button><button name="update" title="@(Edit)"><i class="fa fa-pencil"></i></button><button class="btn-remove" name="remove" title="@(Remove)"><i class="far fa-trash-o"></i></button></div>' }
+				]
+				</script>
+			</div>
+
+		</section>
+	</div>
+
+</div>
+
+<div data---="importer__common.form__if:pagesform;url:@{#}/_pages/form.html"></div>
+<div data---="importer__common.form__if:pagesnavigation;url:@{#}/_pages/form-navigation.html"></div>
+<div data---="importer__common.form2__if:pagesnavigationitem;url:@{#}/_pages/form-navigation-item.html"></div>
+<div data---="importer__common.form__if:pagesredirects;url:@{#}/_pages/form-redirects.html"></div>
+
+<script>
+	PLUGIN('pages', function(exports) {
+
+		exports.refresh = function() {
+
+			FUNC.loading(true);
+
+			AJAX('GET [url]api/pages/', function(response) {
+
+				for (var i = 0, length = response.items.length; i < length; i++) {
+					var item = response.items[i];
+					var parent = item.parent;
+					var path = item.name;
+					var is = false;
+
+					while (parent) {
+						var sub = response.items.findItem('id', parent);
+						if (!sub || sub.url === '/')
+							break;
+						path = sub.name + ' / ' + path;
+						parent = sub.parent;
+						is = true;
+					}
+
+					item.path = path;
+				}
+
+				var cdl = response.items.slice(0).map(function(item) {
+					return { id: item.id, ispartial: item.ispartial, name: (item.language ? (item.language + ': ') : '') + item.path, url: item.url };
+				});
+
+				cdl.quicksort('name');
+				SET('?.grid', response);
+				SET('?.list', cdl);
+				FUNC.loading(false, 200);
+			});
+		};
+
+		// Public methods
+		exports.reload = function() {
+			exports.refresh();
+		};
+
+		exports.update = function(row) {
+			exports.button('update', row);
+		};
+
+		exports.template = function(el) {
+			var id = el.attrd('id');
+			if (id) {
+				AJAX('GET [url]api/templates/' + id, function(response) {
+					SETR('pagestemplate', response);
+					SET('common.form', 'pagestemplate');
+				});
+			} else {
+				SETR('pagestemplate', { type: 'page' });
+				SET('common.form', 'pagestemplate');
+			}
+		};
+
+		exports.button = function(name, row, grid) {
+			switch (name) {
+				case 'remove':
+					SETTER('confirm', 'show2', '@(Are you sure you want to remove selected page?)', ['"trash"@(Remove)', '@(Cancel)'], function() {
+						FUNC.loading(true);
+						AJAX('DELETE [url]api/pages/', row, FUNC.messageresponse('@(Page has been removed successfully)', function() {
+							pages.grid.items = pages.grid.items.remove('id', row.id);
+							pages.list = pages.list.remove('id', row.id);
+							UPD('?.grid');
+							UPD('?.list');
+							setTimeout2('pages_refresh', exports.refresh, 3000);
+						}));
+					});
+					break;
+				case 'update':
+				case 'duplicate':
+					FUNC.loading(true);
+					AJAX('GET [url]api/pages/{id}/'.arg(row), function(response) {
+
+						if (name === 'duplicate') {
+
+							response.id = '';
+
+							// Clear existing parts
+							setTimeout(function() {
+								SETTER('cmseditor', 'clearParts');
+							}, 1000);
+
+						}
+
+						response.bodycurrent = response.body;
+
+						if (response.draft)
+							response.body = response.bodydraft;
+
+						SET('cmseditor.css', response.css);
+						SET('cmseditor.template', response.template);
+						SET('pagesform', response, true);
+						SET('common.form', 'pagesform');
+					});
+
+					break;
+			}
+		};
+
+		exports.checked = function(el) {
+			var options = {};
+			options.align = 'right';
+			options.element = el;
+			options.items = [];
+			options.items.push({ id: 'remove', name: '@(Remove pages)', icon: 'trash red' });
+			options.callback = function(item) {
+				switch (item.id) {
+					case 'remove':
+						SETTER('confirm', 'show2', '@(Are you sure you want to remove all selected pages?)', ['"trash" @(Remove)', '@(Cancel)'], function() {
+							FUNC.loading(true);
+							var arr = FIND('.pages.grid').checked();
+							arr.wait(function(el, next, index) {
+								SET('common.progress', (index / arr.length) * 100);
+								AJAX('DELETE [url]api/pages/', { id: el.id }, next);
+							}, function() {
+								exports.refresh();
+								FUNC.loading(false, 1000);
+								SETTER('snackbar', 'success', '@(Pages have been removed successfully.)');
+							});
+						});
+						break;
+				}
+			};
+
+			SETTER('menu', 'show', options);
+		};
+
+		exports.options = function(el) {
+			var options = {};
+			options.align = 'right';
+			options.items = [];
+			options.items.push({ id: 'create', name: '@(Create page)', icon: 'plus-circle green', classname: 'b' });
+			options.items.push({ id: 'refresh', name: '@(Refresh)', icon: 'refresh' });
+			options.items.push('-');
+			options.items.push({ value: 'pagesglobals', name: '@(Variables)', icon: 'cog' });
+			options.items.push({ value: 'widgetsglobals', name: '@(Global style/script)', icon: 'paint-brush' });
+			options.element = el;
+
+			options.callback = function(item) {
+				if (item.id)
+					exports[item.id]();
+				else
+					SET('common.form', item.value);
+			};
+
+			SETTER('menu', 'show', options);
+		};
+
+		exports.navigation = function(el) {
+			AJAX('GET [url]api/nav/{0}/'.format(el.attrd('id')), function(response) {
+				FUNC.loading(false, 1000);
+				SETR('pagesnavigation', response);
+				SET('common.form', 'pagesnavigation');
+			});
+		};
+
+		exports.create = function() {
+			SET('pagesform', { widgets: [], ispartial: false, navicon: true, navname: true, replacelink: true, url: '---' }, true);
+			SET('common.form', 'pagesform');
+		};
+
+		exports.removetemplate = function(el) {
+			var id = el.parent().attrd('id');
+			SETTER('confirm', 'show2', '@(Are you sure you want to remove selected template?)', ['"trash-o" @(Remove)', '@(Cancel)'], function() {
+				AJAX('DELETE [url]api/templates/' + id, refresh_dependencies);
+			});
+		};
+
+	});
+
+	Thelpers.pagespath = function(value) {
+		var arr = value.split('/');
+		var builder = [];
+
+		for (var i = 0; i < arr.length - 1; i++) {
+			var path = arr[i];
+			builder.push('<span class="silver">{0} /</span>'.format(path.trim()));
+		}
+
+		return (builder.length ? (builder.join('')) : '') + arr.last();
+	};
+
+</script>
