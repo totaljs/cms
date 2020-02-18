@@ -7,7 +7,6 @@ const ADMINURL = '/admin/';
 var DDOS = {};
 var WS = null;
 
-
 FUNC.notify = function(value) {
 	if (WS) {
 		MSG_NOTIFY.type = value instanceof Object ? value.type : value;
