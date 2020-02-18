@@ -153,8 +153,6 @@ W.counter = function(req) {
 	if (user)
 		sum = Math.abs(W.current - user) / 1000;
 
-	console.log(W.current, sum, user);
-
 	var isHits = user ? sum >= TIMEOUT_VISITORS : true;
 	if (isHits)
 		W.stats.hits++;
