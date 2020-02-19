@@ -46,7 +46,6 @@ NEWSCHEMA('Posts', function(schema) {
 		}
 
 		filter.fields('id,template,category,name,dtcreated,dtupdated,date,linker,pictures,summary,ispublished,signals,author,template,type,language');
-
 		filter.gridsort(opt.sort || 'date_desc');
 		filter.callback($.callback);
 	});
@@ -85,7 +84,7 @@ NEWSCHEMA('Posts', function(schema) {
 		var nosql = NOSQL('posts');
 		var filter = nosql.one();
 
-		$.id && filter.where('template', $.id);
+		$.id && filter.where('id', $.id);
 		$.options.linker && filter.where('linker', $.options.linker);
 		$.options.template && filter.where('template', $.options.template);
 		filter.where('ispublished', true);

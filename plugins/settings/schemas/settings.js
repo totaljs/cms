@@ -76,7 +76,6 @@ NEWSCHEMA('Settings', function(schema) {
 		obj.templatespages = PREF.templates;
 		obj.templatesposts = PREF.templatesposts;
 		obj.templatesnewsletters = PREF.templatesnewsletters;
-		obj.posts = PREF.posts;
 		obj.notices = PREF.notices;
 		obj.languages = PREF.languages || EMPTYARRAY;
 		$.callback();

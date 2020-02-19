@@ -913,8 +913,8 @@
 
 				if (el.hclass('CMS_edit') && el.attrd('cms-width') && el.attrd('cms-height')) {
 
-					var w = parseInt(el.attrd('cms-width'));
-					var h = parseInt(el.attrd('cms-height'));
+					var w = el.attrd('cms-width').parseInt();
+					var h = el.attrd('cms-height').parseInt();
 
 					if (isNaN(w) || isNaN(h))
 						return;
@@ -1475,8 +1475,8 @@
 
 						if (target.prop('tagName') === 'IMG') {
 
-							var w = parseInt(target.attrd('cms-width'));
-							var h = parseInt(target.attrd('cms-height'));
+							var w = (target.attrd('cms-width') || '').parseInt();
+							var h = (target.attrd('cms-height') || '').parseInt();
 
 							if (isNaN(w) || isNaN(h)) {
 								cmseditor.instance.filebrowser(target, (/^image\/*/));
