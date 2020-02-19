@@ -1,7 +1,7 @@
 const MSG_NOTIFY = { TYPE: 'notify' };
 const MSG_ALERT = { TYPE: 'alert' };
 const COOKIE_OPTIONS = { security: 'strict', httponly: true };
-const ALLOW = ['/api/dependencies/', '/api/pages/preview/', '/api/upload/', '/api/nav/', '/api/files/', '/stats/', '/live/', '/api/widgets/', '/logout/'];
+const ALLOW = { GET: ['/api/dependencies/', '/api/pages/preview/', '/api/nav/', '/api/files/', '/stats/', '/live/', '/api/widgets/', '/logout/', '/api/parts/'], POST: ['/api/upload/', '/api/parts/'] };
 const ADMINURL = '/admin/';
 
 var DDOS = {};
@@ -110,8 +110,10 @@ ON('controller', function(controller) {
 		// Allowed URL
 		if (cancel) {
 
-			for (var i = 0, length = ALLOW.length; i < length; i++) {
-				if (controller.url.indexOf(ALLOW[i]) !== -1) {
+			var allow = ALLOW[controller.req.method];
+
+			for (var i = 0, length = allow.length; i < length; i++) {
+				if (controller.url.indexOf(allow[i]) !== -1) {
 					cancel = false;
 					break;
 				}
