@@ -20,7 +20,7 @@ $(document).ready(function() {
 		var W = window;
 		var LS = W.localStorage;
 
-		if ((n.onLine != null && !n.onLine) || !LS)
+		if ((n.onLine != null && !n.onLine) || !LS || NAV.query.DRAFT)
 			return;
 
 		var key = 'cmsvisitor';
