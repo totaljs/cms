@@ -1058,7 +1058,6 @@
 					target = tmp;
 					target.data('temporary', true);
 
-
 					var link = cmseditor.link;
 
 					link.file = '';
@@ -1068,10 +1067,10 @@
 						link.href = 'mailto:' + content;
 					else if ((/\d+/).test(content))
 						link.href = 'tel:' + content;
-					else if (content.indexOf(' ') === -1 && content.indexOf(',') === -1)
+					else if (content.indexOf(' ') === -1 && content.indexOf(',') === -1 && content.indexOf('.') !== -1)
 						link.href = (/http(s):\/\//).test(content) ? content : ('https://' + content);
 
-					link.target = '_self';
+					link.target = link.href.indexOf('.') !== -1 && link.href.indexOf(location.hostname) === -1 ? '_blank' : '_self';
 					link.title = '';
 					link.alllinks = false;
 					link.tracking = null;
@@ -1478,9 +1477,8 @@
 							var w = (target.attrd('cms-width') || '').parseInt();
 							var h = (target.attrd('cms-height') || '').parseInt();
 
-							if (isNaN(w) || isNaN(h)) {
+							if (!w || !h) {
 								cmseditor.instance.filebrowser(target, (/^image\/*/));
-								//$('#cmseditor_inlineupload').trigger('click');
 								return;
 							}
 

@@ -160,7 +160,7 @@ function file_read(req, res) {
 	var id = req.split[1].replace('.' + req.extension, '');
 
 	if (!req.query.s || (req.extension !== 'jpg' && req.extension !== 'gif' && req.extension !== 'png')) {
-		res.filefs('files', id);
+		res.filefs('files', id, req.extension !== 'pdf' || req.extension !== 'txt');
 		return;
 	}
 
