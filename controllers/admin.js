@@ -152,6 +152,8 @@ function pluginfiles(req, res, is) {
 	res.throw404();
 }
 
+const ISIMAGE = { jpg: 1, jpeg: 1, png: 1, gif: 1 };
+
 // Reads a specific file from database
 // For images (jpg, gif, png) supports percentual resizing according "?s=NUMBER" argument in query string e.g.: .jpg?s=50, .jpg?s=80 (for image galleries)
 // URL: /download/*.*
@@ -159,8 +161,8 @@ function file_read(req, res) {
 
 	var id = req.split[1].replace('.' + req.extension, '');
 
-	if (!req.query.s || (req.extension !== 'jpg' && req.extension !== 'gif' && req.extension !== 'png')) {
-		res.filefs('files', id, req.extension !== 'pdf' || req.extension !== 'txt');
+	if (!req.query.s || !ISIMAGE[req.extension]) {
+		res.filefs('files', id, !ISIMAGE[req.extension] && (req.extension !== 'pdf' || req.extension !== 'txt'));
 		return;
 	}
 
