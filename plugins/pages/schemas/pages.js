@@ -757,6 +757,8 @@ Controller.prototype.CMSpage = function(callback, cache) {
 	if (self.query.DEBUG && DEBUG)
 		cache = false;
 
+	var DRAFT = !!self.query.DRAFT;
+
 	self.memorize('cachecms' + self.language + '_' + self.url, cache || '1 minute', cache === false, function() {
 
 		var nosql = NOSQL('pages');
@@ -780,8 +782,9 @@ Controller.prototype.CMSpage = function(callback, cache) {
 			}
 
 			var counter = nosql.counter.hit('all').hit(response.id);
-			var DRAFT = !!self.query.DRAFT;
-			response.language && counter.hit(response.language);
+
+			if (response.language && !DRAFT)
+				counter.hit(response.language);
 
 			if (response.css) {
 				response.css = U.minifyStyle('/*auto*/\n' + response.css);
@@ -808,7 +811,7 @@ Controller.prototype.CMSpage = function(callback, cache) {
 
 			FUNC.read('pages', response.id + (DRAFT ? '_draft' : ''), function(err, body) {
 				response.body = body;
-				response.body.CMSrender(DRAFT ? response.dwidgets : response.widgets, function(body) {
+				response.body.CMSrender(DRAFT ? (response.dwidgets || response.widgets) : response.widgets, function(body) {
 					response.body = body;
 					loadpartial(repo.page, function(partial) {
 						repo.page.partial = partial;
@@ -830,7 +833,7 @@ Controller.prototype.CMSpage = function(callback, cache) {
 			});
 		});
 	}, function() {
-		if (self.repository.page)
+		if (self.repository.page && !DRAFT)
 			NOSQL('pages').counter.hit('all').hit(self.repository.page.id);
 	});
 
@@ -884,7 +887,7 @@ Controller.prototype.CMSpagemodel = function(model) {
 	repo.page.signals = obj;
 	self.layout('');
 
-	model.body.CMSrender(DRAFT ? model.dwidgets : model.widgets, function(body) {
+	model.body.CMSrender(DRAFT ? (model.dwidgets || model.widgets) : model.widgets, function(body) {
 		model.body = body;
 		loadpartial(repo.page, function(partial) {
 			repo.page.partial = partial;
@@ -945,6 +948,7 @@ Controller.prototype.CMSrender = function(url, callback) {
 
 		FUNC.read('pages', response.id, function(err, body) {
 			response.body = body;
+			console.log(response.widgets);
 			response.body.CMSrender(response.widgets, function(body) {
 				response.body = body;
 				loadpartial(repo.page.partial, function(partial) {
