@@ -50,6 +50,7 @@ NEWSCHEMA('Subscribers', function(schema) {
 		opt.email && filter.gridfilter('email', opt, String);
 		opt.language && filter.gridfilter('language', opt, String);
 		opt.dtcreated && filter.gridfilter('dtcreated', opt, Date);
+		opt.unsubscribed && filter.gridfilter('unsubscribed', opt, Boolean);
 		filter.gridsort(opt.sort || 'dtcreated_desc');
 		filter.callback($.callback);
 	});

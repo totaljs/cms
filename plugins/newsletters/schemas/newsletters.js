@@ -55,7 +55,7 @@ NEWSCHEMA('Newsletters', function(schema) {
 		var user = $.user.name;
 		FUNC.remove('newsletters', id);
 		NOSQL('newsletters').remove().backup(user).log('Remove: ' + id, user).where('id', id).callback(() => $.success());
-		NOSQL('parts').remove().where('idowner', id).where('type', 'newsletter');
+		NOSQL('parts').remove().where('ownerid', id).where('type', 'newsletter');
 	});
 
 	// Saves the post into the database
@@ -74,6 +74,8 @@ NEWSCHEMA('Newsletters', function(schema) {
 			model.admincreated = user;
 			model.dtcreated = NOW;
 			model.count = 0;
+			model.issending = false;
+			model.issent = false;
 		}
 
 		var body = U.minifyHTML(model.body);
@@ -156,7 +158,7 @@ NEWSCHEMA('Newsletters', function(schema) {
 		newsletter.body.CMSrender(newsletter.widgets, function(body) {
 
 			var repository = {};
-			var cache = F.cache.get2('newsletters');
+			var cache = PREF.newsletters;
 
 			repository.page = {};
 			repository.page.id = newsletter.id;
@@ -172,6 +174,8 @@ NEWSCHEMA('Newsletters', function(schema) {
 				var count = response.length;
 				var sum = cache ? cache.count : 0;
 				var old = 0;
+
+				count += sum;
 
 				response.limit(10, function(items, next) {
 
@@ -191,7 +195,7 @@ NEWSCHEMA('Newsletters', function(schema) {
 					MAIN.newsletter.percentage = ((sum / count) * 100) >> 0;
 
 					// Updates cache
-					F.cache.set2('newsletters', { id: MAIN.newsletter.id, count: sum }, '5 days');
+					PREF.set('newsletters', { id: MAIN.newsletter.id, count: sum });
 
 					if (MAIN.newsletter.percentage !== old)
 						$SAVE('Event', { type: 'newsletters/percentage', body: MAIN.newsletter.percentage.toString() + '%', admin: true }, NOOP, $);
@@ -208,15 +212,15 @@ NEWSCHEMA('Newsletters', function(schema) {
 						setTimeout(() => Mail.send2(messages, next), 60000);
 
 						// Updates DB
-						NOSQL('newsletters').modify({ count: sum, datesent: NOW }).first().where('id', MAIN.newsletter.id);
+						NOSQL('newsletters').modify({ issending: true, count: sum, dtsent: NOW }).first().where('id', MAIN.newsletter.id);
 
 					} else
 						Mail.send2(messages, () => setTimeout(next, 2000));
 
 				}, function() {
-					F.cache.remove('newsletters');
+					PREF.set('newsletters', null);
 					$SAVE('Event', { type: 'newsletters/sent', body: repository.page.name, admin: true }, NOOP, $);
-					NOSQL('newsletters').modify({ count: sum, datesent: NOW }).first().where('id', MAIN.newsletter.id);
+					NOSQL('newsletters').modify({ issending: false, issent: true, count: sum, dtsent: NOW }).first().where('id', MAIN.newsletter.id);
 					MAIN.newsletter.sending = false;
 					MAIN.newsletter.percentage = 0;
 					MAIN.newsletter.id = null;
@@ -226,18 +230,15 @@ NEWSCHEMA('Newsletters', function(schema) {
 		}, $.controller);
 	});
 
-	// Loads unset newlsetter
-	var cache = F.cache.get2('newsletters');
-	if (cache) {
-		setTimeout(function() {
+	// Loads unsent newsletter
+	ON('settings', function() {
+		var cache = PREF.newsletters;
+		cache && setTimeout(function() {
 			schema.get({ id: cache.id }, function(err, response) {
-				if (response)
-					schema.workflow('send', response);
-				else
-					F.cache.remove('newsletters');
+				response && schema.workflow('send', response);
 			});
 		}, 5000);
-	}
+	});
 });
 
 function prepare_urladdress(body) {

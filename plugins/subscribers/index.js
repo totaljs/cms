@@ -7,6 +7,7 @@ exports.install = function() {
 	ROUTE('GET     /admin/api/subscribers/{id}/               *Subscribers --> @read');
 	ROUTE('POST    /admin/api/subscribers/                    *Subscribers --> @save');
 	ROUTE('DELETE  /admin/api/subscribers/                    *Subscribers --> @remove');
+	ROUTE('GET     /admin/api/subscribers/download/           *Subscribers --> @download');
 	ROUTE('GET     /admin/api/subscribers/stats/              *Subscribers --> @stats');
 	ROUTE('GET     /admin/api/subscribers/toggle/             *Subscribers --> @toggle');
 	ROUTE('POST    /api/subscribers/                          *Subscribers --> @save');

@@ -25,6 +25,12 @@
 		</section>
 
 		<section data-type="right">
+
+			<div class="hidden padding bg-yellow mb10" style="padding-bottom:15px" data-bind="?.state.sending__show">
+				<div class="help"><i class="fa fa-spin fa-spinner color"></i>@(CMS is sending a newsletter:)</div>
+				<div data---="progress__?.state.percentage" class="mt5"></div>
+			</div>
+
 			<div class="padding">
 				<div class="caption"><i class="fa fa-code"></i>@(Templates)</div>
 				<nav class="links">
@@ -44,7 +50,7 @@
 			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?.checked;button:?/button;noborder:1;height:window;margin:106;exec:?/refresh;dblclick:?/update">
 				<script type="text/plain">
 				[
-					{ name: 'name', text: '@(Name)', width: 550, template: '{{ if issent }}<span class="badge badge-green mr5">@(send)</span>{{ fi }}{{ name }}' },
+					{ name: 'name', text: '@(Name)', width: 550, template: '{{ if issending }}<i class="fa fa-spinner fa-spin mr5 color"></i>{{ fi }}{{ if issent }}<span class="badge badge-green badge b mr5">@(SENT)</span>{{ fi }}{{ name }}' },
 					{ name: 'count', text: '@(Subscribers)', align: 2, width: 150, template: '{{ count }}x<i class="fa fa-envelope-o ml5"></i>' },
 					{ name: 'dtsent', text: '@(Sent)', format: '[date]', width: 150, sort: false, align: 1 },
 					{ name: 'dtupdated', text: '@(Updated)', format: '[date]', width: 150, sort: false, align: 1 },
@@ -100,9 +106,21 @@
 		};
 
 		exports.state = function() {
+			exports.scope();
 			AJAX('GET [url]api/newsletters/state/', function(response) {
+
+				if (response.percentage > 100)
+					response.percentage = 100;
+
+				if (response.sending) {
+					!exports.removed && setTimeout(exports.state, 15000);
+				} else {
+					var tmp = GET('?.state');
+					tmp && tmp.sending && exports.refresh();
+				}
+
+				SET('common.progress', response.percentage);
 				SET('?.state', response);
-				response.sending && !exports.removed && setTimeout(exports.state, 5000);
 			});
 		};
 

@@ -118,8 +118,12 @@
 						EXEC('newsletters/refresh');
 
 						// Updates parts
-						parts.idowner = response.value;
+						parts.ownerid = response.value;
 						AJAX('POST [url]api/parts/', parts, NOOP);
+
+						model.send && setTimeout(function() {
+							EXEC('newsletters/state');
+						}, 3000);
 					}
 				});
 			};
