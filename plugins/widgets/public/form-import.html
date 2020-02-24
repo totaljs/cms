@@ -19,6 +19,7 @@
 			<li data-value="Columns">@(Columns)</li>
 			<li data-value="Content">@(Content)</li>
 			<li data-value="Inline">@(Inline)</li>
+			<li data-value="Newsletter">@(Newsletter)</li>
 		</ul>
 	</div>
 
@@ -57,6 +58,7 @@
 				case 'Inline':
 				case 'Columns':
 				case 'Content':
+				case 'Newsletter':
 					return value.findAll('category', widgets.externaltab);
 				case 'all':
 				default:

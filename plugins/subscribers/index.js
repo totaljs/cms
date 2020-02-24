@@ -10,7 +10,7 @@ exports.install = function() {
 	ROUTE('GET     /admin/api/subscribers/stats/              *Subscribers --> @stats');
 	ROUTE('GET     /admin/api/subscribers/toggle/             *Subscribers --> @toggle');
 	ROUTE('POST    /api/subscribers/                          *Subscribers --> @save');
-	ROUTE('GET     /api/unsubscribe/',                        unsubscribe, ['*Subscriber']);
+	ROUTE('GET     /api/unsubscribe/',                        unsubscribe, ['*Subscribers']);
 };
 
 function unsubscribe() {
