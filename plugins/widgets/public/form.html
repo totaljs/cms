@@ -124,7 +124,7 @@
 
 		exports.upload = function(el) {
 			refresh_filebrowser(function(file) {
-				SETTER('.widgetsform.form.body', 'insert', file);
+				SETTER('.widgetsform.form.body/insert', file);
 			});
 		};
 
@@ -137,7 +137,7 @@
 			AJAX('POST [url]api/widgets/ REPEAT', GETR('widgetsform.form'), function(response) {
 				FUNC.loading(false, 1000);
 				if (response.success) {
-					SETTER('snackbar', 'success', '@(Widget has been saved successfully.)');
+					SETTER('snackbar/success', '@(Widget has been saved successfully.)');
 					EXEC('widgets/refresh');
 					hide();
 				}
@@ -158,7 +158,7 @@
 
 				response.quicksort('date', false);
 
-				SETTER('suggestion', 'show', 'left', el, response, function(value) {
+				SETTER('suggestion/show', 'left', el, response, function(value) {
 					FUNC.loading(true);
 					setTimeout(function() {
 						MODIFY('widgetsform.form.body', value.data.body);

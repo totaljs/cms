@@ -10,7 +10,7 @@ NEWSCHEMA('Settings/SuperUser', function(schema) {
 	schema.define('name', String, true);
 	schema.define('login', String, true);
 	schema.define('password', String, true);
-	schema.define('roles', '[String]');
+	schema.define('permissions', '[String]');
 	schema.define('sa', Boolean);
 });
 
@@ -110,29 +110,7 @@ NEWSCHEMA('Settings', function(schema) {
 
 		CONF.admin_cookie = PREF.cookie;
 
-		// Refreshes internal informations
-		if (PREF.users && PREF.users.length)
-			MAIN.users.push.apply(MAIN.users, PREF.users);
-
-		// Adds an admin (service) account
-		if (!MAIN.users.length) {
-			var pwd = GUID(10);
-			MAIN.users.push({ id: GUID(15), name: 'Administrator', login: GUID(10), password: pwd.sha256(CONF.admin_secret), roles: [], sa: true, passwordinit: pwd });
-			PREF.set('users', MAIN.users);
-			PREF.set('usersinitialized', false);
-		}
-
-		// Optimized for the performance
-		var users = {};
-		for (var i = 0, length = MAIN.users.length; i < length; i++) {
-			var user = MAIN.users[i];
-			var key = (user.login + ':' + user.password + ':' + CONF.secret + (user.login + ':' + user.password).hash()).sha256(CONF.admin_secret);
-			if ($.controller && $.user.id === user.id)
-				$.cookie(CONF.admin_cookie, key, '1 month', COOKIE_OPTIONS);
-			users[key] = user;
-		}
-
-		MAIN.users = users;
+		FUNC.refresh_users($);
 
 		if (PREF.name)
 			CONF.name = PREF.name;
@@ -160,6 +138,41 @@ NEWSCHEMA('Settings', function(schema) {
 		$.success();
 	});
 });
+
+FUNC.refresh_users = function($) {
+
+	MAIN.users = [];
+
+	// Refreshes internal informations
+	if (PREF.users && PREF.users.length)
+		MAIN.users.push.apply(MAIN.users, PREF.users);
+
+	// Adds an admin (service) account
+	if (!MAIN.users.length) {
+		var pwd = GUID(10);
+		MAIN.users.push({ id: GUID(15), name: 'Administrator', login: GUID(10), password: pwd.sha256(CONF.admin_secret), permissions: [], sa: true, passwordinit: pwd });
+		PREF.set('users', MAIN.users);
+		PREF.set('usersinitialized', false);
+	}
+
+	// Optimized for the performance
+	var users = {};
+	for (var i = 0, length = MAIN.users.length; i < length; i++) {
+		var user = MAIN.users[i];
+		var key = (user.login + ':' + user.password + ':' + CONF.secret + (user.login + ':' + user.password).hash()).sha256(CONF.admin_secret);
+
+		if (user.roles) {
+			user.permissions = user.roles;
+			delete user.roles;
+		}
+
+		if ($.controller && $.user.id === user.id)
+			$.cookie(CONF.admin_cookie, key, '1 month', COOKIE_OPTIONS);
+		users[key] = user;
+	}
+
+	MAIN.users = users;
+};
 
 setTimeout(function() {
 	$WORKFLOW('Settings', 'load');

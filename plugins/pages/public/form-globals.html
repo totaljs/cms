@@ -38,7 +38,7 @@
 
 		exports.upload = function() {
 			refresh_filebrowser(function(file) {
-				SETTER('.pagesglobals.body', 'insert', file);
+				SETTER('.pagesglobals.body/insert', file);
 			});
 		};
 
@@ -47,7 +47,7 @@
 			AJAX('POST [url]api/pages/globals/ REPEAT', GETR('?'), function(response) {
 				FUNC.loading(false, 1000);
 				if (response.success) {
-					SETTER('snackbar', 'success', '@(Globals variables have been saved successfully.)');
+					SETTER('snackbar/success', '@(Globals variables have been saved successfully.)');
 					NULL('common.form');
 				}
 			});

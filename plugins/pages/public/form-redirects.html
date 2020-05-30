@@ -31,7 +31,7 @@
 			AJAX('POST [url]api/pages/redirects/ REPEAT', GETR('?'), function(response) {
 				FUNC.loading(false, 1000);
 				if (response.success) {
-					SETTER('snackbar', 'success', '@(Redirects have been applied successfully.)');
+					SETTER('snackbar/success', '@(Redirects have been applied successfully.)');
 					NULL('common.form');
 				}
 			});

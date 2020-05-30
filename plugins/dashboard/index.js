@@ -1,5 +1,6 @@
 exports.icon = 'fa fa-dashboard';
-exports.name = 'Dashboard';
+exports.name = '@(Dashboard)';
+exports.group = '@(Common)';
 exports.position = 0;
 
 exports.install = function() {

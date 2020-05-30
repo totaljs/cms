@@ -70,12 +70,12 @@
 		};
 
 		exports.clear = function() {
-			SETTER('confirm', 'confirm', '@(Are you sure you want to remove all useless files?)', ['"trash" @(Remove)', '@(Cancel)'], function(index) {
+			SETTER('approve/show', '@(Are you sure you want to remove all useless files?)', '"trash" @(Remove)', function(index) {
 				if (!index) {
 					FUNC.loading(true);
 					AJAX('GET [url]api/files/clear/', function() {
 						FUNC.loading(false, 1000);
-						SETTER('snackbar', 'success', '@(Cleaning of useless files has been started.)');
+						SETTER('snackbar/success', '@(Cleaning of useless files has been started.)');
 					});
 				}
 			});
@@ -99,7 +99,7 @@
 				if (/\.(jpg|png|gif|svg|jpeg)$/i.test(url))
 					$(obj.target).attr('src', url);
 				else {
-					SETTER('snackbar', 'warning', '@(You need to choose an image.)');
+					SETTER('snackbar/warning', '@(You need to choose an image.)');
 					return;
 				}
 			}
@@ -133,7 +133,7 @@
 				if (/\.(jpg|png|gif|svg|jpeg)$/.test(url))
 					$(obj.target).attr('src', url);
 				else {
-					SETTER('snackbar', 'warning', '@(You need to choose an image.)');
+					SETTER('snackbar/warning', '@(You need to choose an image.)');
 					return;
 				}
 			}
@@ -184,7 +184,7 @@
 				}
 
 				var files = e.originalEvent.dataTransfer.files;
-				SETTER('#filebrowser.filename', 'upload', files);
+				SETTER('#filebrowser.filename/upload', files);
 			});
 
 			self.event('click', 'a', function(e) {

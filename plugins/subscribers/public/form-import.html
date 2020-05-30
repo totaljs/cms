@@ -38,7 +38,7 @@
 					setTimeout(next, 50);
 				});
 			}, function() {
-				SETTER('snackbar', 'success', '@(Email addresses have been imported successfully.)');
+				SETTER('snackbar/success', '@(Email addresses have been imported successfully.)');
 				setTimeout(function() {
 					SET('?.importing', false);
 					EXEC('subscribers/refresh');

@@ -1,6 +1,7 @@
 exports.icon = 'far fa-envelope-o';
-exports.name = 'Newsletters';
-exports.position = 80;
+exports.name = '@(Newsletters)';
+exports.group = '@(Visitors)';
+exports.position = 60;
 
 exports.install = function() {
 

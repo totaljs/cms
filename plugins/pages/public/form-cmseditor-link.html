@@ -158,7 +158,7 @@
 			var id = cmseditor.link.idtracking;
 			cmseditor.link.idtracking = null;
 			SET('cmseditor.link.tracking', null);
-			SETTER('confirm', 'show2', '@(Do you want to remove this tracking from database?)', ['"trash-o" @(Remove)', '@(Cancel)'], function(index) {
+			SETTER('approve/show', '@(Do you want to remove this tracking from database?)', '"trash-o" @(Remove)', function(index) {
 				AJAX('DELETE [url]api/tracking/{0}/'.format(id), NOOP);
 				var arr = GET('%tracking');
 				if (arr) {
@@ -169,7 +169,7 @@
 		};
 
 		exports.autocomplete = function(com) {
-			SETTER('autocomplete', 'attach', com, function(query, render) {
+			SETTER('autocomplete/attach', com, function(query, render) {
 
 				var q = query.substring(0, 6);
 

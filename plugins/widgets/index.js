@@ -1,6 +1,7 @@
 exports.icon = 'fa fa-plug';
-exports.name = 'Widgets';
-exports.position = 40;
+exports.name = '@(Widgets)';
+exports.group = '@(Content)';
+exports.position = 80;
 
 exports.install = function() {
 

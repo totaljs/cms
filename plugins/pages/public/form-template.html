@@ -56,7 +56,7 @@
 			AJAX('POST [url]api/templates/ REPEAT', model, function(response) {
 				if (response.success) {
 					refresh_dependencies();
-					SETTER('snackbar', 'success', '@(Template has been saved successfully.)');
+					SETTER('snackbar/success', '@(Template has been saved successfully.)');
 					hide();
 				}
 			});
@@ -64,7 +64,7 @@
 
 		exports.file = function() {
 			refresh_filebrowser(function(url, filename) {
-				SETTER('#codemirrorpagestemplate', 'insert', url);
+				SETTER('#codemirrorpagestemplate/insert', url);
 			});
 		};
 
@@ -90,7 +90,7 @@
 				exports.scope();
 				AJAX('GET @{#}/_pages/template-' + item.id + '.txt', '?.body');
 			};
-			SETTER('menu', 'show', opt);
+			SETTER('menu/show', opt);
 		};
 	});
 

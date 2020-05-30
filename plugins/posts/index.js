@@ -1,5 +1,6 @@
 exports.icon = 'fa fa-newspaper-o';
-exports.name = 'Posts';
+exports.name = '@(Posts)';
+exports.group = '@(Content)';
 exports.position = 50;
 
 exports.install = function() {

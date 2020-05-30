@@ -1,6 +1,7 @@
 exports.icon = 'far fa-file-text-o';
-exports.name = 'Pages';
+exports.name = '@(Pages)';
 exports.position = 30;
+exports.group = '@(Content)'
 
 exports.install = function() {
 	// Pages

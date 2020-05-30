@@ -1,19 +1,7 @@
 <div data-scope="pages">
+	<div data---="layout2__null__parent:.ui-layout2-section" class="invisible">
 
-	<div data---="layout__null__parent:window;margin:58" class="invisible">
-
-		<script type="text/plain">
-			{
-				right: { size: 250 },
-				top: { size: 45 },
-				main: {},
-				xs: {
-					right: { show: false }
-				}
-			}
-		</script>
-
-		<section data-type="top2">
+		<section data-type="top2" data-size="44">
 			<div class="header">
 				<label><i class="far fa-file-alt"></i>@(List of pages)</label>
 				<nav data-bind="?.checked__enabled .S:value && value.length">
@@ -24,8 +12,8 @@
 			</div>
 		</section>
 
-		<section data-type="right">
-			<div class="padding">
+		<section data-type="right" data-size="250,250,200,0">
+			<div class="padding npb">
 				<div class="caption"><i class="fa fa-clone"></i>@(Options)</div>
 				<nav class="links">
 					<button class="exec b" data-exec="?/create"><i class="fa fa-plus-circle green"></i>@(Add a new page)</button>
@@ -34,7 +22,7 @@
 					<button class="exec" data-path="common.form" data-value="'pagesredirects'"><i class="fa fa-retweet"></i>@(Redirects)</button>
 				</nav>
 			</div>
-			<div class="padding">
+			<div class="padding npb">
 				<div class="caption"><i class="fa fa-code"></i>@(Templates)</div>
 				<nav class="links">
 					<div data-bind="common.dependencies.templatespages__template">
@@ -63,7 +51,7 @@
 		</section>
 
 		<section data-type="main">
-			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?.checked;button:?/button;noborder:1;height:window;margin:103;dblclick:?/update">
+			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?.checked;button:?/button;noborder:1;height:window;margin:45;dblclick:?/update">
 				<script type="text/plain">
 				[
 					{ name: 'path', text: '@(Name)', width: 300, template: '{{ language | language }}{{ if icon }}<i class="{{ icon }} mr5"></i>{{ fi }}{{ path | pagespath }}{{ if draft }}<span class="badge badge-red ml5">@(draft)</span>{{ fi }}{{ if ispartial }}<span class="badge badge-green ml5">@(partial)</span>{{ fi }}', classth: 'left', classfilter: 'left' },
@@ -149,7 +137,7 @@
 		exports.button = function(name, row, grid) {
 			switch (name) {
 				case 'remove':
-					SETTER('confirm', 'show2', '@(Are you sure you want to remove selected page?)', ['"trash"@(Remove)', '@(Cancel)'], function() {
+					SETTER('approve/show', '@(Are you sure you want to remove selected page?)', '"trash"@(Remove)', function() {
 						FUNC.loading(true);
 						AJAX('DELETE [url]api/pages/', row, FUNC.messageresponse('@(Page has been removed successfully)', function() {
 							pages.grid.items = pages.grid.items.remove('id', row.id);
@@ -171,7 +159,7 @@
 
 							// Clear existing parts
 							setTimeout(function() {
-								SETTER('cmseditor', 'clearParts');
+								SETTER('cmseditor/clearParts');
 							}, 1000);
 
 						}
@@ -200,7 +188,7 @@
 			options.callback = function(item) {
 				switch (item.id) {
 					case 'remove':
-						SETTER('confirm', 'show2', '@(Are you sure you want to remove all selected pages?)', ['"trash" @(Remove)', '@(Cancel)'], function() {
+						SETTER('approve/show', '@(Are you sure you want to remove all selected pages?)', '"trash" @(Remove)', function() {
 							FUNC.loading(true);
 							var arr = FIND('.pages.grid').checked();
 							arr.wait(function(el, next, index) {
@@ -209,7 +197,7 @@
 							}, function() {
 								exports.refresh();
 								FUNC.loading(false, 1000);
-								SETTER('snackbar', 'success', '@(Pages have been removed successfully.)');
+								SETTER('snackbar/success', '@(Pages have been removed successfully.)');
 							});
 						});
 						break;
@@ -255,7 +243,7 @@
 
 		exports.removetemplate = function(el) {
 			var id = el.parent().attrd('id');
-			SETTER('confirm', 'show2', '@(Are you sure you want to remove selected template?)', ['"trash-o" @(Remove)', '@(Cancel)'], function() {
+			SETTER('approve/show', '@(Are you sure you want to remove selected template?)', '"trash-o" @(Remove)', function() {
 				AJAX('DELETE [url]api/templates/' + id, refresh_dependencies);
 			});
 		};

@@ -17,12 +17,13 @@
 <body data---="exec">
 
 	@{json(user, 'userprofile', (k,v) => k === 'password' ? undefined : v)}
-	@{json(MAIN.plugins, 'adminplugins')}
+	@{json(model, 'adminplugins')}
 
 	<div data---="LAZY autocomplete"></div>
 	<div data---="LAZY faicons"></div>
 	<div data---="LAZY datepicker__null__days:@(SU,MO,TU,WE,TH,FR,SO);months:@(January,February,March,April,May,June,July,August,September,October,November,December);today:@(Set date to today);firstday:0"></div>
 	<div data---="LAZY confirm"></div>
+	<div data---="LAZY approve__null__cancel:@(Cancel)"></div>
 	<div data---="LAZY colorpicker"></div>
 	<div data---="LAZY directory"></div>
 	<div data---="LAZY features__null__placeholder:@(Search ...)"></div>
@@ -32,40 +33,61 @@
 	<div data---="LAZY menu"></div>
 	<div data---="loading" class="hidden"></div>
 	<div data---="avatar"></div>
-	<div data---="message"></div>
+	<div data---="message__null__style:2"></div>
 	<div data---="mainprogress__common.progress"></div>
 	<div data---="shortcuts"></div>
 	<div data---="websocket__null__reconnect:5000;url:[url]live/"></div>
 
-	<header>
-		<span class="version">@{MAIN.version}</span>
-		<a href="/" target="_blank"><i class="fa fa-globe"></i></a>
-		<nav data-bind="common.nav__template" data---="selected__common.page__datasource:common.nav;selector:button">
-			<script type="text/html">
-			{{ foreach m in value }}
-				<button class="exec" data-exec="main/plugin" data-if="{{ m.value }}" title="{{ m.title }}"><i class="{{ m.icon }}"></i></button>
-			{{ end }}
-			</script>
-		</nav>
-		<div class="mobilemenu exec" data-exec="main/menu"><i class="fa fa-navicon"></i></div>
-		<div class="logout exec" data-exec="main/logout"><i class="fa fa-power-off"></i></div>
-		<div class="user">
-			<i class="fa fa-circle"></i><span class="hidden-xs" data-bind="user.name__html"></span>
-		</div>
-		<div class="header-message">
-			<i class="fa fa-bell"></i>
-			<div>
-				<div class="header-message-table">
-					<div class="header-message-cell"></div>
-				</div>
+	<div class="header-message">
+		<i class="fa fa-bell"></i>
+		<div>
+			<div class="header-message-table">
+				<div class="header-message-cell"></div>
 			</div>
 		</div>
-	</header>
+	</div>
 
-	<div id="parts">
-		@{foreach m in MAIN.plugins}
-		<div data---="part__common.page__if:@{m.id};url:@{#}/_@{m.id}/index.html;reload:@{m.id}/reload;hidden:@{m.id}/hidden" data-id="@{m.id}" class="hidden"></div>
-		@{end}
+	<div data---="layout2__null__parent:window" class="invisible">
+		<div data-type="left" data-size="220,220,200,0" data-scrollbar="selector:main;margin:76">
+			<header>
+				<a href="/" class="logo" target="_blank"><i class="fa fa-globe"></i><span>@{'%name'}</span></a>
+			</header>
+			<main>
+				<div style="height:8px"></div>
+				@{foreach m in model}
+					@{if m.plugins.length !== 1}
+						@{if index > 0}
+						<hr />
+						@{fi}
+						@{if m.name}
+						<div class="group">@{m.name}</div>
+						@{fi}
+						<ul class="nav" data-bind="common.nav__template" data---="selected__common.page__selector:li">
+							@{foreach p in m.plugins}
+								@{if p.id !== 'settings'}
+								<li data-if="@{p.id}" class="exec" data-exec="common/plugin"><i class="@{p.icon}"></i>@{p.name}</li>
+								@{fi}
+							@{end}
+						</ul>
+					@{fi}
+				@{end}
+			</main>
+			<footer data---="selected__common.page__selector:span">
+				<a href="/" target="_blank"><i class="fa fa-globe"></i></a>
+				<span class="exec" data-exec="common/profile"><i class="fa fa-user-circle"></i></span>
+				<span class="exec" data-exec="common/plugin" data-if="settings"><i class="fa fa-cog"></i></span>
+				<span class="exec red" data-exec="common/logout"><i class="fa fa-power-off"></i></span>
+			</footer>
+		</div>
+		<div data-type="main">
+			<div id="parts">
+				@{foreach m in model}
+					@{foreach p in m.plugins}
+					<div data---="part__common.page__if:@{p.id};url:@{#}/_@{p.id}/index.html;reload:@{p.id}/reload;hidden:@{p.id}/hidden" data-id="@{p.id}" data-icon="@{p.icon}" data-name="@{p.name}" class="hidden"></div>
+					@{end}
+				@{end}
+			</div>
+		</div>
 	</div>
 
 	<!-- SPECIAL DEPENDENCIES -->
@@ -74,6 +96,7 @@
 	<div data---="importer__common.form3__if:filebrowser;url:@{#}/_pages/form-filebrowser.html"></div>
 	<div data---="importer__common.form__if:pagesglobals;url:@{#}/_pages/form-globals.html"></div>
 	<div data---="importer__common.form__if:pagestemplate;url:@{#}/_pages/form-template.html"></div>
+	<div data---="importer__common.form__if:profileform;url:/_settings/profile.html"></div>
 
 	<script>
 
@@ -81,15 +104,21 @@
 		var filebrowser = {};
 
 		common.nav = PARSE($('#adminplugins').html());
-		common.nav.quicksort('position');
 		common.version = @{MAIN.version};
 		common.init = false;
 
 		(function() {
-			for (var i = 0; i < common.nav.length; i++) {
-				var nav = common.nav[i];
-				nav.role = nav.value = nav.id;
-			}
+
+			var parts = $('#parts');
+			var permissions = [];
+
+			parts.find('> div').each(function() {
+				var el = $(this);
+				permissions.push({ id: el.attrd('id'), name: el.attrd('name'), icon: el.attrd('icon') });
+			});
+
+			common.lastpage = permissions[0].id;
+			SET('common.permissions', permissions);
 		})();
 
 		ENV('url', '/admin/');
@@ -118,31 +147,11 @@
 
 			setTimeout(function(obj) {
 				if (obj.pagecache)
-					EXEC('main/plugin', obj.pagecache);
+					EXEC('common/plugin', obj.pagecache);
 				else
-					EXEC('main/plugin', common.nav[0].id);
+					EXEC('common/plugin', common.lastpage);
 			}, 200, obj);
 		});
-
-		(function() {
-
-			var roles = [];
-			var parts = $('#parts');
-
-			if (!user.sa || user.roles.length) {
-				common.nav = common.nav.remove(function(plugin) {
-					var is = user.roles.indexOf(plugin.role) === -1;
-					is && parts.find('div[data-id="{0}"]'.format(plugin.id)).remove();
-					return is;
-				});
-			}
-
-			var value = common.nav;
-			for (var i = 0; i < value.length; i++)
-				roles.push({ id: value[i].role, name: value[i].name });
-			SET('common.roles', roles);
-
-		})();
 
 		CACHEPATH('common.pagecache', '1 week');
 
@@ -238,7 +247,7 @@
 						else
 							tmp += '-form';
 						if (tmp === common.form)
-							SETTER('snackbar', 'warning', '@(<b>IMPORTANT:</b> The user called "<b>{0}</b>" is editing same item.)'.format(user.name));
+							SETTER('snackbar/warning', '@(<b>IMPORTANT:</b> The user called "<b>{0}</b>" is editing same item.)'.format(user.name));
 					}
 
 					refresh_notifications();
@@ -287,7 +296,7 @@
 				case 'success':
 				case 'warning':
 					if (item.type === 'warning')
-						SETTER('message', 'warning', item.message);
+						SETTER('message/warning', item.message);
 					else
 						SETTER('snackbar', item.type, item.message);
 					break;
@@ -309,12 +318,12 @@
 			setTimeout(refresh_notifications, item.delay || 3000);
 		}
 
-		SETTER(true, 'shortcuts', 'register', 'cmd + s, ctrl + s', function() {
+		SETTER(true, 'shortcuts/register', 'cmd + s, ctrl + s', function() {
 			if (common.form === 'pagesform')
 				EXEC('pagesform/submit');
 		}, true);
 
-		SETTER(true, 'shortcuts', 'register', 'ESC', function() {
+		SETTER(true, 'shortcuts/register', 'ESC', function() {
 			if (common.window)
 				NULL('common.window');
 			else if (common.form3)
@@ -335,7 +344,7 @@
 					case 'pagestemplate':
 						var fields = MODIFIED(common.page + '.form').join(',');
 						if (fields.indexOf('.body') !== -1) {
-							SETTER('confirm', 'show2', '@(Are you sure you want to close this form without saving?)', ['@(Yes)', '@(Cancel)'], function() {
+							SETTER('approve/show', '@(Are you sure you want to close this form without saving?)', '@(Yes)', function() {
 								NULL('common.form');
 							});
 							return;
@@ -346,7 +355,7 @@
 			}
 		});
 
-		SETTER(true, 'shortcuts', 'register', 'F10', function(e) {
+		SETTER(true, 'shortcuts/register', 'F10', function(e) {
 			if (common.window)
 				NULL('common.window');
 			else if (common.form === 'pagesform')
@@ -356,19 +365,19 @@
 
 		});
 
-		SETTER(true, 'shortcuts', 'register', 'F1', function(e) {
+		SETTER(true, 'shortcuts/register', 'F1', function(e) {
 
 			var items = [];
 
-			for (var i = 0; i < common.nav.length; i++) {
-				var item = common.nav[i];
-				if (user.sa || !user.roles.length || user.roles.indexOf(item.role) !== -1)
-					items.push({ name: item.title, icon: item.icon, url: item.url });
+			for (var i = 0; i < common.permissions.length; i++) {
+				var item = common.permissions[i];
+				if (user.sa || !user.permissions.length || user.permissions.indexOf(item.id) !== -1)
+					items.push({ id: item.id, name: item.name, icon: item.icon });
 			}
 
 			items.push({ name: '@(Sign out)', icon: 'power-off', signout: true });
 
-			SETTER('features', 'show', items, function(item) {
+			SETTER('features/show', items, function(item) {
 				if (item.signout) {
 					location.href = '[url]logout/'.env();
 				} else {
@@ -381,15 +390,21 @@
 			}, true);
 		}, true);
 
-		PLUGIN('main', function(exports) {
+		PLUGIN('common', function(exports) {
+
+			exports.profile = function() {
+				SET('common.form', 'profileform');
+			};
+
 			exports.plugin = function(el) {
 				var id = el instanceof jQuery ? el.attrd('if') : el;
-				var item = common.nav.findItem('value', id);
+				var item = common.permissions.findItem('id', id);
 				if (item) {
 					EMIT('page', item);
 					SET('common.page', id);
 					SET('common.pagecache', id);
-				}
+				} else
+					SETTER('message/warning', '@(You don\'t have required permissions.)');
 			};
 
 			exports.menu = function(el) {
@@ -404,7 +419,7 @@
 					exports.plugin(item.id);
 				};
 
-				SETTER('menu', 'show', opt);
+				SETTER('menu/show', opt);
 			};
 
 			exports.logout = function() {

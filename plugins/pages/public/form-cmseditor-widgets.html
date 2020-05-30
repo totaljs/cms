@@ -50,7 +50,7 @@
 	PLUGIN('cmseditorwidgets', function(exports) {
 
 		exports.reload = function() {
-			SETTER('widgetlist', 'reset');
+			SETTER('widgetlist/reset');
 		};
 
 		exports.inject = function() {
@@ -212,7 +212,7 @@
 			self.search();
 
 			setTimeout(function() {
-				SETTER('avatar', 'refresh');
+				SETTER('avatar/refresh');
 			}, 500);
 		};
 

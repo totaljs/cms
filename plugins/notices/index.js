@@ -1,6 +1,7 @@
 exports.icon = 'fa fa-bullhorn';
-exports.name = 'Notices';
+exports.name = '@(Notices)';
 exports.position = 60;
+exports.group = '@(Content)';
 
 exports.install = function() {
 	ROUTE('GET     /admin/api/notices/                        *Notices --> @query');

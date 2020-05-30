@@ -7,11 +7,11 @@
 </style>
 
 <div data-scope="settings">
-	<div data---="layout__null__parent:window;margin:58" class="invisible">
+	<div data---="layout__null__parent:.ui-layout2-section" class="invisible">
 
 		<script type="text/plain">
 			{
-				top: { size: 45 },
+				top: { size: 44 },
 				main: {}
 			}
 		</script>
@@ -212,6 +212,10 @@
 			AJAX('POST [url]api/settings/ REPEAT', data, FUNC.messageresponse('@(Settings have been saved successfully.)', function() {
 				refresh_dependencies();
 				SET('common.componentator', data.componentator);
+
+				if (data.name)
+					$('.logo').find('span').text(data.name);
+
 			}));
 		};
 
@@ -252,9 +256,9 @@
 
 		exports.operation = function(el) {
 			var type = el.attrd('name');
-			SETTER('confirm', 'show2', '@(Are you sure you want to perform selected operation?)', ['"play-o" @(Yes, continue)', '@(Cancel)'], function() {
+			SETTER('approve/show', '@(Are you sure you want to perform selected operation?)', '"play-o" @(Yes, continue)', function() {
 				AJAX('GET [url]api/{0}/clear/'.format(type), function() {
-					SETTER('snackbar', 'success', '@(Done, operation has been completed.)');
+					SETTER('snackbar/success', '@(Done, operation has been completed.)');
 				});
 			})
 		};
@@ -270,13 +274,13 @@
 			opt.items.push('-');
 			opt.items.push({ id: 'all', name: '@(Clear all)', icon: 'trash-o' });
 			opt.callback = function(item) {
-				SETTER('confirm', 'show2', '@(Are you sure you want to perform selected operation?)', ['"play-o" @(Yes, continue)', '@(Cancel)'], function() {
+				SETTER('approve/show', '@(Are you sure you want to perform selected operation?)', '"play-o" @(Yes, continue)', function() {
 					AJAX('GET [url]api/{0}/clear/'.format(type), { id: item.id }, function() {
-						SETTER('snackbar', 'success', '@(Done, the counters will be removed in 5 minutes.)');
+						SETTER('snackbar/success', '@(Done, the counters will be removed in 5 minutes.)');
 					});
 				});
 			};
-			SETTER('menu', 'show', opt);
+			SETTER('menu/show', opt);
 		};
 
 		exports.create = function() {
@@ -297,7 +301,7 @@
 			var index = users.findIndex('id', el.parent().attrd('id'));
 			var user = users[index];
 
-			SETTER('confirm', 'show2', '@(Are you sure you want to remove the user <b>"{0}"</b>?)'.format(user.name), ['"times-circle" @(Remove)', '@(Cancel)'], function() {
+			SETTER('approve/show', '@(Are you sure you want to remove the user <b>"{0}"</b>?)'.format(user.name), '"times-circle" @(Remove)', function() {
 				users.splice(index, 1);
 				exports.scope();
 				UPDATE('?.form.users');

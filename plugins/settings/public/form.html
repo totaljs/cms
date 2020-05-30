@@ -20,8 +20,8 @@
 		<div data-bind="?.sa__hide">
 			<hr class="nmt nmb" />
 			<div class="padding">
-				<div data---="dropdowncheckbox__?.roles__alltext:null;datasource:common.roles;placeholder:@(Choose allowed roles)">@(Roles)</div>
-				<div class="help m">@(If the user roles will be empty then the user will be access to all functionality.)</div>
+				<div data---="dropdowncheckbox__?.permissions__alltext:null;datasource:common.permissions;placeholder:@(Choose allowed permissions)">@(Permissions)</div>
+				<div class="help m">@(If the user permissions will be empty then the user will be access to all functionality.)</div>
 			</div>
 		</div>
 	</div>
@@ -57,7 +57,7 @@
 				user.login = model.login;
 				if (model.password)
 					user.password = '#' + model.password;
-				user.roles = model.roles;
+				user.permissions = model.permissions;
 				user.sa = model.sa;
 				UPDATE('settings.form.users');
 			} else {

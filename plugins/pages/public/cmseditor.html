@@ -43,17 +43,17 @@
 
 	setTimeout(function() {
 		$('#cmseditor_inlineupload').on('change', function(e) {
-			SETTER('loading', 'show');
+			SETTER('loading/show');
 			var data = new FormData();
 			var files = e.target.files;
 			data.append('file0', files[0]);
 			this.value = '';
 			UPLOAD('POST [url]api/upload/', data, function(response, err) {
 
-				SETTER('loading', 'hide', 100);
+				SETTER('loading/hide', 100);
 
 				if (err) {
-					SETTER('snackbar', 'warning', '@(Upload error:) ' + err.toString());
+					SETTER('snackbar/warning', '@(Upload error:) ' + err.toString());
 					return;
 				}
 
@@ -205,7 +205,7 @@
 				doc.close();
 				iframe.css({ height: 'auto' });
 				setTimeout(function() {
-					M.components.findItem('name', 'autocomplete') && SETTER('autocomplete', 'resize');
+					M.components.findItem('name', 'autocomplete') && SETTER('autocomplete/resize');
 				}, 500);
 				return;
 			}
@@ -767,7 +767,7 @@
 				if (locked)
 					return;
 
-				SETTER('!faicons', 'hide', true);
+				SETTER('!faicons/hide', true);
 
 				e.preventDefault();
 				e.stopPropagation();
@@ -942,7 +942,7 @@
 					return;
 				}
 
-				SETTER('loading', 'show');
+				SETTER('loading/show');
 
 				var data = new FormData();
 
@@ -950,10 +950,10 @@
 
 				UPLOAD('POST [url]api/upload/', data, function(response, err) {
 
-					SETTER('loading', 'hide', 100);
+					SETTER('loading/hide', 100);
 
 					if (err) {
-						SETTER('snackbar', 'warning', '@(Upload error:) ' + err.toString());
+						SETTER('snackbar/warning', '@(Upload error:) ' + err.toString());
 						return;
 					}
 
@@ -1137,7 +1137,7 @@
 				var name = el.attrd('name');
 				var tmp;
 
-				SETTER('!faicons', 'hide', true);
+				SETTER('!faicons/hide', true);
 
 				switch (name) {
 
@@ -1423,12 +1423,12 @@
 
 							if (!response) {
 								cmseditor.settings.options = null;
-								SETTER(true, '#cmseditor.settings', 'remapempty');
+								SETTER(true, '#cmseditor.settings/remapempty');
 								SET('cmseditor.form', 'settings');
 								return;
 							}
 
-							SETTER(true, '#cmseditor.settings', 'remap2', function(option) {
+							SETTER(true, '#cmseditor.settings/remap2', function(option) {
 								cmseditor.settings.exports = {};
 								(new Function('option', 'exports', response))(option, cmseditor.settings.exports);
 							});
@@ -1468,7 +1468,7 @@
 								target.rclass('fa far fab fal fad fas').rclass2('fa-').aclass(icon);
 							};
 
-							SETTER('faicons', 'show', opt);
+							SETTER('faicons/show', opt);
 							return;
 						}
 
@@ -1486,7 +1486,7 @@
 								com.reconfigure('width:{0};height:{1};background:{2}'.format(w, h, target.attrd('cms-bg') || ''));
 								SET('cmseditor.crop.url', target.attrd('cms-src') || target.attr('src'), 100);
 								setTimeout2('cropmodal', function() {
-									SETTER(true, '#cmseditor.crop.modal', 'reconfigure', 'height:' + (h + 215));
+									SETTER(true, '#cmseditor.crop.modal/reconfigure', 'height:' + (h + 215));
 								}, 300);
 							});
 
@@ -1597,8 +1597,8 @@
 				iframe.css({ height: h });
 				width = contents.width();
 				setTimeout(function() {
-					SETTER('form', 'resize');
-					M.components.findItem('name', 'autocomplete') && SETTER('autocomplete', 'resize');
+					SETTER('form/resize');
+					M.components.findItem('name', 'autocomplete') && SETTER('autocomplete/resize');
 				}, 300);
 			}, force ? 10 : 500);
 		};
@@ -1627,13 +1627,13 @@
 				return;
 			}
 
-			SETTER('loading', 'show');
+			SETTER('loading/show');
 			AJAX('POST [url]api/pages/preview/', options, function(response) {
 
 				self.write(response.replace('</body>', '<div id="CMS_panel"><div id="CMS_panel_buttons_move"><span class="fa fa-arrow-up" data-name="up" title="@(Move up)"></span><span class="fa fa-arrow-down" data-name="down" title="@(Move down)"></span></div><div id="CMS_panel_buttons_reposition"><span class="fa fa-chevron-up" data-name="up2" title="@(Move up current repeated element)"></span><span class="fa fa-chevron-down" data-name="down2" title="@(Move down current repeated element)"></span></div><div id="CMS_panel_buttons_copy"><span class="fa fa-paste" data-name="paste" title="@(Paste widget)"></span><span class="fa fa-copy" data-name="copy" title="@(Copy widget)"></span></div><div id="CMS_panel_info"></div><div class="CMS_panel_buttons"><span class="fa fa-pencil" title="@(Edit)" data-name="edit"></span><span class="fa fa-cog" title="@(Widget settings)" data-name="settings"></span><span class="fa fa-link" title="@(Change link)" data-name="link"></span><span class="fa fa-quote-left" title="@(Change attributes)" data-name="attribute"></span><span class="fa fa-file-text-o" title="@(Choose a partial content)" data-name="partial"></span><span class="fa fa-object-ungroup" title="@(Edit as part)" data-name="part"></span><span class="fa fa-copy" title="@(Duplicate)" data-name="repeat"></span></span><span class="fa fa-plus-circle" title="@(Add a widget)" data-name="widgets"></span><span class="fa fa-trash" title="@(Remove content)" data-name="remove"></span><span class="fa fa-caret-square-o-down" title="@(Hide)" data-name="hide"></span></div><div id="CMS_panel_buttons_body"><span class="fa fa-arrows-v" data-name="wm"></span><span class="fa fa-arrows-h" data-name="wp"></span></div></div></body>'));
 				setTimeout(self.setCSS, 500);
 
-				SETTER('loading', 'hide', 500);
+				SETTER('loading/hide', 500);
 				AJAX('GET [url]api/pages/dependencies/', function(response) {
 					var links = response.links;
 					for (var i = 0, length = links.length; i < length; i++) {
@@ -1669,7 +1669,7 @@
 		};
 
 		self.sourcecode = function() {
-			SETTER('loading', 'show');
+			SETTER('loading/show');
 			self.save(function() {
 				SET('cmseditorsourcecode', self.getSourceCode().replace(/\n[\s\t]+\n/g, '\n'), true);
 				SET('cmseditor.form', 'sourcecode');

@@ -211,7 +211,7 @@
 		};
 
 		exports.removedraft = function() {
-			SETTER('confirm', 'show2', '@(Are you sure you want to remove stored draft?)', ['"trash-o" @(Yes)', '@(Cancel)'], function() {
+			SETTER('approve/show', '@(Are you sure you want to remove stored draft?)', '"trash-o" @(Yes)', function() {
 				SET('?.body', pagesform.bodycurrent);
 				SET('?.draft', false);
 				cmseditor.instance.setWidgetOptions(pagesform.widgets);
@@ -290,7 +290,7 @@
 					FUNC.loading(false, 1000);
 
 					if (response.success) {
-						SETTER('snackbar', 'success', '@(Page has been saved successfully.)');
+						SETTER('snackbar/success', '@(Page has been saved successfully.)');
 
 						if (typeof(hide) === 'function')
 							hide();
@@ -307,7 +307,7 @@
 			};
 
 			if (model.lockedtemplate && !user.sa)
-				SETTER('confirm', 'show2', '@(Are you sure you want to use always this template?)', ['@(Sure)', '@(Cancel)'], sumit);
+				SETTER('approve/show', '@(Are you sure you want to use always this template?)', '@(Sure)', sumit);
 			else
 				submit();
 		};
@@ -326,7 +326,7 @@
 
 				response.quicksort('date', false);
 
-				SETTER('suggestion', 'show', 'left', el, response, function(value) {
+				SETTER('suggestion/show', 'left', el, response, function(value) {
 					FUNC.loading(true);
 					setTimeout(function() {
 						AJAX('GET [url]api/backups/pages/{id}_{stamp}/'.arg(value.data), function(body) {

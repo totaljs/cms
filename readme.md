@@ -4,7 +4,7 @@
 
 [![Professional Support](https://www.totaljs.com/img/badge-support.svg)](https://www.totaljs.com/support/) [![Chat with contributors](https://www.totaljs.com/img/badge-chat.svg)](https://messenger.totaljs.com)
 
-- Latest version: `v12.0.0` (requires __Total.js +v3.0.0__)
+- Latest version: `v14.0.0` (requires __Total.js +v3.0.0__)
 - [__Live chat with professional support__](https://messenger.totaljs.com)
 - [__HelpDesk with professional support__](https://helpdesk.totaljs.com)
 - [Documentation](https://wiki.totaljs.com?q=cms+welcome)
@@ -26,7 +26,7 @@ dateupdated --> dtupdated
 datecreated --> dtcreated
 datesent    --> dtsent
 idpage      --> pageid
-idowner     --> ownerid         (parst)
+idowner     --> ownerid         (parts)
 ```
 
 ## License

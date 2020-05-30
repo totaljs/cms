@@ -112,7 +112,7 @@
 				AJAX('POST [url]api/newsletters/ REPEAT', model, function(response) {
 					FUNC.loading(false, 1000);
 					if (response.success) {
-						SETTER('snackbar', 'success', '@(Newsletter has been saved successfully.)');
+						SETTER('snackbar/success', '@(Newsletter has been saved successfully.)');
 						hide();
 
 						EXEC('newsletters/refresh');
@@ -129,7 +129,7 @@
 			};
 
 			if (model.send)
-				SETTER('confirm', 'show2', '@(Are you sure you want to send this newsletter to all registered subscribers?)', ['"envelope" @(Yes, send)', '@(Cance)'], fn);
+				SETTER('approve/show', '@(Are you sure you want to send this newsletter to all registered subscribers?)', '"envelope" @(Yes, send)', fn);
 			else
 				fn();
 		};
@@ -180,7 +180,7 @@
 			FUNC.loading(true);
 			AJAX('POST [url]api/newsletters/test/?email=' + encodeURIComponent(newsletterstest.email), model, function() {
 				FUNC.loading(false, 500);
-				SETTER('snackbar', 'success', '@(Newsletter has been sent successfully.)');
+				SETTER('snackbar/success', '@(Newsletter has been sent successfully.)');
 			});
 		};
 

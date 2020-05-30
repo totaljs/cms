@@ -2,9 +2,9 @@ const Fs = require('fs');
 
 // List of all plugins
 MAIN.plugins = [];
-MAIN.version = 13;
+MAIN.version = 14;
 
-FUNC.refreshplugins = function(callback) {
+FUNC.refresh_plugins = function(callback) {
 	Fs.readdir(PATH.root('plugins'), function(err, response) {
 
 		if (response == null) {
@@ -48,11 +48,32 @@ FUNC.refreshplugins = function(callback) {
 				});
 			});
 
-		}, callback);
+		}, function() {
+
+			MAIN.pluginsgroups = [];
+			MAIN.plugins.quicksort('position');
+
+			var tmp = {};
+
+			for (var i = 0; i < MAIN.plugins.length; i++) {
+				var item = MAIN.plugins[i];
+				var g = item.group || '#';
+				if (tmp[g])
+					tmp[g].push(item);
+				else
+					tmp[g] = [item];
+			}
+
+			var keys = Object.keys(tmp);
+			for (var i = 0; i < keys.length; i++) {
+				var key = keys[i];
+				MAIN.pluginsgroups.push({ name: key === '#' ? null : key, plugins: tmp[key] });
+			}
+		});
 
 	});
 };
 
 ON('ready', function() {
-	FUNC.refreshplugins();
+	FUNC.refresh_plugins();
 });

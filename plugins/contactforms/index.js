@@ -1,6 +1,7 @@
 exports.icon = 'far fa-envelope-open';
-exports.name = 'Contact forms';
-exports.position = 70;
+exports.name = '@(Contact forms)';
+exports.group = '@(Visitors)';
+exports.position = 50;
 
 exports.install = function() {
 	ROUTE('GET     /admin/api/contactforms/                    *ContactForms --> @query');

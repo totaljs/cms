@@ -1,15 +1,7 @@
 <div data-scope="notices">
 
-	<div data---="layout__null__parent:window;margin:58" class="invisible">
-
-		<script type="text/plain">
-			{
-				top: { size: 45 },
-				main: {}
-			}
-		</script>
-
-		<section data-type="top2">
+	<div data---="layout2__null__parent:.ui-layout2-section" class="invisible">
+		<section data-type="top2" data-size="44">
 			<div class="header">
 				<label><i class="fa fa-bullhorn"></i>@(List of notices)</label>
 				<nav data-bind="?.checked__enabled .S:value && value.length">
@@ -21,7 +13,7 @@
 		</section>
 
 		<section data-type="main">
-			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?.checked;button:?/button;noborder:1;height:window;margin:106;exec:?/refresh;dblclick:?/update">
+			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?.checked;button:?/button;noborder:1;height:window;margin:45;exec:?/refresh;dblclick:?/update">
 				<script type="text/plain">
 				[
 					{ name: 'name', text: '@(Name)', width: 450, template: '{{ if icon }}<i class="{{ icon }} icon"></i>{{ fi }}{{ if ispinned }}<span class="badge badge-green mr5"><i class="fa fa-map-pin"></i>@(Pinned)</span>{{ fi }}{{ name }}' },
@@ -74,12 +66,12 @@
 		exports.button = function(name, row, grid) {
 			switch (name) {
 				case 'remove':
-					SETTER('confirm', 'show2', '@(Are you sure you want to remove selected notice?)', ['"trash" @(Remove)', '@(Cancel)'], function() {
+					SETTER('approve/show', '@(Are you sure you want to remove selected notice?)', '"trash" @(Remove)', function() {
 						FUNC.loading(true);
 						AJAX('DELETE [url]api/notices/' + row.id, function(response) {
 							FUNC.loading(false, 1000);
 							if (response.success) {
-								SETTER('snackbar', 'success', '@(Notice has been removed successfully.)');
+								SETTER('snackbar/success', '@(Notice has been removed successfully.)');
 								NULL('?.grid');
 							}
 						});
@@ -111,7 +103,7 @@
 			options.callback = function(item) {
 				switch (item.id) {
 					case 'remove':
-						SETTER('confirm', 'show', '@(Are you sure you want to remove all selected notices?)', ['"trash" @(Remove)', '@(Cancel)'], function(index) {
+						SETTER('approve/show', '@(Are you sure you want to remove all selected notices?)', '"trash" @(Remove)', function(index) {
 							if (!index) {
 								var arr = FIND('.notices.grid').checked();
 								FUNC.loading(true);
@@ -121,7 +113,7 @@
 								}, function() {
 									NULL('?.grid');
 									FUNC.loading(false, 1000);
-									SETTER('snackbar', 'success', '@(Notices have been removed successfully.)');
+									SETTER('snackbar/success', '@(Notices have been removed successfully.)');
 								});
 							}
 						});
@@ -133,14 +125,13 @@
 		};
 
 		exports.options = function(el) {
-			var options = {};
-			options.align = 'right';
-			options.element = el;
-			options.items = [];
-			options.items.push({ id: 'refresh', name: '@(Refresh)', icon: 'refresh' });
-			options.items.push({ id: 'create', name: '@(Create notice)', icon: 'plus-circle' });
-
-			options.callback = function(item) {
+			var opt = {};
+			opt.align = 'right';
+			opt.element = el;
+			opt.items = [];
+			opt.items.push({ id: 'refresh', name: '@(Refresh)', icon: 'refresh' });
+			opt.items.push({ id: 'create', name: '@(Create notice)', icon: 'plus-circle' });
+			opt.callback = function(item) {
 				switch (item.id) {
 					case 'refresh':
 					case 'create':
@@ -149,7 +140,7 @@
 				}
 			};
 
-			SETTER('menu', 'show', options);
+			SETTER('menu/show', opt);
 		};
 
 		exports.create = function() {

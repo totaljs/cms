@@ -1,5 +1,6 @@
 exports.icon = 'far fa-address-card';
-exports.name = 'Subscribers';
+exports.name = '@(Subscribers)';
+exports.group = '@(Visitors)';
 exports.position = 70;
 
 exports.install = function() {

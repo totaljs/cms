@@ -19,7 +19,7 @@
 	PLUGIN('cmseditorpart', function(exports) {
 
 		exports.remove = function() {
-			SETTER('confirm', 'show2', '@(Are you sure you want to remove this part?)', ['"trash-o" @(Remove)', '@(Cancel)'], function(index) {
+			SETTER('approve/show', '@(Are you sure you want to remove this part?)', '"trash-o" @(Remove)', function(index) {
 				var target = cmseditor.part.target;
 				target.rattr('data-cms-part');
 				target.rclass('CMS_part');

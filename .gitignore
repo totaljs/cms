@@ -1,3 +1,5 @@
 tmp/*
 logs/*
 databases/*
+debug.js.json
+debug.pid

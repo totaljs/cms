@@ -86,7 +86,7 @@
 					file = '![{0}]({1})'.format(name, file);
 				else
 					file = '[{0}]({1})'.format(name, file);
-				SETTER('.noticesform.body', 'insert', file);
+				SETTER('.noticesform.body/insert', file);
 			});
 		};
 
@@ -100,7 +100,7 @@
 					if (!common.dependencies.notices.findItem('name', model.category))
 						refresh_dependencies();
 
-					SETTER('snackbar', 'success', '@(Notice has been saved successfully.)');
+					SETTER('snackbar/success', '@(Notice has been saved successfully.)');
 					EXEC('notices/refresh');
 					hide();
 				}

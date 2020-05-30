@@ -1,7 +1,7 @@
 const MSG_NOTIFY = { TYPE: 'notify' };
 const MSG_ALERT = { TYPE: 'alert' };
 const COOKIE_OPTIONS = { security: 'strict', httponly: true };
-const ALLOW = { GET: ['/api/dependencies/', '/api/pages/preview/', '/api/nav/', '/api/files/', '/stats/', '/live/', '/api/widgets/', '/logout/', '/api/parts/'], POST: ['/api/upload/', '/api/parts/'] };
+const ALLOW = { GET: ['/api/dependencies/', '/api/pages/preview/', '/api/profile/', '/api/nav/', '/api/files/', '/stats/', '/live/', '/api/widgets/', '/logout/', '/api/parts/'], POST: ['/api/upload/', '/api/parts/', '/api/profile/'] };
 const ADMINURL = '/admin/';
 
 var DDOS = {};
@@ -39,7 +39,7 @@ ON('visitor', function(obj) {
 exports.install = function() {
 
 	// Internal
-	ROUTE('GET     /admin', 'admin');
+	ROUTE('GET     /admin',                                   admin);
 	ROUTE('GET     /admin/logout/',                           logout);
 	ROUTE('POST    /api/login/admin/',                        login);
 	ROUTE('POST    /admin/api/upload/',                       upload, ['upload', 10000], 5120); // 5 MB
@@ -56,6 +56,30 @@ exports.install = function() {
 	FILE(pluginfiles);
 	FILE('/download/', file_read);
 };
+
+function admin() {
+
+	var self = this;
+	var user = self.user;
+	var model = [];
+
+	for (var i = 0; i < MAIN.pluginsgroups.length; i++) {
+		var group = MAIN.pluginsgroups[i];
+		var index = -1;
+		for (var j = 0; j < group.plugins.length; j++) {
+			var item = group.plugins[j];
+			if (user.sa || (user.permissions && user.permissions.indexOf(item.id) !== -1)) {
+				if (item.id === 'settings' && !user.sa)
+					continue;
+				if (index == -1)
+					index = model.push({ name: group.name ? TRANSLATOR(user.language, group.name) : null, plugins: [] }) - 1;
+				model[index].plugins.push({ id: item.id, name: TRANSLATOR(user.language, item.name), icon: item.icon });
+			}
+		}
+	}
+
+	self.view('admin', model);
+}
 
 ON('controller', function(controller) {
 
@@ -93,13 +117,13 @@ ON('controller', function(controller) {
 		return;
 	}
 
-	// Roles
-	if (!user.sa && user.roles.length && controller.url !== ADMINURL) {
+	// Permissions
+	if (!user.sa && user.permissions.length && controller.url !== ADMINURL) {
 
 		var cancel = true;
 
-		for (var i = 0, length = user.roles.length; i < length; i++) {
-			var role = user.roles[i];
+		for (var i = 0, length = user.permissions.length; i < length; i++) {
+			var role = user.permissions[i];
 
 			if (controller.url.indexOf(role.toLowerCase()) !== -1) {
 				cancel = false;

@@ -7,22 +7,34 @@ html,body { overflow: hidden; }
 body { background-color: white; }
 button { background-color: transparent; }
 
-.color { color: $color; }
+.color { color: $color !important; }
 
-header { height: 58px; background-color: white; background: linear-gradient(130deg, #E0E0E0 80%, #F0F0F0 80%); border: 1px solid #DEDEDE; box-shadow: inset 0 -10px 10px rgba(0,0,0,0.03); }
-header .logout { float: left; font-size: 16px; color: red; border-left: 1px solid #D0D0D0; width: 60px; height: 40px; line-height: 40px; text-align: center; cursor: pointer; margin: 8px 0 0 10px; }
-header .mobilemenu { float: left; font-size: 16px; color: black; border-left: 1px solid #D0D0D0; width: 50px; height: 40px; line-height: 40px; text-align: center; cursor: pointer; margin: 8px 0 0 10px; display: none; }
-header > a { float: left; width: 38px; height: 38px; text-align: center; font-size: 22px; line-height: 37px; border: 1px solid transparent; outline: 0; background-color: transparent; color: rgba(0,0,0,0.6); border-radius: 2px; margin: 8px 0 0 4px; color: black; transition: color 0.2s; }
-header > a:hover { color: #505050; }
-header nav { float: left; margin: 8px 0 0 5px; border-left: 1px solid #D0D0D0; padding-left: 10px; }
-header nav button { width: 38px; height: 38px; text-align: center; font-size: 16px; line-height: 37px; border: 1px solid transparent; outline: 0; background-color: transparent; color: rgba(0,0,0,0.6); border-radius: 2px; }
-header nav button:hover { color: black; }
-header nav button.selected { background-color: white; color: black; border: 1px solid white; box-shadow: 0 2px 2px rgba(0,0,0,0.05); }
-header .user { float: right; font-size: 12px; line-height: 58px; margin-right: 20px; color: black; font-size: 14px; font-weight: bold; }
-header .user .fa, header .user .fal { margin-right: 5px; }
-header .title { height: 40px; border-left: 1px solid #F0F0F0; font-size: 16px; float: left; padding: 9px 0 0 20px; color: white; font-weight: bold; }
-header .title .fa, header .title .fal { margin-right: 8px; }
-header .version { position: absolute; font-size: 9px; color: #A0A0A0; left: 19px; top: 42px; }
+.ui-layout2-left { border-right: 1px solid #E0E0E0; background-color: #F5F5F5; }
+.ui-layout2-left .logo { float: left; margin: 0 0 0 15px; line-height: 44px; font-weight: bold; font-size: 18px; color: #000000; width: 90%; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+.ui-layout2-left .logo img { height: 22px; }
+.ui-layout2-left .logo i { color: $color; margin-right: 7px; }
+.ui-layout2-left .logo:hover { text-decoration: none; }
+.ui-layout2-left header { height: 45px; border-bottom: 1px solid #E0E0E0; background-color: #FFFFFF; }
+.ui-layout2-left footer { height: 33px; border-top: 1px solid #E0E0E0; text-align: center; white-space: nowrap; }
+.ui-layout2-left hr { margin: 10px 0; }
+.ui-layout2-left footer span, .ui-layout2-left footer a { cursor: pointer; width: 25%; text-align: center; float: left; border-left: 1px solid #E0E0E0; line-height: 31px; color: #888888; }
+.ui-layout2-left footer span:hover, .ui-layout2-left footer a:hover { color: #000000; }
+.ui-layout2-left footer span:first-child, .ui-layout2-left footer a:first-child { border-left: 0; }
+.ui-layout2-left footer .selected { color: $color; }
+.ui-layout2-left .nav { list-style-type: none; margin: 0 0 15px; padding: 0; }
+.ui-layout2-left .nav li { margin: 0; padding: 4px 15px; display: block; color: #000000; cursor: pointer; margin-bottom: 3px; }
+.ui-layout2-left .nav li span { float: right; color: #888888; font-size: 12px; padding: 2px 0 0; }
+.ui-layout2-left .nav li:hover { background-color: #E8E8E8; }
+.ui-layout2-left .nav i { width: 18px; color: $color; text-align: center; margin-right: 7px; }
+.ui-layout2-left .nav .selected { background-color: #4C84F7 !important; color: #FFFFFF; }
+.ui-layout2-left .nav .selected i { color: #FFFFFF; }
+.ui-layout2-left .nav .selected span { color: #FFFFFF; }
+.ui-layout2-left .group { font-size: 12px; color: #888888; padding: 5px 15px; }
+.ui-layout2-main header { height: 45px; border-bottom: 1px solid #E0E0E0; }
+.ui-layout2-main header > nav { height: 44px; padding: 10px 15px 0 0; }
+.ui-layout2-main header label { float: left; line-height: 44px; font-weight: bold; margin-left: 15px; }
+.ui-layout2-main header label i { margin-right: 5px; }
+.ui-layout2-main .padding { padding: 15px; }
 
 .iframefull { height: 100%; }
 .iframefull div, .iframefull iframe { height: 100%; }
@@ -41,7 +53,7 @@ a.linkshortcut:hover { border-bottom-color: #A0A0A0; }
 
 .gray { color: gray; }
 .header { height: 45px; padding: 0 10px 0 0; background-color: #F8F8F8; }
-.header label { float: left; font-size: 14px; font-weight: bold; height: 26px; line-height: 26px; margin: 10px 0 0 5px; padding: 0 10px 0; }
+.header label { float: left; font-size: 14px; font-weight: bold; height: 26px; line-height: 26px; margin: 9px 0 0 5px; padding: 0 10px 0; }
 .header label i { color: $color; }
 .header nav { float: right; margin: 10px 0 0 10px; }
 

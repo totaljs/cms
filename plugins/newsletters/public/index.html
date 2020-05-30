@@ -1,19 +1,8 @@
 <div data-scope="newsletters">
 
-	<div data---="layout__null__parent:window;margin:58" class="invisible">
+	<div data---="layout2__null__parent:.ui-layout2-section" class="invisible">
 
-		<script type="text/plain">
-			{
-				top: { size: 45 },
-				right: { size: 250 },
-				main: {},
-				xs: {
-					right: { show: false }
-				}
-			}
-		</script>
-
-		<section data-type="top2">
+		<section data-type="top2" data-size="44">
 			<div class="header">
 				<label><i class="far fa-envelope-o"></i>@(List of newsletters)</label>
 				<nav data-bind="?.checked__enabled .S:value && value.length">
@@ -24,7 +13,7 @@
 			</div>
 		</section>
 
-		<section data-type="right">
+		<section data-type="right" data-size="250,250,200,0">
 
 			<div class="hidden padding bg-yellow mb10" style="padding-bottom:15px" data-bind="?.state.sending__show">
 				<div class="help"><i class="fa fa-spin fa-spinner color"></i>@(CMS is sending a newsletter:)</div>
@@ -47,10 +36,10 @@
 		</section>
 
 		<section data-type="main">
-			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?.checked;button:?/button;noborder:1;height:window;margin:106;exec:?/refresh;dblclick:?/update">
+			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?.checked;button:?/button;noborder:1;height:window;margin:45;exec:?/refresh;dblclick:?/update">
 				<script type="text/plain">
 				[
-					{ name: 'name', text: '@(Name)', width: 550, template: '{{ if issending }}<i class="fa fa-spinner fa-spin mr5 color"></i>{{ fi }}{{ if issent }}<span class="badge badge-green badge b mr5">@(SENT)</span>{{ fi }}{{ name }}' },
+					{ name: 'name', text: '@(Name)', width: 350, template: '{{ if issending }}<i class="fa fa-spinner fa-spin mr5 color"></i>{{ fi }}{{ if issent }}<span class="badge badge-green badge b mr5">@(SENT)</span>{{ fi }}{{ name }}' },
 					{ name: 'count', text: '@(Subscribers)', align: 2, width: 150, template: '{{ count }}x<i class="fa fa-envelope-o ml5"></i>' },
 					{ name: 'dtsent', text: '@(Sent)', format: '[date]', width: 150, sort: false, align: 1 },
 					{ name: 'dtupdated', text: '@(Updated)', format: '[date]', width: 150, sort: false, align: 1 },
@@ -132,12 +121,12 @@
 		exports.button = function(name, row, grid) {
 			switch (name) {
 				case 'remove':
-					SETTER('confirm', 'show2', '@(Are you sure you want to remove selected newsletter?)', ['"trash" @(Remove)', '@(Cancel)'], function(index) {
+					SETTER('approve/show', '@(Are you sure you want to remove selected newsletter?)', '"trash" @(Remove)', function(index) {
 						FUNC.loading(true);
 						AJAX('DELETE [url]api/newsletters/' + row.id, function(response) {
 							FUNC.loading(false, 1000);
 							if (response.success) {
-								SETTER('snackbar', 'success', '@(Newsletter has been removed successfully.)');
+								SETTER('snackbar/success', '@(Newsletter has been removed successfully.)');
 								exports.refresh();
 							}
 						});
@@ -179,7 +168,7 @@
 			options.callback = function(item) {
 				switch (item.id) {
 					case 'remove':
-						SETTER('confirm', 'show2', '@(Are you sure you want to remove all selected newsletters?)', ['"trash" @(Remove)', '@(Cancel)'], function(index) {
+						SETTER('approve/show', '@(Are you sure you want to remove all selected newsletters?)', '"trash" @(Remove)', function(index) {
 							FUNC.loading(true);
 							newsletters.checked.wait(function(el, next, index) {
 								SET('common.progress', (index / arr.length) * 100);
@@ -187,14 +176,14 @@
 							}, function() {
 								NULL('?.grid');
 								FUNC.loading(false, 1000);
-								SETTER('snackbar', 'success', '@(Newsletters have been removed successfully.)');
+								SETTER('snackbar/success', '@(Newsletters have been removed successfully.)');
 							});
 						});
 						break;
 				}
 			};
 
-			SETTER('menu', 'show', options);
+			SETTER('menu/show', options);
 		};
 
 		exports.options = function(el) {
@@ -214,7 +203,7 @@
 				}
 			};
 
-			SETTER('menu', 'show', options);
+			SETTER('menu/show', options);
 		};
 
 		exports.create = function() {

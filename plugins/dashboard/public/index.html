@@ -45,305 +45,293 @@
 </style>
 
 <div data-scope="dashboard">
-
-	<div data---="layout__null__parent:window;margin:58" class="invisible">
-
-		<script type="text/plain">
-			{
-				main: {}
-			}
-		</script>
-
-		<section data-type="main">
-			<div data---="viewbox__null__parent:.ui-layout-section;scrollbar:1">
-				<br />
-				<div class="container">
-					<div class="row">
-						<div class="col-md-8">
-							<div>@(The total number of visitors:) <b data-bind="?.stats.today.visitors__html:(value || 0).format(0) + ' ' + (value || 0).pluralize(@('visitors', 'visitor', 'visitors', 'visitors'))"></b></div>
-							<div class="help nmt m">@(Memory usage:) <span data-bind="?.stats.today.memory.heapUsed__html:Thelpers.filesize(value, 2)"></span> / <span data-bind="?.stats.today.memory.heapTotal__html:Thelpers.filesize(value, 2)"></span></div>
-						</div>
-						<div class="col-md-4 visible-md visible-lg right" data-bind="?.stats.today.performance__!html .rpm:value.request.format(0)__!html .fpm:value.file.format(0)">
-							<div class="help">
-								<div>@(Requests/min.) <b class="rpm">0</b></div>
-								<div>@(Files/min.) <b class="fpm">0</b></div>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-4 m">
-							<div class="panel">
-								<label class="center"><i class="fa fa-circle green blink"></i>@(Online-visitors)</label>
-								<div class="panelbody">
-									<div class="dashboard-online-position hidden">
-										<div class="dashboard-online" data-bind="?.stats.today.online__html:value ? value : 0">0</div>
-										<div class="dashboard-online-date"><b>@(Last visitor:)</b> <span data-bind="?.stats.today.last__html:value ? Thelpers.time(value) : '...'"></span></div>
-									</div>
-									<div data---="donutchart__?.stats.sources__tooltip:false;redraw:?/redrawSources;select:?/selectSource;animate:false"></div>
-								</div>
-								<hr class="nmt nmb" />
-
-								<div class="panelbody">
-									<div class="stats m">
-										<div class="value" data-bind="?.stats.today.robots__html:?/count(value)"></div>
-										<div class="key">@(Robots / Crawlers)</div>
-									</div>
-									<div class="stats">
-										<div class="value" data-bind="?.stats.today.mobile__html:?/count(value)"></div>
-										<div class="key"><i class="fa fa-square" style="color:#EF914E"></i>@(Mobile devices)</div>
-									</div>
-									<div class="stats" style="border-bottom:0">
-										<div class="value" data-bind="?.stats.today.desktop__html:?/count(value)"></div>
-										<div class="key"><i class="fa fa-square" style="color:#4781B8"></i>@(Desktop)</div>
-									</div>
-									<div data---="statsbarsimple__?.stats.today.devices" style="margin:7px 0">
-										<script type="text/html">
-											{{ name }} {{ percentage }}%
-										</script>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<div class="col-md-8 m">
-							<div class="row mt10">
-								<div class="col-md-6 m">
-									<div class="caption"><i class="fa fa-globe"></i>@(Sources today)</div>
-									<div class="stats" id="dashboard-sources-social">
-										<div class="value" data-bind="?.stats.today.social__html:?/count(value)"></div>
-										<div class="key"><i class="fa fa-square" style="color:#649BD0"></i>@(From social networks)</div>
-									</div>
-									<div class="stats" id="dashboard-sources-advert">
-										<div class="value" data-bind="?.stats.today.advert__html:?/count(value)"></div>
-										<div class="key"><i class="fa fa-square" style="color:#FD8D3C"></i>@(From adverts)</div>
-									</div>
-									<div class="stats" id="dashboard-sources-search">
-										<div class="value" data-bind="?.stats.today.search__html:?/count(value)"></div>
-										<div class="key"><i class="fa fa-square" style="color:#74C476"></i>@(From organic search)</div>
-									</div>
-									<div class="stats" id="dashboard-sources-direct">
-										<div class="value" data-bind="?.stats.today.direct__html:?/count(value)"></div>
-										<div class="key"><i class="fa fa-square" style="color:#9E9AC8"></i>@(Direct visitors)</div>
-									</div>
-									<div class="stats" id="dashboard-sources-unknown">
-										<div class="value" data-bind="?.stats.today.unknown__html:?/count(value)"></div>
-										<div class="key"><i class="fa fa-square" style="color:#969696"></i>@(From unknown source)</div>
-									</div>
-								</div>
-								<div class="col-md-6 m">
-									<div class="caption"><i class="fa fa-users"></i>@(Today statistics)</div>
-									<div class="stats">
-										<div class="value" data-bind="?.stats.today.hits__html:?/count(value)"></div>
-										<div class="key">@(Hits)</div>
-									</div>
-									<div class="stats">
-										<div class="value" data-bind="?.stats.today.count__html:?/count(value)"></div>
-										<div class="key">@(Visitors)</div>
-									</div>
-									<div class="stats">
-										<div class="value" data-bind="?.stats.today.unique__html:?/count(value)"></div>
-										<div class="key">@(Unique visitors)</div>
-									</div>
-									<div class="stats">
-										<div class="value" data-bind="?.stats.today.uniquemonth__html:?/count(value)"></div>
-										<div class="key">@(Unique visitors per month)</div>
-									</div>
-									<div class="stats">
-										<div class="value" data-bind="?.stats.today.pages__html:?/count(value)"></div>
-										<div class="key">@(Visited pages per user)</div>
-									</div>
-								</div>
-							</div>
-							<div data---="dashboardvisitors__?.visitors">
-								<table>
-									<thead>
-										<tr>
-											<th style="width:135px"><i class="fa fa-refresh fa-spin"></i>@(Type)</th>
-											<th><i class="fa fa-globe"></i>@(Address)</th>
-											<th style="width:110px" class="hidden-xs"><i class="fa fa-user"></i>@(User)</th>
-											<th style="width:110px" class="hidden-xs">@(IP address)</th>
-											<th style="width:70px" class="hidden-xs center"><i class="far fa-clock-o"></i>@(Time)</th>
-										</tr>
-									</thead>
-									<tbody>
-
-										<!-- WITH DATA -->
-										<script type="text/html">
-											<tr>
-												<td><div class="singline">{{ if newbie }}<i class="fa fa-plus-circle green"></i>{{ fi }}{{ type }}</div></td>
-												<td><div class="singline">{{ if browser }}<span class="browser">{{ browser }}</span>{{ fi }}<span class="badge badge-silver badge-small mr5">{{ id }}</span>{{ if unique }}<span class="badge badge-green mr5">@(+new)</span>{{ fi }}{{ if mobile }}<i class="fa fa-mobile"></i>{{ fi }}<a href="{{ url }}" target="_blank">{{ url }}</a></div></td>
-												<td class="hidden-xs"><div class="singline">{{ user }}</div></td>
-												<td class="hidden-xs"><a href="https://tools.keycdn.com/geo?host={{ ip }}" target="_blank">{{ ip }}</a></td>
-												<td class="hidden-xs center">{{ date | format('HH:mm:ss') }}</td>
-											</tr>
-										</script>
-
-										<!-- EMPTY -->
-										<script type="text/html">
-										<tr>
-											<td>&nbsp;</td>
-											<td></td>
-											<td class="hidden-xs"></td>
-											<td class="hidden-xs"></td>
-											<td class="hidden-xs"></td>
-										</tr>
-										</script>
-									</tbody>
-								</table>
-							</div>
-						</div>
-					</div>
-					<br />
+	<div data---="viewbox__null__parent:.ui-layout2-section;scrollbar:1">
+		<br />
+		<div class="container">
+			<div class="row">
+				<div class="col-md-8">
+					<div>@(The total number of visitors:) <b data-bind="?.stats.today.visitors__html:(value || 0).format(0) + ' ' + (value || 0).pluralize(@('visitors', 'visitor', 'visitors', 'visitors'))"></b></div>
+					<div class="help nmt m">@(Memory usage:) <span data-bind="?.stats.today.memory.heapUsed__html:Thelpers.filesize(value, 2)"></span> / <span data-bind="?.stats.today.memory.heapTotal__html:Thelpers.filesize(value, 2)"></span></div>
 				</div>
-				<div class="container">
-					<div class="row">
-						<div class="col-md-4">
-							<div class="caption"><i class="fa fa-user-circle"></i>@(Maximum daily online visitors)</div>
-						</div>
-						<div class="col-md-4 col-md-offset-4 right hidden-sm hidden-xs">
-							&empty; <span data-bind="?.stats.today.hoursavg__html:(value || 0).pluralize(@('# visitors', '# visitor', '# visitors', '# visitors'))" class="fs11 gray"></span>
-						</div>
-					</div>
-					<div data---="stats24__?.stats.today.hours" class="m"></div>
-
-					<div data-bind="?.stats.visitors__show" class="hidden m">
-						<div class="row">
-							<div class="col-md-6 m">
-
-								<div style="float:right;margin-top:-3px" data-bind="?.stats.history__template">
-									<script type="text/html">
-									{{ foreach m in value }}
-										<span class="exec fs12 link" style="margin-left:15px" data-exec="?/history" data-year="{{ m }}"><i class="fa fa-calendar mr5"></i>{{ m }}</span>
-									{{ end }}
-									</script>
-								</div>
-
-								<div class="legend m fs12">
-									<i class="fa fa-square legend-1 mr5"></i><span class="mr10">@(Visitors)</span>
-									<i class="fa fa-square legend-2 mr5"></i><span class="mr10">@(Unique)</span>
-								</div>
-								<div data---="barchart__?.stats.visitors__height:250"></div>
-								<div class="mt10" data-bind="?.stats.visitorssum__template">
-									<script type="text/html">
-										<span class="fs11 gray" style="float:right"><b>{{ value.unique | format(0) | def('0') }}</b> {{ value.unique | pluralize(@('uniques', 'unique', 'uniques', 'uniques')) }}</span>
-										<span class="fs11 gray"><b>{{ value.count | format(0) | def('0') }}</b> {{ value.count | pluralize(@('visitors', 'visitor', 'visitors', 'visitors')) }}</span>
-									</script>
-								</div>
-							</div>
-							<div class="col-md-6 m">
-								<div class="legend m fs12">
-									<i class="fa fa-square legend-1 mr5"></i><span class="mr10">@(Desktop)</span>
-									<i class="fa fa-square legend-2 mr5"></i><span class="mr10">@(Mobile devices)</span>
-								</div>
-								<div data---="barchart__?.stats.devices__height:250"></div>
-								<div style="margin-top:8px" data-bind="?.stats.devicessum__template">
-									<script type="text/html">
-										<span class="fs11 gray" style="float:right">@(Total mobile:) <b>{{ value.mobile | format(0) | def('0') }}</b></span>
-										<span class="fs11 gray">@(Total desktop:) <b>{{ value.desktop | format(0) | def('0') }}</b></span>
-									</script>
-								</div>
-							</div>
-						</div>
-
-						<div data---="statsbarsimple__?.stats.sourcesarr">
-							<script type="text/html">
-								{{ name }} {{ percentage }}%
-							</script>
-							<script type="text/html">
-								{{ name }} {{ percentage }}%
-							</script>
-						</div>
-
-					</div>
-
-					<br />
-
-					<div data-bind="?.stats.referrers__template">
-						<script type="text/html">
-							{{ if value && value.length }}
-							<div class="row">
-								<div class="col-md-4">
-									<div class="caption"><i class="fa fa-exchange"></i>@(Top referrers)</div>
-								</div>
-							</div>
-							<div class="row">
-								{{ foreach m in value }}
-								<div class="col-md-3 col-xs-6">
-									<div class="dashboard-referrer">
-										<div>{{ m.count }}</div>
-										<div>{{ m.id }}</div>
-									</div>
-								</div>
-								{{ end }}
-							</div>
-							<br />
-							<br />
-							{{ fi }}
-						</script>
-					</div>
-
-					<div data-bind="?.stats.browsers__template">
-						<script type="text/html">
-							{{ if value && value.length }}
-							<div class="row">
-								<div class="col-md-4">
-									<div class="caption"><i class="fa fa-desktop"></i>@(Top devices)</div>
-								</div>
-							</div>
-							<div class="row">
-								{{ foreach m in value }}
-								<div class="col-md-3 col-xs-6">
-									<div class="dashboard-referrer">
-										<div>{{ m.count }}</div>
-										<div>{{ m.id }}</div>
-									</div>
-								</div>
-								{{ end }}
-							</div>
-							<br />
-							<br />
-							{{ fi }}
-						</script>
-					</div>
-
-					<div data-bind="?.stats.tracking__template__show:value && value.length">
-						<script type="text/html">
-							{{ if value && value.length }}
-							<div class="row">
-								<div class="col-md-4">
-									<div class="caption"><i class="fa fa-exchange"></i>@(Top links tracking)</div>
-								</div>
-							</div>
-							<div class="row">
-								{{ foreach m in value }}
-								<div class="col-md-3 col-xs-6">
-									<div class="dashboard-referrer">
-										<div>{{ m.count }}</div>
-										<div>{{ m.id }}</div>
-									</div>
-								</div>
-								{{ end }}
-							</div>
-							<br />
-							<br />
-							{{ fi }}
-						</script>
-					</div>
-				</div>
-				<div class="tabmenu-container">
-					<div class="container">
-						<ul data---="tabmenu__?.tab__null__'pages'" class="tabmenu">
-							<li data-value="pages"><i class="far fa-file-text-o"></i>@(Pages)</li>
-							<li data-value="posts"><i class="fa fa-newspaper-o"></i>@(Posts)</li>
-							<li data-value="contactforms"><i class="far fa-envelope"></i>@(Contact forms)</li>
-							<li data-value="subscribers"><i class="far fa-address-card"></i>@(Subscribers)</li>
-							<li data-value="newsletters"><i class="far fa-envelope"></i>@(Newsletters)</li>
-						</ul>
-						<div data---="nosqlcounter__?.stats.nosqlcounter__height:250"></div>
+				<div class="col-md-4 visible-md visible-lg right" data-bind="?.stats.today.performance__!html .rpm:value.request.format(0)__!html .fpm:value.file.format(0)">
+					<div class="help">
+						<div>@(Requests/min.) <b class="rpm">0</b></div>
+						<div>@(Files/min.) <b class="fpm">0</b></div>
 					</div>
 				</div>
 			</div>
-		</section>
+			<div class="row">
+				<div class="col-md-4 m">
+					<div class="panel">
+						<label class="center"><i class="fa fa-circle green blink"></i>@(Online-visitors)</label>
+						<div class="panelbody">
+							<div class="dashboard-online-position hidden">
+								<div class="dashboard-online" data-bind="?.stats.today.online__html:value ? value : 0">0</div>
+								<div class="dashboard-online-date"><b>@(Last visitor:)</b> <span data-bind="?.stats.today.last__html:value ? Thelpers.time(value) : '...'"></span></div>
+							</div>
+							<div data---="donutchart__?.stats.sources__tooltip:false;redraw:?/redrawSources;select:?/selectSource;animate:false"></div>
+						</div>
+						<hr class="nmt nmb" />
+
+						<div class="panelbody">
+							<div class="stats m">
+								<div class="value" data-bind="?.stats.today.robots__html:?/count(value)"></div>
+								<div class="key">@(Robots / Crawlers)</div>
+							</div>
+							<div class="stats">
+								<div class="value" data-bind="?.stats.today.mobile__html:?/count(value)"></div>
+								<div class="key"><i class="fa fa-square" style="color:#EF914E"></i>@(Mobile devices)</div>
+							</div>
+							<div class="stats" style="border-bottom:0">
+								<div class="value" data-bind="?.stats.today.desktop__html:?/count(value)"></div>
+								<div class="key"><i class="fa fa-square" style="color:#4781B8"></i>@(Desktop)</div>
+							</div>
+							<div data---="statsbarsimple__?.stats.today.devices" style="margin:7px 0">
+								<script type="text/html">
+									{{ name }} {{ percentage }}%
+								</script>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="col-md-8 m">
+					<div class="row mt10">
+						<div class="col-md-6 m">
+							<div class="caption"><i class="fa fa-globe"></i>@(Sources today)</div>
+							<div class="stats" id="dashboard-sources-social">
+								<div class="value" data-bind="?.stats.today.social__html:?/count(value)"></div>
+								<div class="key"><i class="fa fa-square" style="color:#649BD0"></i>@(From social networks)</div>
+							</div>
+							<div class="stats" id="dashboard-sources-advert">
+								<div class="value" data-bind="?.stats.today.advert__html:?/count(value)"></div>
+								<div class="key"><i class="fa fa-square" style="color:#FD8D3C"></i>@(From adverts)</div>
+							</div>
+							<div class="stats" id="dashboard-sources-search">
+								<div class="value" data-bind="?.stats.today.search__html:?/count(value)"></div>
+								<div class="key"><i class="fa fa-square" style="color:#74C476"></i>@(From organic search)</div>
+							</div>
+							<div class="stats" id="dashboard-sources-direct">
+								<div class="value" data-bind="?.stats.today.direct__html:?/count(value)"></div>
+								<div class="key"><i class="fa fa-square" style="color:#9E9AC8"></i>@(Direct visitors)</div>
+							</div>
+							<div class="stats" id="dashboard-sources-unknown">
+								<div class="value" data-bind="?.stats.today.unknown__html:?/count(value)"></div>
+								<div class="key"><i class="fa fa-square" style="color:#969696"></i>@(From unknown source)</div>
+							</div>
+						</div>
+						<div class="col-md-6 m">
+							<div class="caption"><i class="fa fa-users"></i>@(Today statistics)</div>
+							<div class="stats">
+								<div class="value" data-bind="?.stats.today.hits__html:?/count(value)"></div>
+								<div class="key">@(Hits)</div>
+							</div>
+							<div class="stats">
+								<div class="value" data-bind="?.stats.today.count__html:?/count(value)"></div>
+								<div class="key">@(Visitors)</div>
+							</div>
+							<div class="stats">
+								<div class="value" data-bind="?.stats.today.unique__html:?/count(value)"></div>
+								<div class="key">@(Unique visitors)</div>
+							</div>
+							<div class="stats">
+								<div class="value" data-bind="?.stats.today.uniquemonth__html:?/count(value)"></div>
+								<div class="key">@(Unique visitors per month)</div>
+							</div>
+							<div class="stats">
+								<div class="value" data-bind="?.stats.today.pages__html:?/count(value)"></div>
+								<div class="key">@(Visited pages per user)</div>
+							</div>
+						</div>
+					</div>
+					<div data---="dashboardvisitors__?.visitors">
+						<table>
+							<thead>
+								<tr>
+									<th style="width:135px"><i class="fa fa-refresh fa-spin"></i>@(Type)</th>
+									<th><i class="fa fa-globe"></i>@(Address)</th>
+									<th style="width:110px" class="hidden-xs"><i class="fa fa-user"></i>@(User)</th>
+									<th style="width:110px" class="hidden-xs">@(IP address)</th>
+									<th style="width:70px" class="hidden-xs center"><i class="far fa-clock-o"></i>@(Time)</th>
+								</tr>
+							</thead>
+							<tbody>
+
+								<!-- WITH DATA -->
+								<script type="text/html">
+									<tr>
+										<td><div class="singline">{{ if newbie }}<i class="fa fa-plus-circle green"></i>{{ fi }}{{ type }}</div></td>
+										<td><div class="singline">{{ if browser }}<span class="browser">{{ browser }}</span>{{ fi }}<span class="badge badge-silver badge-small mr5">{{ id }}</span>{{ if unique }}<span class="badge badge-green mr5">@(+new)</span>{{ fi }}{{ if mobile }}<i class="fa fa-mobile"></i>{{ fi }}<a href="{{ url }}" target="_blank">{{ url }}</a></div></td>
+										<td class="hidden-xs"><div class="singline">{{ user }}</div></td>
+										<td class="hidden-xs"><a href="https://tools.keycdn.com/geo?host={{ ip }}" target="_blank">{{ ip }}</a></td>
+										<td class="hidden-xs center">{{ date | format('HH:mm:ss') }}</td>
+									</tr>
+								</script>
+
+								<!-- EMPTY -->
+								<script type="text/html">
+								<tr>
+									<td>&nbsp;</td>
+									<td></td>
+									<td class="hidden-xs"></td>
+									<td class="hidden-xs"></td>
+									<td class="hidden-xs"></td>
+								</tr>
+								</script>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<br />
+		</div>
+		<div class="container">
+			<div class="row">
+				<div class="col-md-4">
+					<div class="caption"><i class="fa fa-user-circle"></i>@(Maximum daily online visitors)</div>
+				</div>
+				<div class="col-md-4 col-md-offset-4 right hidden-sm hidden-xs">
+					&empty; <span data-bind="?.stats.today.hoursavg__html:(value || 0).pluralize(@('# visitors', '# visitor', '# visitors', '# visitors'))" class="fs11 gray"></span>
+				</div>
+			</div>
+			<div data---="stats24__?.stats.today.hours" class="m"></div>
+
+			<div data-bind="?.stats.visitors__show" class="hidden m">
+				<div class="row">
+					<div class="col-md-6 m">
+
+						<div style="float:right;margin-top:-3px" data-bind="?.stats.history__template">
+							<script type="text/html">
+							{{ foreach m in value }}
+								<span class="exec fs12 link" style="margin-left:15px" data-exec="?/history" data-year="{{ m }}"><i class="fa fa-calendar mr5"></i>{{ m }}</span>
+							{{ end }}
+							</script>
+						</div>
+
+						<div class="legend m fs12">
+							<i class="fa fa-square legend-1 mr5"></i><span class="mr10">@(Visitors)</span>
+							<i class="fa fa-square legend-2 mr5"></i><span class="mr10">@(Unique)</span>
+						</div>
+						<div data---="barchart__?.stats.visitors__height:250"></div>
+						<div class="mt10" data-bind="?.stats.visitorssum__template">
+							<script type="text/html">
+								<span class="fs11 gray" style="float:right"><b>{{ value.unique | format(0) | def('0') }}</b> {{ value.unique | pluralize(@('uniques', 'unique', 'uniques', 'uniques')) }}</span>
+								<span class="fs11 gray"><b>{{ value.count | format(0) | def('0') }}</b> {{ value.count | pluralize(@('visitors', 'visitor', 'visitors', 'visitors')) }}</span>
+							</script>
+						</div>
+					</div>
+					<div class="col-md-6 m">
+						<div class="legend m fs12">
+							<i class="fa fa-square legend-1 mr5"></i><span class="mr10">@(Desktop)</span>
+							<i class="fa fa-square legend-2 mr5"></i><span class="mr10">@(Mobile devices)</span>
+						</div>
+						<div data---="barchart__?.stats.devices__height:250"></div>
+						<div style="margin-top:8px" data-bind="?.stats.devicessum__template">
+							<script type="text/html">
+								<span class="fs11 gray" style="float:right">@(Total mobile:) <b>{{ value.mobile | format(0) | def('0') }}</b></span>
+								<span class="fs11 gray">@(Total desktop:) <b>{{ value.desktop | format(0) | def('0') }}</b></span>
+							</script>
+						</div>
+					</div>
+				</div>
+
+				<div data---="statsbarsimple__?.stats.sourcesarr">
+					<script type="text/html">
+						{{ name }} {{ percentage }}%
+					</script>
+					<script type="text/html">
+						{{ name }} {{ percentage }}%
+					</script>
+				</div>
+
+			</div>
+
+			<br />
+
+			<div data-bind="?.stats.referrers__template">
+				<script type="text/html">
+					{{ if value && value.length }}
+					<div class="row">
+						<div class="col-md-4">
+							<div class="caption"><i class="fa fa-exchange"></i>@(Top referrers)</div>
+						</div>
+					</div>
+					<div class="row">
+						{{ foreach m in value }}
+						<div class="col-md-3 col-xs-6">
+							<div class="dashboard-referrer">
+								<div>{{ m.count }}</div>
+								<div>{{ m.id }}</div>
+							</div>
+						</div>
+						{{ end }}
+					</div>
+					<br />
+					<br />
+					{{ fi }}
+				</script>
+			</div>
+
+			<div data-bind="?.stats.browsers__template">
+				<script type="text/html">
+					{{ if value && value.length }}
+					<div class="row">
+						<div class="col-md-4">
+							<div class="caption"><i class="fa fa-desktop"></i>@(Top devices)</div>
+						</div>
+					</div>
+					<div class="row">
+						{{ foreach m in value }}
+						<div class="col-md-3 col-xs-6">
+							<div class="dashboard-referrer">
+								<div>{{ m.count }}</div>
+								<div>{{ m.id }}</div>
+							</div>
+						</div>
+						{{ end }}
+					</div>
+					<br />
+					<br />
+					{{ fi }}
+				</script>
+			</div>
+
+			<div data-bind="?.stats.tracking__template__show:value && value.length">
+				<script type="text/html">
+					{{ if value && value.length }}
+					<div class="row">
+						<div class="col-md-4">
+							<div class="caption"><i class="fa fa-exchange"></i>@(Top links tracking)</div>
+						</div>
+					</div>
+					<div class="row">
+						{{ foreach m in value }}
+						<div class="col-md-3 col-xs-6">
+							<div class="dashboard-referrer">
+								<div>{{ m.count }}</div>
+								<div>{{ m.id }}</div>
+							</div>
+						</div>
+						{{ end }}
+					</div>
+					<br />
+					<br />
+					{{ fi }}
+				</script>
+			</div>
+		</div>
+		<div class="tabmenu-container">
+			<div class="container">
+				<ul data---="tabmenu__?.tab__null__'pages'" class="tabmenu">
+					<li data-value="pages"><i class="far fa-file-text-o"></i>@(Pages)</li>
+					<li data-value="posts"><i class="fa fa-newspaper-o"></i>@(Posts)</li>
+					<li data-value="contactforms"><i class="far fa-envelope"></i>@(Contact forms)</li>
+					<li data-value="subscribers"><i class="far fa-address-card"></i>@(Subscribers)</li>
+					<li data-value="newsletters"><i class="far fa-envelope"></i>@(Newsletters)</li>
+				</ul>
+				<div data---="nosqlcounter__?.stats.nosqlcounter__height:250"></div>
+			</div>
+		</div>
 	</div>
 </div>
 
@@ -538,7 +526,7 @@
 		};
 
 		ON('visitor', function(data) {
-			SETTER('dashboardvisitors', 'add', data);
+			SETTER('dashboardvisitors/add', data);
 		});
 	});
 
