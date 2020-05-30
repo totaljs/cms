@@ -75,5 +75,6 @@ FUNC.refresh_plugins = function(callback) {
 };
 
 ON('ready', function() {
+	CONF.version = MAIN.version;
 	FUNC.refresh_plugins();
 });
