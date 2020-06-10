@@ -307,7 +307,7 @@
 			};
 
 			if (model.lockedtemplate && !user.sa)
-				SETTER('approve/show', '@(Are you sure you want to use always this template?)', '@(Sure)', sumit);
+				SETTER('approve/show', '@(Are you sure you want to use always this template?)', '@(Sure)', submit);
 			else
 				submit();
 		};
@@ -341,7 +341,8 @@
 		WATCH('?.template', function(path, value, type) {
 			if (type === 2) {
 				cmseditor.instance.reconfigure('template:' + (value || ''));
-				cmseditor.instance.set('');
+				// SETTER('approve/show', '@(Do you want to remove previous content?)', '"trash-o" @(Remove) #98BF61', function() {
+				// cmseditor.instance.set('');
 			}
 		}, true);
 	});
