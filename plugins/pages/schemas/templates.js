@@ -106,8 +106,8 @@ function refresh(callback) {
 								delete F.temporary.views['view#/cms-default/' + item.file + '.html'];
 								delete F.temporary.views['view#' + item.file + '.html'];
 
-								F.touch('/' + item.file + '.js');
-								F.touch('/' + item.file + '.css');
+								TOUCH('/' + item.file + '.js');
+								TOUCH('/' + item.file + '.css');
 								next();
 							});
 						});

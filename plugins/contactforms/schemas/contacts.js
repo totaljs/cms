@@ -27,14 +27,13 @@ NEWSCHEMA('ContactForms', function(schema) {
 	});
 
 	schema.setGet(function($) {
-		NOSQL('contactforms').one().where('id', $.id).callback($.callback, 'error-contacforms-404');
+		NOSQL('contactforms').read().where('id', $.id).callback($.callback, 'error-contacforms-404');
 	});
 
 	schema.setRemove(function($) {
-		var user = $.user.name;
 		var id = (($.body.id || '') + '').split(',');
 		if (id.length)
-			NOSQL('contactforms').remove().backup(user).log('Remove: ' + $.id, user).in('id', id).callback($.done());
+			NOSQL('contactforms').remove().backup($.user.meta()).in('id', id).callback($.done());
 		else
 			$.success();
 	});
@@ -52,7 +51,7 @@ NEWSCHEMA('ContactForms', function(schema) {
 
 		var nosql = NOSQL('contactforms');
 		nosql.insert(model.$clean());
-		nosql.counter.hit('all');
+		COUNTER('contactforms').hit('all');
 		$.success();
 
 		EMIT('contacts.save', model);
@@ -74,6 +73,6 @@ NEWSCHEMA('ContactForms', function(schema) {
 
 	// Stats
 	schema.addWorkflow('stats', function($) {
-		NOSQL('contactforms').counter.monthly('all', $.callback);
+		COUNTER('contactforms').monthly('all', $.callback);
 	});
 });

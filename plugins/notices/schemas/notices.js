@@ -15,9 +15,8 @@ NEWSCHEMA('Notices', function(schema) {
 	schema.setQuery(function($) {
 
 		var opt = $.options === EMPTYOBJECT ? $.query : $.options;
-		var isAdmin = $.controller ? $.controller.name === 'admin' : false;
+		var isAdmin = $.controller ? $.controller.url.substring(0, 7) === '/admin/' : false;
 		var filter = NOSQL('notices').list();
-
 		filter.paginate(opt.page, opt.limit, 70);
 
 		if (isAdmin) {
@@ -56,8 +55,7 @@ NEWSCHEMA('Notices', function(schema) {
 	// Removes a specific post
 	schema.setRemove(function($) {
 		var id = $.body.id;
-		var user = $.user.name;
-		NOSQL('notices').remove().backup(user).log('Remove: ' + id, user).where('id', id).callback(function() {
+		NOSQL('notices').remove().backup($.user.meta()).where('id', id).callback(function() {
 			F.cache.removeAll('cachecms');
 			$.success();
 		});
@@ -72,10 +70,10 @@ NEWSCHEMA('Notices', function(schema) {
 
 		var model = $.model.$clean();
 		var user = $.user.name;
-		var isUpdate = !!model.id;
+		var update = !!model.id;
 		var nosql = NOSQL('notices');
 
-		if (isUpdate) {
+		if (update) {
 			model.dtupdated = NOW;
 			model.adminupdated = user;
 		} else {
@@ -88,7 +86,7 @@ NEWSCHEMA('Notices', function(schema) {
 		model.search = ((model.name || '') + ' ' + (model.body || '')).keywords(true, true).join(' ').max(1000);
 		model.linker_category = model.category.slug();
 
-		var db = isUpdate ? nosql.modify(model).where('id', model.id).backup(user).log('Update: ' + model.id, user) : nosql.insert(model).log('Create: ' + model.id, user);
+		var db = update ? nosql.modify(model).where('id', model.id).backup($.user.meta()) : nosql.insert(model);
 
 		db.callback(function() {
 			$SAVE('Events', { type: 'notices/save', id: model.id, user: user, body: model.name, admin: true }, NOOP, $);
@@ -105,8 +103,7 @@ NEWSCHEMA('Notices', function(schema) {
 
 	// Clears database
 	schema.addWorkflow('clear', function($) {
-		var user = $.user.name;
-		NOSQL('notices').remove().backup(user).log('Clear all notices', user).callback(() => refresh($.done()));
+		NOSQL('notices').remove().backup($.user.meta()).callback(() => refresh($.done()));
 	});
 });
 

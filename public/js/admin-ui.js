@@ -23,7 +23,9 @@ COMPONENT('exec', function(self, config) {
 
 				scope = null;
 
-				if (el.attrd('prevent' + plus) === 'true') {
+				var prevent = el.attrd('prevent' + plus);
+
+				if (prevent === 'true' || prevent === '1') {
 					e.preventDefault();
 					e.stopPropagation();
 				}
@@ -1078,9 +1080,8 @@ COMPONENT('codemirror', 'linenumbers:true;required:false;trim:false;tabs:true', 
 	next();
 }]);
 
-COMPONENT('nosqlcounter', 'count:0;height:80', function(self, config) {
+COMPONENT('nosqlcounter', 'count:0;height:80', function(self, config, cls) {
 
-	var cls = 'ui-' + self.name;
 	var cls2 = '.' + cls;
 	var months = MONTHS;
 	var container, labels;
@@ -1118,6 +1119,14 @@ COMPONENT('nosqlcounter', 'count:0;height:80', function(self, config) {
 		var current = dt.format('yyyyMM');
 		var stats = null;
 
+		for (var i = 0; i < value.length; i++) {
+			var item = value[i];
+			if (item.value == null) {
+				item.id = item.date;
+				item.value = value[i].sum;
+			}
+		}
+
 		if (config.lastvalues) {
 			var max = value.length - maxbars;
 			if (max < 0)
@@ -1149,7 +1158,7 @@ COMPONENT('nosqlcounter', 'count:0;height:80', function(self, config) {
 		var min = ((20 / config.height) * 100) >> 0;
 		var sum = '';
 
-		for (var i = 0, length = stats.length; i < length; i++) {
+		for (var i = 0; i < stats.length; i++) {
 			var item = stats[i];
 			var val = item.value;
 
@@ -3169,7 +3178,7 @@ COMPONENT('websocket', 'reconnect:3000', function(self, config) {
 	};
 
 	self.send = function(obj) {
-		queue.push(encodeURIComponent(JSON.stringify(obj)));
+		queue.push(JSON.stringify(obj));
 		self.process();
 		return self;
 	};
@@ -3212,7 +3221,7 @@ COMPONENT('websocket', 'reconnect:3000', function(self, config) {
 	function onMessage(e) {
 		var data;
 		try {
-			data = PARSE(decodeURIComponent(e.data));
+			data = PARSE(e.data);
 			self.attrd('jc-path') && self.set(data);
 		} catch (e) {
 			WARN('WebSocket "{0}": {1}'.format(url, e.toString()));
@@ -6357,6 +6366,7 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 
 		if (value && value.schema && schemas.$current !== value.schema) {
 			schemas.$current = value.schema;
+			self.selected = null;
 			self.rebind(value.schema);
 			setTimeout(function() {
 				self.setter(value, path, type);
@@ -6877,7 +6887,10 @@ COMPONENT('message', 'button:OK', function(self, config, cls) {
 			SETTER('!loading/hide');
 		} else {
 			message && self.success(message);
-			fn && fn(response);
+			if (fn)
+				fn(response);
+			else
+				SETTER('!loading/hide');
 		}
 	};
 
@@ -6896,9 +6909,13 @@ COMPONENT('message', 'button:OK', function(self, config, cls) {
 					msg = template.format(err.toString());
 
 				self.warning(msg);
+				SETTER('!loading/hide');
 			} else {
 				self.success(success);
-				callback && callback(response);
+				if (callback)
+					callback(response);
+				else
+					SETTER('!loading/hide');
 			}
 		};
 	};
@@ -7388,7 +7405,7 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 		Thelpers.ui_input_icon = function(val) {
 			return val.charAt(0) === '!' ? ('<span class="ui-input-icon-custom">' + val.substring(1) + '</span>') : ('<i class="fa fa-' + val + '"></i>');
 		};
-		W.ui_input_template = Tangular.compile(('{{ if label }}<div class="{0}-label">{{ if icon }}<i class="fa fa-{{ icon }}"></i>{{ fi }}{{ label | raw }}{{ after | raw }}</div>{{ fi }}<div class="{0}-control{{ if licon }} {0}-licon{{ fi }}{{ if ricon || (type === \'number\' && increment) }} {0}-ricon{{ fi }}">{{ if ricon || (type === \'number\' && increment) }}<div class="{0}-icon-right{{ if type === \'number\' && increment }} {0}-increment{{ else if riconclick || type === \'date\' || type === \'time\' || (type === \'search\' && searchalign === 1) || type === \'password\' }} {0}-click{{ fi }}">{{ if type === \'number\' }}<i class="fa fa-caret-up"></i><i class="fa fa-caret-down"></i>{{ else }}{{ ricon | ui_input_icon }}{{ fi }}</div>{{ fi }}{{ if licon }}<div class="{0}-icon-left{{ if liconclick || (type === \'search\' && searchalign !== 1) }} {0}-click{{ fi }}">{{ licon | ui_input_icon }}</div>{{ fi }}<div class="{0}-input{{ if align === 1 || align === \'center\' }} center{{ else if align === 2 || align === \'right\' }} right{{ fi }}">{{ if placeholder && !innerlabel }}<div class="{0}-placeholder">{{ placeholder }}</div>{{ fi }}<input type="{{ if !dirsource && type === \'password\' }}password{{ else }}text{{ fi }}"{{ if autofill }} autocomplete="on" name="{{ PATH }}"{{ else }} name="input' + Date.now() + '" autocomplete="new-password"{{ fi }}{{ if dirsource }} readonly{{ else }} data-jc-bind=""{{ fi }}{{ if maxlength > 0}} maxlength="{{ maxlength }}"{{ fi }}{{ if autofocus }} autofocus{{ fi }} /></div></div>{{ if error }}<div class="{0}-error hidden"><i class="fa fa-warning"></i> {{ error }}</div>{{ fi }}').format(cls));
+		W.ui_input_template = Tangular.compile(('{{ if label }}<div class="{0}-label">{{ if icon }}<i class="fa fa-{{ icon }}"></i>{{ fi }}{{ label | raw }}{{ after | raw }}</div>{{ fi }}<div class="{0}-control{{ if licon }} {0}-licon{{ fi }}{{ if ricon || (type === \'number\' && increment) }} {0}-ricon{{ fi }}">{{ if ricon || (type === \'number\' && increment) }}<div class="{0}-icon-right{{ if type === \'number\' && increment && !ricon }} {0}-increment{{ else if riconclick || type === \'date\' || type === \'time\' || (type === \'search\' && searchalign === 1) || type === \'password\' }} {0}-click{{ fi }}">{{ if type === \'number\' && !ricon }}<i class="fa fa-caret-up"></i><i class="fa fa-caret-down"></i>{{ else }}{{ ricon | ui_input_icon }}{{ fi }}</div>{{ fi }}{{ if licon }}<div class="{0}-icon-left{{ if liconclick || (type === \'search\' && searchalign !== 1) }} {0}-click{{ fi }}">{{ licon | ui_input_icon }}</div>{{ fi }}<div class="{0}-input{{ if align === 1 || align === \'center\' }} center{{ else if align === 2 || align === \'right\' }} right{{ fi }}">{{ if placeholder && !innerlabel }}<div class="{0}-placeholder">{{ placeholder }}</div>{{ fi }}<input type="{{ if !dirsource && type === \'password\' }}password{{ else }}text{{ fi }}"{{ if autofill }} autocomplete="on" name="{{ PATH }}"{{ else }} name="input' + Date.now() + '" autocomplete="new-password"{{ fi }}{{ if dirsource }} readonly{{ else }} data-jc-bind=""{{ fi }}{{ if maxlength > 0}} maxlength="{{ maxlength }}"{{ fi }}{{ if autofocus }} autofocus{{ fi }} /></div></div>{{ if error }}<div class="{0}-error hidden"><i class="fa fa-warning"></i> {{ error }}</div>{{ fi }}').format(cls));
 	};
 
 	self.make = function() {
@@ -7587,7 +7604,7 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 
 			var opt = {};
 			opt.element = self.find(cls2 + '-control');
-			opt.items = dirsource;
+			opt.items = dirsource || GET(self.makepath(config.dirsource));
 			opt.offsetY = -1 + (config.diroffsety || 0);
 			opt.offsetX = 0 + (config.diroffsetx || 0);
 			opt.placeholder = config.dirplaceholder;
@@ -7605,13 +7622,13 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 			var val = self.get();
 			opt.selected = val;
 
-			if (config.direxclude === false) {
+			if (dirsource && config.direxclude == false) {
 				for (var i = 0; i < dirsource.length; i++) {
 					var item = dirsource[i];
 					if (item)
 						item.selected = typeof(item) === 'object' && item[config.dirvalue] === val;
 				}
-			} else {
+			} else if (config.direxclude) {
 				opt.exclude = function(item) {
 					return item ? item[config.dirvalue] === val : false;
 				};
@@ -7640,12 +7657,18 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 					if (val) {
 						self.set(val, 2);
 						self.change();
-						self.bindvalue();
+						if (dirsource)
+							self.bindvalue();
+						else
+							input.val(val);
 					}
 				} else {
 					self.set(val, 2);
 					self.change();
-					self.bindvalue();
+					if (dirsource)
+						self.bindvalue();
+					else
+						input.val(val);
 				}
 			};
 
@@ -7701,9 +7724,12 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 				else if (config.type === 'password')
 					self.password();
 				else if (config.type === 'number') {
-					var n = $(e.target).hclass('fa-caret-up') ? 1 : -1;
-					self.change(true);
-					self.inc(config.increment * n);
+					var tmp = $(e.target);
+					if (tmp.attr('class').indexOf('fa-') !== -1) {
+						var n = tmp.hclass('fa-caret-up') ? 1 : -1;
+						self.change(true);
+						self.inc(config.increment * n);
+					}
 				}
 				return;
 			}
@@ -7722,7 +7748,7 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 		if (config.camouflage) {
 			if (is) {
 				var t = input[0];
-				var arr = (t.value || '').split('');
+				var arr = t.value.split('');
 				for (var i = 0; i < arr.length; i++)
 					arr[i] = typeof(config.camouflage) === 'string' ? config.camouflage : '*';
 				nobindcamouflage = true;
@@ -7780,6 +7806,8 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 				return value.isPhone();
 			case 'url':
 				return value.isURL();
+			case 'zip':
+				return (/^\d{5}(?:[-\s]\d{4})?$/).test(value);
 			case 'currency':
 			case 'number':
 				value = value.parseFloat();
@@ -7818,6 +7846,7 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 			}
 			value = val.join('');
 		}
+
 		self.getterin(value, realtime, nobind);
 	};
 
@@ -7832,10 +7861,7 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 					var val = [];
 					for (var i = 0; i < config.mask.length; i++) {
 						var c = config.mask.charAt(i);
-						if (c === '_')
-							val.push(value.charAt(index++) || '_');
-						else
-							val.push(c);
+						val.push(c === '_' ? (value.charAt(index++) || '_') : c);
 					}
 					value = val.join('');
 				}
@@ -7881,6 +7907,7 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 	};
 
 	self.bindvalue = function() {
+
 		if (dirsource) {
 
 			var value = self.get();
@@ -7903,7 +7930,10 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 				item = value;
 
 			input.val(item || '');
-		}
+
+		} else if (config.dirsource)
+			input.val(self.get() || '');
+
 		self.check();
 	};
 
@@ -7942,19 +7972,25 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 	self.configure = function(key, value) {
 		switch (key) {
 			case 'dirsource':
-				self.datasource(value, function(path, value) {
-					dirsource = value;
+				if (config.dirajax || value.indexOf('/') !== -1) {
+					dirsource = null;
 					self.bindvalue();
-				});
+				} else {
+					self.datasource(value, function(path, value) {
+						dirsource = value;
+						self.bindvalue();
+					});
+				}
 				self.tclass(cls + '-dropdown', !!value);
+				input.prop('readonly', !!config.disabled || !!config.dirsource);
 				break;
 			case 'disabled':
-				self.tclass('ui-disabled', value == true);
-				input.prop('readonly', value === true);
+				self.tclass('ui-disabled', !!value);
+				input.prop('readonly', !!value || !!config.dirsource);
 				self.reset();
 				break;
 			case 'required':
-				self.tclass(cls + '-required', value == true);
+				self.tclass(cls + '-required', !!value);
 				self.reset();
 				break;
 			case 'type':

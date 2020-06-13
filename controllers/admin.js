@@ -78,6 +78,7 @@ function admin() {
 		}
 	}
 
+	model.quicksort('name');
 	self.view('admin', model);
 }
 
@@ -244,20 +245,17 @@ function login() {
 // Upload (multiple) pictures
 function upload() {
 
-	var id = [];
+	var files = [];
 	var self = this;
 
 	self.files.wait(function(file, next) {
-		file.read(function(err, data) {
-			// Store current file into the HDD
-			FILESTORAGE('files').insert(file.filename, data, function(err, ref) {
-				id.push({ id: ref, name: file.filename, size: file.length, width: file.width, height: file.height, type: file.type, ctime: NOW, mtime: NOW, extension: file.extension, download: '/download/' + ref + '.' + file.extension });
-				setImmediate(next);
-			});
-
+		var id = UID();
+		FILESTORAGE('files').save(id, file.filename, file.path, function(err) {
+			if (!err)
+				files.push({ id: id, name: file.filename, size: file.length, width: file.width, height: file.height, type: file.type, ctime: NOW, mtime: NOW, extension: file.extension, download: '/download/' + id + '.' + file.extension });
+			setImmediate(next);
 		});
-
-	}, () => self.json(id));
+	}, () => self.json(files));
 }
 
 // Upload base64
@@ -288,5 +286,6 @@ function upload_base64() {
 	}
 
 	var data = self.body.file.base64ToBuffer();
-	FILESTORAGE('files').insert((self.body.name || 'base64').replace(/\.[0-9a-z]+$/i, '').max(40) + ext, data, (err, id) => self.json('/download/' + id + ext));
+	var id = UID();
+	FILESTORAGE('files').save(id, (self.body.name || 'base64').replace(/\.[0-9a-z]+$/i, '').max(40) + ext, data, () => self.json('/download/' + id + ext));
 }

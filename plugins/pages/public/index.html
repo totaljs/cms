@@ -7,7 +7,7 @@
 				<nav data-bind="?.checked__enabled .S:value && value.length">
 					<button class="exec" data-exec="?/create"><i class="fa fa-plus-circle"></i>@(Create)</button>
 					<button class="exec" data-exec="?/options"><i class="fa fa-wrench"></i>@(Options)</button>
-					<button class="exec S" data-exec="?/checked" disabled><i class="fa fa-check-circle"></i>@(Checked)</button>
+					<button class="exec" data-exec="?/remove" data-bind="?__enabled:value&&(value.selected||(value.checked&&value.checked.length))__track:checked,selected" disabled><i class="far fa-trash-o red"></i>@(Remove)</button>
 				</nav>
 			</div>
 		</section>
@@ -51,7 +51,7 @@
 		</section>
 
 		<section data-type="main">
-			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?.checked;button:?/button;noborder:1;height:window;margin:45;dblclick:?/update">
+			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?.checked;button:?/button;noborder:1;height:window;margin:45;dblclick:?/update;highlight:1;click:?.selected">
 				<script type="text/plain">
 				[
 					{ name: 'path', text: '@(Name)', width: 300, template: '{{ language | language }}{{ if icon }}<i class="{{ icon }} mr5"></i>{{ fi }}{{ path | pagespath }}{{ if draft }}<span class="badge badge-red ml5">@(draft)</span>{{ fi }}{{ if ispartial }}<span class="badge badge-green ml5">@(partial)</span>{{ fi }}', classth: 'left', classfilter: 'left' },
@@ -179,32 +179,28 @@
 			}
 		};
 
-		exports.checked = function(el) {
-			var options = {};
-			options.align = 'right';
-			options.element = el;
-			options.items = [];
-			options.items.push({ id: 'remove', name: '@(Remove pages)', icon: 'trash red' });
-			options.callback = function(item) {
-				switch (item.id) {
-					case 'remove':
-						SETTER('approve/show', '@(Are you sure you want to remove all selected pages?)', '"trash" @(Remove)', function() {
-							FUNC.loading(true);
-							var arr = FIND('.pages.grid').checked();
-							arr.wait(function(el, next, index) {
-								SET('common.progress', (index / arr.length) * 100);
-								AJAX('DELETE [url]api/pages/', { id: el.id }, next);
-							}, function() {
-								exports.refresh();
-								FUNC.loading(false, 1000);
-								SETTER('snackbar/success', '@(Pages have been removed successfully.)');
-							});
-						});
-						break;
-				}
-			};
+		exports.remove = function(el) {
+			var model = GET('?');
+			SETTER('approve/show', '@(Are you sure you want to remove all selected pages?)', '"trash" @(Remove)', function() {
 
-			SETTER('menu', 'show', options);
+				FUNC.loading(true);
+
+				var checked = model.checked;
+				if (!checked || !checked.length) {
+					checked = model.selected;
+					if (checked)
+						checked = [checked];
+				}
+
+				checked.wait(function(el, next, index) {
+					SET('common.progress', (index / checked.length) * 100);
+					AJAX('DELETE [url]api/pages/', { id: el.id }, next);
+				}, function() {
+					exports.refresh();
+					FUNC.loading(false, 1000);
+					SETTER('snackbar/success', '@(Pages have been removed successfully.)');
+				});
+			});
 		};
 
 		exports.options = function(el) {

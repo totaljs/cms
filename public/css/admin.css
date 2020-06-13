@@ -77,11 +77,11 @@ hr { border-color: #E0E0E0; }
 .links a:hover, .links button:hover { text-decoration: none; color: black; background-color: #F8F8F8; }
 .links a b, .links button b { position: absolute; font-size: 10px; right: 5px; background-color: $color; color: white; width: 16px; height: 16px; padding: 1px 0 0 0; border-radius: 100px; text-align: center; margin: 2px 0 0; }
 
-.header-message { display: block; position: absolute; right: 0; top: 0; width: 400px; vertical-align: middle; height: 57px; font-size: 12px; background-color: #FFFFD5; opacity: 0; transition: all 0.3s; transform: translate(100px,0px); box-shadow: -2px 0 10px rgba(0,0,0,0.05); }
+.header-message { display: block; position: absolute; right: 0; top: 0; width: 400px; vertical-align: middle; height: 44px; font-size: 12px; background-color: #FFFFD5; opacity: 0; transition: all 0.3s; transform: translate(100px,0px); box-shadow: -2px 0 10px rgba(0,0,0,0.05); z-index: 20; }
 .header-message-visible { opacity: 1; transform: translate(0,0); }
-.header-message > i { width: 50px; border-right: 1px solid #EEEEAD; height: 57px; line-height: 57px; vertical-align: middle; font-size: 20px; padding: 0 0 0 2px; text-align: center; float: left; color: #E6C752; }
+.header-message > i { width: 50px; border-right: 1px solid #EEEEAD; height: 44px; line-height: 44px; vertical-align: middle; font-size: 20px; padding: 0 0 0 2px; text-align: center; float: left; color: #E6C752; }
 .header-message > div { display: block; margin-left: 60px; line-height: 14px; }
-.header-message-table { display: table; width: 100%; table-layout: fixed; height: 57px; }
+.header-message-table { display: table; width: 100%; table-layout: fixed; height: 44px; }
 .header-message-cell { display: table-cell; vertical-align: middle; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .header-message-cell b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; line-height: 18px; }
 

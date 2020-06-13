@@ -32,7 +32,7 @@ NEWSCHEMA('Subscribers', function(schema) {
 					if (email.length === 1)
 						$SAVE('Events', { id: obj.email.hash(true) + '', type: 'subscribers/add', user: $.user ? $.user.name : '', body: obj.email }, NOOP, $);
 					EMIT('subscribers.save', obj);
-					db.counter.hit('all', 1);
+					COUNTER('subscribers').hit('all', 1);
 				}
 			});
 		}
@@ -98,6 +98,6 @@ NEWSCHEMA('Subscribers', function(schema) {
 	});
 
 	schema.addWorkflow('stats', function($) {
-		NOSQL('subscribers').counter.monthly('all', $.callback);
+		COUNTER('subscribers').monthly('all', $.callback);
 	});
 });

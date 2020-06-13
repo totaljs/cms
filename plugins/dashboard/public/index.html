@@ -429,6 +429,7 @@
 
 					for (var i = 0; i < response.length; i++) {
 						var item = response[i];
+						item.count = item.sum;
 						if (item.id.charAt(0) === '!') {
 							item.id = item.id.substring(1);
 							brw.push(item);

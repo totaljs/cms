@@ -11,6 +11,7 @@
 	<meta name="robots" content="all,follow" />
 	<link rel="stylesheet" href="@{'%cdn'}/spa.min@18@{if CONF.proicons}pro@{fi}.css" />
 	<script src="@{'%cdn'}/spa.min@18.js"></script>
+	<!--<script src="http://127.0.0.1:8001/spa.min@18.js"></script>-->
 	<script>ENVIRONMENT('cms');</script>
 	@{import('head', 'admin-ui.css + admin.css', 'admin-ui.js + admin.js', 'favicon.ico')}
 </head>
@@ -38,7 +39,7 @@
 	<div data---="shortcuts"></div>
 	<div data---="websocket__null__reconnect:5000;url:[url]live/"></div>
 
-	<div class="header-message">
+	<div class="header-message hidden">
 		<i class="fa fa-bell"></i>
 		<div>
 			<div class="header-message-table">
@@ -216,7 +217,7 @@
 			var item = common.notifications.messages.shift();
 
 			if (item === undefined) {
-				common.notifications.ui.el.rclass('header-message-visible');
+				common.notifications.ui.el.rclass('header-message-visible').aclass('hidden', 200);
 				common.notifications.running = false;
 				return;
 			}
@@ -310,7 +311,7 @@
 			EMIT('notification', msg);
 
 			if (msg && msg.body) {
-				!common.notifications.running && common.notifications.ui.el.aclass('header-message-visible');
+				!common.notifications.running && common.notifications.ui.el.rclass('hidden').aclass('header-message-visible', 100);
 				common.notifications.running = true;
 				msg && common.notifications.ui.body.html(msg.body);
 			}

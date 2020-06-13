@@ -29,7 +29,11 @@ function stats() {
 }
 
 function referrers() {
-	NOSQL('visitors').counter.stats_sum(24, NOW.getFullYear(), this.callback());
+	var self = this;
+	COUNTER('visitors').summarize('yearly').where('year', NOW.getFullYear()).callback(function(err, response) {
+		response.quicksort('sum', true);
+		self.json(response.take(24));
+	});
 }
 
 function clear() {
@@ -37,6 +41,7 @@ function clear() {
 	var db = ['pages', 'posts', 'products', 'newsletters', 'subscribers', 'contactforms'];
 	var id = self.query.id || 'today';
 	var date = id === 'today' ? NOW.format('yyyy-MM-dd') : id === 'month' ? NOW.format('yyyy-MM') : id === 'year' ? NOW.format('yyyy') : id === 'all' ? null : 'today';
-	db.wait((name, next) => NOSQLCOUNTER(name).reset(null, null, date, next));
+	// db.wait((name, next) => COUNER(name).reset(null, null, date, next));
+	// @TODO: missing implementation
 	self.success();
 }

@@ -105,8 +105,7 @@
 		$(document).on('click', 'button', function() {
 			if (!CAN('form.*') || BLOCKED('adminlogin', 2000))
 				return;
-			RESET('form.*');
-			AJAX('POST /api/login/admin/', form, function(response) {
+			AJAX('POST /api/login/admin/', GET('form @reset'), function(response) {
 				SET('form.response', response);
 				response.success && location.reload(true);
 			});

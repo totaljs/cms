@@ -110,7 +110,7 @@ NEWSCHEMA('Newsletters', function(schema) {
 	});
 
 	schema.addWorkflow('stats', function($) {
-		NOSQL('newsletters').counter.monthly($.id || $.options.id || 'all', $.callback);
+		COUNTER('newsletters').monthly($.id || $.options.id || 'all', $.callback);
 	});
 
 	schema.addWorkflow('test', function($) {

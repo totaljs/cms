@@ -18,7 +18,7 @@ NEWSCHEMA('Navigations', function(schema) {
 
 	schema.setGet(function($) {
 		FUNC.alert($.user, 'navigations/edit', $.id);
-		NOSQL('navigations').one().where('id', $.id).callback(function(err, response) {
+		NOSQL('navigations').read().where('id', $.id).callback(function(err, response) {
 			if (response) {
 				$.callback(response);
 			} else {
@@ -49,7 +49,6 @@ NEWSCHEMA('Navigations', function(schema) {
 		// $.options.navigations
 		// $.options.page
 
-		var user = $.user.name;
 		var navigations = $.options.navigations;
 		var page = $.options.page;
 		var count = 0;
@@ -84,7 +83,7 @@ NEWSCHEMA('Navigations', function(schema) {
 			children.push(obj);
 
 			count++;
-			NOSQL('navigations').modify({ children: children }).where('id', navid).callback(next).backup(user).log('Add page {0}: {1}'.format(page.id, page.name), user);
+			NOSQL('navigations').modify({ children: children }).where('id', navid).callback(next).backup($.user.meta());
 
 		}, function() {
 
@@ -113,7 +112,7 @@ NEWSCHEMA('Navigations', function(schema) {
 			return;
 		}
 
-		db.update(model, model).where('id', model.id).backup(user).log('Update navigation "{0}"'.format(model.id), user).callback(function() {
+		db.update(model, model).where('id', model.id).backup($.user.meta()).callback(function() {
 			$SAVE('Events', { type: 'navigations/save', user: user, id: model.id, body: model.name, admin: true }, NOOP, $);
 			EMIT('navigations.save', model);
 			refresh();
@@ -146,7 +145,7 @@ NEWSCHEMA('Navigations', function(schema) {
 					}
 
 					item.dtupdated = NOW;
-					db.update(nav).backup(user).log('Update menu item according to the page {0}: {1}'.format(page.id, page.name)).where('id', nav.id).callback(done);
+					db.update(nav).backup($.user.meta()).where('id', nav.id).callback(done);
 				}
 			}
 			$.success();

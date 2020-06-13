@@ -2,7 +2,7 @@
 	.settings-user { border: 1px solid #E0E0E0; text-align: center; padding: 25px 10px; border-radius: 2px; cursor: pointer; }
 	.settings-user .initials { margin: 0 auto 10px; }
 	.settings-user:hover { background-color: #F5F5F5; }
-	.settings-user-roles { font-size: 11px; color: gray; }
+	.settings-user-permissions { font-size: 11px; color: gray; }
 	.settings-user .fa-times { position: absolute; color: red; right: 25px; top: 10px; cursor: pointer; }
 </style>
 
@@ -20,7 +20,7 @@
 			<div class="header">
 				<label><i class="fa fa-cog"></i>@(Settings)</label>
 				<nav data---="validation__?">
-					<button class="exec" name="submit" data-exec="?/save" disabled><i class="fa fa-floppy-o blue"></i>@(<b>APPLY</b> SETTINGS)</button>
+					<button class="exec" name="submit" data-exec="?/save" disabled><i class="fa fa-check-circle green"></i>@(<b>APPLY</b> SETTINGS)</button>
 				</nav>
 			</div>
 		</section>
@@ -168,7 +168,7 @@
 									{{ fi }}
 									<div>{{ m.name | initials }}</div>
 									<div class="settings-user-name{{ if m.owner }} b{{ fi }}">{{ m.name }}</div>
-									<div class="settings-user-roles">{{ if m.sa }}@(Super administrator){{ else }}{{ m.roles | settingsroles }}{{ fi }}</div>
+									<div class="settings-user-permissions">{{ if m.sa }}@(Super administrator){{ else }}{{ m.permissions | settingspermissions }}{{ fi }}</div>
 								</div>
 							</div>
 							{{ end }}
@@ -212,10 +212,9 @@
 			AJAX('POST [url]api/settings/ REPEAT', data, FUNC.messageresponse('@(Settings have been saved successfully.)', function() {
 				refresh_dependencies();
 				SET('common.componentator', data.componentator);
-
+				SETTER('loading/hide');
 				if (data.name)
 					$('.logo').find('span').text(data.name);
-
 			}));
 		};
 
@@ -310,10 +309,10 @@
 		};
 	});
 
-	Thelpers.settingsroles = function(value) {
+	Thelpers.settingspermissions = function(value) {
 		var builder = [];
 		for (var i = 0; i < value.length; i++) {
-			var role = common.roles.findItem('id', value[i]);
+			var role = common.permissions.findItem('id', value[i]);
 			role && builder.push(role.name);
 		}
 		return builder.join(', ') || DEF.empty;

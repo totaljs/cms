@@ -27,7 +27,7 @@ NEWSCHEMA('Common', function(schema) {
 
 		var clean = function(name) {
 			return function(next) {
-				TABLE(name).remove().like('id', '_').callback(function() {
+				TABLE(name).remove().search('id', '_').callback(function() {
 					TABLE(name).clean();
 					next();
 				});

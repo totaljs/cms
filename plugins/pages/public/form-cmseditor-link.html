@@ -150,7 +150,7 @@
 		};
 
 		exports.tracking = function(id) {
-			AJAX('GET [url]api/tracking/{0}/'.format(id), '?.tracking');
+			AJAX('GET [url]api/tracking/' + id, 'cmseditor.link.tracking');
 			cmseditor.link.idtracking = id;
 		};
 

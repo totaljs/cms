@@ -15,8 +15,8 @@ exports.install = function() {
 function preview() {
 	var self = this;
 	var body = self.body.body;
-	if (body)
+	if (body) {
 		$WORKFLOW('Notices', 'preview', body, (err, response) => self.content(response, 'text/html'));
-	else
+	} else
 		self.content('', 'text/html');
 }

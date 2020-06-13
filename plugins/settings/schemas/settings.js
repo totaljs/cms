@@ -139,6 +139,10 @@ NEWSCHEMA('Settings', function(schema) {
 	});
 });
 
+function meta() {
+	return { id: this.id, name: this.name, sa: this.sa };
+}
+
 FUNC.refresh_users = function($) {
 
 	MAIN.users = [];
@@ -168,7 +172,9 @@ FUNC.refresh_users = function($) {
 
 		if ($.controller && $.user.id === user.id)
 			$.cookie(CONF.admin_cookie, key, '1 month', COOKIE_OPTIONS);
+
 		users[key] = user;
+		user.meta = meta;
 	}
 
 	MAIN.users = users;

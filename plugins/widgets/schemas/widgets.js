@@ -60,9 +60,9 @@ NEWSCHEMA('Widgets', function(schema) {
 			}
 		}
 
-		var isUpdate = !!model.id;
+		var update = !!model.id;
 
-		if (isUpdate) {
+		if (update) {
 			model.dtupdated = NOW;
 		} else {
 			model.id = UID();
@@ -72,7 +72,7 @@ NEWSCHEMA('Widgets', function(schema) {
 
 		var replace = model.replace;
 		model.replace = undefined;
-		var db = isUpdate ? nosql.modify(model).where('id', model.id).backup(user).log('Update: ' + model.id, user) : nosql.insert(model).log('Create: ' + model.id, user);
+		var db = update ? nosql.modify(model).where('id', model.id).backup($.user.meta()) : nosql.insert(model);
 
 		db.callback(function() {
 			$SAVE('Events', { type: 'widgets/save', id: model.id, user: user, body: model.name, admin: true }, NOOP, $);
@@ -84,8 +84,7 @@ NEWSCHEMA('Widgets', function(schema) {
 
 	// Removes a specific widget
 	schema.setRemove(function($) {
-		var user = $.user.name;
-		NOSQL('widgets').remove().where('id', $.id).backup(user).log('Remove: ' + $.id, user).callback(function(err, count) {
+		NOSQL('widgets').remove().where('id', $.id).backup($.user.meta()).callback(function(err, count) {
 
 			if (INSTALLED[$.id]) {
 				var w = MAIN.widgets[$.id];
@@ -152,7 +151,7 @@ NEWSCHEMA('Widgets', function(schema) {
 		var count = 0;
 
 		databases.wait(function(name, next) {
-			NOSQL(name).find().in('bodywidgets', id).fields('id', 'widgets', 'bodywidgets').callback(function(err, response) {
+			NOSQL(name).find().in('bodywidgets', id).fields('id,widgets,bodywidgets').callback(function(err, response) {
 				response.wait(function(item, next) {
 					var is = false;
 					FUNC.read(name, item.id, function(err, body) {
@@ -172,7 +171,7 @@ NEWSCHEMA('Widgets', function(schema) {
 	});
 });
 
-NEWSCHEMA('Widgets/Globals').make(function(schema) {
+NEWSCHEMA('Widgets/Globals', function(schema) {
 
 	schema.define('css', 'String');
 	schema.define('js', 'String');
@@ -400,19 +399,19 @@ function refresh(callback, force) {
 
 				if (rebuildcss) {
 					Fs.writeFile(PATH.temp(CSS), U.minifyStyle('/*auto*/\n' + (response.css ? response.css + '\n' : '') + css.join('\n')), NOOP);
-					F.touch('/' + CSS);
+					TOUCH('/' + CSS);
 					MAIN.css = '/' + CSS + '?ts=' + version;
 				}
 
 				if (rebuildjs) {
 					Fs.writeFile(PATH.temp(JS), U.minifyScript((response.js ? response.js + ';\n' : '') + js.join('\n')), NOOP);
-					F.touch('/' + JS);
+					TOUCH('/' + JS);
 					MAIN.js = '/' + JS + '?ts=' + version;
 				}
 
 				if (rebuildeditor) {
 					Fs.writeFile(PATH.temp(JSEDITOR), U.minifyScript(jseditor.join('\n')), NOOP);
-					F.touch('/' + JSEDITOR);
+					TOUCH('/' + JSEDITOR);
 					MAIN.jseditor = '/' + JSEDITOR + '?ts=' + version;
 				}
 

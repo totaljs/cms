@@ -49,8 +49,8 @@ NEWSCHEMA('Pages', function(schema) {
 
 	// Gets listing
 	schema.setQuery(function($) {
-		var filter = NOSQL('pages').listing();
-		filter.fields('id,name,title,url,ispartial,icon,parent,language,draft,dtupdated');
+		var filter = NOSQL('pages').list();
+		filter.fields('id,name,title,url,ispartial,icon,parent,language,draft,dtupdated,dtcreated');
 		filter.sort('dtcreated', true);
 		filter.callback($.callback);
 	});
@@ -97,15 +97,14 @@ NEWSCHEMA('Pages', function(schema) {
 
 	// Removes a specific page
 	schema.setRemove(function($) {
-		var user = $.user.name;
 		var id = $.body.id;
 		var db = NOSQL('pages');
 
-		db.remove().where('id', id).backup(user).log('Remove: ' + id, user).callback(function(err, count) {
+		db.remove().where('id', id).callback(function(err, count) {
 			$.success();
 			if (count) {
 				FUNC.remove('pages', id);
-				db.counter.remove(id);
+				COUNTER('pages').remove(id);
 				setTimeout2('pages', refresh, 1000);
 			}
 		});
@@ -119,13 +118,13 @@ NEWSCHEMA('Pages', function(schema) {
 		var model = $.clean();
 		var user = $.user.name;
 		var oldurl = model.oldurl;
-		var isUpdate = !!model.id;
+		var update = !!model.id;
 		var nosql = NOSQL('pages');
 		var navigations2 = model.ispartial ? null : model.navigations2;
 
 		!model.title && (model.title = model.name);
 
-		if (isUpdate) {
+		if (update) {
 			model.dtupdated = NOW;
 			model.adminupdated = user;
 		} else {
@@ -178,17 +177,17 @@ NEWSCHEMA('Pages', function(schema) {
 			model.dbodywidgets = model.widgets;
 			model.widgets = undefined;
 			model.bodywidgets = undefined;
-			FUNC.write('pages', model.id + '_draft', model.body, isUpdate);
+			FUNC.write('pages', model.id + '_draft', model.body, update);
 		} else {
 			// Removes helper values
 			model.dwidgets = null;
 			model.dbodywidgets = null;
 			FUNC.write('pages', model.id + '_' + model.stamp, model.body); // backup
-			FUNC.write('pages', model.id, model.body, isUpdate);
+			FUNC.write('pages', model.id, model.body, update);
 		}
 
 		model.body = undefined;
-		var db = isUpdate ? nosql.modify(model).where('id', model.id).backup(user).log('Update: ' + model.id, user) : nosql.insert(model).log('Create: ' + model.id, user);
+		var db = update ? nosql.modify(model).where('id', model.id).backup($.user.meta()) : nosql.insert(model);
 
 		// Update a URL in all navigations where this page is used
 		if (!model.ispartial)
@@ -256,11 +255,7 @@ NEWSCHEMA('Pages', function(schema) {
 
 	// Stats
 	schema.addWorkflow('stats', function($) {
-		var nosql = NOSQL('pages').counter;
-		if ($.id)
-			nosql.monthly($.id, $.callback);
-		else
-			nosql.monthly($.callback);
+		COUNTER('pages').monthly($.id || 'all', $.callback);
 	});
 });
 
@@ -694,8 +689,7 @@ function loadpartial(page, callback, controller) {
 	if (!page.partial || !page.partial.length)
 		return callback(output);
 
-	var nosql = NOSQL('pages');
-	nosql.find().in('id', page.partial).callback(function(err, response) {
+	NOSQL('pages').find().in('id', page.partial).callback(function(err, response) {
 		response.wait(function(item, next) {
 
 
@@ -708,7 +702,7 @@ function loadpartial(page, callback, controller) {
 
 			item.signals = obj;
 
-			nosql.counter.hit(item.id);
+			COUNTER('pages').hit(item.id);
 			output[item.id] = item;
 			output[item.url] = item;
 			FUNC.read('pages', item.id, function(err, body) {
@@ -735,7 +729,7 @@ Controller.prototype.CMSpage = function(callback, cache) {
 	if (!page) {
 		if (MAIN.redirects && MAIN.redirects[self.url]) {
 			self.redirect(MAIN.redirects[self.url], RELEASE);
-			NOSQL('pages').counter.hit('redirect');
+			COUNTER('pages').hit('redirect');
 		} else {
 			// tries to redirect to admin
 			if (self.url === '/')
@@ -761,8 +755,7 @@ Controller.prototype.CMSpage = function(callback, cache) {
 
 	self.memorize('cachecms' + self.language + '_' + self.url, cache || '1 minute', cache === false, function() {
 
-		var nosql = NOSQL('pages');
-		nosql.one().where('id', page.id).callback(function(err, response) {
+		NOSQL('pages').one().where('id', page.id).callback(function(err, response) {
 
 			if (!response.template) {
 				self.invalid('error-pages-template');
@@ -781,7 +774,7 @@ Controller.prototype.CMSpage = function(callback, cache) {
 				tmp = MAIN.sitemap[tmp.parent];
 			}
 
-			var counter = nosql.counter.hit('all').hit(response.id);
+			var counter = COUNTER('pages').hit('all').hit(response.id);
 
 			if (response.language && !DRAFT)
 				counter.hit(response.language);
@@ -834,7 +827,7 @@ Controller.prototype.CMSpage = function(callback, cache) {
 		});
 	}, function() {
 		if (self.repository.page && !DRAFT)
-			NOSQL('pages').counter.hit('all').hit(self.repository.page.id);
+			COUNTER('pages').hit('all').hit(self.repository.page.id);
 	});
 
 	return self;
@@ -975,9 +968,8 @@ Controller.prototype.CMSpartial = function(url, callback) {
 		return self;
 	}
 
-	var nosql = NOSQL('pages');
-	nosql.counter.hit(page.id);
-	nosql.one().where('id', page.id).callback(function(err, response) {
+	COUNTER('pages').hit(page.id);
+	NOSQL('pages').one().where('id', page.id).callback(function(err, response) {
 
 		if (response.css) {
 			response.css = U.minifyStyle('/*auto*/\n' + response.css);
