@@ -58,8 +58,7 @@ NEWSCHEMA('Subscribers', function(schema) {
 	// Removes user from DB
 	schema.setRemove(function($) {
 		var id = $.body.id;
-		var user = $.user.name;
-		NOSQL('subscribers').remove().backup(user).log('Remove: ' + id, user).where('email', id).callback(() => $.success());
+		NOSQL('subscribers').remove().backup($.user.meta()).where('email', id).callback(() => $.success());
 	});
 
 	// Performs download
@@ -76,12 +75,8 @@ NEWSCHEMA('Subscribers', function(schema) {
 	});
 
 	schema.addWorkflow('toggle', function($) {
-		var user = $.user.name;
 		var arr = $.options.id ? $.options.id : $.query.id.split(',');
-		NOSQL('subscribers').update(function(doc) {
-			doc.unsubscribed = !doc.unsubscribed;
-			return doc;
-		}).log('Toggle: ' + arr.join(', '), user).in('email', arr).callback($.done());
+		NOSQL('subscribers').update({ '!unsubscribed': 1 }).in('email', arr).callback($.done());
 	});
 
 	schema.addWorkflow('unsubscribe', function($) {
@@ -92,8 +87,7 @@ NEWSCHEMA('Subscribers', function(schema) {
 
 	// Clears DB
 	schema.addWorkflow('clear', function($) {
-		var user = $.user.name;
-		NOSQL('subscribers').remove().backup(user).log('Clear all subscribers', user);
+		NOSQL('subscribers').remove().backup($.user.meta());
 		$.success();
 	});
 
