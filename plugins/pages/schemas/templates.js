@@ -8,7 +8,7 @@ NEWSCHEMA('Templates', function(schema) {
 	schema.define('body', String, true);
 
 	schema.setGet(function($) {
-		NOSQL('templates').one().where('id', $.id).callback($.callback, 'error-templates-404');
+		NOSQL('templates').read().where('id', $.id).callback($.callback, 'error-templates-404');
 	});
 
 	schema.setSave(function($) {
