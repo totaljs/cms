@@ -341,7 +341,7 @@
 		WATCH('?.template', function(path, value, type) {
 			if (type === 2) {
 				cmseditor.instance.reconfigure('template:' + (value || ''));
-				cmseditor.instance.set('');
+				cmseditor.instance.set(cmseditor.instance.get());
 			}
 		}, true);
 	});
