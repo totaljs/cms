@@ -114,7 +114,7 @@ NEWSCHEMA('Posts', function(schema) {
 	// Removes a specific post
 	schema.setRemove(function($) {
 		var id = $.id;
-		NOSQL('posts').remove().backup($.user.meta()).where('id', id).callback(function() {
+		NOSQL('posts').remove().where('id', id).callback(function() {
 			FUNC.remove('posts', id);
 			$.success();
 			refresh_cache();
@@ -159,7 +159,7 @@ NEWSCHEMA('Posts', function(schema) {
 
 		model.body = undefined;
 
-		var db = isUpdate ? nosql.modify(model).where('id', model.id).backup($.user.meta()) : nosql.insert(model);
+		var db = isUpdate ? nosql.modify(model).where('id', model.id).backup($.user.meta(model)) : nosql.insert(model);
 
 		db.callback(function() {
 			$SAVE('Events', { type: 'posts/save', id: model.id, user: user, body: model.name, admin: true }, NOOP, $);
@@ -171,12 +171,8 @@ NEWSCHEMA('Posts', function(schema) {
 	});
 
 	schema.addWorkflow('toggle', function($) {
-		var user = $.user.name;
 		var arr = $.options.id ? $.options.id : $.query.id.split(',');
-		NOSQL('posts').update(function(doc) {
-			doc.ispublished = !doc.ispublished;
-			return doc;
-		}).log('Toggle: ' + arr.join(', '), user).in('id', arr).callback(function() {
+		NOSQL('posts').update({ '!ispublished': 1 }).in('id', arr).callback(function() {
 			refresh_cache();
 			$.success();
 		});
@@ -184,7 +180,7 @@ NEWSCHEMA('Posts', function(schema) {
 
 	// Clears database
 	schema.addWorkflow('clear', function($) {
-		NOSQL('posts').remove().backup($.user.meta()).callback(function() {
+		NOSQL('posts').clear(function() {
 			FUNC.remove('posts');
 			$.success();
 			refresh_cache();

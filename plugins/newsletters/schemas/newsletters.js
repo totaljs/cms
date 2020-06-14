@@ -53,7 +53,7 @@ NEWSCHEMA('Newsletters', function(schema) {
 	schema.setRemove(function($) {
 		var id = $.id;
 		FUNC.remove('newsletters', id);
-		NOSQL('newsletters').remove().backup($.user.meta()).where('id', id).callback(() => $.success());
+		NOSQL('newsletters').remove().where('id', id).callback(() => $.success());
 		NOSQL('parts').remove().where('ownerid', id).where('type', 'newsletter');
 	});
 
@@ -88,7 +88,7 @@ NEWSCHEMA('Newsletters', function(schema) {
 
 		model.body = undefined;
 
-		var db = isUpdate ? nosql.modify(model).where('id', model.id).backup($.user.meta()) : nosql.insert(model);
+		var db = isUpdate ? nosql.modify(model).where('id', model.id).backup($.user.meta(model)) : nosql.insert(model);
 
 		db.callback(function() {
 			$SAVE('Events', { type: 'newsletters/save', user: user, id: model.id, body: model.name, admin: true }, NOOP, $);
@@ -104,7 +104,7 @@ NEWSCHEMA('Newsletters', function(schema) {
 	// Clears database
 	schema.addWorkflow('clear', function($) {
 		FUNC.remove('newsletters');
-		NOSQL('newsletters').remove().callback(NOOP);
+		NOSQL('newsletters').clear();
 		$.success();
 	});
 

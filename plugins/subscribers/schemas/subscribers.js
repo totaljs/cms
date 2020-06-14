@@ -58,7 +58,7 @@ NEWSCHEMA('Subscribers', function(schema) {
 	// Removes user from DB
 	schema.setRemove(function($) {
 		var id = $.body.id;
-		NOSQL('subscribers').remove().backup($.user.meta()).where('email', id).callback(() => $.success());
+		NOSQL('subscribers').remove().where('email', id).callback(() => $.success());
 	});
 
 	// Performs download
@@ -87,7 +87,7 @@ NEWSCHEMA('Subscribers', function(schema) {
 
 	// Clears DB
 	schema.addWorkflow('clear', function($) {
-		NOSQL('subscribers').remove().backup($.user.meta());
+		NOSQL('subscribers').clear();
 		$.success();
 	});
 

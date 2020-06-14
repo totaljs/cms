@@ -72,7 +72,7 @@ NEWSCHEMA('Widgets', function(schema) {
 
 		var replace = model.replace;
 		model.replace = undefined;
-		var db = update ? nosql.modify(model).where('id', model.id).backup($.user.meta()) : nosql.insert(model);
+		var db = update ? nosql.modify(model).where('id', model.id).backup($.user.meta(model)) : nosql.insert(model);
 
 		db.callback(function() {
 			$SAVE('Events', { type: 'widgets/save', id: model.id, user: user, body: model.name, admin: true }, NOOP, $);
@@ -84,7 +84,7 @@ NEWSCHEMA('Widgets', function(schema) {
 
 	// Removes a specific widget
 	schema.setRemove(function($) {
-		NOSQL('widgets').remove().where('id', $.id).backup($.user.meta()).callback(function(err, count) {
+		NOSQL('widgets').remove().where('id', $.id).callback(function(err, count) {
 
 			if (INSTALLED[$.id]) {
 				var w = MAIN.widgets[$.id];

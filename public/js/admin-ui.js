@@ -918,7 +918,7 @@ COMPONENT('codemirror', 'linenumbers:true;required:false;trim:false;tabs:true', 
 		SimpleScrollbars.prototype.update = function(measure) {
 			var t = this;
 			if (t.width == null) {
-				var style = window.getComputedStyle ? window.getComputedStyle(t.horiz.node) : t.horiz.node.currentStyle;
+				var style = W.getComputedStyle ? W.getComputedStyle(t.horiz.node) : t.horiz.node.currentStyle;
 				if (style)
 					t.width = parseInt(style.height);
 			}

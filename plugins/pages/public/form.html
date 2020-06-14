@@ -329,7 +329,7 @@
 				SETTER('suggestion/show', 'left', el, response, function(value) {
 					FUNC.loading(true);
 					setTimeout(function() {
-						AJAX('GET [url]api/backups/pages/{id}_{stamp}/'.arg(value.data), function(body) {
+						AJAX('GET [url]api/backups/pages/{id}_{stamp}/'.arg(value), function(body) {
 							cmseditor.instance.replace(body);
 							FUNC.loading(false, 1000);
 						});

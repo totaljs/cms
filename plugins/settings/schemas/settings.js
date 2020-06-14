@@ -139,8 +139,8 @@ NEWSCHEMA('Settings', function(schema) {
 	});
 });
 
-function meta() {
-	return { id: this.id, name: this.name, sa: this.sa };
+function meta(model) {
+	return { id: model.id, stamp: model.stamp, userid: this.id, user: this.name, sa: this.sa };
 }
 
 FUNC.refresh_users = function($) {

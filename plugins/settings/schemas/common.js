@@ -7,7 +7,7 @@ NEWSCHEMA('Common', function(schema) {
 		var req = $.controller.req;
 		var name = req.split[req.split.length - 3];
 
-		NOSQL(name).backups(n => n.data.id === $.id, function(err, response) {
+		NOSQL(name).backups().where('id', $.id).fields('id,user,stamp,date').take(20).callback(function(err, response) {
 
 			if (name === 'widgets') {
 				$.callback(response);
@@ -15,8 +15,8 @@ NEWSCHEMA('Common', function(schema) {
 			}
 
 			response.wait(function(item, next) {
-				FUNC.read(name, item.data.id + '_' + item.data.stamp, function(err, body) {
-					item.data.body = body;
+				FUNC.read(name, item.id + '_' + item.stamp, function(err, body) {
+					item.body = body;
 					next();
 				});
 			}, () => $.callback(response));
@@ -36,7 +36,7 @@ NEWSCHEMA('Common', function(schema) {
 
 		var remove = function(name) {
 			return function(next) {
-				Fs.unlink(PATH.databases(name + '.nosql-backup'), next);
+				Fs.unlink(PATH.databases(name + '.nosql.bk'), next);
 			};
 		};
 

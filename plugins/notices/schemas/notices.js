@@ -55,7 +55,7 @@ NEWSCHEMA('Notices', function(schema) {
 	// Removes a specific post
 	schema.setRemove(function($) {
 		var id = $.body.id;
-		NOSQL('notices').remove().backup($.user.meta()).where('id', id).callback(function() {
+		NOSQL('notices').remove().where('id', id).callback(function() {
 			F.cache.removeAll('cachecms');
 			$.success();
 		});
@@ -86,7 +86,7 @@ NEWSCHEMA('Notices', function(schema) {
 		model.search = ((model.name || '') + ' ' + (model.body || '')).keywords(true, true).join(' ').max(1000);
 		model.linker_category = model.category.slug();
 
-		var db = update ? nosql.modify(model).where('id', model.id).backup($.user.meta()) : nosql.insert(model);
+		var db = update ? nosql.modify(model).where('id', model.id) : nosql.insert(model);
 
 		db.callback(function() {
 			$SAVE('Events', { type: 'notices/save', id: model.id, user: user, body: model.name, admin: true }, NOOP, $);
@@ -103,7 +103,7 @@ NEWSCHEMA('Notices', function(schema) {
 
 	// Clears database
 	schema.addWorkflow('clear', function($) {
-		NOSQL('notices').remove().backup($.user.meta()).callback(() => refresh($.done()));
+		NOSQL('notices').clear(() => refresh($.done()));
 	});
 });
 

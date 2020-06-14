@@ -187,7 +187,7 @@ NEWSCHEMA('Pages', function(schema) {
 		}
 
 		model.body = undefined;
-		var db = update ? nosql.modify(model).where('id', model.id).backup($.user.meta()) : nosql.insert(model);
+		var db = update ? nosql.modify(model).where('id', model.id).backup($.user.meta(model)) : nosql.insert(model);
 
 		// Update a URL in all navigations where this page is used
 		if (!model.ispartial)
