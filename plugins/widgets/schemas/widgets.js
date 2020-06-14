@@ -28,7 +28,7 @@ NEWSCHEMA('Widgets', function(schema) {
 	// Gets listing
 	schema.setQuery(function($) {
 		var filter = NOSQL('widgets').list();
-		filter.sort('dtcreated', true);
+		filter.sort('dtcreated_asc');
 		filter.fields('id,picture,name,icon,category,dtcreated,reference,dtupdated');
 		filter.callback($.callback);
 	});

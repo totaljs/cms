@@ -54,7 +54,7 @@ function refresh(callback) {
 	var newsletters = [];
 	var posts = [];
 
-	NOSQL('templates').find().sort('name').callback(function(err, response) {
+	NOSQL('templates').find().sort('name_asc').callback(function(err, response) {
 
 		var hash = Date.now();
 		var navigations = {};

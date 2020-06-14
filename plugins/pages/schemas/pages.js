@@ -51,7 +51,7 @@ NEWSCHEMA('Pages', function(schema) {
 	schema.setQuery(function($) {
 		var filter = NOSQL('pages').list();
 		filter.fields('id,name,title,url,ispartial,icon,parent,language,draft,dtupdated,dtcreated');
-		filter.sort('dtcreated', true);
+		filter.sort('dtcreated_asc');
 		filter.callback($.callback);
 	});
 

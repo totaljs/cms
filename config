@@ -1,6 +1,7 @@
 name                      : CMS
-version                   : 13.0.0
+version                   : 14.0.0
 author                    : Peter Širka
+proicons                  : true
 
 // Secret for administrators
 admin_secret  (generate)  : 10
