@@ -142,7 +142,7 @@ NEWSCHEMA('Newsletters', function(schema) {
 	schema.addWorkflow('send', function($) {
 
 		if (MAIN.newsletter.sending) {
-			$.invalid().push('error-newsletters-sending');
+			$.invalid('error-newsletters-sending');
 			return;
 		}
 

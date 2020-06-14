@@ -39,7 +39,16 @@ NEWSCHEMA('Tracking', function(schema) {
 	});
 
 	schema.addWorkflow('stats', function($) {
-		COUNTER('tracking').monthly($.id, $.callback);
+		COUNTER('tracking').summarize('monthly', function(err, response) {
+			var tracking = PREF.tracking || EMPTYARRAY;
+			if (tracking) {
+				for (var i = 0; i < response.length; i++) {
+					var item = response[i];
+					item.id = tracking[item.id];
+				}
+			}
+			$.callback(err, response);
+		});
 	});
 
 });
