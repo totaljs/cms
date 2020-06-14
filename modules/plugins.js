@@ -4,14 +4,14 @@ MAIN.version = 14;
 
 ON('ready', function() {
 
-	MAIN.pluginsgroups = [];
-	MAIN.plugins.quicksort('position');
-
 	var tmp = {};
 
 	var keys = Object.keys(F.plugins);
 	for (var i = 0; i < keys.length; i++)
 		MAIN.plugins.push(F.plugins[keys[i]]);
+
+	MAIN.pluginsgroups = [];
+	MAIN.plugins.quicksort('position');
 
 	for (var i = 0; i < MAIN.plugins.length; i++) {
 		var item = MAIN.plugins[i];
@@ -25,7 +25,6 @@ ON('ready', function() {
 	var keys = Object.keys(tmp);
 	for (var i = 0; i < keys.length; i++) {
 		var key = keys[i];
-		tmp[key].quicksort('position');
 		MAIN.pluginsgroups.push({ name: key === '#' ? null : key, plugins: tmp[key] });
 	}
 
