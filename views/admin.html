@@ -38,7 +38,7 @@
 	<div data---="shortcuts"></div>
 	<div data---="websocket__null__reconnect:5000;url:[url]live/"></div>
 
-	<div class="header-message">
+	<div class="header-message hidden">
 		<i class="fa fa-bell"></i>
 		<div>
 			<div class="header-message-table">
@@ -216,7 +216,7 @@
 			var item = common.notifications.messages.shift();
 
 			if (item === undefined) {
-				common.notifications.ui.el.rclass('header-message-visible');
+				common.notifications.ui.el.rclass('header-message-visible').aclass('hidden', 200);
 				common.notifications.running = false;
 				return;
 			}
@@ -310,7 +310,7 @@
 			EMIT('notification', msg);
 
 			if (msg && msg.body) {
-				!common.notifications.running && common.notifications.ui.el.aclass('header-message-visible');
+				!common.notifications.running && common.notifications.ui.el.rclass('hidden').aclass('header-message-visible', 100);
 				common.notifications.running = true;
 				msg && common.notifications.ui.body.html(msg.body);
 			}
