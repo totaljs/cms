@@ -305,16 +305,18 @@ W.load = function() {
 
 W.append = function() {
 	var stats = U.clone(W.stats);
-	NOSQL(DBNAME).update(function(doc) {
-		var arr = Object.keys(stats);
-		for (var i = 0, length = arr.length; i < length; i++) {
-			var key = arr[i];
-			if (key === 'year' || key === 'month' || key === 'day')
-				continue;
-			doc[key] = (doc[key] || 0) + (stats[key] || 0);
-		}
-		return doc;
-	}, stats).where('year', stats.year).where('month', stats.month).where('day', stats.day);
+	var keys = Object.keys(stats);
+	var data = {};
+
+	for (var i = 0; i < keys.length; i++) {
+		var key = keys[i];
+		if (key !== 'year' && key !== 'month' && key !== 'day')
+			data['+' + key] = stats[key] || 0;
+		else
+			data[key] = stats[key];
+	}
+
+	NOSQL(DBNAME).modify(data, true).where('year', stats.year).where('month', stats.month).where('day', stats.day);
 };
 
 W.daily = function(callback) {
@@ -401,7 +403,7 @@ W.yearly = function(callback) {
 W.statistics = function(callback) {
 	var filename = PATH.databases(DBNAME + '.nosql');
 	var stream = Fs.createReadStream(filename);
-	var data = U.createBufferSize();
+	var data = Buffer.alloc(0);
 	stream.on('error', () => callback(EMPTYARRAY));
 	stream.on('data', function(chunk) {
 		CONCAT[0] = data;
@@ -414,26 +416,30 @@ W.statistics = function(callback) {
 };
 
 function sum(a, b) {
-	Object.keys(b).forEach(function(o) {
+
+	var keys = Object.keys(b);
+
+	for (var i = 0; i < keys.length; i++) {
+		var o = keys[i];
 
 		if (o === 'day' || o === 'year' || o === 'month')
-			return;
+			continue;
 
 		if (o === 'hours') {
 			a[o] = undefined;
-			return;
+			continue;
 		}
 
 		if (o === 'visitors') {
 			a[o] = Math.max(a[o] || 0, b[o] || 0);
-			return;
+			continue;
 		}
 
 		if (a[o] === undefined)
 			a[o] = 0;
 		if (b[o] !== undefined)
 			a[o] += b[o];
-	});
+	}
 }
 
 function getHostname(host) {
