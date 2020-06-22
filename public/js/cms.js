@@ -28,7 +28,7 @@ $(document).ready(function() {
 		var ticks = LS.getItem('cmsvisitor') || '';
 
 		options.type = 'GET';
-		options.headers = { 'X-Ping': location.pathname, 'X-Referrer': document.referrer };
+		options.headers = { 'x-ping': location.pathname, 'x-referrer': document.referrer };
 
 		var url = '/$visitors/';
 
@@ -87,6 +87,7 @@ $(document).ready(function() {
 
 		W.$visitorsinterval = setInterval(function() {
 			if (document.hasFocus()) {
+				options.headers['x-ping'] = location.pathname;
 				options.headers['x-reading'] = '1';
 				$.ajax(url + '?id=' + ticks + (un ? ('&utm_user=' + encodeURIComponent(un)) : ''), options);
 			}
