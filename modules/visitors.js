@@ -115,7 +115,7 @@ W.counter = function(req) {
 		return '';
 	}
 
-	if (!h['accept'] || !h['accept-language'])
+	if (!h.accept || !h['accept-language'])
 		return '';
 
 	NOW = new Date();
@@ -218,7 +218,7 @@ W.counter = function(req) {
 		return W.checksum(ticks.toString(16) + req.visitorid);
 	}
 
-	VISITOR.referer = getHostname(h['x-referrer'] || h['x-referer'] || h['referer']);
+	VISITOR.referer = getHostname(h['x-referrer'] || h['x-referer'] || h.referer);
 
 	if (!VISITOR.referer || (W.hostname && VISITOR.referer.indexOf(W.hostname) !== -1)) {
 		W.stats.direct++;
