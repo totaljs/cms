@@ -331,6 +331,7 @@ NEWSCHEMA('Pages/Redirects', function(schema) {
 	});
 
 	schema.setGet(function($) {
+
 		Fs.readFile(PATH.databases('pagesredirects.json'), function(err, data) {
 
 			if (data) {
@@ -362,7 +363,7 @@ NEWSCHEMA('Pages/Redirects', function(schema) {
 
 function refresh_redirects() {
 	$GET('Pages/Redirects', function(err, response) {
-		var lines = response.body.split('\n');
+		var lines = (response.body || '').split('\n');
 		MAIN.redirects = {};
 		for (var i = 0, length = lines.length; i < length; i++) {
 			var line = lines[i].trim();
@@ -433,7 +434,7 @@ function refresh() {
 		MAIN.pages = pages;
 
 		$GET('Pages/Globals', function(err, response) {
-			parseGlobals(response.body);
+			response.body && parseGlobals(response.body);
 			F.cache.removeAll('cachecms');
 			loaded = true;
 		});

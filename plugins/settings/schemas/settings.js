@@ -62,7 +62,7 @@ NEWSCHEMA('Settings', function(schema) {
 		$.success();
 	});
 
-	schema.addHook('dependencies', function($) {
+	schema.addWorkflow('dependencies', function($) {
 
 		var obj = $.model;
 		var keys = Object.keys(obj);
