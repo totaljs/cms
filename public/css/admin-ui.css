@@ -9,7 +9,7 @@ input { border-radius: 0; }
 .avatar { overflow: hidden; }
 
 .badge { font-size: 11px; padding: 1px 6px 2px; border-radius: 2px; background-color: #F0F0F0; line-height: 12px; vertical-align: middle; margin-top: -2px; position: relative; display: inline-block; color: white; }
-.badge .fa { margin-right: 3px; }
+.badge i { margin-right: 3px; }
 .badge-blue { background-color: #4CC1E9; }
 .badge-red { background-color: #DA4453; }
 .badge-green { background-color: #8CC152; }
@@ -20,7 +20,7 @@ input { border-radius: 0; }
 .badge-pink { background-color: #D770AD; }
 .badge-silver { background-color: #E0E0E0; color: gray; }
 .badge-large { padding: 3px 8px; font-size: 14px; line-height: 16px; }
-.badge-large .fa { margin-right: 5px; }
+.badge-large i { margin-right: 5px; }
 .badge-small { font-size: 10px; padding: 0px 3px 1px; }
 
 .ui-form-noscroll, .ui-form-noscroll body { overflow: hidden; }
