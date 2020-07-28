@@ -106,7 +106,7 @@ NEWSCHEMA('Settings', function(schema) {
 		MAIN.users = [];
 
 		if (!PREF.cookie)
-			PREF.cookie = '__admin';
+			PREF.cookie = U.random_string(10);
 
 		CONF.admin_cookie = PREF.cookie;
 
