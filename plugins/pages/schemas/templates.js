@@ -11,21 +11,21 @@ NEWSCHEMA('Templates', function(schema) {
 		NOSQL('templates').read().where('id', $.id).callback($.callback, 'error-templates-404');
 	});
 
-	schema.setSave(function($) {
+	schema.setSave(function($, model) {
 
 		var db = NOSQL('templates');
-		var model = $.clean();
+		var id = model.id ? model.id : UID();
 
 		var done = function() {
-			refresh($.done($.model.id));
+			refresh($.done(model.id));
 		};
 
 		if (model.id) {
 			model.id = undefined;
 			model.dtupdated = NOW;
-			db.modify(model).where('id', $.model.id).callback(done);
+			db.modify(model).where('id', id).callback(done);
 		} else {
-			$.model.id = model.id = UID();
+			model.id = id;
 			model.dtcreated = NOW;
 			model.dtupdated = NOW;
 			db.insert(model).callback(done);
