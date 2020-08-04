@@ -412,7 +412,8 @@ function refresh() {
 
 			if (lng) {
 				key = lng + ' ' + key;
-				sitemap[key] = obj;
+				sitemap[key] = CLONE(obj);
+				helper[lng + '_' + doc.id] = key;
 			}
 
 			pages.push(obj);
@@ -424,8 +425,9 @@ function refresh() {
 			var key = keys[i];
 			var parent = sitemap[key].parent;
 			if (parent) {
-				sitemap[key].parent = helper[parent];
-				sitemap[sitemap[key].parent] && sitemap[sitemap[key].parent].links.push(sitemap[key]);
+				var tmp = sitemap[key];
+				tmp.parent = helper[parent] || helper[tmp.language + '_' + parent];
+				tmp.parent && sitemap[tmp.parent] && sitemap[tmp.parent].links.push(sitemap[key]);
 			}
 		}
 
@@ -753,7 +755,6 @@ Controller.prototype.CMSpage = function(callback, cache) {
 		cache = false;
 
 	var DRAFT = !!self.query.DRAFT;
-
 	self.memorize('cachecms' + self.language + '_' + self.url, cache || '1 minute', cache === false, function() {
 
 		NOSQL('pages').one().where('id', page.id).callback(function(err, response) {
