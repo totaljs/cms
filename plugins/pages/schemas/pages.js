@@ -815,16 +815,9 @@ Controller.prototype.CMSpage = function(callback, cache) {
 						if (callback) {
 							callback.call(self, function(model) {
 								self.view_compile(repo.page.body, model);
-								repo.page.body = null;
-								repo.page.pictures = EMPTYARRAY;
-								repo.page.search = null;
 							});
-						} else {
+						} else
 							self.view_compile(repo.page.body);
-							repo.page.body = null;
-							repo.page.pictures = EMPTYARRAY;
-							repo.page.search = null;
-						}
 					}, self);
 				}, self);
 			});
