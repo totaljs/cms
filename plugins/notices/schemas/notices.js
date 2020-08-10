@@ -66,9 +66,8 @@ NEWSCHEMA('Notices', function(schema) {
 	});
 
 	// Saves the post into the database
-	schema.setSave(function($) {
+	schema.setSave(function($, model) {
 
-		var model = $.model.$clean();
 		var user = $.user.name;
 		var update = !!model.id;
 		var nosql = NOSQL('notices');

@@ -94,6 +94,7 @@
 			} else if (href.substring(0, 1) === '+')
 				href = 'tel:' + href;
 
+			link[0].$cmsskipupdate = 1;
 			link.attr('href', href);
 
 			if (obj.title)

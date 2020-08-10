@@ -97,11 +97,10 @@ NEWSCHEMA('Navigations', function(schema) {
 
 	});
 
-	schema.setSave(function($) {
+	schema.setSave(function($, model) {
 
 		var user = $.user.name;
 		var db = NOSQL('navigations');
-		var model = $.model.$clean();
 
 		var nav = PREF.navigations.findItem('id', model.id);
 		if (nav) {

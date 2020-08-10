@@ -265,8 +265,8 @@ NEWSCHEMA('Pages/Globals', function(schema) {
 
 	schema.define('body', 'String');
 
-	schema.setSave(function($) {
-		Fs.writeFile(PATH.databases('pagesglobals.json'), JSON.stringify($.model.$clean()), function() {
+	schema.setSave(function($, model) {
+		Fs.writeFile(PATH.databases('pagesglobals.json'), JSON.stringify(model), function() {
 			refresh();
 			$.success();
 		});
@@ -323,8 +323,8 @@ NEWSCHEMA('Pages/Redirects', function(schema) {
 
 	schema.define('body', 'String');
 
-	schema.setSave(function($) {
-		Fs.writeFile(PATH.databases('pagesredirects.json'), JSON.stringify($.model.$clean()), function() {
+	schema.setSave(function($, model) {
+		Fs.writeFile(PATH.databases('pagesredirects.json'), JSON.stringify(model), function() {
 			refresh_redirects();
 			$.success();
 		});

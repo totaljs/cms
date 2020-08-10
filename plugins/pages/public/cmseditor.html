@@ -427,22 +427,18 @@
 				}
 			}
 
-			if (!is)
+			if (!is || (a && a.$cmsskipupdate))
 				return;
 
 			a = $(a);
 
 			var content = target.text().replace(/\s/g, '');
 			var href = a.attr('href');
-
-			if ((/\,|\//).test(content) || !content)
-				return;
-
 			var ismail = /[#|@|\:]/;
 			if (content.indexOf('@') !== -1) {
 				if (!href || ismail.test(href))
 					a.attr('href', 'mailto:' + content);
-			} else if (!(/[a-z]/i).test(content))
+			} else if (!(/[a-z]/i).test(content) && content.length > 5)
 				a.attr('href', 'tel:' + content);
 		};
 

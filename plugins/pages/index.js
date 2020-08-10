@@ -100,7 +100,7 @@ function preview2() {
 		}
 
 		self.layout('');
-		self.CMSpagemodel(response.$clean());
+		self.CMSpagemodel(response);
 	});
 }
 

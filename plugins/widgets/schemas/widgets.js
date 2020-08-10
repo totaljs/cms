@@ -176,8 +176,8 @@ NEWSCHEMA('Widgets/Globals', function(schema) {
 	schema.define('css', 'String');
 	schema.define('js', 'String');
 
-	schema.setSave(function($) {
-		Fs.writeFile(PATH.databases('widgetsglobals.json'), JSON.stringify($.model.$clean()), function() {
+	schema.setSave(function($, model) {
+		Fs.writeFile(PATH.databases('widgetsglobals.json'), JSON.stringify(model), function() {
 			refresh(null, true);
 			$.success();
 		});

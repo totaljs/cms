@@ -58,9 +58,8 @@ NEWSCHEMA('Newsletters', function(schema) {
 	});
 
 	// Saves the post into the database
-	schema.setSave(function($) {
+	schema.setSave(function($, model) {
 
-		var model = $.model.$clean();
 		var user = $.user.name;
 		var isUpdate = !!model.id;
 		var nosql = NOSQL('newsletters');
@@ -112,9 +111,9 @@ NEWSCHEMA('Newsletters', function(schema) {
 		COUNTER('newsletters').monthly($.id || $.options.id || 'all', $.callback);
 	});
 
-	schema.addWorkflow('test', function($) {
+	schema.addWorkflow('test', function($, model) {
 
-		var newsletter = $.model.$clean();
+		var newsletter = model;
 
 		newsletter.body.CMSrender(newsletter.widgets, function(body) {
 
@@ -139,15 +138,14 @@ NEWSCHEMA('Newsletters', function(schema) {
 
 	});
 
-	schema.addWorkflow('send', function($) {
+	schema.addWorkflow('send', function($, model) {
 
 		if (MAIN.newsletter.sending) {
 			$.invalid('error-newsletters-sending');
 			return;
 		}
 
-		var newsletter = $.model.$clean();
-
+		var newsletter = model;
 		MAIN.newsletter.sending = true;
 		MAIN.newsletter.percentage = 0;
 		MAIN.newsletter.id = $.model.id;

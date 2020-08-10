@@ -38,9 +38,8 @@ NEWSCHEMA('ContactForms', function(schema) {
 			$.success();
 	});
 
-	schema.setSave(function($) {
+	schema.setSave(function($, model) {
 
-		var model = $.model;
 		model.id = UID();
 		model.ip = $.ip;
 		model.browser = $.req.useragent();
@@ -50,7 +49,7 @@ NEWSCHEMA('ContactForms', function(schema) {
 			model.name = model.lastname + ' ' + model.firstname;
 
 		var nosql = NOSQL('contactforms');
-		nosql.insert(model.$clean());
+		nosql.insert(model);
 		COUNTER('contactforms').hit('all');
 		$.success();
 
