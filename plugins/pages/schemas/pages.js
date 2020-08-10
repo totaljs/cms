@@ -729,6 +729,7 @@ Controller.prototype.CMSpage = function(callback, cache) {
 	} else
 		page = MAIN.sitemap[self.url];
 
+
 	if (!page) {
 		if (MAIN.redirects && MAIN.redirects[self.url]) {
 			self.redirect(MAIN.redirects[self.url], RELEASE);
@@ -755,7 +756,8 @@ Controller.prototype.CMSpage = function(callback, cache) {
 		cache = false;
 
 	var DRAFT = !!self.query.DRAFT;
-	self.memorize('cachecms' + self.language + '_' + self.url, cache || '1 minute', cache === false, function() {
+
+	self.memorize('cachecms' + (self.language || '') + '_' + self.url, cache || '1 minute', cache === false, function() {
 
 		NOSQL('pages').one().where('id', page.id).callback(function(err, response) {
 
@@ -793,7 +795,7 @@ Controller.prototype.CMSpage = function(callback, cache) {
 				response.parenturl = '';
 
 			repo.page = response;
-			self.layout('');
+			self.layoutName = 'cms' + repo.page.template;
 
 			var obj = {};
 
@@ -812,13 +814,13 @@ Controller.prototype.CMSpage = function(callback, cache) {
 						repo.page.partial = partial;
 						if (callback) {
 							callback.call(self, function(model) {
-								self.view('cms' + repo.page.template, model);
+								self.view_compile(repo.page.body, model);
 								repo.page.body = null;
 								repo.page.pictures = EMPTYARRAY;
 								repo.page.search = null;
 							});
 						} else {
-							self.view('cms' + repo.page.template);
+							self.view_compile(repo.page.body);
 							repo.page.body = null;
 							repo.page.pictures = EMPTYARRAY;
 							repo.page.search = null;
@@ -880,7 +882,7 @@ Controller.prototype.CMSpagemodel = function(model) {
 		model.parenturl = '';
 
 	repo.page.signals = obj;
-	self.layout('');
+	self.layoutName = '';
 
 	model.body.CMSrender(DRAFT ? (model.dwidgets || model.widgets) : model.widgets, function(body) {
 		model.body = body;
@@ -943,7 +945,6 @@ Controller.prototype.CMSrender = function(url, callback) {
 
 		FUNC.read('pages', response.id, function(err, body) {
 			response.body = body;
-			console.log(response.widgets);
 			response.body.CMSrender(response.widgets, function(body) {
 				response.body = body;
 				loadpartial(repo.page.partial, function(partial) {
