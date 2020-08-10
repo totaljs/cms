@@ -311,10 +311,14 @@
 
 	Thelpers.settingspermissions = function(value) {
 		var builder = [];
-		for (var i = 0; i < value.length; i++) {
-			var role = common.permissions.findItem('id', value[i]);
-			role && builder.push(role.name);
+
+		if (value && value.length) {
+			for (var i = 0; i < value.length; i++) {
+				var role = common.permissions.findItem('id', value[i]);
+				role && builder.push(role.name);
+			}
 		}
+
 		return builder.join(', ') || DEF.empty;
 	};
 
