@@ -2731,13 +2731,13 @@ COMPONENT('fileupload', function(self, config) {
 			data.append('file' + i, files[i]);
 
 		SETTER('loading', 'show');
-		UPLOAD(config.url, data, function(response, err) {
+		UPLOAD(config.url, data, function(response, err, output) {
 
 			el.value = '';
 			SETTER('loading', 'hide', 500);
 
 			if (err) {
-				SETTER('snackbar', 'warning', err.toString());
+				SETTER('message/warning', err === 431 ? config.error : (output.text || err));
 				return;
 			}
 
