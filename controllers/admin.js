@@ -187,7 +187,7 @@ function file_read(req, res) {
 	var id = req.split[1].replace('.' + req.extension, '');
 
 	if (!req.query.s || !ISIMAGE[req.extension]) {
-		res.filefs('files', id, !ISIMAGE[req.extension] && (req.extension !== 'pdf' || req.extension !== 'txt'));
+		res.filefs('files', id, !ISIMAGE[req.extension] && (req.extension !== 'pdf' && req.extension !== 'txt'));
 		return;
 	}
 
