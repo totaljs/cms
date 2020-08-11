@@ -1,5 +1,11 @@
 const COOKIE_OPTIONS = { security: 'strict', httponly: true };
 
+var localization = null;
+
+LOCALIZE(function(req) {
+	return localization ? localization(req) : '';
+});
+
 NEWSCHEMA('SettingsKeyValue', function(schema) {
 	schema.define('id', 'String(50)', true);
 	schema.define('name', 'String(50)', true);
@@ -30,6 +36,8 @@ NEWSCHEMA('Settings', function(schema) {
 	schema.define('componentator', Boolean);
 	schema.define('cookie', 'String(30)', true);
 	schema.define('cdn', String, true);
+	schema.define('memorizeall', 'Boolean');
+	schema.define('localization', 'String');
 
 	schema.setGet(function($) {
 		$.callback(PREF);
@@ -133,6 +141,11 @@ NEWSCHEMA('Settings', function(schema) {
 		!PREF.notices && PREF.set('notices', []);
 
 		PREF.smtp && Mail.use(PREF.smtp, PREF.smtpoptions.parseJSON());
+
+		if (PREF.localization)
+			localization = new Function('req', PREF.localization.indexOf('return ') === -1 ? ('return ' + PREF.localization) : PREF.localization);
+		else
+			localization = null;
 
 		EMIT('settings', PREF);
 		$.success();

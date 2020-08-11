@@ -4,6 +4,8 @@
 	.settings-user:hover { background-color: #F5F5F5; }
 	.settings-user-permissions { font-size: 11px; color: gray; }
 	.settings-user .fa-times { position: absolute; color: red; right: 25px; top: 10px; cursor: pointer; }
+	.settings-keyvalue .ui-keyvalue-item-key { width: 55%; }
+	.settings-keyvalue .ui-keyvalue-item-value { margin-left: 55%; }
 </style>
 
 <div data-scope="settings">
@@ -26,7 +28,7 @@
 		</section>
 
 		<section data-type="main">
-			<div data---="viewbox__common.page__parent:.ui-layout-section;scrollbar:1">
+			<div data---="viewbox__common.page__parent:.ui-layout-section;scrollbar:1" class="invisible">
 				<br />
 				<div class="container">
 					<br />
@@ -70,7 +72,7 @@
 
 						<div class="panel">
 							<label><i class="fa fa-wrench"></i>@(Additional settings)</label>
-							<div class="panelbody m">
+							<div class="panelbody m settings-keyvalue">
 								<div class="alert m">
 									<div class="b"><i class="fa fa-warning"></i>@(IMPORTANT)</div>
 									@(All new values below must be confirmed manully via <i class="fa fa-keyboard-o"></i>ENTER).
@@ -85,18 +87,24 @@
 										<div class="help">@(Signals can affect a behaviour in pages or posts)</div>
 									</div>
 								</div>
-
+								<hr class="nmt" />
 								<div class="row">
-									<div class="col-md-6 m">
+									<div class="col-md-4 m">
 										<div data---="input__?.form.cookie__required:1;maxlength:30">@(Cookie name)</div>
 										<div class="help">@(A cookie name for administration area)</div>
 									</div>
-									<div class="col-md-6 m">
+									<div class="col-md-4 m">
 										<div data---="input__?.form.cdn__required:1;maxlength:150">@(CDN)</div>
-										<div class="help">@(The link will be added to each external resource from Total.js Platform)</div>
+										<div class="help">@(Content delivery network for jComponent library)</div>
+									</div>
+									<div class="col-md-4 m">
+										<div data---="input__?.form.localization__placeholder:req.url.startsWith('/sk/') ? 'sk' \: 'en'">@(Localization)</div>
+										<div class="help">@(Generates a localization delegate, must return a language)</div>
 									</div>
 								</div>
 
+								<hr class="nmt" />
+								<div data---="checkbox__?.form.memorizeall">@(Cache entire render with the layout together)</div>
 							</div>
 
 							<div class="panelbody bg-smoke">

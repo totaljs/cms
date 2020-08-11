@@ -1208,7 +1208,7 @@ COMPONENT('keyvalue', 'maxlength:100', function(self, config) {
 	var skip = false;
 	var empty = {};
 
-	self.template = Tangular.compile('<div class="ui-keyvalue-item"><div class="ui-keyvalue-item-remove"><i class="fa fa-times"></i></div><div class="ui-keyvalue-item-key"><input type="text" name="key" maxlength="{{ max }}"{{ if disabled }} disabled="disabled"{{ fi }} placeholder="{{ placeholder_key }}" value="{{ key }}" /></div><div class="ui-keyvalue-item-value"><input type="text" maxlength="{{ max }}" placeholder="{{ placeholder_value }}" value="{{ value }}" /></div></div>');
+	self.template = Tangular.compile('<div class="ui-keyvalue-item"><div class="ui-keyvalue-item-remove"><i class="fa fa-times"></i></div><div class="ui-keyvalue-item-key"><input type="text" name="key" maxlength="{{ max }}"{{ if disabled }} disabled="disabled"{{ fi }} placeholder="{{ placeholder_key }}" autocomplete="new-password" value="{{ key }}" /></div><div class="ui-keyvalue-item-value"><input type="text" maxlength="{{ max }}" placeholder="{{ placeholder_value }}" autocomplete="new-password" value="{{ value }}" /></div></div>');
 	self.nocompile();
 
 	self.binder = function(type, value) {
@@ -1216,6 +1216,7 @@ COMPONENT('keyvalue', 'maxlength:100', function(self, config) {
 	};
 
 	self.configure = function(key, value, init, prev) {
+
 		if (init)
 			return;
 

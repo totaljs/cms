@@ -795,7 +795,11 @@ Controller.prototype.CMSpage = function(callback, cache) {
 				response.parenturl = '';
 
 			repo.page = response;
-			self.layoutName = 'cms' + repo.page.template;
+
+			if (PREF.memorizeall)
+				self.layoutName = '';
+			else
+				self.layoutName = 'cms' + repo.page.template;
 
 			var obj = {};
 
@@ -814,10 +818,17 @@ Controller.prototype.CMSpage = function(callback, cache) {
 						repo.page.partial = partial;
 						if (callback) {
 							callback.call(self, function(model) {
-								self.view_compile(repo.page.body, model);
+								if (PREF.memorizeall)
+									self.view('cms' + repo.page.template, model);
+								else
+									self.view_compile(repo.page.body, model);
 							});
-						} else
-							self.view_compile(repo.page.body);
+						} else {
+							if (PREF.memorizeall)
+								self.view('cms' + repo.page.template);
+							else
+								self.view_compile(repo.page.body);
+						}
 					}, self);
 				}, self);
 			});
