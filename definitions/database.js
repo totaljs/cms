@@ -8,9 +8,9 @@ CONF.table_postsdata = 'id:string|body:string|dtcreated:date';
 CONF.table_newslettersdata = 'id:string|body:string|dtcreated:date';
 
 TABLE('pagesdata').memory(1);
-// TABLE('partsdata').memory(1);
-// TABLE('postsdata').memory(1);
-// TABLE('newslettersdata').memory(1);
+TABLE('partsdata').memory(1);
+TABLE('postsdata').memory(1);
+TABLE('newslettersdata').memory(1);
 
 // Pages, Posts, Parts and Newsletter us .write() and .read() functions
 FUNC.write = function(type, id, content, callback, exists) {
