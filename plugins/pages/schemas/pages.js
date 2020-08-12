@@ -50,13 +50,14 @@ NEWSCHEMA('Pages', function(schema) {
 	// Gets listing
 	schema.setQuery(function($) {
 		var filter = NOSQL('pages').list();
-		filter.fields('id,name,title,url,ispartial,icon,parent,language,draft,dtupdated,dtcreated');
+		filter.fields('id,name,title,url,ispartial,icon,parent,template,language,draft,dtupdated,dtcreated');
 		filter.sort('dtcreated_asc');
 		filter.callback($.callback);
 	});
 
 	// Gets a specific page
 	schema.setGet(function($) {
+
 		var opt = $.options;
 		var filter = NOSQL('pages').one();
 		opt.url && filter.where('url', opt.url);
