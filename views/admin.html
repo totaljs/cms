@@ -245,9 +245,18 @@
 							tmp = 'pagesnavigation';
 						else
 							tmp += 'form';
-						if (tmp === common.form)
-							SETTER('message/warning', '@(The user  "<b>{0}</b>" is editing this content too.)'.format(user.name));
+						if (tmp === common.form) {
+							// send warning to another user
+							if (item.notified)
+								SETTER('message/warning', '@(The user  "<b>{0}</b>" is editing this content too.)'.format(item.user));
+							else {
+								item.notified = true;
+								item.user = user.name;
+								SETTER('websocket/send', item);
+							}
+						}
 					}
+
 					refresh_notifications();
 					return;
 

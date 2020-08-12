@@ -218,6 +218,7 @@ function socket() {
 	var self = this;
 	WS = self;
 	self.autodestroy(() => WS = null);
+	self.on('message', (client, message) => self.send(message, c => c !== client));
 }
 
 function logout() {
