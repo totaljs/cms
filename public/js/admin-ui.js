@@ -5138,7 +5138,7 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 			forcescroll = opt.scroll = 'y';
 			opt.operation = 'filter';
 			label.parent().tclass('dg-filter-selected', is);
-			label.text(item[col.otext] || '');
+			label.text(is ? (item[col.otext] || '') : col.filter);
 			self.fn_refresh();
 		};
 
