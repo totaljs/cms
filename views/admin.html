@@ -54,7 +54,7 @@
 			<main>
 				<div style="height:8px"></div>
 				@{foreach m in model}
-					@{if m.plugins.length !== 1}
+					@{if m.plugins.length}
 						@{if index > 0}
 						<hr />
 						@{fi}
@@ -242,13 +242,12 @@
 					if (user.name !== item.user) {
 						var tmp = item.type.substring(0, item.type.indexOf('/'));
 						if (tmp === 'navigations')
-							tmp = 'pages-navigation';
+							tmp = 'pagesnavigation';
 						else
-							tmp += '-form';
+							tmp += 'form';
 						if (tmp === common.form)
-							SETTER('snackbar/warning', '@(<b>IMPORTANT:</b> The user called "<b>{0}</b>" is editing same item.)'.format(user.name));
+							SETTER('message/warning', '@(The user  "<b>{0}</b>" is editing this content too.)'.format(user.name));
 					}
-
 					refresh_notifications();
 					return;
 
