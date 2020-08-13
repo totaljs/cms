@@ -193,7 +193,6 @@
 		};
 
 		ON('message', function(message) {
-
 			if (message.type === 'visitor') {
 				EMIT('visitor', message.message);
 			} else {
@@ -240,19 +239,26 @@
 				case 'widgets/edit':
 
 					if (user.name !== item.user) {
+
 						var tmp = item.type.substring(0, item.type.indexOf('/'));
 						if (tmp === 'navigations')
 							tmp = 'pagesnavigation';
 						else
 							tmp += 'form';
+
 						if (tmp === common.form) {
 							// send warning to another user
 							if (item.notified)
 								SETTER('message/warning', '@(The user  "<b>{0}</b>" is editing this content too.)'.format(item.user));
 							else {
-								item.notified = true;
-								item.user = user.name;
-								SETTER('websocket/send', item);
+								var model = GET(tmp);
+								if (model && model.id === item.message) {
+									setTimeout(function(item) {
+										item.notified = true;
+										item.user = user.name;
+										SETTER('websocket/send', item);
+									}, 1000, item);
+								}
 							}
 						}
 					}
