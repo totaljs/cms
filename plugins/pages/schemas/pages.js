@@ -302,15 +302,19 @@ NEWSCHEMA('Pages/Globals', function(schema) {
 
 			WAIT(() => loaded, function() {
 				schema.get(function(err, response) {
+
+					if (!response.body)
+						response.body = '';
+
 					var arr = pending.slice(0);
 					var is = false;
-					for (var i = 0, length = arr.length; i < length; i++) {
+					for (var i = 0; i < arr.length; i++) {
 						if (!MAIN.variables[arr[i].name]) {
 							response.body += '\n' + arr[i].name.padRight(25) + ': ' + arr[i].value;
 							is = true;
 						}
 					}
-					is && response.$save();
+					is && $SAVE(schema.name, response, NOOP);
 				});
 			});
 
@@ -349,15 +353,14 @@ NEWSCHEMA('Pages/Redirects', function(schema) {
 		var redirects = Object.keys(MAIN.redirects);
 		var builder = [];
 
-		for (var i = 0, length = redirects.length; i < length; i++) {
+		for (var i = 0; i < redirects.length; i++) {
 			var key = redirects[i];
 			builder.push(key.padRight(40) + ' : ' + MAIN.redirects[key]);
 		}
 
 		var model = schema.create();
 		model.body = builder.join('\n');
-		model.$save();
-
+		$SAVE(schema.name, model, NOOP);
 		$.success();
 	});
 });
