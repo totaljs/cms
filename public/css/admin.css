@@ -168,6 +168,7 @@ h3 i { margin-right: 8px; }
 .button { background-color: #4285F4; border: 0; color: white; cursor: pointer; outline: 0; width: 100%; border-radius: 2px; height: 50px; text-transform: uppercase; font-family: Arial; }
 .button:hover { box-shadow: 0 2px 5px rgba(0,0,0,0.1); opacity: 0.9; }
 .button:disabled { background-color: #E0E0E0; color: silver; cursor: not-allowed; box-shadow: none; opacity: 1; }
+.button:disabled i { color: silver !important; }
 .button i { margin-right: 5px; }
 .button-small { height: 32px; font-size: 12px; }
 .button-clear { background-color: #CA3F3F; }
