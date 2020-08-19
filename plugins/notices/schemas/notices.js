@@ -34,11 +34,13 @@ NEWSCHEMA('Notices', function(schema) {
 			opt.event && filter.where('event', '>', NOW.add('-1 day'));
 		}
 
-		filter.fields('id,picture,linker_category,summary,category,date,name,author,icon,dtcreated,pinned,event,url,dtupdated' + (isAdmin || opt.nobody ? '' : ',body'));
+		var isbody = !(isAdmin || opt.nobody);
+
+		filter.fields('id,picture,linker_category,summary,category,date,name,author,icon,dtcreated,pinned,event,url,dtupdated' + (isbody ? ',body' : ''));
 		filter.gridsort(opt.sort || 'dtcreated_desc');
 
 		filter.callback(function(err, response) {
-			!isAdmin && prepare_body(response.items);
+			isbody && prepare_body(response.items);
 			$.callback(response);
 		});
 	});
