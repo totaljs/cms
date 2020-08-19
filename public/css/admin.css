@@ -51,7 +51,8 @@ a.linkshortcut:hover { border-bottom-color: #A0A0A0; }
 .ui-layout { background-color: #E0E0E0; }
 .ui-layout-section { background-color: white; }
 
-.gray { color: gray; }
+.gray { color: #999999; }
+.orange { color: #FF7F00; }
 .header { height: 45px; padding: 0 10px 0 0; background-color: #F8F8F8; }
 .header label { float: left; font-size: 14px; font-weight: bold; height: 26px; line-height: 26px; margin: 9px 0 0 5px; padding: 0 10px 0; }
 .header label i { color: $color; }

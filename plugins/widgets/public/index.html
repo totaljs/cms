@@ -76,7 +76,7 @@
 		exports.button = function(name, row, grid) {
 			switch (name) {
 				case 'remove':
-					SETTER('approve/show', '@(Are you sure you want to remove selected widget?)', '"trash" @(Remove)', function(index) {
+					SETTER('approve/show', '@(Are you sure you want to remove selected widget?)', '"trash" @(Remove)', function() {
 						FUNC.loading(true);
 						AJAX('DELETE [url]api/widgets/{id}/'.arg(row), function(response) {
 							FUNC.loading(false, 1000);

@@ -159,7 +159,7 @@
 			var id = cmseditor.link.idtracking;
 			cmseditor.link.idtracking = null;
 			SET('cmseditor.link.tracking', null);
-			SETTER('approve/show', '@(Do you want to remove this tracking from database?)', '"trash-o" @(Remove)', function(index) {
+			SETTER('approve/show', '@(Do you want to remove this tracking from database?)', '"trash-o" @(Remove)', function() {
 				AJAX('DELETE [url]api/tracking/{0}/'.format(id), NOOP);
 				var arr = GET('%tracking');
 				if (arr) {

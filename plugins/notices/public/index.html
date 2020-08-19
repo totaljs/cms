@@ -103,19 +103,17 @@
 			options.callback = function(item) {
 				switch (item.id) {
 					case 'remove':
-						SETTER('approve/show', '@(Are you sure you want to remove all selected notices?)', '"trash" @(Remove)', function(index) {
-							if (!index) {
-								var arr = FIND('.notices.grid').checked();
-								FUNC.loading(true);
-								arr.wait(function(el, next, index) {
-									SET('common.progress', (index / arr.length) * 100);
-									AJAX('DELETE [url]api/notices/' + el.id, next);
-								}, function() {
-									NULL('?.grid');
-									FUNC.loading(false, 1000);
-									SETTER('snackbar/success', '@(Notices have been removed successfully.)');
-								});
-							}
+						SETTER('approve/show', '@(Are you sure you want to remove all selected notices?)', '"trash" @(Remove)', function() {
+							var arr = FIND('.notices.grid').checked();
+							FUNC.loading(true);
+							arr.wait(function(el, next, index) {
+								SET('common.progress', (index / arr.length) * 100);
+								AJAX('DELETE [url]api/notices/' + el.id, next);
+							}, function() {
+								NULL('?.grid');
+								FUNC.loading(false, 1000);
+								SETTER('snackbar/success', '@(Notices have been removed successfully.)');
+							});
 						});
 						break;
 				}

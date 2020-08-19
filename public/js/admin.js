@@ -41,6 +41,20 @@ function refresh_height() {
 	}, 50);
 }
 
+function refresh_filebrowser_files(clear, callback) {
+	AJAXCACHE('GET [url]api/files/', function(response, is) {
+		if (!is) {
+			response.reverse();
+			for (var i = 0; i < response.length; i++) {
+				var file = response[i];
+				file.id = file.id + file.name.substring(file.name.lastIndexOf('.'));
+			}
+		}
+		SET('filebrowser.files', response);
+		callback && callback(response);
+	}, 'session', clear);
+}
+
 function refresh_filebrowser(target, type, clear) {
 
 	var item = filebrowser;
@@ -52,21 +66,10 @@ function refresh_filebrowser(target, type, clear) {
 	if (clear === true)
 		item.clear = clear;
 
-	AJAXCACHE('GET [url]api/files/', function(response, is) {
-
+	refresh_filebrowser_files(item.clear, function() {
 		item.clear = false;
-
-		if (!is) {
-			response.quicksort('ctime', false);
-			for (var i = 0, length = response.length; i < length; i++) {
-				var file = response[i];
-				file.id = file.id + file.name.substring(file.name.lastIndexOf('.'));
-			}
-		}
-
-		SET('filebrowser.files', response);
 		SET('common.form3', 'filebrowser');
-	}, 'session', item.clear);
+	});
 }
 
 $(W).on('resize', refresh_height);

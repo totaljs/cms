@@ -121,7 +121,7 @@
 		exports.button = function(name, row, grid) {
 			switch (name) {
 				case 'remove':
-					SETTER('approve/show', '@(Are you sure you want to remove selected newsletter?)', '"trash" @(Remove)', function(index) {
+					SETTER('approve/show', '@(Are you sure you want to remove selected newsletter?)', '"trash" @(Remove)', function() {
 						FUNC.loading(true);
 						AJAX('DELETE [url]api/newsletters/' + row.id, function(response) {
 							FUNC.loading(false, 1000);
@@ -168,7 +168,7 @@
 			options.callback = function(item) {
 				switch (item.id) {
 					case 'remove':
-						SETTER('approve/show', '@(Are you sure you want to remove all selected newsletters?)', '"trash" @(Remove)', function(index) {
+						SETTER('approve/show', '@(Are you sure you want to remove all selected newsletters?)', '"trash" @(Remove)', function() {
 							FUNC.loading(true);
 							newsletters.checked.wait(function(el, next, index) {
 								SET('common.progress', (index / arr.length) * 100);

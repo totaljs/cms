@@ -118,7 +118,7 @@
 		};
 
 		exports.clear = function() {
-			SETTER('approve/show', '@(Are you sure you want to clear all events?)', '"trash-o" @(Clear)', function(index) {
+			SETTER('approve/show', '@(Are you sure you want to clear all events?)', '"trash-o" @(Clear)', function() {
 				AJAX('GET [url]api/events/clear/', function() {
 					SET('events', { today: [], yesterday: [], older: [] });
 					exports.element.SETTER('*', 'resize');

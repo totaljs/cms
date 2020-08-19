@@ -149,7 +149,7 @@
 						AJAX('GET [url]api/posts/toggle/', { id: arr.join(',') }, exports.refresh);
 						break;
 					case 'remove':
-						SETTER('approve/show', '@(Are you sure you want to remove all selected posts?)', '"trash"@(Remove)', function(index) {
+						SETTER('approve/show', '@(Are you sure you want to remove all selected posts?)', '"trash"@(Remove)', function() {
 							var arr = exports.element.FIND('.posts.grid').checked();
 							FUNC.loading(true);
 							arr.wait(function(el, next, index) {

@@ -38,6 +38,7 @@ NEWSCHEMA('Pages', function(schema) {
 	schema.define('redirects', '[String]');             // Temporary
 	schema.define('css', String);                       // Custom page styles
 
+	schema.define('pinned', Boolean);                   // Pin the page of the top of sorting
 	schema.define('draft', Boolean);                    // Determines draft
 	schema.define('navicon', Boolean);                  // Can replace the item icon in navigation
 	schema.define('navname', Boolean);                  // Can replace the item name in navigation
@@ -50,7 +51,7 @@ NEWSCHEMA('Pages', function(schema) {
 	// Gets listing
 	schema.setQuery(function($) {
 		var filter = NOSQL('pages').list();
-		filter.fields('id,name,title,url,ispartial,icon,parent,template,language,draft,dtupdated,dtcreated');
+		filter.fields('id,name,title,url,ispartial,icon,parent,template,language,draft,dtupdated,dtcreated,pinned');
 		filter.sort('dtcreated_asc');
 		filter.callback($.callback);
 	});
