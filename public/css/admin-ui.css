@@ -538,7 +538,6 @@ input { border-radius: 0; }
 .ui-menu li.ui-menu-disabled { color: gray; background-color: #dedede; cursor: not-allowed; }
 .ui-menu li.ui-menu-disabled i { color: #c5c5c5; }
 
-
 .ui-input { position: relative; font-size: 13px; }
 .ui-input-required .ui-input-control { border-color: #D0D0D0; }
 .ui-input-label { margin-bottom: 3px; font-size: 12px; }
@@ -645,6 +644,7 @@ input { border-radius: 0; }
 .ui-viewbox { overflow: hidden; -ms-overflow-style: none; box-sizing: content-box }
 .ui-viewbox-disabled { z-index: 5; position: absolute; background-color: rgba(255,255,255,0.8); }
 .ui-viewbox-hidden { visibility: hidden; }
+
 
 .ui-datepicker { font-size: 12px; width: 247px; height: 300px; position: absolute; background-color: #FFFFFF; border: 1px solid #E0E0E0; left: 100px; top: 100px; border-radius: 2px; z-index: 100; color: gray; box-shadow: 0 5px 25px rgba(0,0,0,0.1); opacity: 0; transform: scale(0.6); transition: all 0.2s; }
 .ui-datepicker-visible { transform: scale(1); opacity: 1; }

@@ -8,7 +8,7 @@ NEWSCHEMA('Notices', function(schema) {
 	schema.define('date', Date);
 	schema.define('event', Date);
 	schema.define('icon', 'Lower(40)');
-	schema.define('ispinned', Boolean);
+	schema.define('pinned', Boolean);
 	schema.define('url', 'String(500)');
 
 	// Gets listing
@@ -28,12 +28,12 @@ NEWSCHEMA('Notices', function(schema) {
 			opt.category && filter.where('categoryid', opt.category);
 			opt.published && filter.where('date', '<=', NOW);
 			opt.search && filter.like('search', opt.search.keywords(true, true));
-			opt.ispinned != null && filter.where('ispinned', opt.ispinned);
+			opt.pinned != null && filter.where('pinned', opt.pinned);
 			opt.event && filter.where('event', '>', NOW.add('-1 day'));
 			filter.fields('body');
 		}
 
-		filter.fields('id,categoryid,category,date,name,author,icon,dtcreated,ispinned,event,url,dtupdated');
+		filter.fields('id,categoryid,category,date,name,author,icon,dtcreated,pinned,event,url,dtupdated');
 		filter.gridsort(opt.sort || 'dtcreated_desc');
 
 		filter.callback(function(err, response) {

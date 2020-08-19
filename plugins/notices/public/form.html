@@ -5,7 +5,7 @@
 			<div class="row">
 				<div class="col-md-8 m">
 					<div data---="input__?.name__required:true;maxlength:50" class="m">@(Name)</div>
-					<div data---="checkbox__?.ispinned" class="b red">@(Pin this notice)</div>
+					<div data---="checkbox__?.pinned">@(Pin this notice)</div>
 				</div>
 				<div class="col-md-4 m">
 					<div data---="input__?.date__type:date;icon:clock-o;placeholder:@(yyyy-MM-dd);align:center">@(Date)</div>
@@ -16,7 +16,7 @@
 		<div class="padding bg-smoke" style="padding-bottom:10px">
 			<div class="row">
 				<div class="col-md-4 m">
-					<div data---="input__?.category__dirsource:common.dependencies.notices;icon:folder-o;required:1;dircustom:true;dirplaceholder:@(Search or enter a new);placeholder:@(Choose a category)">@(Category)</div>
+					<div data---="input__?.category__dirsource:common.dependencies.notices;icon:folder-o;required:1;dircustom:1;dirplaceholder:@(Search or enter a new);placeholder:@(Choose a category)">@(Category)</div>
 				</div>
 				<div class="col-md-4 m">
 					<div data---="input__?.author__maxlength:30;icon:user;placeholder:@(Who is the autor?)">@(Author)</div>
