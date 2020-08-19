@@ -8,7 +8,7 @@
 					<div data---="checkbox__?.pinned">@(Pin this notice)</div>
 				</div>
 				<div class="col-md-4 m">
-					<div data---="input__?.date__type:date;icon:clock-o;placeholder:@(yyyy-MM-dd);align:center">@(Date)</div>
+					<div data---="input__?.date__type:date;icon:clock-o;placeholder:@(yyyy-mm-dd);align:center">@(Date)</div>
 					<div class="help mt10">@(You can specify a publish date.)</div>
 				</div>
 			</div>
@@ -22,7 +22,7 @@
 					<div data---="input__?.author__maxlength:30;icon:user;placeholder:@(Who is the autor?)">@(Author)</div>
 				</div>
 				<div class="col-md-4 m">
-					<div data---="input__?.event__type:date;icon:calendar;placeholder:@(yyyy-MM-dd);align:center">@(Event)</div>
+					<div data---="input__?.event__type:date;icon:calendar;placeholder:@(yyyy-mm-dd);align:center">@(Event)</div>
 				</div>
 			</div>
 		</div>
@@ -42,6 +42,7 @@
 			<ul data---="tabmenu__?tab__'editor'" class="tabmenu">
 				<li data-value="editor"><i class="fa fa-pencil"></i>@(Editor)</li>
 				<li data-value="preview"><i class="fa fa-search"></i>@(Preview)</li>
+				<li data-value="picture"><i class="far fa-camera"></i>@(Picture)</li>
 			</ul>
 		</div>
 		<div class="padding">
@@ -58,6 +59,17 @@
 			</div>
 			<div data-bind="?tab__show:value=='preview'" class="hidden">
 				<div data-bind="notices.preview__html:value" class="noticespreview"></div>
+			</div>
+			<div class="row hidden" data-bind="?tab__show:value=='picture'">
+				<div class="col-md-4 col-md-offset-4">
+					<br class="hidden-xs" />
+					<div data---="preview__?.picture__width:500;height:500;url:[url]api/upload/base64/" class="m"></div>
+					<div class="center help">
+						@(Drag & Drop picture for this notice)<br />
+						<b>@(500x500px)</b>
+					</div>
+					<br class="hidden-xs" />
+				</div>
 			</div>
 		</div>
 		<div data---="error__?.response"></div>
