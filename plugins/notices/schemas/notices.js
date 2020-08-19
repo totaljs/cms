@@ -4,6 +4,7 @@ NEWSCHEMA('Notices', function(schema) {
 	schema.define('category', 'String(50)', true);
 	schema.define('name', 'String(200)', true);
 	schema.define('author', 'String(30)', true);
+	schema.define('summary', 'String(500)');
 	schema.define('body', String, true);
 	schema.define('date', Date);
 	schema.define('event', Date);
@@ -33,7 +34,7 @@ NEWSCHEMA('Notices', function(schema) {
 			filter.fields('body');
 		}
 
-		filter.fields('id,categoryid,category,date,name,author,icon,dtcreated,pinned,event,url,dtupdated');
+		filter.fields('id,categoryid,summary,category,date,name,author,icon,dtcreated,pinned,event,url,dtupdated');
 		filter.gridsort(opt.sort || 'dtcreated_desc');
 
 		filter.callback(function(err, response) {
