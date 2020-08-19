@@ -27,15 +27,14 @@ NEWSCHEMA('Notices', function(schema) {
 			opt.category && filter.gridfilter('category', opt, String);
 		} else {
 			opt.author && filter.where('author', opt.author);
-			opt.category && filter.where('categoryid', opt.category);
+			opt.category && filter.where('linker_category', opt.category);
 			opt.published && filter.where('date', '<=', NOW);
 			opt.search && filter.like('search', opt.search.keywords(true, true));
 			opt.pinned != null && filter.where('pinned', opt.pinned);
 			opt.event && filter.where('event', '>', NOW.add('-1 day'));
-			filter.fields('body');
 		}
 
-		filter.fields('id,picture,categoryid,summary,category,date,name,author,icon,dtcreated,pinned,event,url,dtupdated');
+		filter.fields('id,picture,linker_category,summary,category,date,name,author,icon,dtcreated,pinned,event,url,dtupdated' + (isAdmin || opt.nobody ? '' : ',body'));
 		filter.gridsort(opt.sort || 'dtcreated_desc');
 
 		filter.callback(function(err, response) {
@@ -125,7 +124,7 @@ function refresh(callback) {
 }
 
 function prepare_body(items) {
-	for (var i = 0, length = items.length; i < length; i++) {
+	for (var i = 0; i < items.length; i++) {
 		var item = items[i];
 		item.body = item.body.markdown().CMSglobals();
 	}
