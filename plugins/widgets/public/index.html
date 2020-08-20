@@ -29,6 +29,7 @@
 			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?.checked;button:?/button;noborder:1;height:window;margin:45;dblclick:?/update;highlight:1;click:?.selected">
 				<script type="text/plain">
 					[
+						{ name: 'id', text: '@(ID)', width: 120, hide: true, class: 'monospace' },
 						{ name: 'name', text: '@(Name)', width: 430, template: '{{ if picture }}<i class="fa fa-camera mr5 blue"></i>{{ fi }}{{ name }}' },
 						{ name: 'category', text: '@(Category)', width: 200 },
 						{ name: 'dtupdated', text: '@(Updated)', format: '[date]', width: 150, sort: false, align: 1 },

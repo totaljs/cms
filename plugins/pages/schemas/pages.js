@@ -800,12 +800,14 @@ Controller.prototype.CMSpage = function(callback, cache) {
 	if (self.query.DEBUG && DEBUG)
 		cache = false;
 
+	var pluscache = '';
+
 	if (page.nocache)
-		cache = false;
+		pluscache = self.uri.search.hash() + '';
 
 	var DRAFT = !!self.query.DRAFT;
 
-	self.memorize('cachecms' + (self.language || '') + '_' + self.url, cache || '1 minute', cache === false, function() {
+	self.memorize('cachecms' + (self.language || '') + '_' + self.url + pluscache, cache || '1 minute', cache === false, function() {
 
 		NOSQL('pages').one().id(page.id).callback(function(err, response) {
 

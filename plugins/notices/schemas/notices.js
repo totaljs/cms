@@ -68,6 +68,18 @@ NEWSCHEMA('Notices', function(schema) {
 		$.callback($.options.markdown());
 	});
 
+	schema.addWorkflow('render', function($) {
+		var filter = NOSQL('notices').one();
+		$.options.id && filter.id($.options.id);
+		$.options.linker && filter.where('linker', $.options.linker);
+		$.options.category && filter.where('linker_category', $.options.category);
+		filter.callback(function(err, response) {
+			if (response && response.body)
+				response.body = response.body.markdown().CMSglobals();
+			$.callback(err, response);
+		}, 'error-notices-404');
+	});
+
 	// Saves the post into the database
 	schema.setSave(function($, model) {
 

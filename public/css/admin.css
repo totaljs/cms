@@ -206,6 +206,7 @@ h3 i { margin-right: 8px; }
 
 .padding-events { padding: 25px 25px 0; }
 .pagesformcheckboxes { border-left:1px solid #EBEBC4; padding: 5px 0 5px 20px; }
+.monospace { font-family: Menlo, monospace; }
 
 @media(min-width: 1200px) {
 	.header-message { display: block; }
