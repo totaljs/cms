@@ -202,7 +202,7 @@ NEWSCHEMA('Pages', function(schema) {
 			EMIT('pages.save', model);
 
 			if (!model.ispartial && model.replacelink && model.url !== oldurl && oldurl)
-				$WORKFLOW('Pages', 'replacelinks', { url: model.url, oldurl: oldurl });
+				$WORKFLOW('Pages', 'replacelinks', { url: model.url.replace(/\*\//g, ''), oldurl: oldurl });
 			else
 				setTimeout2('pages', refresh, 1000);
 

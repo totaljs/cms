@@ -32,7 +32,7 @@ NEWSCHEMA('Navigations', function(schema) {
 		var obj = {};
 		obj.id = child.id;
 		obj.pageid = child.pageid;
-		obj.url = child.url;
+		obj.url = child.url.replace(/\*\//g, '');
 		obj.icon = child.icon;
 		obj.language = child.language;
 		obj.target = child.target;
