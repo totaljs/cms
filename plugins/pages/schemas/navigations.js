@@ -1,3 +1,5 @@
+const REG_WILDCARD = /\*\//g;
+
 NEWSCHEMA('Navigations/Items', function(schema) {
 	schema.define('id', 'String(20)');
 	schema.define('pageid', UID); // Page ID
@@ -32,7 +34,7 @@ NEWSCHEMA('Navigations', function(schema) {
 		var obj = {};
 		obj.id = child.id;
 		obj.pageid = child.pageid;
-		obj.url = child.url.replace(/\*\//g, '');
+		obj.url = child.url.replace(REG_WILDCARD, '');
 		obj.icon = child.icon;
 		obj.language = child.language;
 		obj.target = child.target;
@@ -72,7 +74,7 @@ NEWSCHEMA('Navigations', function(schema) {
 			obj = {};
 			obj.id = GUID(10);
 			obj.pageid = page.id;
-			obj.url = page.url;
+			obj.url = page.url.replace(REG_WILDCARD, '');
 			obj.icon = page.icon;
 			obj.language = page.language;
 			obj.target = '_self';
@@ -167,6 +169,7 @@ function findByPage(id, items) {
 function prepare(main, children, parent, level) {
 	for (var i = 0; i < children.length; i++) {
 		var item = children[i];
+		item.url = item.url.replace(REG_WILDCARD, '');
 		main.pages[item.id] = item;
 		main.url[item.url] = item;
 		item.parent = parent;

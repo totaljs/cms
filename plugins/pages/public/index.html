@@ -97,6 +97,7 @@
 
 				for (var i = 0; i < response.items.length; i++) {
 					var item = response.items[i];
+					item.url = item.url.replace(/\*\//g, '');
 					var parent = item.parent;
 					var path = item.name;
 					var is = false;
