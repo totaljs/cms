@@ -38,6 +38,7 @@ NEWSCHEMA('Pages', function(schema) {
 	schema.define('redirects', '[String]');             // Temporary
 	schema.define('css', String);                       // Custom page styles
 
+	schema.define('nocache', Boolean);                  // Disables cache
 	schema.define('pinned', Boolean);                   // Pin the page of the top of sorting
 	schema.define('draft', Boolean);                    // Determines draft
 	schema.define('navicon', Boolean);                  // Can replace the item icon in navigation
@@ -392,7 +393,7 @@ function refresh_redirects() {
 // Refreshes internal information (sitemap)
 function refresh() {
 
-	NOSQL('pages').find().fields('id,url,name,title,parent,icon,language,ispartial,dtcreated,dtupdated').callback(function(err, response) {
+	NOSQL('pages').find().fields('id,url,name,title,parent,icon,language,ispartial,nocache,dtcreated,dtupdated').callback(function(err, response) {
 
 		var sitemap = {};
 		var helper = {};
@@ -405,7 +406,7 @@ function refresh() {
 
 			// A partial content is skipped from the sitemap
 			if (doc.ispartial) {
-				partial.push({ id: doc.id, url: doc.url, name: doc.name, title: doc.title, icon: doc.icon, language: doc.language });
+				partial.push({ id: doc.id, url: doc.url, name: doc.name, title: doc.title, icon: doc.icon, language: doc.language, nocache: doc.nocache });
 				continue;
 			}
 
@@ -415,7 +416,7 @@ function refresh() {
 
 			var key = doc.url;
 			var lng = doc.language;
-			var obj = { id: doc.id, url: doc.url, name: doc.name, title: doc.title, parent: doc.parent, icon: doc.icon, links: [], language: doc.language, dtcreated: doc.dtcreated, dtupdated: doc.dtupdated, wildcard: wild };
+			var obj = { id: doc.id, url: doc.url, name: doc.name, title: doc.title, parent: doc.parent, icon: doc.icon, links: [], language: doc.language, dtcreated: doc.dtcreated, dtupdated: doc.dtupdated, wildcard: wild, nocache: doc.nocache };
 
 			helper[doc.id] = key;
 			sitemap[key] = obj;
@@ -550,6 +551,22 @@ String.prototype.CMSrender = function(settings, callback, controller) {
 		}, widget.template);
 
 	}, () => callback(body.CMSglobals().CMStidy()));
+};
+
+Controller.prototype.widget = function(id, options, callback) {
+
+	var widget = MAIN.widgets[id];
+	if (!widget) {
+		callback('');
+		return;
+	}
+
+	if (!widget.total || !widget.total.render) {
+		callback(widget.html);
+		return;
+	}
+
+	widget.total.render.call(this, widgetsettings(widget, options), widget.html, callback, widget.template);
 };
 
 function widgetsettings(widget, settings) {
@@ -781,6 +798,9 @@ Controller.prototype.CMSpage = function(callback, cache) {
 		cache = false;
 
 	if (self.query.DEBUG && DEBUG)
+		cache = false;
+
+	if (page.nocache)
 		cache = false;
 
 	var DRAFT = !!self.query.DRAFT;

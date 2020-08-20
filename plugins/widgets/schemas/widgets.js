@@ -517,7 +517,7 @@ function watcher() {
 		var path = PATH.root('widgets');
 		var changes = [];
 		U.ls2(path, function(files) {
-			for (var i = 0, length = files.length; i < length; i++) {
+			for (var i = 0; i < files.length; i++) {
 				var file = files[i];
 				var time = file.stats.mtime.getTime();
 				if (db[file.filename]) {
