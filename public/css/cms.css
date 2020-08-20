@@ -5,3 +5,4 @@
 
 .jcomponent { display: none; visibility: hidden; }
 .nowrap, .wnowrap { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+.CMS_none { display: none; }

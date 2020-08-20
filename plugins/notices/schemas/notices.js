@@ -37,7 +37,7 @@ NEWSCHEMA('Notices', function(schema) {
 		var isbody = !(isAdmin || opt.nobody);
 
 		filter.fields('id,picture,linker_category,summary,category,date,name,author,icon,dtcreated,pinned,event,url,dtupdated' + (isbody ? ',body' : ''));
-		filter.gridsort(opt.sort || 'dtcreated_desc');
+		filter.gridsort(opt.sort || 'date_desc');
 
 		filter.callback(function(err, response) {
 			isbody && prepare_body(response.items);
@@ -666,6 +666,9 @@ function prepare_body(items) {
 			}
 
 			var line = lines[i];
+
+			if (opt.br !== false)
+				line = line.replace(/&lt;br(\s\/)?&gt;/g, '<br />');
 
 			if (opt.urlify !== false && opt.links !== false)
 				line = markdown_urlify(line);

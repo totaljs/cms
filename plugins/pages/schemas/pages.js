@@ -555,6 +555,11 @@ String.prototype.CMSrender = function(settings, callback, controller) {
 
 Controller.prototype.widget = function(id, options, callback) {
 
+	if (typeof(options) === 'function') {
+		callback = options;
+		options = EMPTYOBJECT;
+	}
+
 	var widget = MAIN.widgets[id];
 	if (!widget) {
 		callback('');
@@ -566,13 +571,13 @@ Controller.prototype.widget = function(id, options, callback) {
 		return;
 	}
 
-	widget.total.render.call(this, widgetsettings(widget, options), widget.html, callback, widget.template);
+	widget.total.render.call(this, options, widget.html, callback, widget.template);
 };
 
 function widgetsettings(widget, settings) {
 	var keys = Object.keys(widget.def);
 	var obj = {};
-	for (var i = 0, length = keys.length; i < length; i++) {
+	for (var i = 0; i < keys.length; i++) {
 		var key = keys[i];
 		if (settings[key] == null)
 			obj[key] = widget.def[key];
