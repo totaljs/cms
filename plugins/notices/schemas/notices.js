@@ -144,11 +144,11 @@ function prepare_body(items) {
 	}
 }
 
-/*! Markdown | (c) 2019 Peter Sirka | www.petersirka.com */
+/*! Markdown | (c) 2019-2020 Peter Sirka | www.petersirka.com */
 (function Markdown() {
 
 	var keywords = /\{.*?\}\(.*?\)/g;
-	var linksexternal = /(https|http):\/\//;
+	var linksexternal = /(https|http):\/\/|\.\w+$/;
 	var format = /__.*?__|_.*?_|\*\*.*?\*\*|\*.*?\*|~~.*?~~|~.*?~/g;
 	var ordered = /^[a-z|0-9]{1}\.\s|^-\s/i;
 	var orderedsize = /^(\s|\t)+/;
@@ -161,10 +161,6 @@ function prepare_body(items) {
 	var encode = function(val) {
 		return '&' + (val === '<' ? 'lt' : 'gt') + ';';
 	};
-
-	function markdown_code(value) {
-		return '<code>' + value.substring(1, value.length - 1) + '</code>';
-	}
 
 	function markdown_imagelinks(value) {
 		var end = value.lastIndexOf(')') + 1;
@@ -205,6 +201,9 @@ function prepare_body(items) {
 			// footnotes
 			return (/^\d+$/).test(text) ? '<sup data-id="{0}" class="footnote">{1}</sup>'.format(link.substring(1), text) : '<span data-id="{0}" class="footnote">{1}</span>'.format(link.substring(1), text);
 		}
+
+		if (link.substring(0, 4) === 'www.')
+			link = 'https://' + link;
 
 		var nofollow = link.charAt(0) === '@' ? ' rel="nofollow"' : linksexternal.test(link) ? ' target="_blank"' : '';
 		return '<a href="' + link + '"' + nofollow + '>' + text + '</a>';
@@ -314,7 +313,7 @@ function prepare_body(items) {
 			var len = url.length;
 			var l = url.charAt(len - 1);
 			var f = url.charAt(0);
-			if (l === '.' || l === ',')
+			if (l === '.' || l === ',' || l === ')')
 				url = url.substring(0, len - 1);
 			else
 				l = '';
@@ -322,6 +321,156 @@ function prepare_body(items) {
 			return (f.charCodeAt(0) < 40 ? f : '') + '[' + url + '](' + url + ')' + l;
 		});
 	}
+
+	FUNC.markdownredraw = function(el, opt) {
+
+		if (!opt)
+			opt = EMPTYOBJECT;
+
+		el.find('.lang-secret').each(function() {
+			var el = $(this);
+			el.parent().replaceWith('<div class="secret" data-show="{0}" data-hide="{1}"><span class="showsecret"><i class="fa fa-lock"></i><i class="fa pull-right fa-angle-down"></i><b>{0}</b></span><div class="hidden">'.format(opt.showsecret || 'Show secret data', opt.hidesecret || 'Hide secret data') + el.html().trim().markdown(opt.secretoptions) +'</div></div>');
+		});
+
+		el.find('.lang-video').each(function() {
+			var t = this;
+			if (t.$mdloaded)
+				return;
+			t.$mdloaded = 1;
+			var el = $(t);
+			var html = el.html();
+			if (html.indexOf('youtube') !== -1)
+				el.parent().replaceWith('<div class="video"><iframe src="https://www.youtube.com/embed/' + html.split('v=')[1] + '" frameborder="0" allowfullscreen></iframe></div>');
+			else if (html.indexOf('vimeo') !== -1)
+				el.parent().replaceWith('<div class="video"><iframe src="//player.vimeo.com/video/' + html.substring(html.lastIndexOf('/') + 1) + '" frameborder="0" allowfullscreen></iframe></div>');
+		});
+
+		el.find('.lang-barchart').each(function() {
+
+			var t = this;
+			if (t.$mdloaded)
+				return;
+
+			t.$mdloaded = 1;
+			var el = $(t);
+			var arr = el.html().split('\n').trim();
+			var series = [];
+			var categories = [];
+			var y = '';
+
+			for (var i = 0; i < arr.length; i++) {
+				var line = arr[i].split('|').trim();
+				for (var j = 1; j < line.length; j++) {
+					if (i === 0)
+						series.push({ name: line[j], data: [] });
+					else
+						series[j - 1].data.push(+line[j]);
+				}
+				if (i)
+					categories.push(line[0]);
+				else
+					y = line[0];
+			}
+
+			var options = {
+				chart: {
+					height: 300,
+					type: 'bar',
+				},
+				yaxis: { title: { text: y }},
+				series: series,
+				xaxis: { categories: categories, },
+				fill: { opacity: 1 },
+			};
+
+			var chart = new ApexCharts($(this).parent().empty()[0], options);
+			chart.render();
+		});
+
+		el.find('.lang-linerchar').each(function() {
+
+			var t = this;
+			if (t.$mdloaded)
+				return;
+			t.$mdloaded = 1;
+
+			var el = $(t);
+			var arr = el.html().split('\n').trim();
+			var series = [];
+			var categories = [];
+			var y = '';
+
+			for (var i = 0; i < arr.length; i++) {
+				var line = arr[i].split('|').trim();
+				for (var j = 1; j < line.length; j++) {
+					if (i === 0)
+						series.push({ name: line[j], data: [] });
+					else
+						series[j - 1].data.push(+line[j]);
+				}
+				if (i)
+					categories.push(line[0]);
+				else
+					y = line[0];
+			}
+
+			var options = {
+				chart: {
+					height: 300,
+					type: 'line',
+				},
+				yaxis: { title: { text: y }},
+				series: series,
+				xaxis: { categories: categories, },
+				fill: { opacity: 1 },
+			};
+
+			var chart = new ApexCharts($(this).parent().empty()[0], options);
+			chart.render();
+		});
+
+		el.find('.lang-iframe').each(function() {
+
+			var t = this;
+			if (t.$mdloaded)
+				return;
+			t.$mdloaded = 1;
+
+			var el = $(t);
+			el.parent().replaceWith('<div class="iframe">' + el.html().replace(/&lt;/g, '<').replace(/&gt;/g, '>') + '</div>');
+		});
+
+		el.find('pre code').each(function(i, block) {
+			var t = this;
+			if (t.$mdloaded)
+				return;
+			t.$mdloaded = 1;
+			hljs.highlightBlock(block);
+		});
+
+		el.find('a').each(function() {
+			var t = this;
+			if (t.$mdloaded)
+				return;
+			t.$mdloaded = 1;
+			var el = $(t);
+			var href = el.attr('href');
+			var c = href.substring(0, 1);
+			if (href === '#') {
+				var beg = '';
+				var end = '';
+				var text = el.html();
+				if (text.substring(0, 1) === '<')
+					beg = '-';
+				if (text.substring(text.length - 1) === '>')
+					end = '-';
+				el.attr('href', '#' + (beg + markdown_id(el.text()) + end));
+			} else if (c !== '/' && c !== '#')
+				el.attr('target', '_blank');
+		});
+
+		el.find('.code').rclass('hidden');
+	};
 
 	String.prototype.markdown = function(opt) {
 
@@ -358,6 +507,7 @@ function prepare_body(items) {
 		var prev;
 		var prevsize = 0;
 		var tmp;
+		var codes = [];
 
 		if (opt.wrap == null)
 			opt.wrap = true;
@@ -370,6 +520,15 @@ function prepare_body(items) {
 				var text = ul.pop();
 				builder.push('</' + text + '>');
 			}
+		};
+
+		var formatcode = function(value) {
+			var index = codes.push('<code>' + value.substring(1, value.length - 1) + '</code>') - 1;
+			return '\0code{0}\0'.format(index);
+		};
+
+		var formatcodeflush = function(value) {
+			return codes[+value.substring(5, value.length - 1)];
 		};
 
 		var formatlinks = function(val) {
@@ -398,7 +557,8 @@ function prepare_body(items) {
 					beg2 = i;
 					continue;
 				} else if (beg2 > -1 && il === '&gt;') {
-					callback(val.substring(beg2, i + 4), true);
+					if (val.substring(beg2 - 6, beg2) !== '<code>')
+						callback(val.substring(beg2, i + 4), true);
 					beg2 = -1;
 					continue;
 				}
@@ -476,7 +636,7 @@ function prepare_body(items) {
 			return val;
 		};
 
-		for (var i = 0, length = lines.length; i < length; i++) {
+		for (var i = 0; i < lines.length; i++) {
 
 			lines[i] = lines[i].replace(encodetags, encode);
 
@@ -484,7 +644,7 @@ function prepare_body(items) {
 
 				if (iscode) {
 					if (opt.code !== false)
-						builder.push('</code></pre></div>');
+						builder[builder.length - 1] += '</code></pre></div>';
 					iscode = false;
 					continue;
 				}
@@ -514,7 +674,7 @@ function prepare_body(items) {
 				line = opt.custom(line);
 
 			if (opt.formatting !== false)
-				line = line.replace(format, markdown_format).replace(code, markdown_code);
+				line = line.replace(code, formatcode).replace(format, markdown_format);
 
 			if (opt.images !== false)
 				line = imagescope(line);
@@ -712,7 +872,7 @@ function prepare_body(items) {
 		closeul();
 		table && opt.tables !== false && builder.push('</tbody></table>');
 		iscode && opt.code !== false && builder.push('</code></pre>');
-		return (opt.wrap ? '<div class="markdown">' : '') + builder.join('\n').replace(/\t/g, '    ') + (opt.wrap ? '</div>' : '');
+		return (opt.wrap ? '<div class="markdown">' : '') + builder.join('\n').replace(/\0code\d+\0/g, formatcodeflush).replace(/\t/g, '    ') + (opt.wrap ? '</div>' : '');
 	};
 
 })();
