@@ -802,7 +802,7 @@ Controller.prototype.CMSpage = function(callback, cache) {
 
 	var pluscache = '';
 
-	if (page.nocache)
+	if (page.nocache && self.uri.search)
 		pluscache = self.uri.search.hash() + '';
 
 	var DRAFT = !!self.query.DRAFT;
