@@ -22,7 +22,7 @@ FUNC.write = function(type, id, content, callback, exists) {
 
 	var db = TABLE(type + 'data');
 	if (exists) {
-		db.modify({ body: content }, true).where('id', id).insert(function(doc) {
+		db.modify({ body: content }, true).id(id).insert(function(doc) {
 			doc.id = id;
 			doc.dtcreated = NOW;
 		}).callback(callback);
@@ -31,7 +31,7 @@ FUNC.write = function(type, id, content, callback, exists) {
 };
 
 FUNC.read = function(type, id, callback) {
-	TABLE(type + 'data').read().where('id', id).fields('body').callback(function(err, doc) {
+	TABLE(type + 'data').read().id(id).fields('body').callback(function(err, doc) {
 		callback(null, doc ? doc.body : '');
 	});
 };

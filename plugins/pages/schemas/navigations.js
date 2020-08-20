@@ -18,7 +18,7 @@ NEWSCHEMA('Navigations', function(schema) {
 
 	schema.setGet(function($) {
 		FUNC.alert($.user, 'navigations/edit', $.id);
-		NOSQL('navigations').read().where('id', $.id).callback(function(err, response) {
+		NOSQL('navigations').read().id($.id).callback(function(err, response) {
 			if (response) {
 				$.callback(response);
 			} else {
@@ -83,7 +83,7 @@ NEWSCHEMA('Navigations', function(schema) {
 			children.push(obj);
 
 			count++;
-			NOSQL('navigations').modify({ children: children }).where('id', navid).callback(next);
+			NOSQL('navigations').modify({ children: children }).id(navid).callback(next);
 
 		}, function() {
 
@@ -111,7 +111,7 @@ NEWSCHEMA('Navigations', function(schema) {
 			return;
 		}
 
-		db.update(model, model).where('id', model.id).callback(function() {
+		db.update(model, model).id(model.id).callback(function() {
 			$SAVE('Events', { type: 'navigations/save', user: user, id: model.id, body: model.name, admin: true }, NOOP, $);
 			EMIT('navigations.save', model);
 			refresh();
@@ -143,7 +143,7 @@ NEWSCHEMA('Navigations', function(schema) {
 					}
 
 					item.dtupdated = NOW;
-					db.update(nav).where('id', nav.id).callback(done);
+					db.update(nav).id(nav.id).callback(done);
 				}
 			}
 			$.success();

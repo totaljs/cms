@@ -53,7 +53,7 @@ NEWSCHEMA('Newsletters', function(schema) {
 	schema.setRemove(function($) {
 		var id = $.id;
 		FUNC.remove('newsletters', id);
-		NOSQL('newsletters').remove().where('id', id).callback(() => $.success());
+		NOSQL('newsletters').remove().id(id).callback(() => $.success());
 		NOSQL('parts').remove().where('ownerid', id).where('type', 'newsletter');
 	});
 
@@ -87,7 +87,7 @@ NEWSCHEMA('Newsletters', function(schema) {
 
 		model.body = undefined;
 
-		var db = isUpdate ? nosql.modify(model).where('id', model.id).backup($.user.meta(model)) : nosql.insert(model);
+		var db = isUpdate ? nosql.modify(model).id(model.id).backup($.user.meta(model)) : nosql.insert(model);
 
 		db.callback(function() {
 			$SAVE('Events', { type: 'newsletters/save', user: user, id: model.id, body: model.name, admin: true }, NOOP, $);
@@ -209,7 +209,7 @@ NEWSCHEMA('Newsletters', function(schema) {
 						setTimeout(() => Mail.send2(messages, next), 60000);
 
 						// Updates DB
-						NOSQL('newsletters').modify({ issending: true, count: sum, dtsent: NOW }).first().where('id', MAIN.newsletter.id);
+						NOSQL('newsletters').modify({ issending: true, count: sum, dtsent: NOW }).first().id(MAIN.newsletter.id);
 
 					} else
 						Mail.send2(messages, () => setTimeout(next, 2000));
@@ -217,7 +217,7 @@ NEWSCHEMA('Newsletters', function(schema) {
 				}, function() {
 					PREF.set('newsletters', null);
 					$SAVE('Event', { type: 'newsletters/sent', body: repository.page.name, admin: true }, NOOP, $);
-					NOSQL('newsletters').modify({ issending: false, issent: true, count: sum, dtsent: NOW }).first().where('id', MAIN.newsletter.id);
+					NOSQL('newsletters').modify({ issending: false, issent: true, count: sum, dtsent: NOW }).first().id(MAIN.newsletter.id);
 					MAIN.newsletter.sending = false;
 					MAIN.newsletter.percentage = 0;
 					MAIN.newsletter.id = null;

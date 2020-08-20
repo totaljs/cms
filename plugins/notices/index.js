@@ -7,7 +7,7 @@ exports.install = function() {
 	ROUTE('GET     /admin/api/notices/                        *Notices --> @query');
 	ROUTE('GET     /admin/api/notices/{id}/                   *Notices --> @read');
 	ROUTE('POST    /admin/api/notices/                        *Notices --> @save');
-	ROUTE('DELETE  /admin/api/notices/                        *Notices --> @remove');
+	ROUTE('DELETE  /admin/api/notices/{id}/                   *Notices --> @remove');
 	ROUTE('GET     /admin/api/notices/toggle/                 *Notices --> @toggle');
 	ROUTE('POST    /admin/api/notices/preview/',              preview, ['json']);
 };

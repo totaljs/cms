@@ -8,7 +8,7 @@ NEWSCHEMA('Templates', function(schema) {
 	schema.define('body', String, true);
 
 	schema.setGet(function($) {
-		NOSQL('templates').read().where('id', $.id).callback($.callback, 'error-templates-404');
+		NOSQL('templates').read().id($.id).callback($.callback, 'error-templates-404');
 	});
 
 	schema.setSave(function($, model) {
@@ -23,7 +23,7 @@ NEWSCHEMA('Templates', function(schema) {
 		if (model.id) {
 			model.id = undefined;
 			model.dtupdated = NOW;
-			db.modify(model).where('id', id).callback(done);
+			db.modify(model).id(id).callback(done);
 		} else {
 			model.id = id;
 			model.dtcreated = NOW;
@@ -33,7 +33,7 @@ NEWSCHEMA('Templates', function(schema) {
 	});
 
 	schema.setRemove(function($) {
-		NOSQL('templates').remove().where('id', $.id).callback(function() {
+		NOSQL('templates').remove().id($.id).callback(function() {
 
 			NOSQL('pages').modify({ template: '' }).where('template', $.id);
 			NOSQL('posts').modify({ template: '' }).where('template', $.id);

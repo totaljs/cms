@@ -16,7 +16,7 @@
 		<div class="padding bg-smoke" style="padding-bottom:10px">
 			<div class="row">
 				<div class="col-md-4 m">
-					<div data---="input__?.category__dirsource:common.dependencies.notices;icon:folder-o;required:1;dircustom:1;dirplaceholder:@(Search or enter a new);placeholder:@(Choose a category)">@(Category)</div>
+					<div data---="input__?.category__dirsource:common.dependencies.notices;icon:folder-o;required:1;dircustom:1;dirvalue:name;dirplaceholder:@(Search or enter a new);placeholder:@(Choose a category)">@(Category)</div>
 				</div>
 				<div class="col-md-4 m">
 					<div data---="input__?.author__maxlength:30;icon:user;placeholder:@(Who is the autor?)">@(Author)</div>
@@ -27,6 +27,7 @@
 			</div>
 		</div>
 		<div class="padding" style="padding-bottom:10px">
+			<div data---="input__?.summary__maxlength:500" class="m">@(Summarization)</div>
 			<div class="row">
 				<div class="col-md-8 m">
 					<div data---="input__?.url__placeholder:@(Type a URL address)">@(URL address)</div>
@@ -36,7 +37,6 @@
 					<div data---="faiconsbutton__?.icon"></div>
 				</div>
 			</div>
-			<div data---="input__?.summary__maxlength:500" class="m">@(Summarization)</div>
 		</div>
 		<div class="tabmenu-container">
 			<ul data---="tabmenu__?tab__'editor'" class="tabmenu">

@@ -5,7 +5,7 @@ NEWSCHEMA('Posts', function(schema) {
 	schema.define('id', UID);
 	schema.define('template', 'String(30)', true);
 	schema.define('type', ['html', 'markdown']);
-	schema.define('name', 'String(100)', true);
+	schema.define('name', String, true);
 	schema.define('author', 'String(30)', true);
 	schema.define('description', 'String(300)');
 	schema.define('summary', 'String(500)');
@@ -58,9 +58,9 @@ NEWSCHEMA('Posts', function(schema) {
 
 		options.category && filter.where('linker_category', options.category);
 		options.linker && filter.where('linker', options.linker);
-		options.id && filter.where('id', options.id);
+		options.id && filter.id(options.id);
 		options.template && filter.where('template', options.template);
-		$.id && filter.where('id', $.id);
+		$.id && filter.id($.id);
 
 		filter.callback(function(err, response) {
 
@@ -83,7 +83,7 @@ NEWSCHEMA('Posts', function(schema) {
 
 		var filter = NOSQL('posts').one();
 
-		$.id && filter.where('id', $.id);
+		$.id && filter.id($.id);
 		$.options.linker && filter.where('linker', $.options.linker);
 		$.options.template && filter.where('template', $.options.template);
 		filter.where('ispublished', true);
@@ -114,7 +114,7 @@ NEWSCHEMA('Posts', function(schema) {
 	// Removes a specific post
 	schema.setRemove(function($) {
 		var id = $.id;
-		NOSQL('posts').remove().where('id', id).callback(function() {
+		NOSQL('posts').remove().id(id).callback(function() {
 			FUNC.remove('posts', id);
 			$.success();
 			refresh_cache();
@@ -158,7 +158,7 @@ NEWSCHEMA('Posts', function(schema) {
 
 		model.body = undefined;
 
-		var db = isUpdate ? nosql.modify(model).where('id', model.id).backup($.user.meta(model)) : nosql.insert(model);
+		var db = isUpdate ? nosql.modify(model).id(model.id).backup($.user.meta(model)) : nosql.insert(model);
 
 		db.callback(function() {
 			$SAVE('Events', { type: 'posts/save', id: model.id, user: user, body: model.name, admin: true }, NOOP, $);

@@ -27,7 +27,7 @@ NEWSCHEMA('ContactForms', function(schema) {
 	});
 
 	schema.setGet(function($) {
-		NOSQL('contactforms').read().where('id', $.id).callback($.callback, 'error-contacforms-404');
+		NOSQL('contactforms').read().id($.id).callback($.callback, 'error-contacforms-404');
 	});
 
 	schema.setRemove(function($) {

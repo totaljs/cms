@@ -17,7 +17,7 @@ WidgetInstace.prototype.globals = WidgetInstace.prototype.variables = WidgetInst
 NEWSCHEMA('Widgets', function(schema) {
 
 	schema.define('id', UID);
-	schema.define('name', 'String(50)', true);
+	schema.define('name', String, true);
 	schema.define('category', 'String(50)');
 	schema.define('body', String);
 	schema.define('picture', 'String(50)'); // A preview
@@ -39,7 +39,7 @@ NEWSCHEMA('Widgets', function(schema) {
 		var filter = NOSQL('widgets').one();
 		var id = opt.id || $.controller.id;
 		opt.url && filter.where('url', opt.url);
-		filter.where('id', id);
+		filter.id(id);
 		filter.callback($.callback, 'error-widgets-404');
 		FUNC.alert($.user, 'widgets/edit', id);
 	});
@@ -72,7 +72,7 @@ NEWSCHEMA('Widgets', function(schema) {
 
 		var replace = model.replace;
 		model.replace = undefined;
-		var db = update ? nosql.modify(model).where('id', model.id).backup($.user.meta(model)) : nosql.insert(model);
+		var db = update ? nosql.modify(model).id(model.id).backup($.user.meta(model)) : nosql.insert(model);
 
 		db.callback(function() {
 			$SAVE('Events', { type: 'widgets/save', id: model.id, user: user, body: model.name, admin: true }, NOOP, $);
@@ -84,7 +84,7 @@ NEWSCHEMA('Widgets', function(schema) {
 
 	// Removes a specific widget
 	schema.setRemove(function($) {
-		NOSQL('widgets').remove().where('id', $.id).callback(function(err, count) {
+		NOSQL('widgets').remove().id($.id).callback(function(err, count) {
 
 			if (INSTALLED[$.id]) {
 				var w = MAIN.widgets[$.id];
@@ -124,7 +124,7 @@ NEWSCHEMA('Widgets', function(schema) {
 				// updating
 				// loads file content
 				Fs.readFile($.options.filename, function(err, data) {
-					NOSQL('widgets').modify({ body: data.toString('utf8'), dtupdated: NOW }).where('id', widget.id).callback(function() {
+					NOSQL('widgets').modify({ body: data.toString('utf8'), dtupdated: NOW }).id(widget.id).callback(function() {
 						setTimeout2('widgets', refresh, 300);
 					});
 				});

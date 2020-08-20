@@ -2,9 +2,9 @@ NEWSCHEMA('Notices', function(schema) {
 
 	schema.define('id', UID);
 	schema.define('category', 'String(50)', true);
-	schema.define('name', 'String(200)', true);
+	schema.define('name', String, true);
 	schema.define('author', 'String(30)', true);
-	schema.define('summary', 'String(500)');
+	schema.define('summary', String);
 	schema.define('body', String, true);
 	schema.define('date', Date);
 	schema.define('event', Date);
@@ -50,15 +50,15 @@ NEWSCHEMA('Notices', function(schema) {
 		var options = $.options;
 		var filter = NOSQL('notices').one();
 		var id = options.id || $.id;
-		filter.where('id', id);
+		filter.id(id);
 		filter.callback($.callback, 'error-notices-404');
 		FUNC.alert($.user, 'notices/edit', id);
 	});
 
 	// Removes a specific post
 	schema.setRemove(function($) {
-		var id = $.body.id;
-		NOSQL('notices').remove().where('id', id).callback(function() {
+		var id = $.id;
+		NOSQL('notices').remove().id(id).callback(function() {
 			F.cache.removeAll('cachecms');
 			$.success();
 		});
@@ -88,7 +88,7 @@ NEWSCHEMA('Notices', function(schema) {
 		model.search = ((model.name || '') + ' ' + (model.body || '')).keywords(true, true).join(' ').max(1000);
 		model.linker_category = model.category.slug();
 
-		var db = update ? nosql.modify(model).where('id', model.id) : nosql.insert(model);
+		var db = update ? nosql.modify(model).id(model.id) : nosql.insert(model);
 
 		db.callback(function() {
 			$SAVE('Events', { type: 'notices/save', id: model.id, user: user, body: model.name, admin: true }, NOOP, $);

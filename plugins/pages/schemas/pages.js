@@ -20,10 +20,10 @@ NEWSCHEMA('Pages', function(schema) {
 	schema.define('ispartial', Boolean);                // Is only partial page (the page will be shown in another page)
 	schema.define('keywords', 'String(200)');           // Meta keywords
 	schema.define('description', 'String(200)');        // Meta description
-	schema.define('name', 'String(50)', true);          // Name in admin
+	schema.define('name', String, true);                // Name in admin
 	schema.define('parent', UID);                       // Parent page for breadcrumb
 	schema.define('partial', '[UID]');                  // A partial content
-	schema.define('summary', 'String(500)');            // Short page description generated according to the "CMS_summary" class in CMS editor
+	schema.define('summary', 'String(1000)');           // Short page description generated according to the "CMS_summary" class in CMS editor
 	schema.define('pictures', '[String]');              // URL addresses for first 5 pictures
 	schema.define('search', 'String(1000)');            // Search pharses
 	schema.define('template', UID);                     // Render template views/*.html
@@ -62,8 +62,8 @@ NEWSCHEMA('Pages', function(schema) {
 		var opt = $.options;
 		var filter = NOSQL('pages').one();
 		opt.url && filter.where('url', opt.url);
-		opt.id && filter.where('id', opt.id);
-		$.id && filter.where('id', $.id);
+		opt.id && filter.id(opt.id);
+		$.id && filter.id($.id);
 
 		filter.callback(function(err, response) {
 
@@ -102,7 +102,7 @@ NEWSCHEMA('Pages', function(schema) {
 		var id = $.body.id;
 		var db = NOSQL('pages');
 
-		db.remove().where('id', id).callback(function(err, count) {
+		db.remove().id(id).callback(function(err, count) {
 			$.success();
 			if (count) {
 				FUNC.remove('pages', id);
@@ -189,7 +189,7 @@ NEWSCHEMA('Pages', function(schema) {
 		}
 
 		model.body = undefined;
-		var db = update ? nosql.modify(model).where('id', model.id).backup($.user.meta(model)) : nosql.insert(model);
+		var db = update ? nosql.modify(model).id(model.id).backup($.user.meta(model)) : nosql.insert(model);
 
 		// Update a URL in all navigations where this page is used
 		if (!model.ispartial)
@@ -398,6 +398,7 @@ function refresh() {
 		var helper = {};
 		var partial = [];
 		var pages = [];
+		var wildcard = [];
 
 		for (var i = 0, length = response.length; i < length; i++) {
 			var doc = response[i];
@@ -408,12 +409,19 @@ function refresh() {
 				continue;
 			}
 
+			var wild = doc.url.indexOf('*/') !== -1;
+			if (wild)
+				doc.url = doc.url.replace('*/', '');
+
 			var key = doc.url;
 			var lng = doc.language;
-			var obj = { id: doc.id, url: doc.url, name: doc.name, title: doc.title, parent: doc.parent, icon: doc.icon, links: [], language: doc.language, dtcreated: doc.dtcreated, dtupdated: doc.dtupdated };
+			var obj = { id: doc.id, url: doc.url, name: doc.name, title: doc.title, parent: doc.parent, icon: doc.icon, links: [], language: doc.language, dtcreated: doc.dtcreated, dtupdated: doc.dtupdated, wildcard: wild };
 
 			helper[doc.id] = key;
 			sitemap[key] = obj;
+
+			if (wild)
+				wildcard.push(obj);
 
 			if (lng) {
 				key = lng + ' ' + key;
@@ -439,6 +447,7 @@ function refresh() {
 		MAIN.sitemap = sitemap;
 		MAIN.partial = partial;
 		MAIN.pages = pages;
+		MAIN.wildcard = wildcard;
 
 		$GET('Pages/Globals', function(err, response) {
 			response.body && parseGlobals(response.body);
@@ -726,6 +735,7 @@ function loadpartial(page, callback, controller) {
 Controller.prototype.CMSpage = function(callback, cache) {
 
 	var self = this;
+	var is = false;
 	var page;
 
 	if (self.language) {
@@ -734,19 +744,32 @@ Controller.prototype.CMSpage = function(callback, cache) {
 	} else
 		page = MAIN.sitemap[self.url];
 
-
 	if (!page) {
+
 		if (MAIN.redirects && MAIN.redirects[self.url]) {
 			self.redirect(MAIN.redirects[self.url], RELEASE);
 			COUNTER('pages').hit('redirect');
 		} else {
+
+			for (var i = 0; i < MAIN.wildcard.length; i++) {
+				page = MAIN.wildcard[i];
+				if (self.url.substring(0, page.url.length) === page.url) {
+					is = true;
+					break;
+				}
+			}
+
 			// tries to redirect to admin
-			if (self.url === '/')
-				self.redirect('/admin/');
-			else
-				self.throw404();
+			if (!is) {
+				if (self.url === '/')
+					self.redirect('/admin/');
+				else
+					self.throw404();
+			}
 		}
-		return self;
+
+		if (!is)
+			return self;
 	}
 
 	if (typeof(callback) === 'boolean') {
@@ -764,7 +787,7 @@ Controller.prototype.CMSpage = function(callback, cache) {
 
 	self.memorize('cachecms' + (self.language || '') + '_' + self.url, cache || '1 minute', cache === false, function() {
 
-		NOSQL('pages').one().where('id', page.id).callback(function(err, response) {
+		NOSQL('pages').one().id(page.id).callback(function(err, response) {
 
 			if (!response.template) {
 				self.invalid('error-pages-template');
@@ -923,7 +946,7 @@ Controller.prototype.CMSrender = function(url, callback) {
 		return self;
 	}
 
-	NOSQL('pages').one().where('id', page.id).callback(function(err, response) {
+	NOSQL('pages').one().id(page.id).callback(function(err, response) {
 
 		var repo = self.repository;
 		self.title(response.title);
@@ -981,7 +1004,7 @@ Controller.prototype.CMSpartial = function(url, callback) {
 	}
 
 	COUNTER('pages').hit(page.id);
-	NOSQL('pages').one().where('id', page.id).callback(function(err, response) {
+	NOSQL('pages').one().id(page.id).callback(function(err, response) {
 
 		if (response.css) {
 			response.css = U.minifyStyle('/*auto*/\n' + response.css);
