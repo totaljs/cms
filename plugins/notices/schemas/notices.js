@@ -19,6 +19,7 @@ NEWSCHEMA('Notices', function(schema) {
 		var opt = $.options === EMPTYOBJECT ? $.query : $.options;
 		var isAdmin = $.controller ? $.controller.url.substring(0, 7) === '/admin/' : false;
 		var filter = NOSQL('notices').list();
+
 		filter.paginate(opt.page, opt.limit, 70);
 
 		if (isAdmin) {
@@ -305,7 +306,10 @@ function prepare_body(items) {
 			}
 		}
 
-		return value.substring(0, beg - 1) + '<i class="fa fa-' + value.substring(beg, end) + '"></i>' + value.substring(end + 1);
+		var icon = value.substring(beg, end);
+		if (icon.indexOf(' ') === -1)
+			icon = 'fa fa-' + icon;
+		return value.substring(0, beg - 1) + '<i class="' + icon + '"></i>' + value.substring(end + 1);
 	}
 
 	function markdown_urlify(str) {
@@ -387,7 +391,7 @@ function prepare_body(items) {
 			chart.render();
 		});
 
-		el.find('.lang-linerchar').each(function() {
+		el.find('.lang-linerchart').each(function() {
 
 			var t = this;
 			if (t.$mdloaded)
