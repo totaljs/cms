@@ -20,8 +20,8 @@
 					{ name: 'category', text: '@(Category)', width: 150 },
 					{ name: 'author', text: '@(Author)', width: 160 },
 					{ name: 'date', text: '@(From)', align: 1, width: 140, template: '{{ date | format(\'@(yyyy-MM-dd)\') }}' },
-					{ name: 'dtupdated', text: '@(Updated)', format: '[date]', width: 150, sort: false, align: 1 },
-					{ name: 'dtcreated', text: '@(Created)', format: '[date]', width: 150, sort: false, align: 1, hide: true },
+					{ name: 'dtupdated', text: '@(Updated)', format: '[date]', width: 150, align: 1 },
+					{ name: 'dtcreated', text: '@(Created)', format: '[date]', width: 150, align: 1, hide: true },
 					{ name: '@(Options)', align: 1, filter: false, sort: false, width: 120, template: '<button title="@(Duplicate)" name="duplicate"><i class="far fa-copy"></i></button><button name="update" title="@(Edit)"><i class="fa fa-pencil"></i></button><button class="btn-remove" name="remove" title="@(Remove)"><i class="far fa-trash-o"></i></button>' }
 				]
 				</script>

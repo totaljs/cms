@@ -32,7 +32,7 @@
 						{ name: 'id', text: '@(ID)', width: 120, hide: true, class: 'monospace' },
 						{ name: 'name', text: '@(Name)', width: 430, template: '{{ if picture }}<i class="fa fa-camera mr5 blue"></i>{{ fi }}{{ name }}' },
 						{ name: 'category', text: '@(Category)', width: 200 },
-						{ name: 'dtupdated', text: '@(Updated)', format: '[date]', width: 150, sort: false, align: 1 },
+						{ name: 'dtupdated', text: '@(Updated)', format: '[date]', width: 150, align: 1 },
 						{ name: '@(Options)', filter: false, align: 1, sort: false, width: 100, template: '<button title="@(Duplicate)" name="duplicate"><i class="far fa-copy"></i></button><button name="update" title="@(Edit)"><i class="fa fa-pencil"></i></button><button class="btn-remove" name="remove" title="@(Remove)"><i class="far fa-trash-o"></i></button>' }
 					]
 				</script>

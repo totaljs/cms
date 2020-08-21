@@ -42,8 +42,8 @@
 					{ name: 'name', text: '@(Name)', width: 350, template: '{{ if issending }}<i class="fa fa-spinner fa-spin mr5 color"></i>{{ fi }}{{ if issent }}<span class="badge badge-green badge b mr5">@(SENT)</span>{{ fi }}{{ name }}' },
 					{ name: 'count', text: '@(Subscribers)', align: 2, width: 150, template: '{{ count }}x<i class="fa fa-envelope-o ml5"></i>' },
 					{ name: 'dtsent', text: '@(Sent)', format: '[date]', width: 150, sort: false, align: 1 },
-					{ name: 'dtupdated', text: '@(Updated)', format: '[date]', width: 150, sort: false, align: 1 },
-					{ name: 'dtcreated', text: '@(Created)', format: '[date]', width: 150, sort: false, align: 1, hide: true },
+					{ name: 'dtupdated', text: '@(Updated)', format: '[date]', width: 150, align: 1 },
+					{ name: 'dtcreated', text: '@(Created)', format: '[date]', width: 150, align: 1, hide: true },
 					{ name: '@(Options)', align: 1, filter: false, sort: false, width: 120, template: '<div class="inline"><button title="@(Duplicate)" name="duplicate"><i class="far fa-copy"></i></button><button name="update" title="@(Edit)"><i class="fa fa-pencil"></i></button><button class="btn-remove" name="remove" title="@(Remove)"><i class="far fa-trash-o"></i></button></div>' }
 				]
 				</script>
