@@ -49,6 +49,11 @@
 
 			filter.page = page || 1;
 
+			if (sort && sort.length)
+				filter.sort = sort.join(',');
+			else
+				delete filter.sort;
+
 			AJAX('GET [url]api/contactforms/', filter, function(response) {
 				SET('?.grid', response);
 				FUNC.loading(false, 200);
