@@ -70,7 +70,7 @@ function refresh(callback) {
 					var compiled = compile(item.body);
 					item.file = 'cms' + item.id;
 
-					compiled.html = '@{notranslate}@{nocompress html}' + compiled.html.replace('</body>', item.type === 'newsletter' ? '@{if repository.preview}<script src="@{\'%cdn\'}/jquery.min@341.js"></script><script src="@{MAIN.jseditor}"></script>@{fi}</body>' : ('@{if repository.preview}<script src="@{\'%cdn\'}/jquery.min@341.js"></script><script src="@{MAIN.jseditor}"></script>@{else}<script src="@{MAIN.js}"></script><script src="/' + item.file + '.js?ts=' + hash + '"></script>@{fi}</body>'));
+					compiled.html = '@{nocompress html}' + compiled.html.replace('</body>', item.type === 'newsletter' ? '@{if repository.preview}<script src="@{\'%cdn\'}/jquery.min@341.js"></script><script src="@{MAIN.jseditor}"></script>@{fi}</body>' : ('@{if repository.preview}<script src="@{\'%cdn\'}/jquery.min@341.js"></script><script src="@{MAIN.jseditor}"></script>@{else}<script src="@{MAIN.js}"></script><script src="/' + item.file + '.js?ts=' + hash + '"></script>@{fi}</body>'));
 
 					if (item.type === 'newsletter')
 						compiled.html = compiled.html.replace('</head>', '@{if repository.preview}<link rel="stylesheet" href="@{\'%cdn\'}/spa.min@18.css" /><link rel="stylesheet" href="/css/admin-editor.css" />@{fi}</head>');
