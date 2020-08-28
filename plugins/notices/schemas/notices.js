@@ -4,6 +4,7 @@ NEWSCHEMA('Notices', function(schema) {
 	schema.define('category', 'String(50)', true);
 	schema.define('name', String, true);
 	schema.define('author', 'String(30)', true);
+	schema.define('language', String);
 	schema.define('summary', String);
 	schema.define('body', String, true);
 	schema.define('date', Date);
@@ -26,9 +27,11 @@ NEWSCHEMA('Notices', function(schema) {
 			opt.author && filter.gridfilter('author', opt, String);
 			opt.name && filter.gridfilter('name', opt, String);
 			opt.category && filter.gridfilter('category', opt, String);
+			opt.language && filter.gridfilter('language', opt, String);
 		} else {
 			opt.author && filter.where('author', opt.author);
-			opt.category && filter.where('linker_category', opt.category);
+			opt.category && filter.in('linker_category', opt.category.split(','));
+			opt.language && filter.where('language', opt.language);
 			opt.published && filter.where('date', '<=', NOW);
 			opt.search && filter.like('search', opt.search.keywords(true, true));
 			opt.pinned != null && filter.where('pinned', opt.pinned);
@@ -37,7 +40,7 @@ NEWSCHEMA('Notices', function(schema) {
 
 		var isbody = !(isAdmin || opt.nobody);
 
-		filter.fields('id,picture,linker_category,summary,category,date,name,author,icon,dtcreated,pinned,event,url,dtupdated' + (isbody ? ',body' : ''));
+		filter.fields('id,picture,linker_category,language,summary,category,date,name,author,icon,dtcreated,pinned,event,url,dtupdated' + (isbody ? ',body' : ''));
 		filter.gridsort(opt.sort || 'date_desc');
 
 		filter.callback(function(err, response) {

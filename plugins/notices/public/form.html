@@ -7,9 +7,8 @@
 					<div data---="input__?.name__required:1;maxlength:300" class="m">@(Name)</div>
 					<div data---="checkbox__?.pinned">@(Pin this notice)</div>
 				</div>
-				<div class="col-md-4 m">
-					<div data---="input__?.date__type:date;icon:clock-o;placeholder:@(yyyy-mm-dd);align:center">@(Date)</div>
-					<div class="help mt10">@(You can specify a publish date.)</div>
+				<div class="col-md-4">
+					<div data---="input__?.language__dirsource:common.dependencies.languages;dirplaceholder:@(Search language);dirempty:@(No language)">@(Language)</div>
 				</div>
 			</div>
 		</div>
@@ -19,7 +18,8 @@
 					<div data---="input__?.category__dirsource:common.dependencies.notices;icon:folder-o;required:1;dircustom:1;dirvalue:name;dirplaceholder:@(Search or enter a new);placeholder:@(Choose a category)">@(Category)</div>
 				</div>
 				<div class="col-md-4 m">
-					<div data---="input__?.author__maxlength:30;icon:user;placeholder:@(Who is the autor?)">@(Author)</div>
+					<div data---="input__?.date__type:date;icon:clock-o;placeholder:@(yyyy-mm-dd);align:center">@(Date)</div>
+					<div class="help mt10">@(You can specify a publish date.)</div>
 				</div>
 				<div class="col-md-4 m">
 					<div data---="input__?.event__type:date;icon:calendar;placeholder:@(yyyy-mm-dd);align:center">@(Event)</div>
@@ -27,7 +27,14 @@
 			</div>
 		</div>
 		<div class="padding" style="padding-bottom:10px">
-			<div data---="input__?.summary__maxlength:500" class="m">@(Summarization)</div>
+			<div class="row">
+				<div class="col-md-8 m">
+					<div data---="input__?.summary__maxlength:500">@(Summarization)</div>
+				</div>
+				<div class="col-md-4 m">
+					<div data---="input__?.author__maxlength:30;icon:user;placeholder:@(Who is the autor?)">@(Author)</div>
+				</div>
+			</div>
 			<div class="row">
 				<div class="col-md-8 m">
 					<div data---="input__?.url__placeholder:@(Type a URL address)">@(URL address)</div>

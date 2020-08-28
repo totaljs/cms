@@ -16,10 +16,11 @@
 			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?.checked;button:?/button;noborder:1;height:window;margin:45;exec:?/refresh;dblclick:?/update">
 				<script type="text/plain">
 				[
-					{ name: 'name', text: '@(Name)', width: 450, template: '{{ if picture }}<i class="far fa-camera color mr5"></i>{{ fi }}{{ if icon }}<i class="{{ icon }} mr5"></i>{{ fi }}{{ if pinned }}<span class="badge badge-orange mr5"><i class="fas fa-thumbtack"></i>@(Pinned)</span>{{ fi }}{{ name }}' },
+					{ name: 'name', text: '@(Name)', width: 450, template: '{{ language | language }}{{ if picture }}<i class="far fa-camera color mr5"></i>{{ fi }}{{ if icon }}<i class="{{ icon }} mr5"></i>{{ fi }}{{ if pinned }}<span class="badge badge-orange mr5"><i class="fas fa-thumbtack"></i>@(Pinned)</span>{{ fi }}{{ name }}' },
 					{ name: 'category', text: '@(Category)', width: 150 },
 					{ name: 'author', text: '@(Author)', width: 160 },
 					{ name: 'date', text: '@(From)', align: 1, width: 140, template: '{{ date | format(\'@(yyyy-MM-dd)\') }}' },
+					{ name: 'language', text: '@(Language)', width: 80, sort: false, align: 1 },
 					{ name: 'dtupdated', text: '@(Updated)', format: '[date]', width: 150, align: 1 },
 					{ name: 'dtcreated', text: '@(Created)', format: '[date]', width: 150, align: 1, hide: true },
 					{ name: '@(Options)', align: 1, filter: false, sort: false, width: 120, template: '<button title="@(Duplicate)" name="duplicate"><i class="far fa-copy"></i></button><button name="update" title="@(Edit)"><i class="fa fa-pencil"></i></button><button class="btn-remove" name="remove" title="@(Remove)"><i class="far fa-trash-o"></i></button>' }
