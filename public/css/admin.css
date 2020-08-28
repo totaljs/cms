@@ -256,8 +256,9 @@ h3 i { margin-right: 8px; }
 .markdown blockquote { color: black; margin: 0 0 20px; padding: 10px 0 0 20px; position: relative; font-style: italic; }
 .markdown blockquote:before { content: '\201C'; position: absolute; margin-left: -18px; margin-top: -13px; font: 45px 'PT Sans', sans-serif; color: #A0A0A0; }
 .markdown section { padding: 15px 20px; background-color: #FFFED1; margin: 10px 0 20px; border-radius: 2px; }
-.markdown hr { border-color: #E0E0E0; border-width: 2px; }
-.markdown-line2 { border-width: 4px; margin: 15px 0 30px !important; }
+.markdown hr { border-color: #E0E0E0; }
+.markdown .line1 { border-width: 1px; }
+.markdown .line2 { border-width: 2px; margin: 20px 0; }
 .markdown h1 code { font-size: 28px; font-weight: normal; background-color: #DAE8F8; }
 .markdown h2 code { font-size: 23px; font-weight: normal; background-color: #DAE8F8; }
 .markdown h3 code { font-size: 18px; font-weight: normal; background-color: #DAE8F8; }
