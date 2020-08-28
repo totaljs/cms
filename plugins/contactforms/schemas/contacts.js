@@ -31,7 +31,7 @@ NEWSCHEMA('ContactForms', function(schema) {
 	});
 
 	schema.setRemove(function($) {
-		var id = (($.body.id || '') + '').split(',');
+		var id = ($.query.id || '').split(',');
 		if (id.length)
 			NOSQL('contactforms').remove().in('id', id).callback($.done());
 		else

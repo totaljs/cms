@@ -69,7 +69,7 @@
 				case 'remove':
 					SETTER('approve/show', '@(Are you sure you want to remove selected contact form?)', '"trash" @(Remove)', function() {
 						FUNC.loading(true);
-						AJAX('DELETE [url]api/contactforms/', { id: row.id }, function(response) {
+						AJAX('DELETE [url]api/contactforms/?id=' + row.id, function(response) {
 							FUNC.loading(false, 1000);
 							if (response.success) {
 								SETTER('snackbar/success', '@(Contact form has been removed successfully.)');
@@ -110,8 +110,7 @@
 							var id = [];
 							for (var i = 0; i < arr.length; i++)
 								id.push(arr[i].id);
-
-							AJAX('DELETE [url]api/contactforms/', { id: id.join(',') }, function() {
+							AJAX('DELETE [url]api/contactforms/?id=' + id.join(','), function() {
 								exports.refresh();
 								FUNC.loading(false, 1000);
 								SETTER('snackbar/success', '@(Contact forms have been removed successfully.)');
