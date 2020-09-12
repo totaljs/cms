@@ -168,7 +168,7 @@
 									{{ fi }}
 									<div>{{ m.name | initials }}</div>
 									<div class="settings-user-name{{ if m.owner }} b{{ fi }}">{{ m.name }}</div>
-									<div class="settings-user-roles">{{ if m.sa }}@(Super administrator){{ else }}{{ m.roles | settingsroles }}{{ fi }}</div>
+									<div class="settings-user-roles">{{ if m.sa }}@(Super administrator){{ else }}{{ m.permissions | settingspermissions }}{{ fi }}</div>
 								</div>
 							</div>
 							{{ end }}
@@ -210,6 +210,7 @@
 
 			FUNC.loading(true);
 			AJAX('POST [url]api/settings/ REPEAT', data, FUNC.messageresponse('@(Settings have been saved successfully.)', function() {
+				FUNC.loading(false);
 				refresh_dependencies();
 				SET('common.componentator', data.componentator);
 
@@ -310,13 +311,16 @@
 		};
 	});
 
-	Thelpers.settingsroles = function(value) {
-		var builder = [];
-		for (var i = 0; i < value.length; i++) {
-			var role = common.roles.findItem('id', value[i]);
-			role && builder.push(role.name);
-		}
-		return builder.join(', ') || DEF.empty;
+	Thelpers.settingspermissions = function(value) {
+		if (value && value.length) {
+			var builder = [];
+			for (var i = 0; i < value.length; i++) {
+				var role = common.permissions.findItem('id', value[i]);
+				role && builder.push(role.name);
+			}
+			return builder.join(', ') || DEF.empty;
+		} else
+			return DEF.empty;
 	};
 
 </script>
