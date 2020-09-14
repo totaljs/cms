@@ -241,6 +241,7 @@ function refresh() {
 			NOSQL('navigations').remove().in('id', rem);
 
 		F.cache.removeAll('cachecms');
+		CMD('clear_viewscache');
 	});
 }
 

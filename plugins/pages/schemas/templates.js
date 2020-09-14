@@ -128,6 +128,7 @@ function refresh(callback) {
 					PREF.templatesnewsletters = newsletters;
 
 					F.cache.removeAll('cachecms');
+					CMD('clear_viewscache');
 					callback && callback();
 				});
 			});
@@ -147,7 +148,18 @@ function compile(html) {
 	html = html.replace(/@\{navigation.*?\}/g, function(text) {
 		var str = text.substring(13, text.length - 1).trim();
 		var beg = str.indexOf(':');
-		navigations.push({ id: str.substring(0, beg).trim(), name: str.substring(beg + 1).trim() });
+		var name = '';
+		var id = '';
+
+		if (beg === -1) {
+			name = str.trim();
+			id = HASH(name).toString(36);
+		} else {
+			name = str.substring(beg + 1).trim();
+			id = str.substring(0, beg).trim();
+		}
+
+		navigations.push({ id: id, name: name });
 		return '';
 	});
 
