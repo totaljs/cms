@@ -957,6 +957,7 @@
 					if (response && response.length) {
 						el.attr('src', response[0].download);
 						instance.change(true);
+						refresh_filebrowser_files(true);
 					}
 
 					instance.autoresize();
