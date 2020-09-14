@@ -6328,6 +6328,7 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 	var REG_SPACE = /\s/g;
 
 	self.filter = function(row) {
+
 		var keys = Object.keys(opt.filter);
 		for (var i = 0; i < keys.length; i++) {
 
@@ -6362,7 +6363,8 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 
 				if (opt.filtercl[column] != null) {
 					is = opt.filtercl[column] == val;
-					return is;
+					if (!is)
+						return false;
 				}
 
 				if (val2 == null) {
@@ -7377,7 +7379,7 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 
 		self.event('paste', 'input', function(e) {
 			if (config.mask) {
-				var val = (e.originalEvent.clipboardData || W.clipboardData).getData('text');
+				var val = (e.originalEvent.clipboardData || window.clipboardData).getData('text');
 				self.set(val.replace(/\s|\t/g, ''));
 				e.preventDefault();
 			}
