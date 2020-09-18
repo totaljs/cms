@@ -989,6 +989,7 @@
 						self.getDocument().execCommand('insertHTML', false, '<br><br>');
 					e.preventDefault();
 					e.stopPropagation();
+					self.autoresize();
 					return;
 				}
 

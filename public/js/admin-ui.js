@@ -4666,7 +4666,7 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 				}
 
 				self.scroll && self.scroll();
-				config.change && SEEX(self.makepath(config.change), null, null, self.grid);
+				config.change && SEEX(self.grid.makepath(config.change), null, null, self.grid);
 			}
 		};
 
@@ -4846,7 +4846,7 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 		sheader = self.find('.dg-header-scrollbar');
 		sbody = self.find('.dg-body-scrollbar');
 
-		self.scrollbarY = SCROLLBAR(sbody, { visibleY: true, orientation: 'y', controls: container, marginY: 54 });
+		self.scrollbarY = SCROLLBAR(sbody, { visibleY: true, orientation: 'y', controls: container, marginY: isMOBILE ? 0 : 54 });
 		self.scrollbarX = SCROLLBAR(sheader, { visibleX: true, orientation: 'x', controls: container });
 
 		// self.scrollbar.sync(sheader, 'x');
@@ -6064,7 +6064,7 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 			resizecache.width = width;
 			header.css('width', width);
 			vbody.css('width', width);
-			self.find('.dg-body-scrollbar').css('width', width);
+			sbody.css('width', width);
 			opt.width2 = w;
 		}
 
@@ -6328,7 +6328,6 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 	var REG_SPACE = /\s/g;
 
 	self.filter = function(row) {
-
 		var keys = Object.keys(opt.filter);
 		for (var i = 0; i < keys.length; i++) {
 
