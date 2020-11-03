@@ -124,5 +124,5 @@ function dependencies() {
 
 function css() {
 	var self = this;
-	self.content(U.minifyStyle('/*auto*/\n' + (self.body.css || '')), 'text/css');
+	self.content(U.minify_css('/*auto*/\n' + (self.body.css || '')), 'text/css');
 }

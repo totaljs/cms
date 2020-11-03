@@ -76,7 +76,7 @@ NEWSCHEMA('Newsletters', function(schema) {
 			model.issent = false;
 		}
 
-		var body = U.minifyHTML(model.body);
+		var body = U.minify_html(model.body);
 		!model.dtcreated && (model.dtcreated = NOW);
 		model.stamp = model.stamp = new Date().format('yyyyMMddHHmm');
 		model.linker = model.dtcreated.format('yyyyMMdd') + '-' + model.name.slug();

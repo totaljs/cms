@@ -161,7 +161,7 @@ NEWSCHEMA('Widgets', function(schema) {
 							count++;
 							is = true;
 						});
-						is && FUNC.write(name, item.id, U.minifyHTML(response.body), true);
+						is && FUNC.write(name, item.id, U.minify_html(response.body), true);
 						next();
 					});
 				}, next);
@@ -398,19 +398,19 @@ function refresh(callback, force) {
 				var version = U.GUID(5);
 
 				if (rebuildcss) {
-					Fs.writeFile(PATH.temp(CSS), U.minifyStyle('/*auto*/\n' + (response.css ? response.css + '\n' : '') + css.join('\n')), NOOP);
+					Fs.writeFile(PATH.temp(CSS), U.minify_css('/*auto*/\n' + (response.css ? response.css + '\n' : '') + css.join('\n')), NOOP);
 					TOUCH('/' + CSS);
 					MAIN.css = '/' + CSS + '?ts=' + version;
 				}
 
 				if (rebuildjs) {
-					Fs.writeFile(PATH.temp(JS), U.minifyScript((response.js ? response.js + ';\n' : '') + js.join('\n')), NOOP);
+					Fs.writeFile(PATH.temp(JS), U.minify_js((response.js ? response.js + ';\n' : '') + js.join('\n')), NOOP);
 					TOUCH('/' + JS);
 					MAIN.js = '/' + JS + '?ts=' + version;
 				}
 
 				if (rebuildeditor) {
-					Fs.writeFile(PATH.temp(JSEDITOR), U.minifyScript(jseditor.join('\n')), NOOP);
+					Fs.writeFile(PATH.temp(JSEDITOR), U.minify_js(jseditor.join('\n')), NOOP);
 					TOUCH('/' + JSEDITOR);
 					MAIN.jseditor = '/' + JSEDITOR + '?ts=' + version;
 				}

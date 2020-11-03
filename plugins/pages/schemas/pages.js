@@ -160,7 +160,7 @@ NEWSCHEMA('Pages', function(schema) {
 
 		model.stamp = new Date().format('yyyyMMddHHmm');
 		model.redirects = undefined;
-		model.body = U.minifyHTML(model.body);
+		model.body = U.minify_html(model.body);
 		model.search = ((model.title || '') + ' ' + (model.keywords || '') + ' ' + model.search).keywords(true, true).join(' ').max(1000);
 
 		// Sanitizes URL
@@ -609,7 +609,7 @@ String.prototype.CMStidy = function() {
 	var tag;
 	var tagend;
 
-	body = U.minifyHTML(body).replace(/\sclass="CMS_template CMS_remove"/gi, '');
+	body = U.minify_html(body).replace(/\sclass="CMS_template CMS_remove"/gi, '');
 
 	while (true) {
 		beg = body.indexOf(b, beg);
@@ -839,7 +839,7 @@ Controller.prototype.CMSpage = function(callback, cache) {
 				counter.hit(response.language);
 
 			if (response.css) {
-				response.css = U.minifyStyle('/*auto*/\n' + response.css);
+				response.css = U.minify_css('/*auto*/\n' + response.css);
 				self.head('<style type="text/css">' + response.css + '</style>');
 			}
 
@@ -920,7 +920,7 @@ Controller.prototype.CMSpagemodel = function(model) {
 	}
 
 	if (model.css) {
-		model.css = U.minifyStyle('/*auto*/\n' + model.css);
+		model.css = U.minify_css('/*auto*/\n' + model.css);
 		self.head('<style type="text/css">' + model.css + '</style>');
 	}
 
@@ -987,7 +987,7 @@ Controller.prototype.CMSrender = function(url, callback) {
 		}
 
 		if (response.css) {
-			response.css = U.minifyStyle('/*auto*/\n' + response.css);
+			response.css = U.minify_css('/*auto*/\n' + response.css);
 			self.head('<style type="text/css">' + response.css + '</style>');
 		}
 
@@ -1034,7 +1034,7 @@ Controller.prototype.CMSpartial = function(url, callback) {
 	NOSQL('pages').one().id(page.id).callback(function(err, response) {
 
 		if (response.css) {
-			response.css = U.minifyStyle('/*auto*/\n' + response.css);
+			response.css = U.minify_css('/*auto*/\n' + response.css);
 			self.head('<style type="text/css">' + response.css + '</style>');
 		}
 

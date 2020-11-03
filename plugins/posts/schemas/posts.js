@@ -151,7 +151,7 @@ NEWSCHEMA('Posts', function(schema) {
 		model.search = ((model.name || '') + ' ' + (model.keywords || '') + ' ' + (model.search || '')).keywords(true, true).join(' ').max(1000);
 
 		if (model.type === 'html')
-			model.body = U.minifyHTML(model.body);
+			model.body = U.minify_html(model.body);
 
 		FUNC.write('posts', model.id + '_' + model.stamp, model.body); // backup
 		FUNC.write('posts', model.id, model.body, isUpdate);

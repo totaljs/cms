@@ -34,7 +34,7 @@ NEWSCHEMA('Parts', function(schema) {
 				var item = model.items[i];
 				item.ownerid = model.ownerid;
 				item.type = model.type;
-				FUNC.write('parts', item.id, U.minifyHTML(item.body), true);
+				FUNC.write('parts', item.id, U.minify_html(item.body), true);
 				item.body = undefined;
 				NOSQL('parts').update(item, true).id(item.id);
 			}
