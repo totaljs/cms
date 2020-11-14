@@ -1,6 +1,5 @@
 name                      : CMS
 version                   : 14.0.0
-author                    : Peter Širka
 proicons                  : true
 
 // Secret for administrators
