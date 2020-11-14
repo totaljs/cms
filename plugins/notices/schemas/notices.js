@@ -674,7 +674,7 @@ function prepare_body(items) {
 
 			var line = lines[i];
 
-			if (opt.br !== false)
+			if (opt.newline !== false)
 				line = line.replace(/&lt;br(\s\/)?&gt;/g, '<br />');
 
 			if (opt.urlify !== false && opt.links !== false)
