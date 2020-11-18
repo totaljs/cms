@@ -80,6 +80,10 @@ function refresh(callback) {
 					if (CONF.proicons)
 						compiled.html = compiled.html.replace(/@18\.css/g, '@18pro.css');
 
+					compiled.id = item.id;
+					compiled.name = item.name;
+					EMIT('templates.compile', compiled);
+
 					Fs.writeFile(PATH.views(item.file + '.html'), U.minify_html(compiled.html), function() {
 						Fs.writeFile(PATH.public(item.file + '.js'), U.minify_js(js + '\n' + compiled.js), function() {
 							Fs.writeFile(PATH.public(item.file + '.css'), U.minify_css('/*auto*/\n' + css + '\n' + compiled.css), function() {
