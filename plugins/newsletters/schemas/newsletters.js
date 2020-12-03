@@ -126,7 +126,7 @@ NEWSCHEMA('Newsletters', function(schema) {
 			newsletter.body = VIEW('cms' + newsletter.template, null, repository);
 			newsletter.unsubscribe = PREF.url + '/api/unsubscribe/?email=';
 
-			var message = new Mail.Message(newsletter.name, prepare_urladdress(newsletter.body.replace('@@@', $.query.email)));
+			var message = new Mail.Message(newsletter.name, prepare_urladdress(newsletter.body.replace(/@@@/g, $.query.email)));
 			message.to($.query.email);
 			message.from(PREF.emailsender, CONF.name);
 			message.reply(PREF.emailreply);
