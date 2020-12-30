@@ -133,15 +133,19 @@
 			} else if (type === 'function') {
 				obj.target(url, value[0].name);
 			} else {
-				if (/\.(jpg|png|gif|svg|jpeg)$/.test(url))
+				if (/\.(jpg|png|gif|svg|jpeg)$/.test(url)) {
 					$(obj.target).attr('src', url);
-				else {
+				} else {
 					SETTER('snackbar/warning', '@(You need to choose an image.)');
 					return;
 				}
 			}
 
-			W.cmseditor && W.cmseditor.instance && W.cmseditor.instance.resize();
+			if (W.cmseditor && W.cmseditor.instance) {
+				W.cmseditor.instance.change(true);
+				W.cmseditor.instance.resize();
+			}
+
 			SET('common.form3', '');
 		});
 
