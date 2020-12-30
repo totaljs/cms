@@ -799,3 +799,17 @@ input { border-radius: 0; }
 @media(max-width: 340px) {
 	.ui-approve button { display: block; margin: 8px 0 0; display: block; width: 100%; height: 34px; font-size: 13px; }
 }
+
+.animation { visibility: hidden; }
+.ui-animation-1-init { transition: all 0.2s; opacity: 0; }
+.ui-animation-1-run { opacity: 1; }
+.ui-animation-2-init { transition: all 0.2s; transform: scale(1.5); }
+.ui-animation-2-run { transform: scale(1); }
+.ui-animation-3-init { transition: all 0.2s; transform: scale(0.5); }
+.ui-animation-3-run { transform: scale(1); }
+.ui-animation-4-init { transition: all 0.2s; transform: rotateY(-90deg); }
+.ui-animation-4-run { transform: rotateY(-1deg); }
+.ui-animation-5-init { transition: all 0.2s; transform: translate(-100px); opacity: 0; }
+.ui-animation-5-run { transform: translate(0); opacity: 1; }
+.ui-animation-6-init { transition: all 0.2s; transform: translate(0, -100px); opacity: 0; }
+.ui-animation-6-run { transform: translate(0, 0); opacity: 1; }
