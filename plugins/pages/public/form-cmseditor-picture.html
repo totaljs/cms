@@ -63,6 +63,8 @@
 					target.attr('src', url + '?s=' + size.replace('%', ''));
 				} else
 					target.attr('src', url);
+
+				cmseditor.instance.change(true);
 				hide();
 				return;
 			}
@@ -86,7 +88,10 @@
 						target.attr('src', response + '?s=' + size.replace('%', ''));
 					} else
 						target.attr('src', response);
+
 					editor.autoresize();
+					cmseditor.instance.change(true);
+
 				}, 1000);
 
 				setTimeout(hide, 1000);
