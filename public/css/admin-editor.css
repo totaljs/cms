@@ -42,7 +42,7 @@ iframe.CMS_edit { padding: 5px; border: 15px solid red;}
 .CMS_preview .CMS_part:before { position: absolute; content: attr(data-cms-part); color: white; background-color: #67C23A; padding: 2px 5px 2px 3px; border-radius: 2px; margin: -15px 0 0 -5px; font-size: 9px; border-left: 3px solid #5EB436; z-index: 100; }
 .CMS_preview .CMS_widget.hidden-xs:before,.CMS_preview .CMS_widget.hidden-sm:before,.CMS_preview .CMS_widget.hidden-md:before,.CMS_preview .CMS_widget.hidden-lg:before { position: absolute; content: '•'; color: black; background-color: #efe02b; width: 12px; height: 12px; border-radius: 100px; margin: -15px 0 0 0; font-size: 12px; z-index: 100; text-align: center; line-height: 12px; }
 
-.CMS_visible .animation { visibility: visible !important; }
+#CMS .animation { visibility: visible !important; }
 
 /*.CMS_preview img[alt=""], .CMS_preview a[href=""] { outline: 3px dashed red !important; }*/
 .CMS_preview a[data-cms-track] { outline: 2px dashed blue; }
