@@ -152,6 +152,7 @@ ON('controller', function(controller) {
 		}
 	}
 
+	controller.name = 'admin';
 	controller.user = user;
 });
 
