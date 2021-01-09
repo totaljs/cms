@@ -744,12 +744,14 @@ function loadpartial(page, callback, controller) {
 			COUNTER('pages').hit(item.id);
 			output[item.id] = item;
 			output[item.url] = item;
+
 			FUNC.read('pages', item.id, function(err, body) {
 				body.CMSrender(item.widgets, function(body) {
 					item.body = body;
 					next();
 				}, controller);
 			});
+
 		}, () => callback(output));
 	});
 }
@@ -816,7 +818,7 @@ Controller.prototype.CMSpage = function(callback, cache) {
 
 		NOSQL('pages').one().id(page.id).callback(function(err, response) {
 
-			if (!response.template) {
+			if (!response || !response.template) {
 				self.invalid('error-pages-template');
 				return;
 			}
