@@ -2,36 +2,13 @@
 
 # Total.js CMS
 
-[![Professional Support](https://www.totaljs.com/img/badge-support.svg)](https://www.totaljs.com/support/) [![Chat with contributors](https://www.totaljs.com/img/badge-chat.svg)](https://messenger.totaljs.com)
+- [Documentation](https://docs.totaljs.com)
+- [Join Total.js Telegram](https://t.me/totaljs)
+- [Support](https://www.totaljs.com/support/)
 
-- Latest version: `v14.0.0` (requires __Total.js +v4.0.0__)
-- [__Live chat with professional support__](https://messenger.totaljs.com)
-- [__HelpDesk with professional support__](https://helpdesk.totaljs.com)
-- [Documentation](https://wiki.totaljs.com?q=cms+welcome)
+__Instructions__:
 
----
-
-## Installation
-
-- `$ cd cms`
-- install `$ npm install total.js`
-
-Read more in [__documentation__](https://wiki.totaljs.com/?q=cms+welcome).
-
-
-## Renamed
-
-```html
-dateupdated --> dtupdated
-datecreated --> dtcreated
-datesent    --> dtsent
-idpage      --> pageid
-idowner     --> ownerid         (parts)
-```
-
-## License
-
-The source-code is under __MIT license__.
-
-[license-image]: https://img.shields.io/badge/license-MIT-blue.svg?style=flat
-[license-url]: license.txt
+- install the latest version of __Total.js framework 4__ from NPM `$ npm install total4`
+- download example
+- run `$ node index.js`
+- open browser `http://127.0.0.1:8000`
