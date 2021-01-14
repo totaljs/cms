@@ -57,7 +57,7 @@ NEWSCHEMA('ContactForms', function(schema) {
 
 		var builder = [];
 
-		builder.push('<b>' + model.name.encode() + '</b>');
+		builder.push('<b>' + model.name.encode() + (model.source ? (' - ' + model.source.encode()) : '') + '</b>');
 		builder.push(model.email);
 		model.phone && builder.push(model.phone);
 		builder.push('');
