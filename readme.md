@@ -1,5 +1,3 @@
-[![MIT License][license-image]][license-url]
-
 # Total.js CMS
 
 - [Documentation](https://docs.totaljs.com)
