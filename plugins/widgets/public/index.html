@@ -8,7 +8,7 @@
 					<button class="exec" data-exec="?/create"><i class="fa fa-plus-circle green"></i><span>@(Create)</span></button>
 					<button class="exec" data-exec="?/import" data-bind="common.componentator__show"><i class="fa fa-cloud-download"></i><span>@(Import)</span></button>
 					<button class="exec" data-exec="?/options"><i class="fa fa-wrench"></i><span>@(Options)</span></button>
-					<button class="exec S hidden-xs" data-exec="?/checked" disabled><i class="fa fa-check-circle"></i><span>@(Checked)</span></button>
+					<button class="exec" data-exec="?/remove" data-bind="?__enabled:value&&(value.selected||(value.checked&&value.checked.length))__track:checked,selected" disabled><i class="far fa-trash-o red"></i>@(Remove)</button>
 				</nav>
 			</div>
 		</section>
@@ -26,12 +26,13 @@
 		</section>
 
 		<section data-type="main">
-			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?.checked;button:?/button;noborder:1;height:window;margin:45;dblclick:?/update">
+			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?.checked;button:?/button;noborder:1;height:window;margin:45;dblclick:?/update;highlight:1;click:?.selected">
 				<script type="text/plain">
 					[
+						{ name: 'id', text: '@(ID)', width: 120, hide: true, class: 'monospace' },
 						{ name: 'name', text: '@(Name)', width: 430, template: '{{ if picture }}<i class="fa fa-camera mr5 blue"></i>{{ fi }}{{ name }}' },
 						{ name: 'category', text: '@(Category)', width: 200 },
-						{ name: 'dtupdated', text: '@(Updated)', format: '[date]', width: 150, sort: false, align: 1 },
+						{ name: 'dtupdated', text: '@(Updated)', format: '[date]', width: 150, align: 1 },
 						{ name: '@(Options)', filter: false, align: 1, sort: false, width: 100, template: '<button title="@(Duplicate)" name="duplicate"><i class="far fa-copy"></i></button><button name="update" title="@(Edit)"><i class="fa fa-pencil"></i></button><button class="btn-remove" name="remove" title="@(Remove)"><i class="far fa-trash-o"></i></button>' }
 					]
 				</script>
@@ -76,7 +77,7 @@
 		exports.button = function(name, row, grid) {
 			switch (name) {
 				case 'remove':
-					SETTER('approve/show', '@(Are you sure you want to remove selected widget?)', '"trash" @(Remove)', function(index) {
+					SETTER('approve/show', '@(Are you sure you want to remove selected widget?)', '"trash" @(Remove)', function() {
 						FUNC.loading(true);
 						AJAX('DELETE [url]api/widgets/{id}/'.arg(row), function(response) {
 							FUNC.loading(false, 1000);
@@ -140,39 +141,28 @@
 			SETTER('menu/show', opt);
 		};
 
-		exports.checkbox = function(el, grid) {
-			el && !el.value && grid.checked(el.checked);
-			var count = grid.checked().length;
-			toolbar.btnChecked.prop('disabled', count === 0);
-		};
+		exports.remove = function(el) {
+			var model = GET('?');
+			SETTER('approve/show', '@(Are you sure you want to remove all selected widgets?)', '"trash" @(Remove)', function() {
 
-		exports.checked = function(el) {
-			var opt = {};
-			opt.align = 'right';
-			opt.element = el;
-			opt.items = [];
-			opt.items.push({ id: 'remove', name: '@(Remove widgets)', icon: 'trash red' });
+				FUNC.loading(true);
 
-			opt.callback = function(item) {
-				switch (item.id) {
-					case 'remove':
-						SETTER('approve/show', '@(Are you sure you want to remove all selected widgets?)', '"trash" @(Remove)', function(index) {
-							var arr = FIND('.widgets.grid').checked();
-							FUNC.loading(true);
-							arr.wait(function(el, next, index) {
-								SET('common.progress', (index / arr.length) * 100);
-								AJAX('DELETE [url]api/widgets/' + el.id, next);
-							}, function() {
-								exports.refresh();
-								FUNC.loading(false, 1000);
-								SETTER('snackbar/success', '@(Widgets have been removed successfully.)');
-							});
-						});
-						break;
+				var checked = model.checked;
+				if (!checked || !checked.length) {
+					checked = model.selected;
+					if (checked)
+						checked = [checked];
 				}
-			};
 
-			SETTER('menu/show', opt);
+				checked.wait(function(el, next, index) {
+					SET('common.progress', (index / checked.length) * 100);
+					AJAX('DELETE [url]api/widgets/', { id: el.id }, next);
+				}, function() {
+					exports.refresh();
+					FUNC.loading(false, 1000);
+					SETTER('snackbar/success', '@(Widgets have been removed successfully.)');
+				});
+			});
 		};
 	});
 

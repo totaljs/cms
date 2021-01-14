@@ -7,7 +7,7 @@
 				<nav data-bind="?.checked__enabled .S:value && value.length">
 					<button class="exec" data-exec="?/create"><i class="fa fa-plus-circle"></i>@(Create)</button>
 					<button class="exec" data-exec="?/options"><i class="fa fa-wrench"></i>@(Options)</button>
-					<button class="exec S" data-exec="?/checked" disabled><i class="fa fa-check-circle"></i>@(Checked)</button>
+					<button class="exec" data-exec="?/remove" data-bind="?__enabled:value&&(value.selected||(value.checked&&value.checked.length))__track:checked,selected" disabled><i class="far fa-trash-o red"></i>@(Remove)</button>
 				</nav>
 			</div>
 		</section>
@@ -51,14 +51,16 @@
 		</section>
 
 		<section data-type="main">
-			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?.checked;button:?/button;noborder:1;height:window;margin:45;dblclick:?/update">
+			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?.checked;button:?/button;noborder:1;height:window;margin:45;dblclick:?/update;highlight:1;click:?.selected">
 				<script type="text/plain">
 				[
-					{ name: 'path', text: '@(Name)', width: 300, template: '{{ language | language }}{{ if icon }}<i class="{{ icon }} mr5"></i>{{ fi }}{{ path | pagespath }}{{ if draft }}<span class="badge badge-red ml5">@(draft)</span>{{ fi }}{{ if ispartial }}<span class="badge badge-green ml5">@(partial)</span>{{ fi }}', classth: 'left', classfilter: 'left' },
+					{ name: 'id', text: '@(ID)', width: 120, hide: true, class: 'monospace' },
+					{ name: 'path', text: '@(Name)', width: 400, template: '{{ language | language }}{{ if pinned }}<i class="fas fa-thumbtack orange mr5"></i>{{ fi }}{{ if icon }}<i class="{{ icon }} mr5"></i>{{ fi }}{{ path | pagespath }}{{ if draft }}<span class="badge badge-red ml5">@(draft)</span>{{ fi }}{{ if ispartial }}<span class="badge badge-green ml5">@(partial)</span>{{ fi }}', classth: 'left', classfilter: 'left' },
 					{ name: 'url', text: '@(URL address)', width: 230, template: '{{ if ispartial }}<span class="silver">{{ url }}</span>{{ else }}{{ url }}{{ fi }}' },
+					{ name: 'template', text: '@(Template)', width: 150, sort: false, template: '{{ template | pagestemplate }}', hide: true, options: 'common.dependencies.templatespages', otext: 'name', ovalue: 'id' },
 					{ name: 'language', text: '@(Language)', width: 80, sort: false, align: 1 },
-					{ name: 'dtupdated', text: '@(Updated)', format: '[date]', width: 150, sort: false, align: 1 },
-					{ name: 'dtcreated', text: '@(Created)', format: '[date]', width: 150, sort: false, align: 1, hide: true },
+					{ name: 'dtupdated', text: '@(Updated)', format: '[date]', width: 150, align: 1 },
+					{ name: 'dtcreated', text: '@(Created)', format: '[date]', width: 150, align: 1, hide: true },
 					{ name: '@(Options)', filter: false, align: 2, sort: false, width: 150, template: '{{ if !ispartial }}<a href="{{ url }}" class="fs11 mr5" target="_blank">@(show)</a>{{ fi }}<div class="inline mr10"><button title="@(Duplicate)" name="duplicate"><i class="far fa-copy"></i></button><button name="update" title="@(Edit)"><i class="fa fa-pencil"></i></button><button class="btn-remove" name="remove" title="@(Remove)"><i class="far fa-trash-o"></i></button></div>' }
 				]
 				</script>
@@ -83,8 +85,19 @@
 
 			AJAX('GET [url]api/pages/', function(response) {
 
-				for (var i = 0, length = response.items.length; i < length; i++) {
+				response.items.sort(function(a, b) {
+					if ((a.pinned && b.pinned) || (!a.pinned && !b.pinned))
+						return 0;
+					if (a.pinned && !b.pinned)
+						return -1;
+					if (!a.pinned && b.pinned)
+						return 1;
+					return 0;
+				});
+
+				for (var i = 0; i < response.items.length; i++) {
 					var item = response.items[i];
+					item.url = item.url.replace(/\*\//g, '');
 					var parent = item.parent;
 					var path = item.name;
 					var is = false;
@@ -179,32 +192,28 @@
 			}
 		};
 
-		exports.checked = function(el) {
-			var options = {};
-			options.align = 'right';
-			options.element = el;
-			options.items = [];
-			options.items.push({ id: 'remove', name: '@(Remove pages)', icon: 'trash red' });
-			options.callback = function(item) {
-				switch (item.id) {
-					case 'remove':
-						SETTER('approve/show', '@(Are you sure you want to remove all selected pages?)', '"trash" @(Remove)', function() {
-							FUNC.loading(true);
-							var arr = FIND('.pages.grid').checked();
-							arr.wait(function(el, next, index) {
-								SET('common.progress', (index / arr.length) * 100);
-								AJAX('DELETE [url]api/pages/', { id: el.id }, next);
-							}, function() {
-								exports.refresh();
-								FUNC.loading(false, 1000);
-								SETTER('snackbar/success', '@(Pages have been removed successfully.)');
-							});
-						});
-						break;
-				}
-			};
+		exports.remove = function(el) {
+			var model = GET('?');
+			SETTER('approve/show', '@(Are you sure you want to remove all selected pages?)', '"trash" @(Remove)', function() {
 
-			SETTER('menu', 'show', options);
+				FUNC.loading(true);
+
+				var checked = model.checked;
+				if (!checked || !checked.length) {
+					checked = model.selected;
+					if (checked)
+						checked = [checked];
+				}
+
+				checked.wait(function(el, next, index) {
+					SET('common.progress', (index / checked.length) * 100);
+					AJAX('DELETE [url]api/pages/', { id: el.id }, next);
+				}, function() {
+					exports.refresh();
+					FUNC.loading(false, 1000);
+					SETTER('snackbar/success', '@(Pages have been removed successfully.)');
+				});
+			});
 		};
 
 		exports.options = function(el) {
@@ -260,6 +269,10 @@
 		}
 
 		return (builder.length ? (builder.join('')) : '') + arr.last();
+	};
+
+	Thelpers.pagestemplate = function(val) {
+		return common.dependencies.templatespages.findValue('id', val, 'name', '').encode();
 	};
 
 </script>

@@ -1,7 +1,7 @@
 exports.icon = 'far fa-file-text-o';
 exports.name = '@(Pages)';
 exports.position = 30;
-exports.group = '@(Content)'
+exports.group = '@(Content)';
 
 exports.install = function() {
 	// Pages
@@ -100,7 +100,7 @@ function preview2() {
 		}
 
 		self.layout('');
-		self.CMSpagemodel(response.$clean());
+		self.CMSpagemodel(response);
 	});
 }
 
@@ -116,7 +116,7 @@ function dependencies() {
 	var output = {};
 	output.links = arr;
 
-	NOSQL('parts').find().fields('id', 'name', 'category').callback(function(err, response) {
+	NOSQL('parts').find().fields('id,name,category').callback(function(err, response) {
 		output.parts = response;
 		self.json(output);
 	});
@@ -124,5 +124,5 @@ function dependencies() {
 
 function css() {
 	var self = this;
-	self.content(U.minifyStyle('/*auto*/\n' + (self.body.css || '')), 'text/css');
+	self.content(U.minify_css('/*auto*/\n' + (self.body.css || '')), 'text/css');
 }

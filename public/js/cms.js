@@ -28,7 +28,7 @@ $(document).ready(function() {
 		var ticks = LS.getItem('cmsvisitor') || '';
 
 		options.type = 'GET';
-		options.headers = { 'X-Ping': location.pathname, 'X-Referrer': document.referrer };
+		options.headers = { 'x-ping': location.pathname, 'x-referrer': document.referrer };
 
 		var url = '/$visitors/';
 
@@ -87,6 +87,7 @@ $(document).ready(function() {
 
 		W.$visitorsinterval = setInterval(function() {
 			if (document.hasFocus()) {
+				options.headers['x-ping'] = location.pathname;
 				options.headers['x-reading'] = '1';
 				$.ajax(url + '?id=' + ticks + (un ? ('&utm_user=' + encodeURIComponent(un)) : ''), options);
 			}
@@ -120,7 +121,7 @@ COMPONENT('exec', function(self, config) {
 		var scopepath = function(el, val) {
 			if (!scope)
 				scope = el.scope();
-			return scope ? scope.makepath ? scope.makepath(val) : val.replace(/\?/g, el.scope().path) : val;
+			return val == null ? scope : scope ? scope.makepath ? scope.makepath(val) : val.replace(/\?/g, el.scope().path) : val;
 		};
 
 		var fn = function(plus) {
@@ -143,8 +144,13 @@ COMPONENT('exec', function(self, config) {
 				}
 
 				if (attr) {
-					if (attr.indexOf('?') !== -1)
-						attr = scopepath(el, attr);
+					if (attr.indexOf('?') !== -1) {
+						var tmp = scopepath(el);
+						if (tmp) {
+							M.scope(tmp.path);
+							attr = tmp.makepath ? tmp.makepath(attr) : attr.replace(/\?/g, tmp.path);
+						}
+					}
 					EXEC(attr, el, e);
 				}
 
@@ -177,6 +183,151 @@ COMPONENT('exec', function(self, config) {
 		self.event('dblclick', config.selector2 || '.exec2', fn('2'));
 		self.event('click', config.selector || '.exec', fn(''));
 	};
+});
+
+COMPONENT('animation', 'style:2;delay:200;init:1000;cleaner:1000;visible:0;offset:50', function(self, config, cls) {
+
+	self.readonly();
+
+	if (!config.if)
+		self.blind();
+
+	self.destroy = function() {
+		self.visibleinterval && clearInterval(self.interval);
+	};
+
+	self.make = function() {
+		if (config.visible) {
+			self.visibleinterval = setInterval(function() {
+				if (VISIBLE(self.dom, config.offset)) {
+					self.visibleinterval = null;
+					clearInterval(self.visibleinterval);
+					self.animate();
+				}
+			}, 500);
+		} else
+			setTimeout2(self.ID, self.animate, config.init);
+
+		config.datasource && self.datasource(config.datasource, function() {
+			setTimeout2(self.ID, self.animate, config.init);
+		});
+	};
+
+	self.restore = function() {
+		self.find('.animated').aclass('animation').rclass('animated');
+	};
+
+	self.animate = function() {
+
+		var el = self.find('.animation');
+		var arr = [];
+
+		for (var i = 0; i < el.length; i++) {
+
+			var t = el[i];
+
+			if (!t.$anim) {
+				var $t = $(t);
+
+				if (!t.$animopt) {
+					var opt = ($t.attrd('animation') || '').parseConfig();
+					t.$animopt = opt;
+				}
+
+				t.$anim = cls + '-' + (t.$animopt.style || config.style);
+				$t.aclass(t.$anim + '-init animating');
+				arr.push($t);
+			}
+		}
+
+		if (!arr.length)
+			return;
+
+		setTimeout(function(arr) {
+
+			if (self.removed)
+				return;
+
+			var maxdelay = 500;
+
+			if (config.together) {
+
+				for (var i = 0; i < arr.length; i++) {
+					var el = arr[i];
+					var c = el[0].$anim;
+					var opt = el[0].$animopt;
+					if (!self.removed) {
+						if (opt.noanimation)
+							el.rclass('animation ' + c + '-init');
+						else
+							el.rclass('animation').aclass(c + '-run');
+					}
+				}
+
+				setTimeout(function() {
+					if (!self.removed) {
+						for (var i = 0; i < arr.length; i++) {
+							var c = arr[i][0].$anim;
+							arr[i].rclass(c + '-init ' + c + '-run animating').aclass('animated');
+							delete arr[i][0].$anim;
+						}
+						config.exec && self.EXEC(config.exec, self.element);
+					}
+				}, 1500);
+
+				return;
+			}
+
+			arr.wait(function(el, next, index) {
+
+				var opt = el[0].$animopt;
+				var delay = (opt.order || index) * (opt.delay || config.delay);
+				var clsname = cls + '-' + (opt.style || config.style);
+
+				if (maxdelay < delay)
+					maxdelay = delay;
+
+				if (el.hclass('hidden') || el.hclass('invisible')) {
+					el.rclass('animation ' + clsname + '-init').aclass('animated');
+					next();
+					return;
+				}
+
+				el[0].$animtime = setTimeout(function(el) {
+					if (!self.removed) {
+						if (opt.noanimation)
+							el.rclass('animation ' + clsname + '-init');
+						else
+							el.rclass('animation').aclass(clsname + '-run');
+					}
+				}, delay, el);
+
+				next();
+
+			}, function() {
+
+				setTimeout(function() {
+					for (var i = 0; i < arr.length; i++) {
+						var c = arr[i][0].$anim;
+						arr[i].rclass(c + '-init ' + c + '-run animating').aclass('animated');
+						delete arr[i][0].$anim;
+					}
+					config.exec && self.EXEC(config.exec, self.element);
+				}, maxdelay + 1000);
+			});
+
+		}, config.init / 10 >> 0, arr);
+	};
+
+	self.setter = function(value) {
+		if (config.if) {
+			if (value === config.if)
+				setTimeout2(self.ID, self.animate, config.init);
+			else
+				self.restore();
+		}
+	};
+
 });
 
 COMPONENT('mobilecarousel', 'count:1;selector:.col-sm-4;margin:15;snapping:true;animate:5000', function(self, config, cls) {
@@ -301,3 +452,110 @@ COMPONENT('mobilecarousel', 'count:1;selector:.col-sm-4;margin:15;snapping:true;
 		});
 	};
 });
+
+var TTIC = ['#1abc9c','#2ecc71','#3498db','#9b59b6','#34495e','#16a085','#2980b9','#8e44ad','#2c3e50','#f1c40f','#e67e22','#e74c3c','#d35400','#c0392b'];
+
+Thelpers.initials = function(value) {
+	var index = value.indexOf('.');
+	var arr = value.substring(index + 1).replace(/\s{2,}/g, ' ').trim().split(' ');
+	var initials = ((arr[0].substring(0, 1) + (arr[1] || '').substring(0, 1))).toUpperCase();
+	var sum = 0;
+	for (var i = 0; i < value.length; i++)
+		sum += value.charCodeAt(i);
+	return '<span class="initials" style="background-color:{1}" title="{2}">{0}</span>'.format(initials, TTIC[sum % TTIC.length], value);
+};
+
+Thelpers.color = function(value) {
+	var hash = HASH(value, true);
+	var color = '#';
+	for (var i = 0; i < 3; i++) {
+		var value = (hash >> (i * 8)) & 0xFF;
+		color += ('00' + value.toString(16)).substr(-2);
+	}
+	return color;
+};
+
+Thelpers.counter = function(value, decimals) {
+
+	if (decimals == null)
+		decimals = 0;
+
+	if (value > 999999)
+		return (value / 1000000).format(decimals) + ' M';
+	if (value > 9999)
+		return (value / 10000).format(decimals) + ' K';
+	return value.format(decimals);
+};
+
+Thelpers.filesize = function(value, decimals, type) {
+	return value ? value.filesize(decimals, type) : '...';
+};
+
+Number.prototype.filesize = function(decimals, type) {
+
+	if (typeof(decimals) === 'string') {
+		var tmp = type;
+		type = decimals;
+		decimals = tmp;
+	}
+
+	var value;
+	var t = this;
+
+	// this === bytes
+	switch (type) {
+		case 'bytes':
+			value = t;
+			break;
+		case 'KB':
+			value = t / 1024;
+			break;
+		case 'MB':
+			value = filesizehelper(t, 2);
+			break;
+		case 'GB':
+			value = filesizehelper(t, 3);
+			break;
+		case 'TB':
+			value = filesizehelper(t, 4);
+			break;
+		default:
+
+			type = 'bytes';
+			value = t;
+
+			if (value > 1023) {
+				value = value / 1024;
+				type = 'KB';
+			}
+
+			if (value > 1023) {
+				value = value / 1024;
+				type = 'MB';
+			}
+
+			if (value > 1023) {
+				value = value / 1024;
+				type = 'GB';
+			}
+
+			if (value > 1023) {
+				value = value / 1024;
+				type = 'TB';
+			}
+
+			break;
+	}
+
+	type = ' ' + type;
+	return (decimals === undefined ? value.format(2).replace('.00', '') : value.format(decimals)) + type;
+};
+
+function filesizehelper(number, count) {
+	while (count--) {
+		number = number / 1024;
+		if (number.toFixed(3) === '0.000')
+			return 0;
+	}
+	return number;
+}

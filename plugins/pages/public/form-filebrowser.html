@@ -29,7 +29,7 @@
 	.ui-filelistbox-pagination { height: 45px; background-color: #F5F5F5; padding: 8px 0 0 10px; border-top: 1px solid #D0D0D0; }
 	.ui-filelistbox-pagination button { width: 22px; height: 22px; border: 0; background-color: #4285F4; border-radius: 2px; outline: 0; font-size: 12px; vertical-align: middle; padding: 2px 0 0 0; margin: 3px 5px 0 0; float: left; color: white; }
 	.ui-filelistbox-pagination button:hover { opacity: 0.9; }
-	.ui-filelistbox-pagination button:disabled { color: silver; cursor: not-allowed; background-color: #E0E0E0 !important; }
+	.ui-filelistbox-pagination button:disabled { color: silver; cursor: not-allowed; background-color: #E0E0E0 !important; opacity: 1; }
 	.ui-filelistbox-pagination div { float: left; font-size: 11px; vertical-align: middle; margin: 6px 0 0 8px; }
 
 	@media(max-width: 767px) {
@@ -45,7 +45,7 @@
 	<div class="padding npt">
 		<div class="row">
 			<div class="col-xs-6">
-				<span data---="fileupload__filebrowser.filename__url:[url]api/upload/;$id:filebrowser.filename" class="link fs12"><i class="fa fa-cloud-upload mr5"></i>@(Upload new file)</span>
+				<span data---="fileupload__filebrowser.filename__url:[url]api/upload/;$id:filebrowser.filename;error:@(File is too large)" class="link fs12"><i class="fa fa-cloud-upload mr5"></i>@(Upload new file)</span>
 			</div>
 			<div class="col-xs-6 right">
 				<span class="link fs12 red exec" data-exec="filelistbox/clear"><i class="fa fa-trash mr5"></i>@(Clear useless files)</span>
@@ -70,14 +70,15 @@
 		};
 
 		exports.clear = function() {
-			SETTER('approve/show', '@(Are you sure you want to remove all useless files?)', '"trash" @(Remove)', function(index) {
-				if (!index) {
-					FUNC.loading(true);
-					AJAX('GET [url]api/files/clear/', function() {
+			SETTER('approve/show', '@(Are you sure you want to remove all useless files?)', '"trash" @(Remove)', function() {
+				FUNC.loading(true);
+				AJAX('GET [url]api/files/clear/', function() {
+					setTimeout(function() {
 						FUNC.loading(false, 1000);
+						refresh_filebrowser_files(true);
 						SETTER('snackbar/success', '@(Cleaning of useless files has been started.)');
-					});
-				}
+					}, 5000);
+				});
 			});
 		};
 
@@ -103,11 +104,13 @@
 					return;
 				}
 			}
-			window.cmseditor && window.cmseditor.instance && window.cmseditor.instance.resize();
+			W.cmseditor && W.cmseditor.instance && W.cmseditor.instance.resize();
 			SET('common.form3', '');
 		};
 
 		WATCH('filebrowser.filename', function(path, value) {
+
+			refresh_filebrowser_files(true);
 
 			if (!value || !value.length)
 				return;
@@ -130,15 +133,19 @@
 			} else if (type === 'function') {
 				obj.target(url, value[0].name);
 			} else {
-				if (/\.(jpg|png|gif|svg|jpeg)$/.test(url))
+				if (/\.(jpg|png|gif|svg|jpeg)$/.test(url)) {
 					$(obj.target).attr('src', url);
-				else {
+				} else {
 					SETTER('snackbar/warning', '@(You need to choose an image.)');
 					return;
 				}
 			}
 
-			window.cmseditor && window.cmseditor.instance && window.cmseditor.instance.resize();
+			if (W.cmseditor && W.cmseditor.instance) {
+				W.cmseditor.instance.change(true);
+				W.cmseditor.instance.resize();
+			}
+
 			SET('common.form3', '');
 		});
 
@@ -183,6 +190,7 @@
 						return;
 				}
 
+				filebrowser.clear = true;
 				var files = e.originalEvent.dataTransfer.files;
 				SETTER('#filebrowser.filename/upload', files);
 			});

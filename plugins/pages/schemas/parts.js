@@ -34,16 +34,16 @@ NEWSCHEMA('Parts', function(schema) {
 				var item = model.items[i];
 				item.ownerid = model.ownerid;
 				item.type = model.type;
-				FUNC.write('parts', item.id, U.minifyHTML(item.body), true);
+				FUNC.write('parts', item.id, U.minify_html(item.body), true);
 				item.body = undefined;
-				NOSQL('parts').update(item, true).where('id', item.id);
+				NOSQL('parts').update(item, true).id(item.id);
 			}
 			$.success();
 		});
 	});
 
 	schema.addWorkflow('render', function($) {
-		NOSQL('parts').find().where('id', $.options.id).first().callback(function(err, response) {
+		NOSQL('parts').find().id($.options.id).first().callback(function(err, response) {
 			if (response) {
 				FUNC.read('parts', response.id, function(err, body) {
 					response.body = body;

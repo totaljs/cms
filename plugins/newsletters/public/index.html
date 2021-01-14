@@ -42,8 +42,8 @@
 					{ name: 'name', text: '@(Name)', width: 350, template: '{{ if issending }}<i class="fa fa-spinner fa-spin mr5 color"></i>{{ fi }}{{ if issent }}<span class="badge badge-green badge b mr5">@(SENT)</span>{{ fi }}{{ name }}' },
 					{ name: 'count', text: '@(Subscribers)', align: 2, width: 150, template: '{{ count }}x<i class="fa fa-envelope-o ml5"></i>' },
 					{ name: 'dtsent', text: '@(Sent)', format: '[date]', width: 150, sort: false, align: 1 },
-					{ name: 'dtupdated', text: '@(Updated)', format: '[date]', width: 150, sort: false, align: 1 },
-					{ name: 'dtcreated', text: '@(Created)', format: '[date]', width: 150, sort: false, align: 1, hide: true },
+					{ name: 'dtupdated', text: '@(Updated)', format: '[date]', width: 150, align: 1 },
+					{ name: 'dtcreated', text: '@(Created)', format: '[date]', width: 150, align: 1, hide: true },
 					{ name: '@(Options)', align: 1, filter: false, sort: false, width: 120, template: '<div class="inline"><button title="@(Duplicate)" name="duplicate"><i class="far fa-copy"></i></button><button name="update" title="@(Edit)"><i class="fa fa-pencil"></i></button><button class="btn-remove" name="remove" title="@(Remove)"><i class="far fa-trash-o"></i></button></div>' }
 				]
 				</script>
@@ -70,6 +70,11 @@
 				filter.limit = 100;
 
 			filter.page = page || 1;
+
+			if (sort && sort.length)
+				filter.sort = sort.join(',');
+			else
+				delete filter.sort;
 
 			AJAX('GET [url]api/newsletters/', filter, function(response) {
 				SET('?.grid', response);
@@ -121,7 +126,7 @@
 		exports.button = function(name, row, grid) {
 			switch (name) {
 				case 'remove':
-					SETTER('approve/show', '@(Are you sure you want to remove selected newsletter?)', '"trash" @(Remove)', function(index) {
+					SETTER('approve/show', '@(Are you sure you want to remove selected newsletter?)', '"trash" @(Remove)', function() {
 						FUNC.loading(true);
 						AJAX('DELETE [url]api/newsletters/' + row.id, function(response) {
 							FUNC.loading(false, 1000);
@@ -168,7 +173,7 @@
 			options.callback = function(item) {
 				switch (item.id) {
 					case 'remove':
-						SETTER('approve/show', '@(Are you sure you want to remove all selected newsletters?)', '"trash" @(Remove)', function(index) {
+						SETTER('approve/show', '@(Are you sure you want to remove all selected newsletters?)', '"trash" @(Remove)', function() {
 							FUNC.loading(true);
 							newsletters.checked.wait(function(el, next, index) {
 								SET('common.progress', (index / arr.length) * 100);

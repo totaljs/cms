@@ -42,7 +42,7 @@ exports.install = function() {
 	ROUTE('GET     /admin',                                   admin);
 	ROUTE('GET     /admin/logout/',                           logout);
 	ROUTE('POST    /api/login/admin/',                        login);
-	ROUTE('POST    /admin/api/upload/',                       upload, ['upload', 10000], 5120); // 5 MB
+	ROUTE('POST    /admin/api/upload/',                       upload, ['upload', 10000], 20480); // 20 MB
 	ROUTE('POST    /admin/api/upload/base64/',                upload_base64, [10000], 2048); // 2 MB
 	ROUTE('GET     /admin/api/dependencies/                   *Settings --> @dependencies');
 
@@ -78,6 +78,7 @@ function admin() {
 		}
 	}
 
+	model.quicksort('name');
 	self.view('admin', model);
 }
 
@@ -187,7 +188,7 @@ function file_read(req, res) {
 	var id = req.split[1].replace('.' + req.extension, '');
 
 	if (!req.query.s || !ISIMAGE[req.extension]) {
-		res.filefs('files', id, !ISIMAGE[req.extension] && (req.extension !== 'pdf' || req.extension !== 'txt'));
+		res.filefs('files', id, !ISIMAGE[req.extension] && (req.extension !== 'pdf' && req.extension !== 'txt'));
 		return;
 	}
 
@@ -218,6 +219,7 @@ function socket() {
 	var self = this;
 	WS = self;
 	self.autodestroy(() => WS = null);
+	self.on('message', (client, message) => self.send(message, c => c !== client));
 }
 
 function logout() {
@@ -245,20 +247,17 @@ function login() {
 // Upload (multiple) pictures
 function upload() {
 
-	var id = [];
+	var files = [];
 	var self = this;
 
 	self.files.wait(function(file, next) {
-		file.read(function(err, data) {
-			// Store current file into the HDD
-			FILESTORAGE('files').insert(file.filename, data, function(err, ref) {
-				id.push({ id: ref, name: file.filename, size: file.length, width: file.width, height: file.height, type: file.type, ctime: NOW, mtime: NOW, extension: file.extension, download: '/download/' + ref + '.' + file.extension });
-				setImmediate(next);
-			});
-
+		var id = UID();
+		FILESTORAGE('files').save(id, file.filename, file.path, function(err) {
+			if (!err)
+				files.push({ id: id, name: file.filename, size: file.length, width: file.width, height: file.height, type: file.type, ctime: NOW, mtime: NOW, extension: file.extension, download: '/download/' + id + '.' + file.extension });
+			setImmediate(next);
 		});
-
-	}, () => self.json(id));
+	}, () => self.json(files));
 }
 
 // Upload base64
@@ -289,5 +288,6 @@ function upload_base64() {
 	}
 
 	var data = self.body.file.base64ToBuffer();
-	FILESTORAGE('files').insert((self.body.name || 'base64').replace(/\.[0-9a-z]+$/i, '').max(40) + ext, data, (err, id) => self.json('/download/' + id + ext));
+	var id = UID();
+	FILESTORAGE('files').save(id, (self.body.name || 'base64').replace(/\.[0-9a-z]+$/i, '').max(40) + ext, data, () => self.json('/download/' + id + ext));
 }

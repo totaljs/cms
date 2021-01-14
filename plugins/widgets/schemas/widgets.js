@@ -17,7 +17,7 @@ WidgetInstace.prototype.globals = WidgetInstace.prototype.variables = WidgetInst
 NEWSCHEMA('Widgets', function(schema) {
 
 	schema.define('id', UID);
-	schema.define('name', 'String(50)', true);
+	schema.define('name', String, true);
 	schema.define('category', 'String(50)');
 	schema.define('body', String);
 	schema.define('picture', 'String(50)'); // A preview
@@ -28,7 +28,7 @@ NEWSCHEMA('Widgets', function(schema) {
 	// Gets listing
 	schema.setQuery(function($) {
 		var filter = NOSQL('widgets').list();
-		filter.sort('dtcreated', true);
+		filter.sort('dtcreated_desc');
 		filter.fields('id,picture,name,icon,category,dtcreated,reference,dtupdated');
 		filter.callback($.callback);
 	});
@@ -39,7 +39,7 @@ NEWSCHEMA('Widgets', function(schema) {
 		var filter = NOSQL('widgets').one();
 		var id = opt.id || $.controller.id;
 		opt.url && filter.where('url', opt.url);
-		filter.where('id', id);
+		filter.id(id);
 		filter.callback($.callback, 'error-widgets-404');
 		FUNC.alert($.user, 'widgets/edit', id);
 	});
@@ -60,9 +60,9 @@ NEWSCHEMA('Widgets', function(schema) {
 			}
 		}
 
-		var isUpdate = !!model.id;
+		var update = !!model.id;
 
-		if (isUpdate) {
+		if (update) {
 			model.dtupdated = NOW;
 		} else {
 			model.id = UID();
@@ -72,7 +72,7 @@ NEWSCHEMA('Widgets', function(schema) {
 
 		var replace = model.replace;
 		model.replace = undefined;
-		var db = isUpdate ? nosql.modify(model).where('id', model.id).backup(user).log('Update: ' + model.id, user) : nosql.insert(model).log('Create: ' + model.id, user);
+		var db = update ? nosql.modify(model).id(model.id).backup($.user.meta(model)) : nosql.insert(model);
 
 		db.callback(function() {
 			$SAVE('Events', { type: 'widgets/save', id: model.id, user: user, body: model.name, admin: true }, NOOP, $);
@@ -84,8 +84,7 @@ NEWSCHEMA('Widgets', function(schema) {
 
 	// Removes a specific widget
 	schema.setRemove(function($) {
-		var user = $.user.name;
-		NOSQL('widgets').remove().where('id', $.id).backup(user).log('Remove: ' + $.id, user).callback(function(err, count) {
+		NOSQL('widgets').remove().id($.id).callback(function(err, count) {
 
 			if (INSTALLED[$.id]) {
 				var w = MAIN.widgets[$.id];
@@ -125,7 +124,7 @@ NEWSCHEMA('Widgets', function(schema) {
 				// updating
 				// loads file content
 				Fs.readFile($.options.filename, function(err, data) {
-					NOSQL('widgets').modify({ body: data.toString('utf8'), dtupdated: NOW }).where('id', widget.id).callback(function() {
+					NOSQL('widgets').modify({ body: data.toString('utf8'), dtupdated: NOW }).id(widget.id).callback(function() {
 						setTimeout2('widgets', refresh, 300);
 					});
 				});
@@ -152,7 +151,7 @@ NEWSCHEMA('Widgets', function(schema) {
 		var count = 0;
 
 		databases.wait(function(name, next) {
-			NOSQL(name).find().in('bodywidgets', id).fields('id', 'widgets', 'bodywidgets').callback(function(err, response) {
+			NOSQL(name).find().in('bodywidgets', id).fields('id,widgets,bodywidgets').callback(function(err, response) {
 				response.wait(function(item, next) {
 					var is = false;
 					FUNC.read(name, item.id, function(err, body) {
@@ -162,7 +161,7 @@ NEWSCHEMA('Widgets', function(schema) {
 							count++;
 							is = true;
 						});
-						is && FUNC.write(name, item.id, U.minifyHTML(response.body), true);
+						is && FUNC.write(name, item.id, U.minify_html(response.body), true);
 						next();
 					});
 				}, next);
@@ -172,13 +171,13 @@ NEWSCHEMA('Widgets', function(schema) {
 	});
 });
 
-NEWSCHEMA('Widgets/Globals').make(function(schema) {
+NEWSCHEMA('Widgets/Globals', function(schema) {
 
 	schema.define('css', 'String');
 	schema.define('js', 'String');
 
-	schema.setSave(function($) {
-		Fs.writeFile(PATH.databases('widgetsglobals.json'), JSON.stringify($.model.$clean()), function() {
+	schema.setSave(function($, model) {
+		Fs.writeFile(PATH.databases('widgetsglobals.json'), JSON.stringify(model), function() {
 			refresh(null, true);
 			$.success();
 		});
@@ -399,20 +398,20 @@ function refresh(callback, force) {
 				var version = U.GUID(5);
 
 				if (rebuildcss) {
-					Fs.writeFile(PATH.temp(CSS), U.minifyStyle('/*auto*/\n' + (response.css ? response.css + '\n' : '') + css.join('\n')), NOOP);
-					F.touch('/' + CSS);
+					Fs.writeFile(PATH.temp(CSS), U.minify_css('/*auto*/\n' + (response.css ? response.css + '\n' : '') + css.join('\n')), NOOP);
+					TOUCH('/' + CSS);
 					MAIN.css = '/' + CSS + '?ts=' + version;
 				}
 
 				if (rebuildjs) {
-					Fs.writeFile(PATH.temp(JS), U.minifyScript((response.js ? response.js + ';\n' : '') + js.join('\n')), NOOP);
-					F.touch('/' + JS);
+					Fs.writeFile(PATH.temp(JS), U.minify_js((response.js ? response.js + ';\n' : '') + js.join('\n')), NOOP);
+					TOUCH('/' + JS);
 					MAIN.js = '/' + JS + '?ts=' + version;
 				}
 
 				if (rebuildeditor) {
-					Fs.writeFile(PATH.temp(JSEDITOR), U.minifyScript(jseditor.join('\n')), NOOP);
-					F.touch('/' + JSEDITOR);
+					Fs.writeFile(PATH.temp(JSEDITOR), U.minify_js(jseditor.join('\n')), NOOP);
+					TOUCH('/' + JSEDITOR);
 					MAIN.jseditor = '/' + JSEDITOR + '?ts=' + version;
 				}
 
@@ -518,7 +517,7 @@ function watcher() {
 		var path = PATH.root('widgets');
 		var changes = [];
 		U.ls2(path, function(files) {
-			for (var i = 0, length = files.length; i < length; i++) {
+			for (var i = 0; i < files.length; i++) {
 				var file = files[i];
 				var time = file.stats.mtime.getTime();
 				if (db[file.filename]) {

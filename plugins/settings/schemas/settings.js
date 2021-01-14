@@ -1,5 +1,11 @@
 const COOKIE_OPTIONS = { security: 'strict', httponly: true };
 
+var localization = null;
+
+LOCALIZE(function(req) {
+	return localization ? localization(req) : '';
+});
+
 NEWSCHEMA('SettingsKeyValue', function(schema) {
 	schema.define('id', 'String(50)', true);
 	schema.define('name', 'String(50)', true);
@@ -30,6 +36,8 @@ NEWSCHEMA('Settings', function(schema) {
 	schema.define('componentator', Boolean);
 	schema.define('cookie', 'String(30)', true);
 	schema.define('cdn', String, true);
+	schema.define('memorizeall', 'Boolean');
+	schema.define('localization', 'String');
 
 	schema.setGet(function($) {
 		$.callback(PREF);
@@ -62,7 +70,7 @@ NEWSCHEMA('Settings', function(schema) {
 		$.success();
 	});
 
-	schema.addHook('dependencies', function($) {
+	schema.addWorkflow('dependencies', function($) {
 
 		var obj = $.model;
 		var keys = Object.keys(obj);
@@ -106,7 +114,7 @@ NEWSCHEMA('Settings', function(schema) {
 		MAIN.users = [];
 
 		if (!PREF.cookie)
-			PREF.cookie = '__admin';
+			PREF.cookie = U.random_string(10);
 
 		CONF.admin_cookie = PREF.cookie;
 
@@ -134,10 +142,19 @@ NEWSCHEMA('Settings', function(schema) {
 
 		PREF.smtp && Mail.use(PREF.smtp, PREF.smtpoptions.parseJSON());
 
+		if (PREF.localization)
+			localization = new Function('req', PREF.localization.indexOf('return ') === -1 ? ('return ' + PREF.localization) : PREF.localization);
+		else
+			localization = null;
+
 		EMIT('settings', PREF);
 		$.success();
 	});
 });
+
+function meta(model) {
+	return { id: model.id, stamp: model.stamp, userid: this.id, user: this.name, sa: this.sa };
+}
 
 FUNC.refresh_users = function($) {
 
@@ -168,7 +185,9 @@ FUNC.refresh_users = function($) {
 
 		if ($.controller && $.user.id === user.id)
 			$.cookie(CONF.admin_cookie, key, '1 month', COOKIE_OPTIONS);
+
 		users[key] = user;
+		user.meta = meta;
 	}
 
 	MAIN.users = users;

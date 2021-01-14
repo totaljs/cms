@@ -1,7 +1,7 @@
 <div data---="form__cmseditor.form__if:link;width:600;height:450;submit:cmseditorlink/submit;cancel:cmseditorlink/cancel;reload:cmseditorlink/reload;title:@(Link editor);icon:link" class="hidden">
 	<div data-scope="cmseditor.link">
 		<div class="padding">
-			<div data---="input__?.href2__dirsource:%links;icon:sitemap;dirkey:path;dirvalue:url" class="m">@(URL according to the sitemap)</div>
+			<div data---="input__?.href2__dirsource:%links;icon:sitemap;dirkey:path;dirvalue:url;placeholder:@(Choose existing page)" class="m">@(URL according to the sitemap)</div>
 		</div>
 		<hr class="nmt nmb" />
 		<div class="padding bg-yellow">
@@ -28,7 +28,7 @@
 	</div>
 
 	<nav data---="validation__cmseditor.link">
-		<button name="submit">@(APPLY)</button>
+		<button name="submit"><i class="fa fa-check-circle"></i>@(APPLY)</button>
 		<button name="cancel">@(Cancel)</button>
 	</nav>
 
@@ -94,6 +94,7 @@
 			} else if (href.substring(0, 1) === '+')
 				href = 'tel:' + href;
 
+			link[0].$cmsskipupdate = 1;
 			link.attr('href', href);
 
 			if (obj.title)
@@ -150,7 +151,7 @@
 		};
 
 		exports.tracking = function(id) {
-			AJAX('GET [url]api/tracking/{0}/'.format(id), '?.tracking');
+			AJAX('GET [url]api/tracking/' + id, 'cmseditor.link.tracking');
 			cmseditor.link.idtracking = id;
 		};
 
@@ -158,7 +159,7 @@
 			var id = cmseditor.link.idtracking;
 			cmseditor.link.idtracking = null;
 			SET('cmseditor.link.tracking', null);
-			SETTER('approve/show', '@(Do you want to remove this tracking from database?)', '"trash-o" @(Remove)', function(index) {
+			SETTER('approve/show', '@(Do you want to remove this tracking from database?)', '"trash-o" @(Remove)', function() {
 				AJAX('DELETE [url]api/tracking/{0}/'.format(id), NOOP);
 				var arr = GET('%tracking');
 				if (arr) {

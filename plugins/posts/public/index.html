@@ -35,12 +35,13 @@
 				[
 					{ name: 'name', text: '@(Name)', width: 350, template: '{{ language | language }}{{ if !ispublished }}<span class="badge badge-gray mr5">@(unpublished)</span>{{ fi }}{{ name }}' },
 					{ name: 'category', text: '@(Template)', width: 150 },
+					{ name: 'template', text: '@(Template)', width: 150, sort: false, template: '{{ template | poststemplate }}', hide: true },
 					{ name: 'author', text: '@(Author)', width: 150 },
 					{ name: 'type', text: '@(Type)', width: 100, align: 1, class: 'silver' },
 					{ name: 'language', text: 'Language', width: 40, title: '@(Language)', filter: false, sort: false, align: 1, hide: true },
 					{ name: 'date', text: '@(From)', align: 1, width: 130, template: '{{ date | format(\'@(yyyy-MM-dd)\') }}' },
-					{ name: 'dtupdated', text: '@(Updated)', format: '[date]', width: 150, sort: false, align: 1, hide: true },
-					{ name: 'dtcreated', text: '@(Created)', format: '[date]', width: 150, sort: false, align: 1, hide: true },
+					{ name: 'dtupdated', text: '@(Updated)', format: '[date]', width: 150, align: 1, hide: true },
+					{ name: 'dtcreated', text: '@(Created)', format: '[date]', width: 150, align: 1, hide: true },
 					{ name: '@(Options)', align: 1, filter: false, sort: false, width: 100, template: '<button title="@(Duplicate)" name="duplicate"><i class="far fa-copy"></i></button><button name="update" title="@(Edit)"><i class="fa fa-pencil"></i></button><button class="btn-remove" name="remove" title="@(Remove)"><i class="far fa-trash-o"></i></button>' }
 				]
 				</script>
@@ -67,6 +68,11 @@
 				filter.limit = 100;
 
 			filter.page = page || 1;
+
+			if (sort && sort.length)
+				filter.sort = sort.join(',');
+			else
+				delete filter.sort;
 
 			AJAX('GET [url]api/posts/', filter, function(response) {
 				SET('?.grid', response);
@@ -148,7 +154,7 @@
 						AJAX('GET [url]api/posts/toggle/', { id: arr.join(',') }, exports.refresh);
 						break;
 					case 'remove':
-						SETTER('approve/show', '@(Are you sure you want to remove all selected posts?)', '"trash"@(Remove)', function(index) {
+						SETTER('approve/show', '@(Are you sure you want to remove all selected posts?)', '"trash"@(Remove)', function() {
 							var arr = exports.element.FIND('.posts.grid').checked();
 							FUNC.loading(true);
 							arr.wait(function(el, next, index) {
@@ -193,4 +199,8 @@
 		};
 
 	});
+
+	Thelpers.poststemplate = function(val) {
+		return common.dependencies.templatesposts.findValue('id', val, 'name', '').encode();
+	};
 </script>

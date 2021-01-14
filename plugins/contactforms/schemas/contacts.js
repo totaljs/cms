@@ -27,21 +27,19 @@ NEWSCHEMA('ContactForms', function(schema) {
 	});
 
 	schema.setGet(function($) {
-		NOSQL('contactforms').one().where('id', $.id).callback($.callback, 'error-contacforms-404');
+		NOSQL('contactforms').read().id($.id).callback($.callback, 'error-contacforms-404');
 	});
 
 	schema.setRemove(function($) {
-		var user = $.user.name;
-		var id = (($.body.id || '') + '').split(',');
+		var id = ($.query.id || '').split(',');
 		if (id.length)
-			NOSQL('contactforms').remove().backup(user).log('Remove: ' + $.id, user).in('id', id).callback($.done());
+			NOSQL('contactforms').remove().in('id', id).callback($.done());
 		else
 			$.success();
 	});
 
-	schema.setSave(function($) {
+	schema.setSave(function($, model) {
 
-		var model = $.model;
 		model.id = UID();
 		model.ip = $.ip;
 		model.browser = $.req.useragent();
@@ -51,15 +49,15 @@ NEWSCHEMA('ContactForms', function(schema) {
 			model.name = model.lastname + ' ' + model.firstname;
 
 		var nosql = NOSQL('contactforms');
-		nosql.insert(model.$clean());
-		nosql.counter.hit('all');
+		nosql.insert(model);
+		COUNTER('contactforms').hit('all');
 		$.success();
 
 		EMIT('contacts.save', model);
 
 		var builder = [];
 
-		builder.push('<b>' + model.name.encode() + '</b>');
+		builder.push('<b>' + model.name.encode() + (model.source ? (' - &quot;' + model.source.encode() + '&quot;') : '') + '</b>');
 		builder.push(model.email);
 		model.phone && builder.push(model.phone);
 		builder.push('');
@@ -74,6 +72,6 @@ NEWSCHEMA('ContactForms', function(schema) {
 
 	// Stats
 	schema.addWorkflow('stats', function($) {
-		NOSQL('contactforms').counter.monthly('all', $.callback);
+		COUNTER('contactforms').monthly('all', $.callback);
 	});
 });

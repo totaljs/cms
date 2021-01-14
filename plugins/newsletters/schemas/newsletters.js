@@ -52,16 +52,14 @@ NEWSCHEMA('Newsletters', function(schema) {
 	// Removes a specific post
 	schema.setRemove(function($) {
 		var id = $.id;
-		var user = $.user.name;
 		FUNC.remove('newsletters', id);
-		NOSQL('newsletters').remove().backup(user).log('Remove: ' + id, user).where('id', id).callback(() => $.success());
+		NOSQL('newsletters').remove().id(id).callback(() => $.success());
 		NOSQL('parts').remove().where('ownerid', id).where('type', 'newsletter');
 	});
 
 	// Saves the post into the database
-	schema.setSave(function($) {
+	schema.setSave(function($, model) {
 
-		var model = $.model.$clean();
 		var user = $.user.name;
 		var isUpdate = !!model.id;
 		var nosql = NOSQL('newsletters');
@@ -78,7 +76,7 @@ NEWSCHEMA('Newsletters', function(schema) {
 			model.issent = false;
 		}
 
-		var body = U.minifyHTML(model.body);
+		var body = U.minify_html(model.body);
 		!model.dtcreated && (model.dtcreated = NOW);
 		model.stamp = model.stamp = new Date().format('yyyyMMddHHmm');
 		model.linker = model.dtcreated.format('yyyyMMdd') + '-' + model.name.slug();
@@ -89,7 +87,7 @@ NEWSCHEMA('Newsletters', function(schema) {
 
 		model.body = undefined;
 
-		var db = isUpdate ? nosql.modify(model).where('id', model.id).backup(user).log('Update: ' + model.id, user) : nosql.insert(model).log('Create: ' + model.id, user);
+		var db = isUpdate ? nosql.modify(model).id(model.id).backup($.user.meta(model)) : nosql.insert(model);
 
 		db.callback(function() {
 			$SAVE('Events', { type: 'newsletters/save', user: user, id: model.id, body: model.name, admin: true }, NOOP, $);
@@ -105,17 +103,17 @@ NEWSCHEMA('Newsletters', function(schema) {
 	// Clears database
 	schema.addWorkflow('clear', function($) {
 		FUNC.remove('newsletters');
-		NOSQL('newsletters').remove().callback(NOOP);
+		NOSQL('newsletters').clear();
 		$.success();
 	});
 
 	schema.addWorkflow('stats', function($) {
-		NOSQL('newsletters').counter.monthly($.id || $.options.id || 'all', $.callback);
+		COUNTER('newsletters').monthly($.id || $.options.id || 'all', $.callback);
 	});
 
-	schema.addWorkflow('test', function($) {
+	schema.addWorkflow('test', function($, model) {
 
-		var newsletter = $.model.$clean();
+		var newsletter = model;
 
 		newsletter.body.CMSrender(newsletter.widgets, function(body) {
 
@@ -128,7 +126,7 @@ NEWSCHEMA('Newsletters', function(schema) {
 			newsletter.body = VIEW('cms' + newsletter.template, null, repository);
 			newsletter.unsubscribe = PREF.url + '/api/unsubscribe/?email=';
 
-			var message = new Mail.Message(newsletter.name, prepare_urladdress(newsletter.body.replace('@@@', $.query.email)));
+			var message = new Mail.Message(newsletter.name, prepare_urladdress(newsletter.body.replace(/@@@/g, $.query.email)));
 			message.to($.query.email);
 			message.from(PREF.emailsender, CONF.name);
 			message.reply(PREF.emailreply);
@@ -140,15 +138,14 @@ NEWSCHEMA('Newsletters', function(schema) {
 
 	});
 
-	schema.addWorkflow('send', function($) {
+	schema.addWorkflow('send', function($, model) {
 
 		if (MAIN.newsletter.sending) {
-			$.invalid().push('error-newsletters-sending');
+			$.invalid('error-newsletters-sending');
 			return;
 		}
 
-		var newsletter = $.model.$clean();
-
+		var newsletter = model;
 		MAIN.newsletter.sending = true;
 		MAIN.newsletter.percentage = 0;
 		MAIN.newsletter.id = $.model.id;
@@ -212,7 +209,7 @@ NEWSCHEMA('Newsletters', function(schema) {
 						setTimeout(() => Mail.send2(messages, next), 60000);
 
 						// Updates DB
-						NOSQL('newsletters').modify({ issending: true, count: sum, dtsent: NOW }).first().where('id', MAIN.newsletter.id);
+						NOSQL('newsletters').modify({ issending: true, count: sum, dtsent: NOW }).first().id(MAIN.newsletter.id);
 
 					} else
 						Mail.send2(messages, () => setTimeout(next, 2000));
@@ -220,7 +217,7 @@ NEWSCHEMA('Newsletters', function(schema) {
 				}, function() {
 					PREF.set('newsletters', null);
 					$SAVE('Event', { type: 'newsletters/sent', body: repository.page.name, admin: true }, NOOP, $);
-					NOSQL('newsletters').modify({ issending: false, issent: true, count: sum, dtsent: NOW }).first().where('id', MAIN.newsletter.id);
+					NOSQL('newsletters').modify({ issending: false, issent: true, count: sum, dtsent: NOW }).first().id(MAIN.newsletter.id);
 					MAIN.newsletter.sending = false;
 					MAIN.newsletter.percentage = 0;
 					MAIN.newsletter.id = null;

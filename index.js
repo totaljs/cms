@@ -1,6 +1,5 @@
 // ===================================================
-// FOR DEVELOPMENT
-// Total.js - framework for Node.js platform
+// Total.js start script
 // https://www.totaljs.com
 // ===================================================
 
@@ -12,5 +11,9 @@ const options = {};
 // options.sleep = 3000;
 // options.inspector = 9229;
 // options.watch = ['private'];
+// options.livereload = true;
 
-require('total.js/debug')(options);
+if (process.argv.indexOf('--release', 1) !== -1 || process.argv.indexOf('release', 1) !== -1)
+	require('total4').http('release', options);
+else
+	require('total4/debug')(options);

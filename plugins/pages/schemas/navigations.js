@@ -1,3 +1,5 @@
+const REG_WILDCARD = /\*\//g;
+
 NEWSCHEMA('Navigations/Items', function(schema) {
 	schema.define('id', 'String(20)');
 	schema.define('pageid', UID); // Page ID
@@ -18,7 +20,7 @@ NEWSCHEMA('Navigations', function(schema) {
 
 	schema.setGet(function($) {
 		FUNC.alert($.user, 'navigations/edit', $.id);
-		NOSQL('navigations').one().where('id', $.id).callback(function(err, response) {
+		NOSQL('navigations').read().id($.id).callback(function(err, response) {
 			if (response) {
 				$.callback(response);
 			} else {
@@ -32,7 +34,7 @@ NEWSCHEMA('Navigations', function(schema) {
 		var obj = {};
 		obj.id = child.id;
 		obj.pageid = child.pageid;
-		obj.url = child.url;
+		obj.url = child.url.replace(REG_WILDCARD, '');
 		obj.icon = child.icon;
 		obj.language = child.language;
 		obj.target = child.target;
@@ -49,7 +51,6 @@ NEWSCHEMA('Navigations', function(schema) {
 		// $.options.navigations
 		// $.options.page
 
-		var user = $.user.name;
 		var navigations = $.options.navigations;
 		var page = $.options.page;
 		var count = 0;
@@ -73,7 +74,7 @@ NEWSCHEMA('Navigations', function(schema) {
 			obj = {};
 			obj.id = GUID(10);
 			obj.pageid = page.id;
-			obj.url = page.url;
+			obj.url = page.url.replace(REG_WILDCARD, '');
 			obj.icon = page.icon;
 			obj.language = page.language;
 			obj.target = '_self';
@@ -84,7 +85,7 @@ NEWSCHEMA('Navigations', function(schema) {
 			children.push(obj);
 
 			count++;
-			NOSQL('navigations').modify({ children: children }).where('id', navid).callback(next).backup(user).log('Add page {0}: {1}'.format(page.id, page.name), user);
+			NOSQL('navigations').modify({ children: children }).id(navid).callback(next);
 
 		}, function() {
 
@@ -98,11 +99,10 @@ NEWSCHEMA('Navigations', function(schema) {
 
 	});
 
-	schema.setSave(function($) {
+	schema.setSave(function($, model) {
 
 		var user = $.user.name;
 		var db = NOSQL('navigations');
-		var model = $.model.$clean();
 
 		var nav = PREF.navigations.findItem('id', model.id);
 		if (nav) {
@@ -113,7 +113,7 @@ NEWSCHEMA('Navigations', function(schema) {
 			return;
 		}
 
-		db.update(model, model).where('id', model.id).backup(user).log('Update navigation "{0}"'.format(model.id), user).callback(function() {
+		db.update(model, model).id(model.id).callback(function() {
 			$SAVE('Events', { type: 'navigations/save', user: user, id: model.id, body: model.name, admin: true }, NOOP, $);
 			EMIT('navigations.save', model);
 			refresh();
@@ -126,7 +126,6 @@ NEWSCHEMA('Navigations', function(schema) {
 
 		var db = NOSQL('navigations');
 		var page = $.options.page;
-		var user = $.user ? $.user.name : '';
 		var done = () => setTimeout2('navigations', refresh, 500);
 
 		db.find().callback(function(err, response) {
@@ -146,7 +145,7 @@ NEWSCHEMA('Navigations', function(schema) {
 					}
 
 					item.dtupdated = NOW;
-					db.update(nav).backup(user).log('Update menu item according to the page {0}: {1}'.format(page.id, page.name)).where('id', nav.id).callback(done);
+					db.update(nav).id(nav.id).callback(done);
 				}
 			}
 			$.success();
@@ -170,6 +169,7 @@ function findByPage(id, items) {
 function prepare(main, children, parent, level) {
 	for (var i = 0; i < children.length; i++) {
 		var item = children[i];
+		item.url = item.url.replace(REG_WILDCARD, '');
 		main.pages[item.id] = item;
 		main.url[item.url] = item;
 		item.parent = parent;
@@ -241,6 +241,7 @@ function refresh() {
 			NOSQL('navigations').remove().in('id', rem);
 
 		F.cache.removeAll('cachecms');
+		CMD('clear_viewscache');
 	});
 }
 

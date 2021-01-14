@@ -1,14 +1,14 @@
 {
   "name": "CMS",
   "description": "A simple and powerful CMS solution written in Total.js / Node.js.",
-  "version": "12.0.0",
-  "main": "release.js",
+  "version": "14.0.0",
+  "main": "index.js",
   "repository": {
       "type": "git",
       "url": "https://github.com/totaljs/cms"
   },
   "dependencies": {
-    "total.js": "latest"
+    "total4": "latest"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

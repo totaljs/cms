@@ -3,7 +3,7 @@ const Fs = require('fs');
 NEWSCHEMA('Files', function(schema) {
 
 	schema.setQuery(function($) {
-		FILESTORAGE('files').all($.callback);
+		FILESTORAGE('files').browse($.callback);
 	});
 
 	schema.addWorkflow('clear', function($) {
@@ -46,9 +46,9 @@ NEWSCHEMA('Files', function(schema) {
 
 		async.async(function() {
 
-			storage.all(function(err, files) {
+			storage.browse(function(err, files) {
 
-				for (var i = 0, length = files.length; i < length; i++) {
+				for (var i = 0; i < files.length; i++) {
 					files[i].is = false;
 					files[i].buffer = Buffer.from(files[i].id);
 				}
@@ -132,7 +132,7 @@ NEWSCHEMA('Files', function(schema) {
 				}, function() {
 					remove.wait((item, next) => storage.remove(item.id, next), () => FUNC.notify({ type: 'files/clear', message: count + '' }));
 				});
-			});
+			}).fields('id');
 		});
 	});
 

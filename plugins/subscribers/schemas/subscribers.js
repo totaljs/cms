@@ -32,7 +32,7 @@ NEWSCHEMA('Subscribers', function(schema) {
 					if (email.length === 1)
 						$SAVE('Events', { id: obj.email.hash(true) + '', type: 'subscribers/add', user: $.user ? $.user.name : '', body: obj.email }, NOOP, $);
 					EMIT('subscribers.save', obj);
-					db.counter.hit('all', 1);
+					COUNTER('subscribers').hit('all', 1);
 				}
 			});
 		}
@@ -58,8 +58,7 @@ NEWSCHEMA('Subscribers', function(schema) {
 	// Removes user from DB
 	schema.setRemove(function($) {
 		var id = $.body.id;
-		var user = $.user.name;
-		NOSQL('subscribers').remove().backup(user).log('Remove: ' + id, user).where('email', id).callback(() => $.success());
+		NOSQL('subscribers').remove().where('email', id).callback(() => $.success());
 	});
 
 	// Performs download
@@ -76,12 +75,8 @@ NEWSCHEMA('Subscribers', function(schema) {
 	});
 
 	schema.addWorkflow('toggle', function($) {
-		var user = $.user.name;
 		var arr = $.options.id ? $.options.id : $.query.id.split(',');
-		NOSQL('subscribers').update(function(doc) {
-			doc.unsubscribed = !doc.unsubscribed;
-			return doc;
-		}).log('Toggle: ' + arr.join(', '), user).in('email', arr).callback($.done());
+		NOSQL('subscribers').update({ '!unsubscribed': 1 }).in('email', arr).callback($.done());
 	});
 
 	schema.addWorkflow('unsubscribe', function($) {
@@ -92,12 +87,11 @@ NEWSCHEMA('Subscribers', function(schema) {
 
 	// Clears DB
 	schema.addWorkflow('clear', function($) {
-		var user = $.user.name;
-		NOSQL('subscribers').remove().backup(user).log('Clear all subscribers', user);
+		NOSQL('subscribers').clear();
 		$.success();
 	});
 
 	schema.addWorkflow('stats', function($) {
-		NOSQL('subscribers').counter.monthly('all', $.callback);
+		COUNTER('subscribers').monthly('all', $.callback);
 	});
 });

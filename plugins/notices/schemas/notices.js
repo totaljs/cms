@@ -2,20 +2,23 @@ NEWSCHEMA('Notices', function(schema) {
 
 	schema.define('id', UID);
 	schema.define('category', 'String(50)', true);
-	schema.define('name', 'String(200)', true);
+	schema.define('name', String, true);
 	schema.define('author', 'String(30)', true);
+	schema.define('language', String);
+	schema.define('summary', String);
 	schema.define('body', String, true);
 	schema.define('date', Date);
 	schema.define('event', Date);
+	schema.define('picture', 'String(50)');
 	schema.define('icon', 'Lower(40)');
-	schema.define('ispinned', Boolean);
+	schema.define('pinned', Boolean);
 	schema.define('url', 'String(500)');
 
 	// Gets listing
 	schema.setQuery(function($) {
 
 		var opt = $.options === EMPTYOBJECT ? $.query : $.options;
-		var isAdmin = $.controller ? $.controller.name === 'admin' : false;
+		var isAdmin = $.controller ? $.controller.url.substring(0, 7) === '/admin/' : false;
 		var filter = NOSQL('notices').list();
 
 		filter.paginate(opt.page, opt.limit, 70);
@@ -24,21 +27,24 @@ NEWSCHEMA('Notices', function(schema) {
 			opt.author && filter.gridfilter('author', opt, String);
 			opt.name && filter.gridfilter('name', opt, String);
 			opt.category && filter.gridfilter('category', opt, String);
+			opt.language && filter.gridfilter('language', opt, String);
 		} else {
 			opt.author && filter.where('author', opt.author);
-			opt.category && filter.where('categoryid', opt.category);
+			opt.category && filter.in('linker_category', opt.category.split(','));
+			opt.language && filter.where('language', opt.language);
 			opt.published && filter.where('date', '<=', NOW);
 			opt.search && filter.like('search', opt.search.keywords(true, true));
-			opt.ispinned != null && filter.where('ispinned', opt.ispinned);
+			opt.pinned != null && filter.where('pinned', opt.pinned);
 			opt.event && filter.where('event', '>', NOW.add('-1 day'));
-			filter.fields('body');
 		}
 
-		filter.fields('id,categoryid,category,date,name,author,icon,dtcreated,ispinned,event,url,dtupdated');
-		filter.gridsort(opt.sort || 'dtcreated_desc');
+		var isbody = !(isAdmin || opt.nobody);
+
+		filter.fields('id,picture,linker_category,language,summary,category,date,name,author,icon,dtcreated,pinned,event,url,dtupdated' + (isbody ? ',body' : ''));
+		filter.gridsort(opt.sort || 'date_desc');
 
 		filter.callback(function(err, response) {
-			!isAdmin && prepare_body(response.items);
+			isbody && prepare_body(response.items);
 			$.callback(response);
 		});
 	});
@@ -48,16 +54,15 @@ NEWSCHEMA('Notices', function(schema) {
 		var options = $.options;
 		var filter = NOSQL('notices').one();
 		var id = options.id || $.id;
-		filter.where('id', id);
+		filter.id(id);
 		filter.callback($.callback, 'error-notices-404');
 		FUNC.alert($.user, 'notices/edit', id);
 	});
 
 	// Removes a specific post
 	schema.setRemove(function($) {
-		var id = $.body.id;
-		var user = $.user.name;
-		NOSQL('notices').remove().backup(user).log('Remove: ' + id, user).where('id', id).callback(function() {
+		var id = $.id;
+		NOSQL('notices').remove().id(id).callback(function() {
 			F.cache.removeAll('cachecms');
 			$.success();
 		});
@@ -67,15 +72,26 @@ NEWSCHEMA('Notices', function(schema) {
 		$.callback($.options.markdown());
 	});
 
-	// Saves the post into the database
-	schema.setSave(function($) {
+	schema.addWorkflow('render', function($) {
+		var filter = NOSQL('notices').one();
+		$.options.id && filter.id($.options.id);
+		$.options.linker && filter.where('linker', $.options.linker);
+		$.options.category && filter.where('linker_category', $.options.category);
+		filter.callback(function(err, response) {
+			if (response && response.body)
+				response.body = response.body.markdown().CMSglobals();
+			$.callback(err, response);
+		}, 'error-notices-404');
+	});
 
-		var model = $.model.$clean();
+	// Saves the post into the database
+	schema.setSave(function($, model) {
+
 		var user = $.user.name;
-		var isUpdate = !!model.id;
+		var update = !!model.id;
 		var nosql = NOSQL('notices');
 
-		if (isUpdate) {
+		if (update) {
 			model.dtupdated = NOW;
 			model.adminupdated = user;
 		} else {
@@ -88,7 +104,7 @@ NEWSCHEMA('Notices', function(schema) {
 		model.search = ((model.name || '') + ' ' + (model.body || '')).keywords(true, true).join(' ').max(1000);
 		model.linker_category = model.category.slug();
 
-		var db = isUpdate ? nosql.modify(model).where('id', model.id).backup(user).log('Update: ' + model.id, user) : nosql.insert(model).log('Create: ' + model.id, user);
+		var db = update ? nosql.modify(model).id(model.id) : nosql.insert(model);
 
 		db.callback(function() {
 			$SAVE('Events', { type: 'notices/save', id: model.id, user: user, body: model.name, admin: true }, NOOP, $);
@@ -105,8 +121,7 @@ NEWSCHEMA('Notices', function(schema) {
 
 	// Clears database
 	schema.addWorkflow('clear', function($) {
-		var user = $.user.name;
-		NOSQL('notices').remove().backup(user).log('Clear all notices', user).callback(() => refresh($.done()));
+		NOSQL('notices').clear(() => refresh($.done()));
 	});
 });
 
@@ -127,13 +142,13 @@ function refresh(callback) {
 }
 
 function prepare_body(items) {
-	for (var i = 0, length = items.length; i < length; i++) {
+	for (var i = 0; i < items.length; i++) {
 		var item = items[i];
 		item.body = item.body.markdown().CMSglobals();
 	}
 }
 
-/*! Markdown | (c) 2019 Peter Sirka | www.petersirka.com */
+/*! Markdown | (c) 2019-2020 Peter Sirka | www.petersirka.com */
 (function Markdown() {
 
 	var keywords = /\{.*?\}\(.*?\)/g;
@@ -144,8 +159,9 @@ function prepare_body(items) {
 	var code = /`.*?`/g;
 	var encodetags = /<|>/g;
 	var regdash = /-{2,}/g;
-	var regicons = /(^|[^\w]):[a-z-]+:([^\w]|$)/g;
+	var regicons = /(^|[^\w]):((fab\s|far\s|fas\s|fal\s|fad|fa\s)fa-)?[a-z-]+:([^\w]|$)/g;
 	var regemptychar = /\s|\W/;
+	var regtags = /<[^>]*>/g;
 
 	var encode = function(val) {
 		return '&' + (val === '<' ? 'lt' : 'gt') + ';';
@@ -190,10 +206,13 @@ function prepare_body(items) {
 		var text = value.substring(img ? 2 : 1, end);
 		var link = value.substring(end + 2, value.length - 1);
 
+		// footnotes
 		if ((/^#\d+$/).test(link)) {
-			// footnotes
-			return (/^\d+$/).test(text) ? '<sup data-id="{0}" class="footnote">{1}</sup>'.format(link.substring(1), text) : '<span data-id="{0}" class="footnote">{1}</span>'.format(link.substring(1), text);
+			return (/^\d+$/).test(text) ? '<sup data-id="{0}" class="markdown-footnote">{1}</sup>'.format(link.substring(1), text) : '<span data-id="{0}" class="markdown-footnote">{1}</span>'.format(link.substring(1), text);
 		}
+
+		if (link.substring(0, 4) === 'www.')
+			link = 'https://' + link;
 
 		var nofollow = link.charAt(0) === '@' ? ' rel="nofollow"' : linksexternal.test(link) ? ' target="_blank"' : '';
 		return '<a href="' + link + '"' + nofollow + '>' + text + '</a>';
@@ -216,18 +235,18 @@ function prepare_body(items) {
 			text = text.substring(1);
 		}
 
-		return '<img src="' + link + '" alt="' + text + '"' + (responsive === 1 ? ' class="img-responsive"' : responsive === 3 ? ' class="gallery"' : '') + ' border="0" loading="lazy" />';
+		return '<img src="' + link + '" alt="' + text + '"' + (responsive === 1 ? ' class="img-responsive"' : responsive === 3 ? ' class="markdown-gallery"' : '') + ' border="0" loading="lazy" />';
 	}
 
 	function markdown_keywords(value) {
 		var keyword = value.substring(1, value.indexOf('}'));
 		var type = value.substring(value.lastIndexOf('(') + 1, value.lastIndexOf(')'));
-		return '<span class="keyword" data-type="{0}">{1}</span>'.format(type, keyword);
+		return '<span class="markdown-keyword" data-type="{0}">{1}</span>'.format(type, keyword);
 	}
 
 	function markdown_links2(value) {
 		value = value.substring(4, value.length - 4);
-		return '<a href="' + (value.indexOf('@') !== -1 ? 'mailto:' : linksexternal.test(value) ? '' : 'http://') + value + '" target="_blank">' + value + '</a>';
+		return '<a href="' + (value.isEmail() ? 'mailto:' : linksexternal.test(value) ? '' : 'http://') + value + '" target="_blank">' + value + '</a>';
 	}
 
 	function markdown_format(value, index, text) {
@@ -266,18 +285,8 @@ function prepare_body(items) {
 	}
 
 	function markdown_id(value) {
-
-		var end = '';
-		var beg = '';
-
-		if (value.charAt(0) === '<')
-			beg = '-';
-
-		if (value.charAt(value.length - 1) === '>')
-			end = '-';
-
-		// return (beg + value.replace(regtags, '').toLowerCase().replace(regid, '-') + end).replace(regdash, '-');
-		return (beg + value.slug() + end).replace(regdash, '-');
+		value = value.replace(regtags, '');
+		return value.slug().replace(regdash, '-');
 	}
 
 	function markdown_icon(value) {
@@ -295,7 +304,10 @@ function prepare_body(items) {
 			}
 		}
 
-		return value.substring(0, beg - 1) + '<i class="fa fa-' + value.substring(beg, end) + '"></i>' + value.substring(end + 1);
+		var icon = value.substring(beg, end);
+		if (icon.indexOf(' ') === -1)
+			icon = 'fa fa-' + icon;
+		return value.substring(0, beg - 1) + '<i class="' + icon + '"></i>' + value.substring(end + 1);
 	}
 
 	function markdown_urlify(str) {
@@ -312,7 +324,7 @@ function prepare_body(items) {
 		});
 	}
 
-	String.prototype.markdown = function(opt) {
+	String.prototype.markdown = function(opt, nested) {
 
 		// opt.wrap = true;
 		// opt.linetag = 'p';
@@ -332,6 +344,7 @@ function prepare_body(items) {
 		// opt.footnotes = true;
 		// opt.urlify = true;
 		// opt.keywords = true;
+		// opt.emptynewline = true;
 
 		var str = this;
 
@@ -343,9 +356,12 @@ function prepare_body(items) {
 		var ul = [];
 		var table = false;
 		var iscode = false;
+		var isblock = false;
 		var ishead = false;
+		var isprevblock = false;
 		var prev;
 		var prevsize = 0;
+		var previndex;
 		var tmp;
 
 		if (opt.wrap == null)
@@ -370,6 +386,8 @@ function prepare_body(items) {
 			var beg = -1;
 			var beg2 = -1;
 			var can = false;
+			var skip = false;
+			var find = false;
 			var n;
 
 			for (var i = index; i < val.length; i++) {
@@ -378,6 +396,23 @@ function prepare_body(items) {
 				if (c === '[') {
 					beg = i;
 					can = false;
+					find = true;
+					continue;
+				}
+
+				var codescope = val.substring(i, i + 6);
+
+				if (skip && codescope === '</code') {
+					skip = false;
+					i += 7;
+					continue;
+				}
+
+				if (skip)
+					continue;
+
+				if (!find && codescope === '<code>') {
+					skip = true;
 					continue;
 				}
 
@@ -395,6 +430,7 @@ function prepare_body(items) {
 				if (c === ']') {
 
 					can = false;
+					find = false;
 
 					if (beg === -1)
 						continue;
@@ -413,6 +449,7 @@ function prepare_body(items) {
 					n = val.charAt(beg - 1);
 					callback(val.substring(beg - (n === '!' ? 1 : 0), i + 1));
 					can = false;
+					find = false;
 					beg = -1;
 				}
 			}
@@ -465,15 +502,43 @@ function prepare_body(items) {
 			return val;
 		};
 
-		for (var i = 0, length = lines.length; i < length; i++) {
+		for (var i = 0; i < lines.length; i++) {
 
 			lines[i] = lines[i].replace(encodetags, encode);
+			var three = lines[i].substring(0, 3);
 
-			if (lines[i].substring(0, 3) === '```') {
+			if (!iscode && (three === ':::' || (three === '==='))) {
+
+				if (isblock) {
+					if (opt.blocks !== false)
+						builder[builder.length - 1] += '</div></div>';
+					isblock = false;
+					isprevblock = true;
+					continue;
+				}
+
+				closeul();
+				isblock = true;
+				if (opt.blocks !== false) {
+					line = lines[i].substring(3).trim();
+					if (opt.formatting !== false)
+						line = line.replace(format, markdown_format).replace(code, markdown_code);
+					builder.push('<div class="markdown-block"><span class="markdown-showblock"><i class="fa fa-plus"></i>{0}</span><div class="hidden">'.format(line));
+				}
+				prev = '';
+				continue;
+			}
+
+			if (!isblock && lines[i] && isprevblock) {
+				builder.push('<br />');
+				isprevblock = false;
+			}
+
+			if (three === '```') {
 
 				if (iscode) {
 					if (opt.code !== false)
-						builder.push('</code></pre></div>');
+						builder[builder.length - 1] += '</code></pre></div>';
 					iscode = false;
 					continue;
 				}
@@ -481,7 +546,7 @@ function prepare_body(items) {
 				closeul();
 				iscode = true;
 				if (opt.code !== false)
-					tmp = '<div class="code hidden"><pre><code class="lang-' + lines[i].substring(3) + '">';
+					tmp = '<div class="markdown-code hidden"><pre><code class="lang-' + lines[i].substring(3) + '">';
 				prev = 'code';
 				continue;
 			}
@@ -496,34 +561,36 @@ function prepare_body(items) {
 
 			var line = lines[i];
 
-			if (opt.urlify !== false && opt.links !== false)
+			if (opt.br !== false)
+				line = line.replace(/&lt;br(\s\/)?&gt;/g, '<br />');
+
+			if (line.length > 10 && opt.urlify !== false && opt.links !== false)
 				line = markdown_urlify(line);
 
 			if (opt.custom)
 				line = opt.custom(line);
 
-			if (opt.formatting !== false)
-				line = line.replace(format, markdown_format).replace(code, markdown_code);
+			if (line.length > 2 && line !== '***' && line !== '---') {
+				if (opt.formatting !== false)
+					line = line.replace(format, markdown_format).replace(code, markdown_code);
+				if (opt.images !== false)
+					line = imagescope(line);
+				if (opt.links !== false) {
+					linkscope(line, 0, function(text, inline) {
+						if (inline)
+							line = line.replace(text, markdown_links2);
+						else if (opt.images !== false)
+							line = line.replace(text, markdown_imagelinks);
+						else
+							line = line.replace(text, formatlinks);
+					});
+				}
+				if (opt.keywords !== false)
+					line = line.replace(keywords, markdown_keywords);
 
-			if (opt.images !== false)
-				line = imagescope(line);
-
-			if (opt.links !== false) {
-				linkscope(line, 0, function(text, inline) {
-					if (inline)
-						line = line.replace(text, markdown_links2);
-					else if (opt.images !== false)
-						line = line.replace(text, markdown_imagelinks);
-					else
-						line = line.replace(text, formatlinks);
-				});
+				if (opt.icons !== false)
+					line = line.replace(regicons, markdown_icon);
 			}
-
-			if (opt.keywords !== false)
-				line = line.replace(keywords, markdown_keywords);
-
-			if (opt.icons !== false)
-				line = line.replace(regicons, markdown_icon);
 
 			if (!line) {
 				if (table) {
@@ -535,7 +602,7 @@ function prepare_body(items) {
 
 			if (line === '' && lines[i - 1] === '') {
 				closeul();
-				if (opt.br !== false)
+				if (opt.emptynewline !== false)
 					builder.push('<br />');
 				prev = 'br';
 				continue;
@@ -624,7 +691,7 @@ function prepare_body(items) {
 			if (tmp === '---' || tmp === '***') {
 				prev = 'hr';
 				if (opt.hr !== false)
-					builder.push('<hr class="line' + (tmp.charAt(0) === '-' ? '1' : '2') + '" />');
+					builder.push('<hr class="markdown-line' + (tmp.charAt(0) === '-' ? '1' : '2') + '" />');
 				continue;
 			}
 
@@ -632,7 +699,7 @@ function prepare_body(items) {
 			if ((/^#\d+:(\s)+/).test(line)) {
 				if (opt.footnotes !== false) {
 					tmp = line.indexOf(':');
-					builder.push('<div class="footnotebody" data-id="{0}"><span>{0}:</span> {1}</div>'.format(line.substring(1, tmp).trim(), line.substring(tmp + 1).trim()));
+					builder.push('<div class="markdown-footnotebody" data-id="{0}"><span>{0}:</span> {1}</div>'.format(line.substring(1, tmp).trim(), line.substring(tmp + 1).trim()));
 				}
 				continue;
 			}
@@ -683,13 +750,23 @@ function prepare_body(items) {
 					var subtype;
 					if (type === 'ol')
 						subtype = tmpline.charAt(0);
-					builder.push('<' + type + (subtype ? (' type="' + subtype + '"') : '') + '>');
+					previndex = builder.push('<' + type + (subtype ? (' type="' + subtype + '"') : '') + '>') - 1;
 					ul.push(type + (append ? '></li' : ''));
 					prev = type;
 					prevsize = size;
 				}
 
-				builder.push('<li>' + (type === 'ol' ? tmpline.substring(tmpline.indexOf('.') + 1) : tmpline.substring(2)).trim().replace(/\[x\]/g, '<i class="fa fa-check-square green"></i>').replace(/\[\s\]/g, '<i class="far fa-square"></i>') + '</li>');
+				var tmpstr = (type === 'ol' ? tmpline.substring(tmpline.indexOf('.') + 1) : tmpline.substring(2));
+				if (type !== 'ol') {
+					var tt = tmpstr.substring(0, 3);
+					if (tt === '[ ]' || tt === '[x]') {
+						if (previndex != null)
+							builder[previndex] = builder[previndex].replace('<ul', '<ul class="markdown-tasks"');
+						previndex = null;
+					}
+				}
+
+				builder.push('<li>' + tmpstr.trim().replace(/\[x\]/g, '<i class="fa fa-check-square green"></i>').replace(/\[\s\]/g, '<i class="far fa-square"></i>') + '</li>');
 
 			} else {
 				closeul();
@@ -701,7 +778,7 @@ function prepare_body(items) {
 		closeul();
 		table && opt.tables !== false && builder.push('</tbody></table>');
 		iscode && opt.code !== false && builder.push('</code></pre>');
-		return (opt.wrap ? '<div class="markdown">' : '') + builder.join('\n').replace(/\t/g, '    ') + (opt.wrap ? '</div>' : '');
+		return (opt.wrap ? ('<div class="markdown' + (nested ? '' : ' markdown-container') + '">') : '') + builder.join('\n').replace(/\t/g, '    ') + (opt.wrap ? '</div>' : '');
 	};
 
 })();

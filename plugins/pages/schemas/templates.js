@@ -8,24 +8,24 @@ NEWSCHEMA('Templates', function(schema) {
 	schema.define('body', String, true);
 
 	schema.setGet(function($) {
-		NOSQL('templates').one().where('id', $.id).callback($.callback, 'error-templates-404');
+		NOSQL('templates').read().id($.id).callback($.callback, 'error-templates-404');
 	});
 
-	schema.setSave(function($) {
+	schema.setSave(function($, model) {
 
 		var db = NOSQL('templates');
-		var model = $.clean();
+		var id = model.id ? model.id : UID();
 
 		var done = function() {
-			refresh($.done($.model.id));
+			refresh($.done(model.id));
 		};
 
 		if (model.id) {
 			model.id = undefined;
 			model.dtupdated = NOW;
-			db.modify(model).where('id', $.model.id).callback(done);
+			db.modify(model).id(id).callback(done);
 		} else {
-			$.model.id = model.id = UID();
+			model.id = id;
 			model.dtcreated = NOW;
 			model.dtupdated = NOW;
 			db.insert(model).callback(done);
@@ -33,7 +33,7 @@ NEWSCHEMA('Templates', function(schema) {
 	});
 
 	schema.setRemove(function($) {
-		NOSQL('templates').remove().where('id', $.id).callback(function() {
+		NOSQL('templates').remove().id($.id).callback(function() {
 
 			NOSQL('pages').modify({ template: '' }).where('template', $.id);
 			NOSQL('posts').modify({ template: '' }).where('template', $.id);
@@ -54,7 +54,7 @@ function refresh(callback) {
 	var newsletters = [];
 	var posts = [];
 
-	NOSQL('templates').find().sort('name').callback(function(err, response) {
+	NOSQL('templates').find().sort('name_asc').callback(function(err, response) {
 
 		var hash = Date.now();
 		var navigations = {};
@@ -84,9 +84,9 @@ function refresh(callback) {
 					compiled.name = item.name;
 					EMIT('templates.compile', compiled);
 
-					Fs.writeFile(PATH.views(item.file + '.html'), U.minifyHTML(compiled.html), function() {
-						Fs.writeFile(PATH.public(item.file + '.js'), U.minifyScript(js + '\n' + compiled.js), function() {
-							Fs.writeFile(PATH.public(item.file + '.css'), U.minifyStyle('/*auto*/\n' + css + '\n' + compiled.css), function() {
+					Fs.writeFile(PATH.views(item.file + '.html'), U.minify_html(compiled.html), function() {
+						Fs.writeFile(PATH.public(item.file + '.js'), U.minify_js(js + '\n' + compiled.js), function() {
+							Fs.writeFile(PATH.public(item.file + '.css'), U.minify_css('/*auto*/\n' + css + '\n' + compiled.css), function() {
 								item.body = undefined;
 								switch (item.type) {
 									case 'page':
@@ -110,8 +110,8 @@ function refresh(callback) {
 								delete F.temporary.views['view#/cms-default/' + item.file + '.html'];
 								delete F.temporary.views['view#' + item.file + '.html'];
 
-								F.touch('/' + item.file + '.js');
-								F.touch('/' + item.file + '.css');
+								TOUCH('/' + item.file + '.js');
+								TOUCH('/' + item.file + '.css');
 								next();
 							});
 						});
@@ -132,6 +132,7 @@ function refresh(callback) {
 					PREF.templatesnewsletters = newsletters;
 
 					F.cache.removeAll('cachecms');
+					CMD('clear_viewscache');
 					callback && callback();
 				});
 			});
@@ -151,7 +152,18 @@ function compile(html) {
 	html = html.replace(/@\{navigation.*?\}/g, function(text) {
 		var str = text.substring(13, text.length - 1).trim();
 		var beg = str.indexOf(':');
-		navigations.push({ id: str.substring(0, beg).trim(), name: str.substring(beg + 1).trim() });
+		var name = '';
+		var id = '';
+
+		if (beg === -1) {
+			name = str.trim();
+			id = HASH(name).toString(36);
+		} else {
+			name = str.substring(beg + 1).trim();
+			id = str.substring(0, beg).trim();
+		}
+
+		navigations.push({ id: id, name: name });
 		return '';
 	});
 

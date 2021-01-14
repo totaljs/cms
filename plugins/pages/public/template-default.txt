@@ -112,6 +112,7 @@
 			</header>
 
 			<div class="container">
+
 				<ul class="breadcrumb">
 					@{foreach m in repository.sitemap}
 						<li><a href="@{m.url}">@{if index === 0}<i class="fa fa-home"></i>@{fi}@{m.name}</a></li>

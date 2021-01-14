@@ -35,6 +35,7 @@
 
 			<div class="padding npt">
 				<div data---="codemirror__?.body__type:markdown;height:auto"></div>
+				<div class="help"><i class="fab fa-markdown"></i><span class="link exec" data-path="common.top" data-value="'markdownhelp'">@(Markdown format)</div>
 			</div>
 			<hr class="nmt nmb" />
 		</div>
@@ -97,7 +98,7 @@
 	</div>
 
 	<nav data---="validation__postsform">
-		<button name="submit">@(SAVE)</button>
+		<button name="submit"><i class="fa fa-check-circle"></i>@(SAVE)</button>
 		<button name="cancel">@(Cancel)</button>
 	</nav>
 
@@ -252,19 +253,15 @@
 					item.name = '{0} <b class="badge badge-blue ml5"><i class="fa fa-user mr5"></i>{1}</b>'.format(item.date.format('@(dd. MMM yyyy - HH:mm)'), item.user);
 				}
 
-				response.quicksort('date', false);
-
 				SETTER('suggestion/show', 'left', el, response, function(value) {
 					FUNC.loading(true);
-					setTimeout(function() {
-						AJAX('GET [url]api/backups/posts/{id}_{stamp}/'.arg(value.data), function(body) {
-							if (posts.form.type === 'html')
-								cmseditor.instance.replace(body);
-							else
-								SET('posts.form.body', body);
-							FUNC.loading(false, 1000);
-						});
-					}, 100);
+					AJAX('GET [url]api/backups/posts/{id}_{stamp}/'.arg(value), function(body) {
+						if (posts.form.type === 'html')
+							cmseditor.instance.replace(body);
+						else
+							SET('posts.form.body', body);
+						FUNC.loading(false, 1000);
+					});
 				});
 			});
 		};
@@ -272,13 +269,13 @@
 		WATCH('?.template', function(path, value, type) {
 			if (type === 2) {
 				cmseditor.instance.reconfigure('template:' + value);
-				cmseditor.instance.set('');
+				cmseditor.instance.set(cmseditor.instance.get());
 			}
 		}, true);
 
 		WATCH('?.type', function(path, value, type) {
 
-			if (value === 'html' && (type === 2 || type === 0) && window.cmseditor && window.cmseditor.instance) {
+			if (value === 'html' && (type === 2 || type === 0) && W.cmseditor && W.cmseditor.instance) {
 				exports.markdown = GET('?.body');
 				cmseditor.instance.reconfigure('template:' + GET('?.template'));
 				cmseditor.instance.set('');

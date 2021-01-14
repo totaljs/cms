@@ -5,7 +5,7 @@ NEWSCHEMA('Posts', function(schema) {
 	schema.define('id', UID);
 	schema.define('template', 'String(30)', true);
 	schema.define('type', ['html', 'markdown']);
-	schema.define('name', 'String(100)', true);
+	schema.define('name', String, true);
 	schema.define('author', 'String(30)', true);
 	schema.define('description', 'String(300)');
 	schema.define('summary', 'String(500)');
@@ -58,9 +58,9 @@ NEWSCHEMA('Posts', function(schema) {
 
 		options.category && filter.where('linker_category', options.category);
 		options.linker && filter.where('linker', options.linker);
-		options.id && filter.where('id', options.id);
+		options.id && filter.id(options.id);
 		options.template && filter.where('template', options.template);
-		$.id && filter.where('id', $.id);
+		$.id && filter.id($.id);
 
 		filter.callback(function(err, response) {
 
@@ -81,10 +81,9 @@ NEWSCHEMA('Posts', function(schema) {
 
 	schema.addWorkflow('render', function($) {
 
-		var nosql = NOSQL('posts');
-		var filter = nosql.one();
+		var filter = NOSQL('posts').one();
 
-		$.id && filter.where('id', $.id);
+		$.id && filter.id($.id);
 		$.options.linker && filter.where('linker', $.options.linker);
 		$.options.template && filter.where('template', $.options.template);
 		filter.where('ispublished', true);
@@ -96,13 +95,13 @@ NEWSCHEMA('Posts', function(schema) {
 
 					if (response.type === 'markdown') {
 						response.body = dynamicvalues(body.markdown(), response);
-						nosql.counter.hit('all').hit(response.id);
+						COUNTER('posts').hit('all').hit(response.id);
 						$.callback(response);
 					} else {
 						response.body = body;
 						response.body = response.body.CMSrender(response.widgets, function(body) {
 							response.body = dynamicvalues(body, response);
-							nosql.counter.hit('all').hit(response.id);
+							COUNTER('posts').hit('all').hit(response.id);
 							$.callback(response);
 						}, $.controller);
 					}
@@ -115,8 +114,7 @@ NEWSCHEMA('Posts', function(schema) {
 	// Removes a specific post
 	schema.setRemove(function($) {
 		var id = $.id;
-		var user = $.user.name;
-		NOSQL('posts').remove().backup(user).log('Remove: ' + id, user).where('id', id).callback(function() {
+		NOSQL('posts').remove().id(id).callback(function() {
 			FUNC.remove('posts', id);
 			$.success();
 			refresh_cache();
@@ -125,9 +123,8 @@ NEWSCHEMA('Posts', function(schema) {
 	});
 
 	// Saves the post into the database
-	schema.setSave(function($) {
+	schema.setSave(function($, model) {
 
-		var model = $.model.$clean();
 		var user = $.user.name;
 		var isUpdate = !!model.id;
 		var nosql = NOSQL('posts');
@@ -154,14 +151,14 @@ NEWSCHEMA('Posts', function(schema) {
 		model.search = ((model.name || '') + ' ' + (model.keywords || '') + ' ' + (model.search || '')).keywords(true, true).join(' ').max(1000);
 
 		if (model.type === 'html')
-			model.body = U.minifyHTML(model.body);
+			model.body = U.minify_html(model.body);
 
 		FUNC.write('posts', model.id + '_' + model.stamp, model.body); // backup
 		FUNC.write('posts', model.id, model.body, isUpdate);
 
 		model.body = undefined;
 
-		var db = isUpdate ? nosql.modify(model).where('id', model.id).backup(user).log('Update: ' + model.id, user) : nosql.insert(model).log('Create: ' + model.id, user);
+		var db = isUpdate ? nosql.modify(model).id(model.id).backup($.user.meta(model)) : nosql.insert(model);
 
 		db.callback(function() {
 			$SAVE('Events', { type: 'posts/save', id: model.id, user: user, body: model.name, admin: true }, NOOP, $);
@@ -173,12 +170,8 @@ NEWSCHEMA('Posts', function(schema) {
 	});
 
 	schema.addWorkflow('toggle', function($) {
-		var user = $.user.name;
 		var arr = $.options.id ? $.options.id : $.query.id.split(',');
-		NOSQL('posts').update(function(doc) {
-			doc.ispublished = !doc.ispublished;
-			return doc;
-		}).log('Toggle: ' + arr.join(', '), user).in('id', arr).callback(function() {
+		NOSQL('posts').update({ '!ispublished': 1 }).in('id', arr).callback(function() {
 			refresh_cache();
 			$.success();
 		});
@@ -186,8 +179,7 @@ NEWSCHEMA('Posts', function(schema) {
 
 	// Clears database
 	schema.addWorkflow('clear', function($) {
-		var user = $.user.name;
-		NOSQL('posts').remove().backup(user).log('Clear all posts', user).callback(function() {
+		NOSQL('posts').clear(function() {
 			FUNC.remove('posts');
 			$.success();
 			refresh_cache();
@@ -196,7 +188,7 @@ NEWSCHEMA('Posts', function(schema) {
 
 	// Stats
 	schema.addWorkflow('stats', function($) {
-		NOSQL('posts').counter.monthly($.id || $.options.id || 'all', $.callback);
+		COUNTER('posts').monthly($.id || $.options.id || 'all', $.callback);
 	});
 
 });
@@ -215,7 +207,7 @@ function refresh() {
 
 	PREF.posts && PREF.posts.forEach(item => categories[item.id] = 0);
 
-	NOSQL('posts').find().fields('ispublished', 'category').callback(function(err, response) {
+	NOSQL('posts').find().fields('ispublished,category').callback(function(err, response) {
 
 		for (var i = 0, length = response.length; i < length; i++) {
 			var doc = response[i];

@@ -8,7 +8,7 @@
 	</div>
 
 	<nav data---="validation__cmseditor.part">
-		<button name="submit">@(APPLY)</button>
+		<button name="submit"><i class="fa fa-check-circle"></i>@(APPLY)</button>
 		<button name="cancel">@(Cancel)</button>
 	</nav>
 
@@ -19,7 +19,7 @@
 	PLUGIN('cmseditorpart', function(exports) {
 
 		exports.remove = function() {
-			SETTER('approve/show', '@(Are you sure you want to remove this part?)', '"trash-o" @(Remove)', function(index) {
+			SETTER('approve/show', '@(Are you sure you want to remove this part?)', '"trash-o" @(Remove)', function() {
 				var target = cmseditor.part.target;
 				target.rattr('data-cms-part');
 				target.rclass('CMS_part');

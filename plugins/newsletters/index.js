@@ -24,7 +24,7 @@ function state() {
 }
 
 function stats(req, res) {
-	NOSQL('newsletters').counter.hit('all');
-	req.query.id && NOSQL('newsletters').counter.hit(req.query.id);
+	COUNTER('newsletters').hit('all');
+	req.query.id && COUNTER('newsletters').hit(req.query.id);
 	res.binary('R0lGODdhAQABAIAAAAAAAAAAACH5BAEAAAEALAAAAAABAAEAAAICTAEAOw==', 'image/gif', 'base64');
 }
