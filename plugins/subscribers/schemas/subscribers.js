@@ -62,7 +62,7 @@ NEWSCHEMA('Subscribers', function(schema) {
 
 	// Performs download
 	schema.addWorkflow('download', function($) {
-		NOSQL('subscribers').find().fields('email').callback(function(err, response) {
+		NOSQL('subscribers').find().fields('email').take(1000000).callback(function(err, response) {
 
 			var builder = [];
 			for (var i = 0, length = response.length; i < length; i++)
