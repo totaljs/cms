@@ -116,9 +116,8 @@ NEWSCHEMA('Pages', function(schema) {
 	});
 
 	// Saves a page into the database
-	schema.setSave(function($) {
+	schema.setSave(function($, model) {
 
-		var model = $.clean();
 		var user = $.user.name;
 		var oldurl = model.oldurl;
 		var update = !!model.id;

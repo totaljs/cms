@@ -44,9 +44,8 @@ NEWSCHEMA('Settings', function(schema) {
 	});
 
 	// Saves settings into the file
-	schema.setSave(function($) {
+	schema.setSave(function($, model) {
 
-		var model = $.clean();
 		var keys = Object.keys(model);
 
 		if (model.url.endsWith('/'))
