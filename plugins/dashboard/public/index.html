@@ -401,6 +401,9 @@
 
 					years = Object.keys(years);
 					years.sort();
+					years.reverse();
+					years = years.take(7);
+					years.reverse();
 
 					historystats = response;
 
