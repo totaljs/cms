@@ -7,7 +7,7 @@
 					<div data---="input__?.name__required:true;maxlength:100">@(Name)</div>
 				</div>
 				<div class="col-md-3 m">
-					<div data---="input__?.template__dirsource:common.dependencies.templatesposts;icon:paint-brush;required:true;empty:">@(Template)</div>
+					<div data---="input__?.template__dirsource:common.dependencies.templatesposts;icon:paint-brush;required:true">@(Template)</div>
 				</div>
 			</div>
 		</div>
@@ -56,7 +56,7 @@
 							<div data---="input__?.author__maxlength:30;icon:user">@(Author)</div>
 						</div>
 						<div class="col-md-4 m">
-							<div data---="input__?.language__icon:flag;dirsource:common.dependencies.languages;empty:">@(Language)</div>
+							<div data---="input__?.language__icon:flag;dirsource:common.dependencies.languages;dirempty:@(None)">@(Language)</div>
 						</div>
 						<div class="col-md-4 m">
 							<div data---="input__?.date__type:date;icon:clock-o;placeholder:@(yyyy-MM-dd)">@(Publish date)</div>
