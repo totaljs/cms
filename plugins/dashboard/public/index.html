@@ -418,6 +418,9 @@
 					SET('?.visitors', response.visitors || []);
 					delete response.visitors;
 
+					while (years.length > 5)
+						years.shift();
+
 					SET('?.stats.history', years);
 					years.length && exports.history(years.last());
 				});
