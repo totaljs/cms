@@ -12,7 +12,7 @@
 	<link rel="stylesheet" href="@{'%cdn'}/spa.min@18@{if CONF.proicons}pro@{fi}.css" />
 	<script src="@{'%cdn'}/spa.min@18.js"></script>
 	<script>ENVIRONMENT('cms');</script>
-	@{import('head', 'admin-ui.css + admin.css', 'admin-ui.js + admin.js', 'favicon.ico')}
+	@{import('head', 'admin-ui.css + admin.css + codemirror.min.css', 'admin-ui.js + admin.js + codemirror.min.js', 'favicon.ico')}
 </head>
 <body data---="exec">
 
@@ -47,12 +47,9 @@
 	</div>
 
 	<div data---="layout2__null__parent:window" class="invisible">
-		<div data-type="left" data-size="220,220,200,0" data-scrollbar="selector:main;margin:76">
-			<header>
-				<a href="/" class="logo" target="_blank"><i class="fa fa-globe"></i><span>@{'%name'}</span></a>
-			</header>
+		<div data-type="left" data-size="220,220,200,0" data-scrollbar="selector:main;margin:40">
 			<main>
-				<div style="height:8px"></div>
+				<a href="/" class="logo" target="_blank"><i class="fa fa-globe"></i><span>@{'%name'}</span></a>
 				@{foreach m in model}
 					@{if m.plugins.length}
 						@{if index > 0}
@@ -70,13 +67,14 @@
 						</ul>
 					@{fi}
 				@{end}
+				<ul class="nav" data-bind="common.nav__template" data---="selected__common.page__selector:li">
+					<li class="exec" data-exec="common/profile"><i class="fa fa-user-circle"></i>@(My profile)</li>
+					@{if user.sa}
+					<li data-if="settings" class="exec" data-exec="common/plugin"><i class="fa fa-cog"></i>@(Settings)</li>
+					@{fi}
+					<li class="exec" data-exec="common/logout"><i class="fa fa-power-off red"></i>@(Logout)</li>
+				</ul>
 			</main>
-			<footer data---="selected__common.page__selector:span">
-				<a href="/" target="_blank"><i class="fa fa-globe"></i></a>
-				<span class="exec" data-exec="common/profile"><i class="fa fa-user-circle"></i></span>
-				<span class="exec" data-exec="common/plugin" data-if="settings"><i class="fa fa-cog"></i></span>
-				<span class="exec red" data-exec="common/logout"><i class="fa fa-power-off"></i></span>
-			</footer>
 		</div>
 		<div data-type="main">
 			<div id="parts">
