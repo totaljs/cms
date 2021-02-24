@@ -1,6 +1,6 @@
 /*auto*/
 
-$color   : #4285F4;
+$color   : var(--color);
 $font    : Arial;
 
 html,body { overflow: hidden; }
@@ -22,14 +22,14 @@ button { background-color: transparent; }
 .ui-layout2-left footer span:first-child, .ui-layout2-left footer a:first-child { border-left: 0; }
 .ui-layout2-left footer .selected { color: $color; }
 .ui-layout2-left .nav { list-style-type: none; margin: 0 0 15px; padding: 0; }
-.ui-layout2-left .nav li { margin: 0; padding: 4px 15px; display: block; color: #000000; cursor: pointer; margin-bottom: 3px; }
+.ui-layout2-left .nav li { margin: 0 10px; padding: 4px 8px; display: block; color: #000000; cursor: pointer; margin-bottom: 3px; border-radius: var(--radius); }
 .ui-layout2-left .nav li span { float: right; color: #888888; font-size: 12px; padding: 2px 0 0; }
 .ui-layout2-left .nav li:hover { background-color: #E8E8E8; }
 .ui-layout2-left .nav i { width: 18px; color: $color; text-align: center; margin-right: 7px; }
 .ui-layout2-left .nav .selected { background-color: #4C84F7 !important; color: #FFFFFF; }
 .ui-layout2-left .nav .selected i { color: #FFFFFF; }
 .ui-layout2-left .nav .selected span { color: #FFFFFF; }
-.ui-layout2-left .group { font-size: 12px; color: #888888; padding: 5px 15px; }
+.ui-layout2-left .group { font-size: 12px; color: #888888; padding: 5px 20px; }
 .ui-layout2-main header { height: 45px; border-bottom: 1px solid #E0E0E0; }
 .ui-layout2-main header > nav { height: 44px; padding: 10px 15px 0 0; }
 .ui-layout2-main header label { float: left; line-height: 44px; font-weight: bold; margin-left: 15px; }
@@ -165,7 +165,7 @@ h3 i { margin-right: 8px; }
 .stats.selected .key { color: black; font-weight: bold; }
 .stats.selected .value { color: blact; font-weight: bold; }
 
-.button { background-color: #4285F4; border: 0; color: white; cursor: pointer; outline: 0; width: 100%; border-radius: 2px; height: 50px; text-transform: uppercase; font-family: Arial; }
+.button { background-color: var(--color); border: 0; color: white; cursor: pointer; outline: 0; width: 100%; border-radius: 2px; height: 50px; text-transform: uppercase; font-family: Arial; }
 .button:hover { box-shadow: 0 2px 5px rgba(0,0,0,0.1); opacity: 0.9; }
 .button:disabled { background-color: #E0E0E0; color: silver; cursor: not-allowed; box-shadow: none; opacity: 1; }
 .button:disabled i { color: silver !important; }
