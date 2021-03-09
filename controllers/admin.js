@@ -51,10 +51,11 @@ exports.install = function() {
 	ROUTE('GET     /admin/api/backups/{type}/{id}/            *Common --> @backup_read');
 
 	// Websocket
-	WEBSOCKET('/admin/live/', socket, ['json']);
+	ROUTE('SOCKET  /admin/live/', socket, ['json']);
 
+	// Files
+	ROUTE('FILE    /download/', file_read);
 	FILE(pluginfiles);
-	FILE('/download/', file_read);
 };
 
 function admin() {

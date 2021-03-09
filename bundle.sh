@@ -18,8 +18,8 @@ echo "ZXhwb3J0cy5pbnN0YWxsID0gZnVuY3Rpb24oKSB7CglST1VURSgnLyonLCBmdW5jdGlvbigpIH
 # for f in *.js; do mv "$f" "`echo cms-$f`"; done
 
 # cd ..
-tpm create cms.package
-cp cms.package ../cms.bundle
+total4 --bundle cms.bundle
+cp cms.bundle ../cms.bundle
 
 cd ..
 rm -rf .bundle

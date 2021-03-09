@@ -760,23 +760,24 @@ Controller.prototype.CMSpage = function(callback, cache) {
 	var self = this;
 	var is = false;
 	var page;
+	var url = self.url.toLowerCase();
 
 	if (self.language) {
-		page = MAIN.sitemap[self.language + ' ' + self.url];
-		!page && (page = MAIN.sitemap[self.url]);
+		page = MAIN.sitemap[self.language + ' ' + url];
+		!page && (page = MAIN.sitemap[url]);
 	} else
-		page = MAIN.sitemap[self.url];
+		page = MAIN.sitemap[url];
 
 	if (!page) {
 
-		if (MAIN.redirects && MAIN.redirects[self.url]) {
-			self.redirect(MAIN.redirects[self.url], RELEASE);
+		if (MAIN.redirects && MAIN.redirects[url]) {
+			self.redirect(MAIN.redirects[url], RELEASE);
 			COUNTER('pages').hit('redirect');
 		} else {
 
 			for (var i = 0; i < MAIN.wildcard.length; i++) {
 				page = MAIN.wildcard[i];
-				if (self.url.substring(0, page.url.length) === page.url) {
+				if (url.substring(0, page.url.length) === page.url) {
 					is = true;
 					break;
 				}
@@ -784,7 +785,7 @@ Controller.prototype.CMSpage = function(callback, cache) {
 
 			// tries to redirect to admin
 			if (!is) {
-				if (self.url === '/')
+				if (url === '/')
 					self.redirect('/admin/');
 				else
 					self.throw404();
@@ -813,7 +814,7 @@ Controller.prototype.CMSpage = function(callback, cache) {
 
 	var DRAFT = !!self.query.DRAFT;
 
-	self.memorize('cachecms' + (self.language || '') + '_' + self.url + pluscache, cache || '1 minute', cache === false, function() {
+	self.memorize('cachecms' + (self.language || '') + '_' + url + pluscache, cache || '1 minute', cache === false, function() {
 
 		NOSQL('pages').one().id(page.id).callback(function(err, response) {
 
