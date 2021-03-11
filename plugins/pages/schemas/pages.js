@@ -413,7 +413,7 @@ function refresh() {
 			if (wild)
 				doc.url = doc.url.replace('*/', '');
 
-			var key = doc.url;
+			var key = doc.url.toLowerCase();
 			var lng = doc.language;
 			var obj = { id: doc.id, url: doc.url, name: doc.name, title: doc.title, parent: doc.parent, icon: doc.icon, links: [], language: doc.language, dtcreated: doc.dtcreated, dtupdated: doc.dtupdated, wildcard: wild, nocache: doc.nocache };
 
