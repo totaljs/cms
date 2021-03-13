@@ -51,26 +51,23 @@
 			<main>
 				<a href="/" class="logo" target="_blank"><i class="fa fa-globe"></i><span>@{'%name'}</span></a>
 				@{foreach m in model}
-					@{if m.plugins.length}
-						@{if index > 0}
-						<hr />
-						@{fi}
+					@{if m.plugins.length && m.name}
 						@{if m.name}
+						<hr class="nmt" />
 						<div class="group">@{m.name}</div>
 						@{fi}
 						<ul class="nav" data-bind="common.nav__template" data---="selected__common.page__selector:li">
 							@{foreach p in m.plugins}
-								@{if p.id !== 'settings'}
 								<li data-if="@{p.id}" class="exec" data-exec="common/plugin"><i class="@{p.icon}"></i>@{p.name}</li>
-								@{fi}
 							@{end}
 						</ul>
 					@{fi}
 				@{end}
-				<ul class="nav" data-bind="common.nav__template" data---="selected__common.page__selector:li">
+				<hr />
+				<ul class="nav" data-bind="common.nav__template" data---="selected__common.page__selector:li.selectable">
 					<li class="exec" data-exec="common/profile"><i class="fa fa-user-circle"></i>@(My profile)</li>
 					@{if user.sa}
-					<li data-if="settings" class="exec" data-exec="common/plugin"><i class="fa fa-cog"></i>@(Settings)</li>
+					<li data-if="settings" class="exec selectable" data-exec="common/plugin"><i class="fa fa-cog"></i>@(Settings)</li>
 					@{fi}
 					<li class="exec" data-exec="common/logout"><i class="fa fa-power-off red"></i>@(Logout)</li>
 				</ul>
@@ -115,7 +112,7 @@
 				permissions.push({ id: el.attrd('id'), name: el.attrd('name'), icon: el.attrd('icon') });
 			});
 
-			common.lastpage = permissions[0].id;
+			common.lastpage = permissions[0] ? permissions[0].id : '';
 			SET('common.permissions', permissions);
 		})();
 
