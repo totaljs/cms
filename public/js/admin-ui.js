@@ -9948,25 +9948,40 @@ COMPONENT('importer', function(self, config) {
 COMPONENT('tooltip', function(self, config, cls) {
 
 	var is = false;
+	var can = true;
 
 	self.singleton();
 	self.readonly();
 	self.blind();
 	self.nocompile && self.nocompile();
 
+	self.enable = function() {
+		can = true;
+	};
+
+	self.hideforce = function() {
+		self.aclass('hidden');
+		self.rclass(cls + '-visible');
+		is = false;
+	};
+
 	self.make = function() {
 		self.aclass(cls + ' hidden');
+		self.on('scroll + resize + reflow + resize2', function() {
+			self.hide(true);
+			can = false;
+			setTimeout2(self.ID + 'can', self.enable, 1000);
+		});
 	};
 
 	self.hide = function(force) {
-		is && setTimeout2(self.ID, function() {
-			self.aclass('hidden');
-			self.rclass(cls + '-visible');
-			is = false;
-		}, force ? 1 : 200);
+		is && setTimeout2(self.ID, self.hideforce, force ? 1 : 200);
 	};
 
 	self.show = function(opt) {
+
+		if (!can)
+			return;
 
 		var tmp = opt.element ? opt.element instanceof jQuery ? opt.element[0] : opt.element.element ? opt.element.dom : opt.element : null;
 
