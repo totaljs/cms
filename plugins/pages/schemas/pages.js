@@ -271,7 +271,7 @@ NEWSCHEMA('Pages', function(schema) {
 				arr.push({ id: m, count: response[m] });
 
 			arr.quicksort('count_desc');
-			arr = arr.take(24);
+			arr = arr.take(50);
 
 			NOSQL('pages').find().fields('id,name,url').where('ispartial', false).in('id', arr, 'id').callback(function(err, items) {
 
@@ -281,7 +281,7 @@ NEWSCHEMA('Pages', function(schema) {
 				}
 
 				items.quicksort('count_desc');
-				$.callback(items);
+				$.callback(items.take(28));
 			});
 
 		}).where('year', year);
