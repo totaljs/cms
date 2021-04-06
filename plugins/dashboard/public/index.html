@@ -296,6 +296,30 @@
 				</script>
 			</div>
 
+			<div data-bind="?.stats.trending__template">
+				<script type="text/html">
+					{{ if value && value.length }}
+					<div class="row">
+						<div class="col-md-4">
+							<div class="caption"><i class="far fa-file-text-o"></i>@(Top pages)</div>
+						</div>
+					</div>
+					<div class="row">
+						{{ foreach m in value }}
+						<div class="col-md-3 col-xs-6">
+							<div class="dashboard-referrer">
+								<div>{{ m.count | counter }}</div>
+								<div>{{ m.name }}</div>
+							</div>
+						</div>
+						{{ end }}
+					</div>
+					<br />
+					<br />
+					{{ fi }}
+				</script>
+			</div>
+
 			<div data-bind="?.stats.tracking__template__show:value && value.length">
 				<script type="text/html">
 					{{ if value && value.length }}
@@ -425,32 +449,38 @@
 					years.length && exports.history(years.last());
 				});
 
-				AJAX('GET [url]api/dashboard/referrers/', function(response) {
-
-					var ref = [];
-					var brw = [];
-
-					for (var i = 0; i < response.length; i++) {
-						var item = response[i];
-						item.count = item.sum;
-						if (item.id.charAt(0) === '!') {
-							item.id = item.id.substring(1);
-							brw.push(item);
-						} else
-							ref.push(item);
-					}
-
-					SET('?.stats.referrers', ref);
-					SET('?.stats.browsers', brw);
-				});
-
 				AJAX('GET [url]api/dashboard/tracking/', '?.stats.tracking');
 
 			}, 500);
 		};
 
+		exports.referrers = function(year) {
+			AJAX('GET [url]api/dashboard/referrers/' + (year ? ('?year=' + year) : ''), function(response) {
+
+				var ref = [];
+				var brw = [];
+
+				for (var i = 0; i < response.length; i++) {
+					var item = response[i];
+					item.count = item.sum;
+					if (item.id.charAt(0) === '!') {
+						item.id = item.id.substring(1);
+						brw.push(item);
+					} else
+						ref.push(item);
+				}
+
+				SET('?.stats.referrers', ref);
+				SET('?.stats.browsers', brw);
+			});
+		};
+
+		exports.trending = function(year) {
+			AJAX('GET [url]api/dashboard/trending/' + (year ? ('?year=' + year) : ''), '?.stats.trending');
+		};
+
 		exports.history = function(el) {
-			var year = +(typeof(el) === 'string' ? el : el.attr('data-year'));
+			var year = +(typeof(el) === 'string' ? el : el.attrd('year'));
 
 			SET('?.stats.visitors', exports.getStats(year, ['count', 'unique']));
 			SET('?.stats.devices', exports.getStats(year, ['desktop', 'mobile']));
@@ -478,6 +508,8 @@
 
 			SET('?.stats.sourcessum', source);
 			SET('?.stats.sourcesarr', sourcearr);
+			exports.referrers(year);
+			exports.trending(year);
 		};
 
 		exports.getStatsSum = function(year, names) {

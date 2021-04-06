@@ -259,6 +259,35 @@ NEWSCHEMA('Pages', function(schema) {
 	schema.addWorkflow('stats', function($) {
 		COUNTER('pages').monthly($.id || 'all', $.callback);
 	});
+
+	schema.addWorkflow('trending', function($) {
+
+		var year = $.filter.year || NOW.getFullYear();
+
+		COUNTER('pages').scalar('group', 'id', 'sum', function(err, response) {
+
+			var arr = [];
+			for (var m in response)
+				arr.push({ id: m, count: response[m] });
+
+			arr.quicksort('count_desc');
+			arr.take(24);
+
+			NOSQL('pages').find().fields('id,name,url').where('ispartial', false).in('id', arr, 'id').callback(function(err, items) {
+
+				for (var i = 0; i < items.length; i++) {
+					var item = items[i];
+					item.count = arr.findValue('id', item.id, 'count', 0);
+				}
+
+				items.quicksort('count_desc');
+				$.callback(items);
+			});
+
+		}).where('year', year);
+
+	}, 'year:number');
+
 });
 
 NEWSCHEMA('Pages/Globals', function(schema) {

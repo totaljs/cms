@@ -8,7 +8,7 @@ exports.install = function() {
 	ROUTE('GET    /admin/api/dashboard/referrers/',          referrers);
 	ROUTE('GET    /admin/api/dashboard/online/',             online);
 	ROUTE('GET    /admin/api/dashboard/tracking/             *Tracking --> @stats');
-	ROUTE('GET    /admin/api/dashboard/clear/',              clear);
+	ROUTE('GET    /admin/api/dashboard/trending/             *Pages --> @trending');
 };
 
 function online() {
@@ -30,18 +30,16 @@ function stats() {
 
 function referrers() {
 	var self = this;
-	COUNTER('visitors').summarize('yearly').where('year', NOW.getFullYear()).callback(function(err, response) {
+
+	var year = self.query.year;
+
+	if (year)
+		year = year.parseInt();
+	else
+		year = NOW.getFullYear();
+
+	COUNTER('visitors').summarize('yearly').where('year', year).callback(function(err, response) {
 		response.quicksort('sum', true);
 		self.json(response.take(24));
 	});
-}
-
-function clear() {
-	var self = this;
-	var db = ['pages', 'posts', 'products', 'newsletters', 'subscribers', 'contactforms'];
-	var id = self.query.id || 'today';
-	var date = id === 'today' ? NOW.format('yyyy-MM-dd') : id === 'month' ? NOW.format('yyyy-MM') : id === 'year' ? NOW.format('yyyy') : id === 'all' ? null : 'today';
-	// db.wait((name, next) => COUNER(name).reset(null, null, date, next));
-	// @TODO: missing implementation
-	self.success();
 }
