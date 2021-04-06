@@ -271,7 +271,7 @@ NEWSCHEMA('Pages', function(schema) {
 				arr.push({ id: m, count: response[m] });
 
 			arr.quicksort('count_desc');
-			arr.take(24);
+			arr = arr.take(24);
 
 			NOSQL('pages').find().fields('id,name,url').where('ispartial', false).in('id', arr, 'id').callback(function(err, items) {
 
