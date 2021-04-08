@@ -87,13 +87,12 @@
 				}
 			});
 
-			self.event('dragover dragenter dragstart drag drop', '.ui-navigation-itemcontainer', function(e) {
-				var cls = cls + '-itemcontainer';
+			self.event('dragover dragenter dragstart drag drop', cls2 + '-itemcontainer', function(e) {
 				switch (e.type) {
 					case 'dragstart':
 						dragdrop = $(e.target);
-						if (!dragdrop.hclass(cls))
-							dragdrop = dragdrop.closest('.' + cls);
+						if (!dragdrop.hclass(cls + '-itemcontainer'))
+							dragdrop = dragdrop.closest(cls2 + '-itemcontainer');
 						dragdrop.aclass(cls + '-drag');
 						language = dragdrop.closest(cls2 + '-language').attrd('language');
 						e.originalEvent.dataTransfer.setData('text', '1');
@@ -102,10 +101,10 @@
 						dragdrop.rclass(cls + '-drag');
 						var el = $(e.target);
 
-						if (!el.hclass(cls))
-							el = el.closest('.' + cls);
+						if (!el.hclass(cls + '-itemcontainer'))
+							el = el.closest(cls2 + '-itemcontainer');
 
-						if (!el.length || el.closest(dragdrop).length || el[0] === dragdrop[0] || el.closest('.ui-navigation-language').attrd('language') !== language)
+						if (!el.length || el.closest(dragdrop).length || el[0] === dragdrop[0] || el.closest(cls2 + '-language').attrd('language') !== language)
 							return;
 
 						setTimeout2(self.id, function() {
