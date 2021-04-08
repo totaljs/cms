@@ -12820,11 +12820,6 @@ COMPONENT('codemirror', 'linenumbers:true;required:false;trim:false;tabs:true', 
 					delay && clearTimeout(delay);
 					delay = setTimeout(function() {
 						cm.operation(function() {
-							var pos = cm.getCursor();
-							var cur = cm.getModeAt(pos);
-							var t = cur.helperType || cur.name;
-							if (right === '}' && t === 'javascript' && FUNC.wrapbracket(cm, pos))
-								return;
 							cm.replaceSelection(right, 'before');
 							cm.triggerElectric(right);
 						});
