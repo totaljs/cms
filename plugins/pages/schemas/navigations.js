@@ -228,7 +228,10 @@ function refresh() {
 			}
 
 			MAIN.navigations[item.id] = item;
-			item.name = tmp.name;
+
+			if (!item.name)
+				item.name = tmp.name;
+
 			item.url = {};
 			item.pages = {};
 			item.stringify = function() {
