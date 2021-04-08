@@ -344,11 +344,15 @@ COMPONENT('form', 'zindex:12;scrollbar:1', function(self, config, cls) {
 		W.$$form_level++;
 
 		self.css('z-index', W.$$form_level * config.zindex);
-		self.element.scrollTop(0);
+		self.aclass('invisible');
 		self.rclass('hidden');
-
 		self.resize();
 		self.release(false);
+
+		if (self.scrollbar)
+			self.scrollbar.scrollTop(0);
+		else
+			self.element.scrollTop(0);
 
 		config.reload && self.EXEC(config.reload, self);
 		config.default && DEFAULT(self.makepath(config.default), true);
@@ -361,9 +365,12 @@ COMPONENT('form', 'zindex:12;scrollbar:1', function(self, config, cls) {
 
 		setTimeout(function() {
 			self.rclass('invisible');
-			self.element.scrollTop(0);
+			if (self.scrollbar)
+				self.scrollbar.scrollTop(0);
+			else
+				self.element.scrollTop(0);
 			self.find(cls2).aclass(cls + '-animate');
-		}, 300);
+		}, 200);
 
 		// Fixes a problem with freezing of scrolling in Chrome
 		setTimeout2(self.ID, function() {

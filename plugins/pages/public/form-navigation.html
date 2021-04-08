@@ -15,19 +15,30 @@
 	.ui-navigation-language:first-child { margin-top: 0; }
 </style>
 
-<div data---="form__common.form__icon:sitemap;if:pagesnavigation;width:800;submit:pagesnavigation/submit;reload:pagesnavigation/reload" class="hidden">
+<div data---="form__common.form__icon:sitemap;if:pagesnavigation;width:800;submit:pagesnavigation/submit;reload:pagesnavigation/reload" class="hidden" data-scope="pagesnavigation">
 
 	<div class="toolbar toolbar2 nmt nmb">
-		<button class="exec" data-exec="pagesnavigation/create"><i class="fa fa-plus-circle green"></i>@(Add new)</button>
+		<button class="exec" data-exec="?/create"><i class="fa fa-plus-circle green"></i>@(Add new)</button>
 		<span></span>
-		<button class="exec" data-exec="pagesnavigation/clear"><i class="fa fa-trash red"></i>@(Clear all)</button>
+		<button class="exec" data-exec="?/clear"><i class="fa fa-trash red"></i>@(Clear all)</button>
 	</div>
 
-	<div class="padding">
-		<div data---="navigation__pagesnavigation.children" class="mt10"></div>
+	<div class="padding mt10">
+		<div class="row">
+			<div class="col-sm-3 m">
+				<div data---="input__?.name__maxlength:70">@(Title)</div>
+			</div>
+			<div class="col-sm-3 m">
+				<div data---="input__?.icon__type:icon">@(Icon)</div>
+			</div>
+			<div class="col-sm-6 m">
+				<div data---="input__?.body" class="m">@(Description)</div>
+			</div>
+		</div>
+		<div data---="navigation__?.children"></div>
 	</div>
 
-	<nav data---="validation__pagesnavigation">
+	<nav data---="validation__?">
 		<button name="submit"><i class="fa fa-check-circle"></i>@(APPLY)</button>
 		<button name="cancel">@(Cancel)</button>
 	</nav>
@@ -36,9 +47,10 @@
 
 <script>
 
-	COMPONENT('navigation', function(self) {
+	COMPONENT('navigation', function(self, config, cls) {
 
 		var dragdrop, language;
+		var cls2 = '.' + cls;
 
 		self.template = Tangular.compile('<div data-id="{{ id }}" class="ui-navigation-itemcontainer" draggable="true"><div class="ui-navigation-item"><i class="fa fa-times remove"></i><i class="fa fa-pencil edit"></i><i class="fa fa-plus-circle plus"></i><i class="icon{{ if icon }} {{ icon }}{{ fi }}"></i><span class="language">{{ language }}</span><div class="name">{{ name }}<span><i class="fa fa-globe mr5"></i>{{ url }}</span></div></div>{{ if children && children.length }}<div class="ui-navigation-children">{{ children | navigationchildren($.template) }}</div>{{ fi }}</div>');
 		self.novalidate();
@@ -46,11 +58,11 @@
 		self.getter = null;
 
 		self.make = function() {
-			self.aclass('ui-navigation');
+			self.aclass(cls);
 
 			self.event('click', '.fa', function() {
 				var el = $(this);
-				var id = el.closest('.ui-navigation-itemcontainer').attrd('id');
+				var id = el.closest(cls2 + '-itemcontainer').attrd('id');
 				if (el.hclass('edit')) {
 					var item = self.finditem(id, self.get());
 					var obj = CLONE(item.item);
@@ -76,18 +88,18 @@
 			});
 
 			self.event('dragover dragenter dragstart drag drop', '.ui-navigation-itemcontainer', function(e) {
-				var cls = 'ui-navigation-itemcontainer';
+				var cls = cls + '-itemcontainer';
 				switch (e.type) {
 					case 'dragstart':
 						dragdrop = $(e.target);
 						if (!dragdrop.hclass(cls))
 							dragdrop = dragdrop.closest('.' + cls);
-						dragdrop.aclass('ui-navigation-drag');
-						language = dragdrop.closest('.ui-navigation-language').attrd('language');
+						dragdrop.aclass(cls + '-drag');
+						language = dragdrop.closest(cls2 + '-language').attrd('language');
 						e.originalEvent.dataTransfer.setData('text', '1');
 						return;
 					case 'drop':
-						dragdrop.rclass('ui-navigation-drag');
+						dragdrop.rclass(cls + '-drag');
 						var el = $(e.target);
 
 						if (!el.hclass(cls))

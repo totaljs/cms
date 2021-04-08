@@ -97,7 +97,7 @@ hr { border-color: #E0E0E0; }
 .backups > div a { border-right: 1px solid #E0E0E0; padding-right: 20px; margin-right: 18px; }
 .backups > div a:last-child { padding-right: 0; margin-right: 0; border-right: 0; }
 
-.toolbar2 { background-color: #F0F0F0; padding: 12px 20px; margin-bottom: 15px; }
+.toolbar2 { background-color: #F0F0F0; padding: 12px 15px; margin-bottom: 15px; }
 .toolbar3 { padding: 5px 20px 0; margin-bottom: 15px; }
 .toolbar { margin: 20px 0; }
 .toolbar button { outline: 0; background-color: transparent; border: 1px solid transparent; border-radius: var(--radius); font-size: 12px; height: 24px; padding: 0 5px; margin: 0; color: #000; margin-right: 5px; }

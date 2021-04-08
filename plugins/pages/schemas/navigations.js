@@ -16,6 +16,9 @@ NEWSCHEMA('Navigations/Items', function(schema) {
 NEWSCHEMA('Navigations', function(schema) {
 
 	schema.define('id', 'String(50)', true);
+	schema.define('name', 'String(70)');
+	schema.define('icon', 'String(30)');
+	schema.define('body', 'String');
 	schema.define('children', '[Navigations/Items]');
 
 	schema.setGet(function($) {
@@ -106,7 +109,6 @@ NEWSCHEMA('Navigations', function(schema) {
 
 		var nav = PREF.navigations.findItem('id', model.id);
 		if (nav) {
-			model.name = nav.name;
 			model.dtupdated = NOW;
 		} else {
 			$.invalid('error-navigations-404');
