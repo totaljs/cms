@@ -4,8 +4,8 @@
 	.dashboard-online-position { position: absolute; width: 100%; margin: 110px 0 0 -20px; }
 	.dashboard-online { font-size: 70px; text-align: center; font-weight: bold; line-height: 70px; }
 	.dashboard-online-date { font-size: 12px; color: gray; text-align: center; margin-bottom: 20px; }
-	.dashboard-devices { background-color: #4781B8; border-radius: 2px; margin-top: 5px; }
-	.dashboard-devices > div { height: 17px; border-radius: 2px; background-color: #EF914E; color: white; font-size: 11px; overflow: hidden; text-align: right; padding: 1px 5px 0 0; }
+	.dashboard-devices { background-color: #4781B8; border-radius: var(--radius); margin-top: 5px; }
+	.dashboard-devices > div { height: 17px; border-radius: var(--radius); background-color: #EF914E; color: white; font-size: 11px; overflow: hidden; text-align: right; padding: 1px 5px 0 0; }
 	.browser { float: right; color: gray; font-size: 10px; }
 
 	@media (max-width: 1199px) {
@@ -13,7 +13,7 @@
 		.dashboard-online { font-size: 50px; line-height: 50px; }
 	}
 
-	.ui-dashboardvisitors { border: 1px solid #E0E0E0; border-radius: 2px; }
+	.ui-dashboardvisitors { border: 1px solid #E0E0E0; border-radius: var(--radius); }
 	.ui-dashboardvisitors .badge-silver { font-family: monospace; }
 	.ui-dashboardvisitors table { border: 0; width: 100%; table-layout: fixed; font-size: 12px; }
 	.ui-dashboardvisitors table i { margin-right: 5px; }
@@ -24,18 +24,18 @@
 	.ui-dashboardvisitors table td:first-child { border-left: 0; }
 	.ui-dashboardvisitors table th { padding: 5px 10px; background-color: #F0F0F0; color: black; border-left: 1px solid #E0E0E0; }
 	.ui-dashboardvisitors table th i { margin-right: 5px; }
-	.ui-dashboardvisitors table th:first-child { border-radius: 2px 0 0 0; border-left: 0; }
-	.ui-dashboardvisitors table th:last-child { border-radius: 0 2px 0 0; }
+	.ui-dashboardvisitors table th:first-child { border-radius: var(--radius) 0 0 0; border-left: 0; }
+	.ui-dashboardvisitors table th:last-child { border-radius: 0 var(--radius) 0 0; }
 
-	.dashboard-referrer { font-size: 12px; background-color: #F0F0F0; margin: 0 0 5px; padding: 5px 5px 5px 10px; border-radius: 2px; }
+	.dashboard-referrer { font-size: 12px; background-color: #F0F0F0; margin: 0 0 5px; padding: 5px 5px 5px 10px; border-radius: var(--radius); }
 	.dashboard-referrer > div:last-child { margin-right: 60px; }
 	.dashboard-referrer > div:first-child { width: 60px; text-align: center; float: right; font-weight: bold; border-left: 1px solid #E0E0E0; padding: 0 5px; }
 	.dashboard-referrer > div { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
 
 	.dashboard-sources { height: 25px; display: table; width: 100%; table-layout: fixed; }
 	.dashboard-sources > div { height: 25px; display: table-cell; cursor: default; font-size: 11px; padding: 5px 5px 0; color: black; overflow: hidden; }
-	.dashboard-sources > div:first-child { border-radius: 2px 0 0 2px; }
-	.dashboard-sources > div:last-child { border-radius: 0 2px 2px 0; }
+	.dashboard-sources > div:first-child { border-radius: var(--radius) 0 0 var(--radius); }
+	.dashboard-sources > div:last-child { border-radius: 0 var(--radius) var(--radius) 0; }
 	.dashboard-sources > div:hover { opacity: 0.9; }
 	.dashboard-sources span { display: block; max-width: 100%; width: 100%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
 

@@ -1,7 +1,7 @@
 <style>
 	.ui-style input { width: 100%; border: 0; outline: 0; background-color: white; display: block; font-weight: bold; font-size: 12px; height: 20px; }
 	.ui-style-numeric { margin-bottom: 15px; }
-	.ui-style-numeric span { display: block; font-size: 10px; border-top: 1px solid #E0E0E0; margin-top: 5px; color: #A0A0A0; padding: 2px 0; background-color: #F8F8F8; border-radius: 0 0 2px 2px; }
+	.ui-style-numeric span { display: block; font-size: 10px; border-top: 1px solid #E0E0E0; margin-top: 5px; color: #A0A0A0; padding: 2px 0; background-color: #F8F8F8; border-radius: 0 0 var(--radius) var(--radius); }
 	.ui-style-numeric-control { position: relative; display: inline-block; width: 25%; text-align: center; }
 	.ui-style-numeric-control input { text-align: center; }
 	.ui-style-numeric-control div { border: 1px solid #D0D0D0; border-radius: 3px; margin-right: 10px; padding: 2px 0 0; background-color: white; }
@@ -9,7 +9,7 @@
 	.ui-style-color { margin-bottom: 15px; }
 	.ui-style-color ul { margin: 0 -2px; padding: 0; list-style-type: none; }
 	.ui-style-color li { margin: 0; padding: 0; width: 8.333%; position: relative; display: inline-block; vertical-align: top; }
-	.ui-style-color li div { height: 16px; margin: 2px; text-align: center; padding: 3px 0 0; color: white; cursor: pointer; border-radius: 2px; }
+	.ui-style-color li div { height: 16px; margin: 2px; text-align: center; padding: 3px 0 0; color: white; cursor: pointer; border-radius: var(--radius); }
 	.ui-style-color .fa { display: none; }
 	.ui-style-color li:nth-child(3) div { border: 1px solid #E0E0E0; color: black; }
 	.ui-style-color .selected .fa { display: block; font-size: 9px; }
