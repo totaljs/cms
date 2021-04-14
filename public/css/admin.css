@@ -200,17 +200,17 @@ h3 i { margin-right: 8px; }
 .tabmenu { padding: 0; margin: 0; display: block; position: relative; font-size: 12px; border: 0; list-style-type: none; height: 44px; overflow: hidden; user-select: none; }
 .tabmenu li { background-color: #FFF; margin: 10px 0 0 0; text-align: center; padding: 0 7px; line-height: 24px; height: 24px; color: #6d6d6d; cursor: pointer; min-width: 70px; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; border-left: 1px solid #FFF; }
 .tabmenu li:hover { color: #252525; }
-.tabmenu li:first-child { border-radius: 2px 0 0 2px; border-left: 0; }
-.tabmenu li:last-child { border-radius: 0 2px 2px 0; }
+.tabmenu li:first-child { border-radius: var(--radius) 0 0 var(--radius); border-left: 0; }
+.tabmenu li:last-child { border-radius: 0 var(--radius) var(--radius) 0; }
 .tabmenu .selected { color: white !important; background-color: $color; }
 .tabmenu .disabled { color: #C0C0C0 !important; background-color: #F8F8F8 !important; cursor: not-allowed; }
 .tabmenu i { margin-right: 8px; }
 .ui-dark .tabmenu .disabled { color: #606060 !important; background-color: #343434 !important; }
 
-.noticespreview { padding: 10px 20px 20px; border: 2px solid #E0E0E0; border-radius: 2px; font-size: 16px; }
+.noticespreview { padding: 10px 20px 20px; border: 2px solid #E0E0E0; border-radius: var(--radius); font-size: 16px; }
 .noticespreview p { margin: 10px 0 0; }
 .noticespreview ul { margin: 10px 0 0; }
-.noticespreview img { display: block; margin: 10px 0 0; border-radius: 4px; }
+.noticespreview img { display: block; margin: 10px 0 0; border-radius: var(--radius); }
 
 .padding-events { padding: 25px 25px 0; }
 .pagesformcheckboxes { border-left:1px solid #EBEBC4; padding: 5px 0 5px 20px; }
@@ -246,16 +246,16 @@ h3 i { margin-right: 8px; }
 .markdown h1 { cursor: default; margin: 0 0 20px; font-size: 34px; padding: 0 0 13px; border-bottom: 1px solid #E0E0E0; color: #000; line-height: 38px; font-family: Arial; font-weight: normal; line-height: 32px; font-weight: normal; }
 .markdown h2 { cursor: default; margin: 0 0 18px; font-weight: bold; font-size: 24px; padding: 8px 0; border-bottom: 1px solid #E0E0E0; color: #000; line-height: 28px; font-family: Arial; }
 .markdown h3 { cursor: default; margin: 0 0 10px; font-size: 22px; padding: 5px 0; color: #404040; font-weight: bold; line-height: 22px; font-family: Arial; }
-.markdown h4, .markdown h5 { cursor: default; margin: 0 0 10px; font-size: 17px; color: #404040; font-weight: bold; line-height: 22px; font-family: Arial; background-color: #F0F0F0; padding: 4px 3px; border-radius: 3px; border-bottom: 1px solid #E0E0E0; }
+.markdown h4, .markdown h5 { cursor: default; margin: 0 0 10px; font-size: 17px; color: #404040; font-weight: bold; line-height: 22px; font-family: Arial; background-color: #F0F0F0; padding: 4px 3px; border-radius: var(--radius); border-bottom: 1px solid #E0E0E0; }
 .markdown p { margin: 0 0 15px; padding-left: 0; padding-right: 0; }
 .markdown-small p { margin-bottom: 10px; }
-.markdown p code, .markdown li code, .markdown section code, .markdown blockquote code, .markdown h1 code, .markdown h2 code, .markdown h3 code, .markdown h4 code, .markdown td code { background-color: #E0E0E0; padding: 1px 3px 2px; border-radius: 2px; font-size: 14px; }
+.markdown p code, .markdown li code, .markdown section code, .markdown blockquote code, .markdown h1 code, .markdown h2 code, .markdown h3 code, .markdown h4 code, .markdown td code { background-color: #E0E0E0; padding: 1px 3px 2px; border-radius: var(--radius); font-size: 14px; }
 .markdown p code, .markdown section code, .markdown li code, .markdown blockquote code, .markdown td code { border: 1px solid #E0E0E0; background-color: #F5F5F5; }
 
 .markdown-small p code, .markdown-small li code, .markdown-small section code, .markdown-small blockquote code, .markdown-small h1 code, .markdown-small h2 code, .markdown-small h3 code, .markdown-small h4 code, .markdown-small td code { font-size: 12px; }
 .markdown .code { margin-bottom: 15px; }
-.markdown pre { padding: 0; border-radius: 2px; margin: 0; width: 100%; }
-.markdown pre code { padding: 10px; font-size: 14px; line-height: 20px; overflow-scrolling: touch; border-radius: 2px; }
+.markdown pre { padding: 0; border-radius: var(--radius); margin: 0; width: 100%; }
+.markdown pre code { padding: 10px; font-size: 14px; line-height: 20px; overflow-scrolling: touch; border-radius: var(--radius); }
 .markdown table { margin: 0 0 15px; width: auto !important; }
 .markdown ul { margin: 0 0 15px; padding: 0 0 0 2em; }
 .markdown ul ul { margin-bottom: 0; }
@@ -263,7 +263,7 @@ h3 i { margin-right: 8px; }
 .markdown th { background-color: #F8F8F8; }
 .markdown blockquote { color: #000; margin: 0 0 20px; padding: 10px 0 0 20px; position: relative; font-style: italic; }
 .markdown blockquote:before { content: '\201C'; position: absolute; margin-left: -18px; margin-top: -13px; font: 45px 'PT Sans', sans-serif; color: #A0A0A0; }
-.markdown section { padding: 15px 20px; background-color: #FFFED1; margin: 10px 0 20px; border-radius: 2px; }
+.markdown section { padding: 15px 20px; background-color: #FFFED1; margin: 10px 0 20px; border-radius: var(--radius); }
 .markdown hr { border-color: #E0E0E0; }
 .markdown .line1 { border-width: 1px; }
 .markdown .line2 { border-width: 2px; margin: 20px 0; }
@@ -280,7 +280,7 @@ h3 i { margin-right: 8px; }
 .markdown-block:last-child { margin-bottom: 15px; }
 
 .markdown a code { background-color: #DAE8F8; text-decoration: none !important; border-color: #D5DFEB; }
-.markdown-footnote { background-color: rgba(0,0,0,0.1); padding: 0 2px; border-radius: 2px; cursor: help; }
+.markdown-footnote { background-color: rgba(0,0,0,0.1); padding: 0 2px; border-radius: var(--radius); cursor: help; }
 .markdown-footnotebody { font-size: 11px; border-top: 1px solid #E0E0E0; font-family: Arial; color: #505050; }
 .markdown-showsecret { cursor: pointer; display: block; padding: 8px 15px; user-select: none; font-size: 14px; }
 .markdown-showsecret b { margin-left: 8px; }
@@ -288,10 +288,10 @@ h3 i { margin-right: 8px; }
 .markdown-showblock { cursor: pointer; display: block; padding: 3px 0; user-select: none; border-bottom: 1px solid #E0E0E0; }
 .markdown-showblock i { width: 16px; font-size: 12px; padding: 6px 0 0; float: left; }
 .markdown-showblock-visible { border-bottom: 0; }
-.markdown-block > div { padding: 10px 10px 1px; border: 1px solid #E0E0E0; margin: 10px 0; border-radius: 2px; }
+.markdown-block > div { padding: 10px 10px 1px; border: 1px solid #E0E0E0; margin: 10px 0; border-radius: var(--radius); }
 
-.markdown-secret { padding: 0; border-radius: 2px; border: 1px solid #E0E0E0; }
-.markdown-secret > div { padding: 15px 5px 1px; border-radius: 0 0 2px 2px; background-color: #F8F8F8; }
+.markdown-secret { padding: 0; border-radius: var(--radius); border: 1px solid #E0E0E0; }
+.markdown-secret > div { padding: 15px 5px 1px; border-radius: 0 0 var(--radius) var(--radius); background-color: #F8F8F8; }
 
 .markdown .video { position: relative; padding-bottom: 56.25%; padding-top: 25px; height: 0; margin-bottom: 15px; }
 .markdown .video iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }

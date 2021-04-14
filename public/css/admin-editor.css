@@ -9,12 +9,12 @@ iframe.CMS_edit { padding: 5px; border: 15px solid red;}
 #CMS_panel_info { height: 25px; }
 #CMS_panel_info span { margin: 5px 0 5px; position: relative; display: inline-block; border-radius: var(--radius); padding: 0 3px; font-size: 10px; color: white; background-color: #E9573F; height: 14px; line-height: 14px; }
 #CMS_panel_buttons_move { float: right; }
-#CMS_panel_buttons_move span { font-size: 12px; color: white; background-color: rgba(0,0,0,0.5); position: relative; display: inline-block; padding: 3px 0; border-radius: 2px; margin: 3px 0 0 3px; cursor: pointer; vertical-align: top; width: 18px; text-align: center; }
+#CMS_panel_buttons_move span { font-size: 12px; color: white; background-color: rgba(0,0,0,0.5); position: relative; display: inline-block; padding: 3px 0; border-radius: var(--radius); margin: 3px 0 0 3px; cursor: pointer; vertical-align: top; width: 18px; text-align: center; }
 #CMS_panel_buttons_reposition { float: right; }
-#CMS_panel_buttons_reposition span { font-size: 12px; color: white; background-color: rgba(246,187,66,0.8); position: relative; display: inline-block; padding: 3px 0; border-radius: 2px; margin: 3px 0 0 3px; cursor: pointer; vertical-align: top; width: 18px; text-align: center; }
+#CMS_panel_buttons_reposition span { font-size: 12px; color: white; background-color: rgba(246,187,66,0.8); position: relative; display: inline-block; padding: 3px 0; border-radius: var(--radius); margin: 3px 0 0 3px; cursor: pointer; vertical-align: top; width: 18px; text-align: center; }
 #CMS_panel_buttons_copy { float: right; }
-#CMS_panel_buttons_copy span { font-size: 12px; color: white; background-color: rgba(66,133,244,0.8); position: relative; display: inline-block; padding: 3px 0; border-radius: 2px; margin: 3px 0 0 3px; cursor: pointer; vertical-align: top; width: 18px; text-align: center; }
-#CMS_panel_buttons_body span { font-size: 10px; color: white; background-color: rgba(246,187,66,0.8); position: relative; display: inline-block; padding: 2px 0; border-radius: 2px; margin: 3px 3px 0 0; cursor: pointer; vertical-align: top; width: 14px; text-align: center; }
+#CMS_panel_buttons_copy span { font-size: 12px; color: white; background-color: rgba(66,133,244,0.8); position: relative; display: inline-block; padding: 3px 0; border-radius: var(--radius); margin: 3px 0 0 3px; cursor: pointer; vertical-align: top; width: 18px; text-align: center; }
+#CMS_panel_buttons_body span { font-size: 10px; color: white; background-color: rgba(246,187,66,0.8); position: relative; display: inline-block; padding: 2px 0; border-radius: var(--radius); margin: 3px 3px 0 0; cursor: pointer; vertical-align: top; width: 14px; text-align: center; }
 
 .CMS_panel_buttons { background-color: black; padding: 3px 2px; border-radius: var(--radius); box-shadow: 0 0 4px rgba(100,100,100,0.1); }
 .CMS_panel_buttons span { position: relative; display: inline-block; background-color: #303030; font-size: 11px; cursor: pointer; padding: 4px 0; margin: 1px 2px; width: 16px; text-align: center; border-radius: var(--radius); color: gray; }
