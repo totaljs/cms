@@ -11,7 +11,7 @@
     "total4": "latest"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js 8000"
   },
   "keywords": [
     "cms"
