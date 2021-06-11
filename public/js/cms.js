@@ -68,7 +68,7 @@ $(document).ready(function() {
 		var un;
 
 		if (NAV.query.utm_medium || NAV.query.utm_source || NAV.query.campaign_id)
-			params = '&utm_medium=1';
+			params += '&utm_medium=1';
 
 		if (W.user) {
 			if (W.user.name)
