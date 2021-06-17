@@ -4,8 +4,8 @@
   "version": "14.0.0",
   "main": "index.js",
   "repository": {
-      "type": "git",
-      "url": "https://github.com/totaljs/cms"
+    "type": "git",
+    "url": "https://github.com/totaljs/cms"
   },
   "dependencies": {
     "total4": "latest"
@@ -17,5 +17,5 @@
     "cms"
   ],
   "author": "Peter Širka",
-  "license":"MIT"
+  "license": "MIT"
 }
