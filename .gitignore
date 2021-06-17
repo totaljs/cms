@@ -1,5 +1,6 @@
 tmp/*
 logs/*
 databases/*
+node_modules
 debug.js.json
 debug.pid

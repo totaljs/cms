@@ -8,6 +8,12 @@ NEWSCHEMA('ContactForms', function(schema) {
 	schema.define('body', String, true);
 	schema.define('phone', 'Phone');
 
+	// TMS
+	schema.jsonschema_define('id', 'String');
+	schema.jsonschema_define('ip', 'String');
+	schema.jsonschema_define('browser', 'String');
+	schema.jsonschema_define('dtcreated', 'Date');
+
 	schema.required('firstname, lastname', m => !m.name);
 	schema.required('name', m => !m.firstname && !m.lastname);
 
@@ -54,6 +60,8 @@ NEWSCHEMA('ContactForms', function(schema) {
 		$.success();
 
 		EMIT('contacts.save', model);
+
+		PUBLISH('contactforms_save', model);
 
 		var builder = [];
 

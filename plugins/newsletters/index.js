@@ -13,7 +13,7 @@ exports.install = function() {
 	ROUTE('GET     /admin/api/newsletters/toggle/             *Newsletters --> @toggle');
 	ROUTE('GET     /admin/api/newsletters/stats/              *Newsletters --> @stats');
 	ROUTE('GET     /admin/api/newsletters/{id}/stats/         *Newsletters --> @stats');
-	ROUTE('GET     /admin/api/newsletters/{id}/backups/       *Common --> @backup');
+	ROUTE('GET     /admin/api/newsletters/{id}/backups/       *Common      --> @backup');
 	ROUTE('GET     /admin/api/newsletters/state/',            state);
 
 	FILE('/newsletter.gif', stats);
@@ -25,6 +25,7 @@ function state() {
 
 function stats(req, res) {
 	COUNTER('newsletters').hit('all');
+	PUBLISH('newsletters_view', { id: req.query.id || '', dttms: NOW });
 	req.query.id && COUNTER('newsletters').hit(req.query.id);
 	res.binary('R0lGODdhAQABAIAAAAAAAAAAACH5BAEAAAEALAAAAAABAAEAAAICTAEAOw==', 'image/gif', 'base64');
 }

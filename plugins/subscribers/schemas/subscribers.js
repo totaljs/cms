@@ -5,6 +5,13 @@ NEWSCHEMA('Subscribers', function(schema) {
 	schema.define('email', String, true);
 	schema.define('source', 'String(100)');
 
+	// TMS
+	schema.jsonschema_define('ip', 'String');
+	schema.jsonschema_define('language', 'String');
+	schema.jsonschema_define('unsubscribed', 'Boolean');
+	schema.jsonschema_define('browser', 'String');
+	schema.jsonschema_define('dtcreated', 'Date');
+
 	// Saves the model into the database
 	schema.setSave(function($) {
 
@@ -32,6 +39,7 @@ NEWSCHEMA('Subscribers', function(schema) {
 					if (email.length === 1)
 						$SAVE('Events', { id: obj.email.hash(true) + '', type: 'subscribers/add', user: $.user ? $.user.name : '', body: obj.email }, NOOP, $);
 					EMIT('subscribers.save', obj);
+					PUBLISH('subscribers_save', obj);
 					COUNTER('subscribers').hit('all', 1);
 				}
 			});
