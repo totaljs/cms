@@ -18,12 +18,14 @@ NEWSCHEMA('Subscribers', function(schema) {
 		var model = $.model;
 		var db = NOSQL('subscribers');
 		var email = model.email.split(',');
-		var ua = $.req ? $.req.useragent() : '';
+		var ua = $.ua;
 
-		for (var i = 0; i < email.length; i++) {
+		email.wait(function(email, next) {
 
-			if (!email[i] || !email[i].isEmail())
-				continue;
+			if (!email || !email.isEmail()) {
+				next();
+				return;
+			}
 
 			var obj = {};
 			obj.dtcreated = NOW;
@@ -31,7 +33,7 @@ NEWSCHEMA('Subscribers', function(schema) {
 			obj.language = $.language;
 			obj.unsubscribed = false;
 			obj.source = model.source;
-			obj.email = email[i].toLowerCase().replace(REG_SPACE, '');
+			obj.email = email.toLowerCase().replace(REG_SPACE, '');
 			obj.browser = ua;
 
 			db.modify(obj, obj).where('email', obj.email).callback(function(err, count) {
@@ -43,7 +45,9 @@ NEWSCHEMA('Subscribers', function(schema) {
 					COUNTER('subscribers').hit('all', 1);
 				}
 			});
-		}
+
+			next();
+		});
 
 		$.success();
 	});
