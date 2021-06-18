@@ -3,7 +3,3 @@ version                   : 14.0.0
 
 // Secret for administrators
 admin_secret  (generate)  : 10
-
-// Image convertor for resizing of pictures
-// Default image converter: im = ImageMagick, gm = GraphicsMagick
-default_image_converter   : gm
