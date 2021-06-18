@@ -261,6 +261,11 @@ W.emitvisitor = function(type, req) {
 	VISITOR.online = W.arr[0] + W.arr[1];
 	VISITOR.mobile = req.mobile;
 	VISITOR.user = req.user ? (req.user.name || req.user.nick || req.user.alias) : req.query.utm_user;
+	VISITOR.dttms = NOW;
+
+	EMIT('visitor');
+
+	PUBLISH('visitor', VISITOR);
 
 	W.visitors.unshift(VISITOR);
 

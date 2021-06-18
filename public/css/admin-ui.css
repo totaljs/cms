@@ -846,3 +846,10 @@ div.CodeMirror span.CodeMirror-matchingbracket { border-bottom: 2px solid blue; 
 .ui-miniform > nav button:first-child { border-top-left-radius: var(--radius); border-bottom-left-radius: var(--radius); }
 .ui-miniform > nav button:last-child { border-top-right-radius: var(--radius); border-bottom-right-radius: var(--radius); }
 .ui-miniform > nav button[name='submit'] { font-weight: bold; background-color: var(--color); color: #FFF; }
+
+.ui-togglebutton { background-color: #FFF; margin: 5px 0; border-radius: 20px; border: 1px solid #D0D0D0; height: 20px; cursor: pointer; width: 40px; position: relative; display: inline-block; user-select: none; -webkit-user-select: none; -ms-user-select: none; -moz-user-select: none; }
+.ui-togglebutton button { cursor: pointer; outline: 0; display:block; position: absolute; left: 0; top: 0; border-radius: 100%; width: 24px; height: 24px; background-color: #FFF; float: left; margin: -3px 0 0 -3px; border: 2px solid #D0D0D0; transition: left 0.3s; padding: 0; color: #C0C0C0; }
+.ui-togglebutton-selected { background-color: #83B152; border: 2px solid #7DA652; }
+.ui-togglebutton-selected button { left: 20px; top: 0; margin: 0; border: 0; width: 16px; height: 16px; box-shadow: 0 0 4px rgba(0,0,0,0.1); font-size: 11px; color: #000; }
+.ui-togglebutton-invalid { border-color: #DA362D !important;  }
+.ui-togglebutton.ui-disabled { background-color: #A0A0A0 !important; border: gray !important; cursor: not-allowed !important; }

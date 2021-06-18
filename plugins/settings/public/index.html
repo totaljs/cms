@@ -72,7 +72,7 @@
 								<div class="help">@(Languages must be implemented manually)</div>
 							</div>
 							<div class="col-sm-6 m">
-								<div data---="keyvalue__?.form.signals__placeholderkey:@(A signal name);placeholdervalue:@(Type an identificator and press enter)">@(Signals)</div>
+								<div data---="keyvalue__?.form.signals__placeholderkey:@(A signal name);placeholdervalue:@(Type a value)">@(Signals)</div>
 								<div class="help">@(Signals can affect a behaviour in pages or posts)</div>
 							</div>
 						</div>
@@ -105,6 +105,62 @@
 							<div class="col-md-8 m">
 								<div data---="input__?.form.smtpoptions__icon:code;camouflage:true;placeholder:@(SMTP options)">@(SMTP options)</div>
 								<div class="help">@(Options need to be defined in JSON format according) <a href="https://docs.totaljs.com/latest/en.html#api~FrameworkConfiguration~mail-smtp-options" target="_blank">Total.js specification</a></div>
+							</div>
+						</div>
+					</div>
+
+					<div class="panelbody">
+						<div class="panel">
+							<div class="pull-right" style="margin:5px 10px 0 0">
+								<div data---="togglebutton__?.form.allow_totalapi"></div>
+							</div>
+							<label class="bg-smoke"><i class="fab fa-node-js"></i>@(Total API)</label>
+							<div class="padding">
+								<p>@(With the <b>Total.js API key</b>, you can purchase templates, widgets, or the CMS can send SMS messages or email messages.)</p>
+								<div class="row">
+									<div class="col-md-4 m">
+										<div class="alert">@(You can obtain the Total.js API key on the link:) <a href="https://platform.totaljs.com/?open=api" class="b" target="_blank">https://platform.totaljs.com?open=api</a></div>
+									</div>
+									<div class="col-md-4">
+										<div data---="input__?.form.totalapi__maxlength:100;required:1;placeholder:@(Enter token);camouflage:•__''" data-bind="?.form.allow_totalapi__enabled">@(Total API key)</div>
+										<div class="help"><span class="link exec" data-exec="?/verifytotalapi"><i class="fa fa-angle-right mr5"></i>@(Verify API key)</span></div>
+									</div>
+								</div>
+								<div data---="checkbox__?.form.mail_api" data-bind="?.form.allow_totalapi__enabled">@(Enable sending mail messages via Total.js API)</div>
+								<div data-bind="%settingstotalapiresponse__template">
+									<script type="text/html">
+										{{ if value }}
+											<div class="mt10">
+												{{ if value.credits != null }}
+													<div class="nmb inline-message"><i class="fa fa-check-circle"></i> @(Total API key is <b>valid</b>. Balance:) <b>{{ value.credits | format(2) }} &euro;</b></div>
+												{{ else }}
+													<div class="nmb inline-message inline-message-error"><i class="fa fa-warning"></i> @(Total API key is <b>invalid</b>).</div>
+												{{ fi }}
+											</div>
+										{{ fi }}
+									</script>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="panelbody">
+						<div class="panel">
+							<div class="pull-right" style="margin:5px 10px 0 0">
+								<div data---="togglebutton__?.allow_tms"></div>
+							</div>
+							<label class="bg-smoke"><i class="fas fa-project-diagram"></i>@(Total.js Message Service (TMS))</label>
+							<div class="padding npb">
+								<p><i class="fas fa-circle mr5" data-bind="?.form.allow_tms__.green__.red:!value"></i>@(TMS allows you to publish and subscribe most important internal operations in the CMS.) <a href="https://docs.totaljs.com/tms/" target="_blank"><i class="fas fa-book mr5"></i>@(TMS documentation)</a>.</p>
+								<div class="row">
+									<div class="col-md-4 m">
+										<div class="alert" data-bind="?.form.url__text b:value + '/$tms/'">@(Endpoint for the Total.js Message Service app will be in the form <b></b>)</div>
+									</div>
+									<div class="col-md-4 m">
+										<div data---="input__?.form.secret_tms__maxlength:100;required:1;placeholder:@(Enter token);camouflage:•__''" data-bind="?.allow_tms__enabled">@(Security token)</div>
+										<div class="help"><span class="exec link" data-exec="?/tms_token"><i class="fas fa-retweet mr5"></i>@(Generate token)</span></div>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -312,6 +368,24 @@
 				CHANGE('?.form.url');
 			});
 		};
+
+		exports.tms_token = function() {
+			SET('?.form.secret_tms', Date.now() + GUID(30));
+		};
+
+		exports.verifytotalapi = function(el) {
+			var p = '%settingstotalapiresponse @hideloading';
+			var model = GET('?');
+			var data = {};
+			data.totalapi = model.totalapi;
+			if (data.totalapi) {
+				if (el instanceof jQuery)
+					OP.loading(true);
+				DAPI('totalapi', data, p);
+			} else
+				NUL(p);
+		};
+
 	});
 
 	Thelpers.settingspermissions = function(value) {

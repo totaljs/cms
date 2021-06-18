@@ -38,6 +38,10 @@ NEWSCHEMA('Settings', function(schema) {
 	schema.define('cdn', String, true);
 	schema.define('memorizeall', 'Boolean');
 	schema.define('localization', 'String');
+	schema.define('allow_tms', Boolean);
+	schema.define('allow_totalapi', Boolean);
+	schema.define('secret_tms', String);
+	schema.define('mail_api', Boolean);
 
 	schema.setGet(function($) {
 		$.callback(PREF);
@@ -91,7 +95,7 @@ NEWSCHEMA('Settings', function(schema) {
 	// Tests SMTP
 	schema.addWorkflow('smtp', function($) {
 		var model = $.model;
-		if (model.smtp)
+		if (model.smtp && !model.mail_api)
 			Mail.use(model.smtp, model.smtpoptions ? model.smtpoptions.parseJSON() : '', err => err ? $.invalid(err) : $.success());
 		else
 			$.success();
@@ -116,6 +120,11 @@ NEWSCHEMA('Settings', function(schema) {
 			PREF.cookie = U.random_string(10);
 
 		CONF.admin_cookie = PREF.cookie;
+		CONF.totalapi = PREF.totalapi;
+		CONF.allow_totalapi = PREF.allow_totalapi;
+		CONF.secret_tms = PREF.secret_tms;
+		CONF.allow_tms = PREF.allow_tms;
+		CONF.mail_api = PREF.mail_api;
 
 		FUNC.refresh_users($);
 
@@ -141,12 +150,17 @@ NEWSCHEMA('Settings', function(schema) {
 
 		PREF.smtp && Mail.use(PREF.smtp, PREF.smtpoptions.parseJSON());
 
-		if (PREF.localization)
-			localization = new Function('req', PREF.localization.indexOf('return ') === -1 ? ('return ' + PREF.localization) : PREF.localization);
-		else
+		if (PREF.localization) {
+			try {
+				localization = new Function('req', PREF.localization.indexOf('return ') === -1 ? ('return ' + PREF.localization) : PREF.localization);
+			} catch (e) {
+				localization = null;
+			}
+		} else
 			localization = null;
 
 		EMIT('settings', PREF);
+		CMD('refresh_cms');
 		$.success();
 	});
 });

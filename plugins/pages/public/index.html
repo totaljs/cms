@@ -32,7 +32,8 @@
 							{{ end }}
 						</script>
 					</div>
-					<button class="exec b" data-exec="?/template"><i class="fa fa-check-circle green"></i>@(Add a new template)</button>
+					<button class="exec b" data-exec="?/marketplace"><i class="fa fa-shopping-basket"></i>@(Buy a template)</button>
+					<button class="exec b" data-exec="?/template"><i class="fa fa-check-circle green"></i>@(Create template)</button>
 				</nav>
 			</div>
 
@@ -243,6 +244,16 @@
 				SETR('pagesnavigation', response);
 				SET('common.form', 'pagesnavigation');
 			});
+		};
+
+		exports.marketplace = function() {
+			IMPORT('ONCE https://marketplace.totaljs.com/open/?app=cms', AEXEC('marketplace/open', 'cms', function(response, data) {
+				SET('pagestemplate', { type: 'page', body: response, name: data.name });
+				SET('common.form', 'pagestemplate');
+				setTimeout(function() {
+					CHANGE('pagestemplate.body', true);
+				}, 2000);
+			}, true));
 		};
 
 		exports.create = function() {

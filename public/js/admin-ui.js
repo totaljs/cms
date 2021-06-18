@@ -1434,7 +1434,7 @@ COMPONENT('multioptions', function(self) {
 	var Tarea = Tangular.compile('<textarea class="ui-moi-save ui-moi-value-inputarea" data-name="{{ name }}"{{ if def }} placeholder="{{ def }}"{{ fi }}{{ if max }} maxlength="{{ max }}"{{ fi }} data-type="text">{{ value }}</textarea>');
 	var Tinput = Tangular.compile('<input class="ui-moi-value-inputtext ui-moi-save" data-name="{{ name }}" type="text" value="{{ value }}"{{ if def }} placeholder="{{ def }}"{{ fi }}{{ if max }} maxlength="{{ max }}"{{ fi }} data-type="text" />');
 	var Tfile = Tangular.compile('<div class="ui-moi-value-inputfile-buttons"><span class="multioptions-operation" data-name="file"><i class="fa fa-folder"></i></span></div><div class="ui-moi-value-inputfile"><input class="ui-moi-save" data-name="{{ name }}" type="text" value="{{ value }}"{{ if def }} placeholder="{{ def }}"{{ fi }}{{ if max }} maxlength="{{ max }}"{{ fi }} data-type="text" /></div>');
-	var Tselect = Tangular.compile('<div class="ui-moi-value-select"><i class="fa fa-chevron-down"></i><select data-name="{{ name }}" class="ui-moi-save ui-multioptions-select">{{ foreach m in values }}<option value="{{ $index }}"{{ if value === m.value }} selected="selected"{{ fi }}>{{ m.text }}</option>{{ end }}</select></div>');
+	var Tselect = Tangular.compile('<div class="ui-moi-value-select"><i class="fa fa-chevron-down"></i><select data-name="{{ name }}" class="ui-moi-save ui-multioptions-select">{{ foreach m in values }}<option value="{{ $index }}"{{ if value === m.value }} selected="selected"{{ fi }}>{{ m.text }}</option>{{ end }}</select></div>');
 	var Tnumber = Tangular.compile('<div class="ui-moi-value-inputnumber-buttons"><span class="multioptions-operation" data-type="number" data-step="{{ step }}" data-name="plus" data-max="{{ max }}" data-min="{{ min }}"><i class="fa fa-plus"></i></span><span class="multioptions-operation" data-type="number" data-name="minus" data-step="{{ step }}" data-max="{{ max }}" data-min="{{ min }}"><i class="fa fa-minus"></i></span></div><div class="ui-moi-value-inputnumber"><input data-name="{{ name }}" class="ui-moi-save ui-moi-value-numbertext" type="text" value="{{ value }}"{{ if def }} placeholder="{{ def }}"{{ fi }} data-max="{{ max }}" data-min="{{ max }}" data-type="number" /></div>');
 	var Tboolean = Tangular.compile('<div data-name="{{ name }}" data-type="boolean" class="ui-moi-save multioptions-operation ui-moi-value-boolean{{ if value }} checked{{ fi }}"><i class="fa fa-check"></i></div>');
 	var Tdate = Tangular.compile('<div class="ui-moi-value-inputdate-buttons"><span class="multioptions-operation" data-type="date" data-name="date"><i class="fa fa-calendar"></i></span></div><div class="ui-moi-value-inputdate"><input class="ui-moi-save ui-moi-date" data-name="{{ name }}" type="text" value="{{ value | format(\'yyyy-MM-dd\') }}" placeholder="dd.mm.yyyy" maxlength="10" data-type="date" /></div>');
@@ -13640,3 +13640,65 @@ COMPONENT('keyvalue', 'maxlength:100', function(self, config, cls) {
 		container.empty().append(builder.join(''));
 	};
 });
+
+// Component: j-ToggleButton
+// Version: 1
+// Updated: 2019-10-04 20:07
+COMPONENT('togglebutton', function(self, config, cls) {
+
+	var icon;
+
+	self.nocompile();
+
+	self.validate = function(value) {
+		return (config.disabled || !config.required) ? true : value === true;
+	};
+
+	self.configure = function(key, value, init) {
+		switch (key) {
+			case 'disabled':
+				!init && self.tclass('ui-disabled', value);
+				break;
+			case 'icontrue':
+			case 'iconfalse':
+				if (value.indexOf(' ') === -1)
+					config[key] = 'fa fa-' + value;
+				break;
+		}
+	};
+
+	self.make = function() {
+		self.aclass(cls);
+		self.append('<button><i></i></button>');
+		icon = self.find('i');
+		self.event('click', function() {
+			if (!config.disabled) {
+				self.dirty(false);
+				self.getter(!self.get());
+			}
+		});
+	};
+
+	self.setter = function(value) {
+		self.tclass(cls + '-selected', value === true);
+		icon.rclass();
+		if (value === true) {
+			if (config.icontrue)
+				icon.aclass(config.icontrue);
+		} else {
+			if (config.iconfalse)
+				icon.aclass(config.iconfalse);
+		}
+	};
+
+	self.state = function(type) {
+		if (!type)
+			return;
+		var invalid = config.required ? self.isInvalid() : false;
+		if (invalid === self.$oldstate)
+			return;
+		self.$oldstate = invalid;
+		self.tclass(cls + '-invalid', invalid);
+	};
+});
+// End: j-ToggleButton

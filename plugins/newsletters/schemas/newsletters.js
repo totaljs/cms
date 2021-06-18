@@ -94,7 +94,7 @@ NEWSCHEMA('Newsletters', function(schema) {
 			EMIT('newsletter.save', model);
 			if ($.model.send) {
 				$.model.body = body;
-				$.model.$workflow('send', $.callback);
+				EXEC('+Newsletters --> send', $.model, $.callback);
 			} else
 				$.success(model.id);
 		});
