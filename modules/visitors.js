@@ -255,16 +255,14 @@ W.counter = function(req) {
 };
 
 W.emitvisitor = function(type, req) {
+
 	VISITOR.url = req.headers['x-ping'] || req.url;
 	VISITOR.ip = req.ip;
 	VISITOR.type = type;
 	VISITOR.online = W.arr[0] + W.arr[1];
 	VISITOR.mobile = req.mobile;
 	VISITOR.user = req.user ? (req.user.name || req.user.nick || req.user.alias) : req.query.utm_user;
-	VISITOR.dttms = NOW;
-
-	EMIT('visitor');
-
+	VISITOR.dtcreated = NOW = new Date();
 	PUBLISH('visitor', VISITOR);
 
 	W.visitors.unshift(VISITOR);

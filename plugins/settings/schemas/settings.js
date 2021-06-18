@@ -148,7 +148,10 @@ NEWSCHEMA('Settings', function(schema) {
 		!PREF.posts && PREF.set('posts', []);
 		!PREF.notices && PREF.set('notices', []);
 
-		PREF.smtp && Mail.use(PREF.smtp, PREF.smtpoptions.parseJSON());
+		delete F.temporary.mail_settings;
+
+		if (PREF.smtp && !CONF.mail_api)
+			Mail.use(PREF.smtp, PREF.smtpoptions.parseJSON());
 
 		if (PREF.localization) {
 			try {
@@ -160,6 +163,7 @@ NEWSCHEMA('Settings', function(schema) {
 			localization = null;
 
 		EMIT('settings', PREF);
+		CMD('refresh_tms');
 		CMD('refresh_cms');
 		$.success();
 	});

@@ -23,9 +23,39 @@ function state() {
 	this.json(MAIN.newsletter);
 }
 
+function stats_tms(req, item) {
+	PUBLISH('newsletters_view', { id: req.query.id || '', ip: req.ip, ua: req.ua, name: item.name, dtcreated: NOW });
+}
+
 function stats(req, res) {
+
+	var id = req.query.id;
+
 	COUNTER('newsletters').hit('all');
-	PUBLISH('newsletters_view', { id: req.query.id || '', dttms: NOW });
-	req.query.id && COUNTER('newsletters').hit(req.query.id);
+
 	res.binary('R0lGODdhAQABAIAAAAAAAAAAACH5BAEAAAEALAAAAAABAAEAAAICTAEAOw==', 'image/gif', 'base64');
+
+	if (id) {
+
+		COUNTER('newsletters').hit(id);
+
+		var key = 'newsletter_' + id;
+		if (TEMP[key]) {
+			stats_tms(req, TEMP[key]);
+			return;
+		}
+
+		if (TEMP[key] === null)
+			return;
+
+		NOSQL('newsletter').one('newsletters').fields('name').id(id).callback(function(err, item) {
+			if (item) {
+				TEMP[key] = item;
+				stats_tms(req, item);
+			} else
+				TEMP[key] = null;
+		});
+	}
+
+
 }

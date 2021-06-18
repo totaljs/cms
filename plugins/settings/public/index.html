@@ -147,7 +147,7 @@
 					<div class="panelbody">
 						<div class="panel">
 							<div class="pull-right" style="margin:5px 10px 0 0">
-								<div data---="togglebutton__?.allow_tms"></div>
+								<div data---="togglebutton__?.form.allow_tms"></div>
 							</div>
 							<label class="bg-smoke"><i class="fas fa-project-diagram"></i>@(Total.js Message Service (TMS))</label>
 							<div class="padding npb">
@@ -157,7 +157,7 @@
 										<div class="alert" data-bind="?.form.url__text b:value + '/$tms/'">@(Endpoint for the Total.js Message Service app will be in the form <b></b>)</div>
 									</div>
 									<div class="col-md-4 m">
-										<div data---="input__?.form.secret_tms__maxlength:100;required:1;placeholder:@(Enter token);camouflage:•__''" data-bind="?.allow_tms__enabled">@(Security token)</div>
+										<div data---="input__?.form.secret_tms__maxlength:100;required:1;placeholder:@(Enter token);camouflage:•__''" data-bind="?.form.allow_tms__enabled">@(Security token)</div>
 										<div class="help"><span class="exec link" data-exec="?/tms_token"><i class="fas fa-retweet mr5"></i>@(Generate token)</span></div>
 									</div>
 								</div>
