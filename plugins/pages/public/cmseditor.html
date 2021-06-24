@@ -325,7 +325,8 @@
 				var idwidget = el.attrd('cms-widget');
 				if (idwidget.substring(0, 4) !== '0000') {
 					unique[idwidget] = true;
-					widgets.push({ id: id, idwidget: idwidget, options: cmseditor.widgetsettings[id] || {} });
+					var config = PARSE(el.attrd('cms-config') || '') || cmseditor.widgetsettings[id] || {};
+					widgets.push({ id: id, idwidget: idwidget, options: config });
 				}
 			});
 
@@ -358,7 +359,8 @@
 					var el = $(this);
 					var id = el.attrd('cms-id');
 					var idwidget = el.attrd('cms-widget');
-					id && idwidget && widgets.push({ id: id, idwidget: idwidget, options: cmseditor.widgetsettings[id] || {} });
+					var config = PARSE(el.attrd('cms-config') || '') || cmseditor.widgetsettings[id] || {};
+					id && idwidget && widgets.push({ id: id, idwidget: idwidget, options: config });
 				});
 
 				parts.push({ id: el.attrd('cms-id'), name: el.attrd('cms-part'), widgets: widgets, body: el[0].outerHTML, category: el.attrd('cms-category') });
@@ -585,8 +587,11 @@
 
 		self.updCopyPaste = function() {
 			self.getToolbar().find('#CMS_panel_buttons_copy span').each(function() {
+
 				var el = $(this);
+
 				switch (el.attrd('name')) {
+
 					case 'copy':
 						el.toggle(!!cmseditor.wrap);
 						break;
@@ -646,7 +651,7 @@
 		self.updWidgetsCSS = function() {
 			var doc = $(cmseditor.instance.getWindow().document);
 			doc.find('link').each(function() {
-				var el = $(this);
+				var el = $(this);
 				var href = el.attr('href');
 				if (href.indexOf('widgets.css') !== -1) {
 					var n = el.clone().attr('href', '/widgets.css?ts=' + GUID(4));
@@ -764,6 +769,7 @@
 					return;
 
 				SETTER('!faicons/hide', true);
+				SETTER('!directory/hide', true);
 
 				e.preventDefault();
 				e.stopPropagation();

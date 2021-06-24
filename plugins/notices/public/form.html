@@ -5,7 +5,7 @@
 			<div class="row">
 				<div class="col-md-8 m">
 					<div data---="input__?.name__required:1;maxlength:300" class="m">@(Name)</div>
-					<div data---="checkbox__?.pinned">@(Pin this notice)</div>
+					<div data---="input__?.pinned__type:checkbox">@(Pin this notice)</div>
 				</div>
 				<div class="col-md-4">
 					<div data---="input__?.language__dirsource:common.dependencies.languages;dirplaceholder:@(Search language);dirempty:@(No language)">@(Language)</div>
@@ -41,7 +41,7 @@
 				</div>
 				<div class="col-md-4 m">
 					<div class="fs12" style="margin-bottom:5px">@(Choose icon):</div>
-					<div data---="faiconsbutton__?.icon"></div>
+					<div data---="input__?.icon__type:icon"></div>
 				</div>
 			</div>
 		</div>

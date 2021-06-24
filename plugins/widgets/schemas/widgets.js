@@ -117,7 +117,7 @@ NEWSCHEMA('Widgets', function(schema) {
 
 		console.log('Updated widget --->', meta);
 
-		for (var i = 0, length = keys.length; i < length; i++) {
+		for (var i = 0; i < keys.length; i++) {
 			var widget = MAIN.widgets[keys[i]];
 			if (widget.reference === meta) {
 
@@ -458,6 +458,7 @@ function replaceContent(arr) {
 function findwidget(id, body, fn, index) {
 
 	index = body.indexOf('data-cms-widget="{0}"'.format(id), index || -1);
+
 	if (index === -1)
 		return;
 

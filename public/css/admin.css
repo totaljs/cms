@@ -1,7 +1,7 @@
 /*auto*/
 
 :root {
-	--radius: 5px;
+	--radius: 4px;
 }
 
 $color   : var(--color);
@@ -95,6 +95,7 @@ hr { border-color: #E0E0E0; }
 .backups { border-bottom: 1px solid #E0E0E0; padding: 10px 20px; font-size: 12px; height: 37px; }
 .backups > div { margin: -1px 18px 0 0; float: left; border-right: 1px solid #E0E0E0; padding-right: 20px }
 .backups > div a { border-right: 1px solid #E0E0E0; padding-right: 20px; margin-right: 18px; }
+.backups > div .link { display: block; margin: 1px 0 0; }
 .backups > div a:last-child { padding-right: 0; margin-right: 0; border-right: 0; }
 
 .toolbar2 { background-color: #F0F0F0; padding: 12px 15px; margin-bottom: 15px; }

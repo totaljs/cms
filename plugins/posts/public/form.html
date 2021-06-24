@@ -13,7 +13,7 @@
 		</div>
 
 		<div class="tabmenu-container">
-			<div data---="checkbox__?.ispublished" class="b pull-left" style="margin-top:15px">@(Is published)</div>
+			<div data---="input__?.ispublished__type:checkbox" class="b pull-left" style="margin-top:15px">@(Is published)</div>
 			<div class="pull-right">
 				<ul data---="tabmenu__?.type__null__'html'" class="tabmenu">
 					<li data-value="html"><i class="fa fa-paint-brush"></i>@(Designer)</li>
@@ -34,8 +34,8 @@
 			</div>
 
 			<div class="padding npt">
-				<div data---="codemirror__?.body__type:markdown;height:auto"></div>
-				<div class="help"><i class="fab fa-markdown"></i><span class="link exec" data-path="common.top" data-value="'markdownhelp'">@(Markdown format)</div>
+				<div data---="codemirror__?.body__minheight:300;parent:window;margin:550;required:1;tabs:true;trim:true"></div>
+				<div class="help"><i class="fab fa-markdown"></i><span class="link exec" data-path="common.top" data-value="'markdownhelp'">@(Markdown format)</span></div>
 			</div>
 			<hr class="nmt nmb" />
 		</div>
@@ -47,7 +47,7 @@
 					<div class="help">@(A quick summarization of this post.)</div>
 				</div>
 				<div class="col-md-3 m">
-					<div data---="dropdowncheckbox__?.signals__alltext:null;datasource:signals;empty:@(Doesn't contain any signals.);icon:dot-circle-o">@(Signals)</div>
+					<div data---="input__?.signals__multiple:true;dirsource:common.dependencies.signals;icon:dot-circle-o">@(Signals)</div>
 					<div class="help">@(Signals can start a special action for visitors.)</div>
 				</div>
 				<div class="col-md-6">
@@ -269,7 +269,7 @@
 		WATCH('?.template', function(path, value, type) {
 			if (type === 2) {
 				cmseditor.instance.reconfigure('template:' + value);
-				cmseditor.instance.set(cmseditor.instance.get());
+				cmseditor.instance.set(cmseditor.instance.get() || '');
 			}
 		}, true);
 

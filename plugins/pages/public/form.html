@@ -4,18 +4,18 @@
 			<div class="row">
 				<div class="col-md-3 m">
 					<div data---="input__?.name__placeholder:@(Homepage);required:true">@(Name)</div>
-					<div data---="checkbox__?.pinned" class="mt10">@(Pin the page)</div>
+					<div data---="input__?.pinned__type:checkbox" class="mt10">@(Pin the page)</div>
 				</div>
 				<div class="col-md-3 m">
 					<div data---="input__?.url__icon:globe;placeholder:@(Page relative URL address);required:true">@(URL address)</div>
-					<div data---="checkbox__?.ispartial" class="green b mt10">@(Is a partial content)</div>
+					<div data---="input__?.ispartial__type:checkbox" class="green b mt10">@(Is a partial content)</div>
 				</div>
 				<div class="col-md-3 m">
 					<div>
 						<div data---="input__?.template__dirsource:common.dependencies.templatespages;dirplaceholder:@(Search templates);dirempty:@(No template);icon:file-text-o" data-bind="?.lockedtemplate__disable">@(Template)</div>
 					</div>
 					<div data-bind="?.lockedtemplate__show:!value || user.sa">
-						<div data---="checkbox__?.lockedtemplate2" class="red b mt10">@(Lock this template for editors)</div>
+						<div data---="input__?.lockedtemplate2__type:checkbox" class="red b mt10">@(Lock this template for editors)</div>
 					</div>
 				</div>
 				<div class="col-md-3 m">
@@ -28,13 +28,13 @@
 		<div class="cmseditor" data---="cmseditor__?.body" data-import="url:@{#}/_pages/cmseditor.html;target:body"></div>
 		<div class="backups hidden hidden-xs bg-smoke" data-bind="?.id__show:!!value">
 			<div class="hidden" data-bind="?.id__show">
-				<div data---="checkbox__?.draft" class="nmb red b" data-bind="?.lockedcontent__show:!value">@(DRAFT)</div>
+				<div data---="input__?.draft__type:checkbox" class="nmb red b" data-bind="?.lockedcontent__show:!value">@(DRAFT)</div>
 			</div>
 			<div class="hidden" data-bind="user.sa__show">
-				<div data---="checkbox__?.lockedcontent" class="nmb b">@(LOCK)</div>
+				<div data---="input__?.lockedcontent__type:checkbox" class="nmb b">@(LOCK)</div>
 			</div>
 			<div class="hidden" data-bind="user.sa__show">
-				<div data---="checkbox__?.usedefault" class="nmb b">@(DEFAULT CONTENT)</div>
+				<div data---="input__?.usedefault__type:checkbox" class="nmb b">@(DEFAULT CONTENT)</div>
 			</div>
 			<div class="hidden" data-bind="?.lockedcontent__hide">
 				<span class="link exec inline green" data-exec="cmseditor.instance.editCSS"><i class="fa fa-paint-brush mr5"></i>@(Edit page styles)</span>
@@ -63,38 +63,37 @@
 			</div>
 			<div class="row mt10">
 				<div class="col-md-4 m">
-					<div data---="dropdowncheckbox__?.navigations__alltext:null;datasource:common.dependencies.navigations;empty:@(Doesn't contain any navigations.);icon:navicon;cleaner:false" data-bind="?.ispartial__disable">@(Side navigations)</div>
+					<div data---="input__?.navigations__multiple:1;dirsource:common.dependencies.navigations" data-bind="?.ispartial__disable">@(Side navigations)</div>
 					<div class="help">@(Add side navigations)</div>
 				</div>
 				<div class="col-md-4 m">
-					<div data---="dropdowncheckbox__?.partial__alltext:null;datasource:pages.partial;empty:@(Doesn't contain any partial pages.);cleaner:false">@(Nested partial pages)</div>
+					<div data---="input__?.partial__multiple:1;dirsource:pages.partial">@(Nested partial pages)</div>
 					<div class="help">@(Join other partial pages with this)</div>
 				</div>
 				<div class="col-md-2 m">
 					<div data---="input__?.language__dirsource:common.dependencies.languages;dirplaceholder:@(Search language);dirempty:@(No language)">@(Language)</div>
 				</div>
 				<div class="col-md-2 m">
-					<div class="fs12" style="margin-bottom:5px">@(Choose icon):</div>
-					<div data---="faiconsbutton__?.icon"></div>
+					<div data---="input__?.icon__type:icon">@(Choose icon)</div>
 				</div>
 			</div>
 		</div>
 		<div class="padding bg-yellow npb">
 			<div class="row">
 				<div class="col-md-4 m">
-					<div data---="dropdowncheckbox__?.navigations2__alltext:null;datasource:common.dependencies.navigations;empty:@(Doesn't contain any navigations.);icon:navicon;cleaner:false" data-bind="?.ispartial__disable">@(Add to navigations)</div>
+					<div data---="input__?.navigations2__multiple:1;dirsource:common.dependencies.navigations;icon:navicon" data-bind="?.ispartial__disable">@(Add to navigations)</div>
 					<div class="help">@(This page will be automatically appended into the selected navigations)</div>
 				</div>
 				<div class="col-md-4 m">
-					<div data---="dropdowncheckbox__?.signals__alltext:null;datasource:common.dependencies.signals;empty:@(Doesn't contain any signals.);icon:dot-circle-o">@(Signals)</div>
+					<div data---="input__?.signals__multiple:1;dirsource:common.dependencies.signals;icon:dot-circle-o">@(Signals)</div>
 					<div class="help">@(Signals can start special actions when the page is displayed)</div>
 				</div>
 				<div class="col-md-4 m">
 					<div class="pagesformcheckboxes">
-						<div data---="checkbox__?.navicon">@(Replace icon in navigations)</div>
-						<div data---="checkbox__?.navname">@(Replace name and language in navigations)</div>
-						<div data---="checkbox__?.replacelink">@(Replace older URL in all pages)</div>
-						<div data---="checkbox__?.nocache">@(Disable cache)</div>
+						<div data---="input__?.navicon__type:checkbox">@(Replace icon in navigations)</div>
+						<div data---="input__?.navname__type:checkbox">@(Replace name and language in navigations)</div>
+						<div data---="input__?.replacelink__type:checkbox">@(Replace older URL in all pages)</div>
+						<div data---="input__?.nocache__type:checkbox">@(Disable cache)</div>
 					</div>
 				</div>
 			</div>

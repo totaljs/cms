@@ -97,6 +97,13 @@
 			}
 		};
 
+		exports.removetemplate = function(el) {
+			var id = el.parent().attrd('id');
+			SETTER('approve/show', '@(Are you sure you want to remove selected template?)', '"trash-o" @(Remove)', function() {
+				AJAX('DELETE [url]api/templates/' + id, refresh_dependencies);
+			});
+		};
+
 		exports.button = function(name, row, grid) {
 			switch (name) {
 				case 'remove':

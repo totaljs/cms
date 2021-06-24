@@ -83,11 +83,14 @@
 			FUNC.loading(true);
 			AJAX('GET [url]api/widgets/{0}/editor/'.format(id), function(response) {
 
-				var content = '<div class="CMS_widget CMS_remove" data-cms-id="{0}" data-cms-widget="{1}" data-cms-category="{3}">{2}</div>'.format(GUID(10), id, response.body, response.category);
+				var slug = 'w-' + item.name.slug().replace(/\-/g, '');
+				var content = ('<div class="CMS_widget CMS_remove ' + slug + '" data-cms-id="{0}" data-cms-name="{4}" data-cms-widget="{1}" data-cms-category="{3}">{2}</div>').format(Date.now().toString(36), id, response.body, response.category, item.name);
+
 				if (after)
 					target.after(content);
 				else
 					target.append(content);
+
 				editor.change(true);
 				editor.resize();
 				FUNC.loading(false, 500);
