@@ -92,7 +92,7 @@
 				return;
 
 			SETTER('approve/show', '@(Are you sure you want to import selected widget?)', '"cloud-download" @(Import)', function() {
-				AJAX('GET https://componentator.com/api/widgets/{0}/'.format(+el.attrd('id')), function(response) {
+				AJAX('GET https://componentator.com/api/widgets/{0}/'.format(el.attrd('id')), function(response) {
 					var data = {};
 					data.name = response.name;
 					data.category = response.category;
