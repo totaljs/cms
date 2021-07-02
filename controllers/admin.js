@@ -200,7 +200,7 @@ function file_read(req, res) {
 	// F.exists() uses req.uri.pathname for creating temp identificator and skips all query strings by creating (because this hack).
 	if (req.query.s) {
 		size = req.query.s.parseInt();
-		if (size < 1 && size > 100) {
+		if (size < 1 || size > 100) {
 			res.throw400();
 			return;
 		}
