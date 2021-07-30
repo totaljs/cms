@@ -862,6 +862,8 @@ Controller.prototype.CMSpage = function(callback, cache) {
 			while (tmp) {
 				repo.sitemap.unshift(tmp);
 				tmp = MAIN.sitemap[tmp.parent];
+				if (tmp && tmp.url === tmp.parent)
+					break;
 			}
 
 			var counter = COUNTER('pages').hit('all').hit(response.id);
