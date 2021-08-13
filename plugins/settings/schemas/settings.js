@@ -41,6 +41,7 @@ NEWSCHEMA('Settings', function(schema) {
 	schema.define('allow_tms', Boolean);
 	schema.define('allow_totalapi', Boolean);
 	schema.define('secret_tms', String);
+	schema.define('totalapi', String);
 	schema.define('mail_api', Boolean);
 
 	schema.setGet(function($) {
@@ -209,6 +210,15 @@ FUNC.refresh_users = function($) {
 
 	MAIN.users = users;
 };
+
+NEWSCHEMA('Settings/TotalAPI', function(schema) {
+
+	schema.define('totalapi', 'String(100)', true);
+
+	schema.addWorkflow('exec', function($, model) {
+		TotalAPI(model.totalapi, 'check', EMPTYOBJECT, $.callback);
+	});
+});
 
 setTimeout(function() {
 	$WORKFLOW('Settings', 'load');

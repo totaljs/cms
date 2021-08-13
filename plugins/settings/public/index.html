@@ -370,20 +370,22 @@
 		};
 
 		exports.tms_token = function() {
-			SET('?.form.secret_tms', Date.now() + GUID(30));
+			var model = GET('?.form');
+			if (model.allow_tms)
+				SET('?.form.secret_tms', Date.now() + GUID(30));
 		};
 
 		exports.verifytotalapi = function(el) {
 			var p = '%settingstotalapiresponse @hideloading';
-			var model = GET('?');
-			var data = {};
-			data.totalapi = model.totalapi;
-			if (data.totalapi) {
-				if (el instanceof jQuery)
-					OP.loading(true);
-				DAPI('totalapi', data, p);
-			} else
-				NUL(p);
+			var model = GET('?.form');
+			if (model.allow_totalapi) {
+				var data = {};
+				data.totalapi = model.totalapi;
+				if (data.totalapi) {
+					AJAX('POST /admin/api/totalapi/', data, ASETTER('message/response', '@(Total.js API key is valid)'));
+				} else
+					NUL(p);
+			}
 		};
 
 	});
