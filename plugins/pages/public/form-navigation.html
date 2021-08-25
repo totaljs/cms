@@ -75,9 +75,7 @@
 					
 					var item = self.finditem(id, self.get());
 					var index = item.children.indexOf(item.item);
-					console.log(item);
 					item.children.splice(index, 1);
-					console.log(item);
 					self.update();
 					self.change(true);
 
