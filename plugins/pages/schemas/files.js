@@ -3,7 +3,7 @@ const Fs = require('fs');
 NEWSCHEMA('Files', function(schema) {
 
 	schema.setQuery(function($) {
-		FILESTORAGE('files').browse($.callback).where('removed', false);
+		FILESTORAGE('files').browse($.callback).where('removed', '<>', true);
 	});
 
 	schema.addWorkflow('clear', function($) {
