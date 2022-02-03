@@ -102,16 +102,14 @@
 					var parent = item.parent;
 					var path = item.name;
 					var is = false;
-
 					while (parent) {
 						var sub = response.items.findItem('id', parent);
-						if (!sub || sub.url === '/')
+						if (!sub || sub.url === '/' || sub.id === parent)
 							break;
 						path = sub.name + ' / ' + path;
 						parent = sub.parent;
 						is = true;
 					}
-
 					item.path = path;
 				}
 

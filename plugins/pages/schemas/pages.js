@@ -135,6 +135,9 @@ NEWSCHEMA('Pages', function(schema) {
 			model.admincreated = user;
 		}
 
+		if (model.id === model.parent)
+			model.parent = null;
+
 		var redirectsmod = false;
 		var redirects = Object.keys(MAIN.redirects);
 		for (var i = 0, length = redirects.length; i < length; i++) {
