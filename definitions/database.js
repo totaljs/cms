@@ -1,6 +1,8 @@
 // This file creates a simple helper for storing content from Pages, Posts and Newsletters
 // Reduces size of main DB for listing (for Pages, Posts, Newsletters) and increases the performance
 
+const ReadCache = {};
+
 // DECLARATION
 CONF.table_pagesdata = 'id:string|body:string|dtcreated:date';
 CONF.table_partsdata = 'id:string|body:string|dtcreated:date';
@@ -31,8 +33,26 @@ FUNC.write = function(type, id, content, callback, exists) {
 };
 
 FUNC.read = function(type, id, callback) {
+
+	var key = 'FUNCread_' + type + '_' + id;
+	var tmp = ReadCache[key];
+	if (tmp) {
+		if (tmp.loaded) {
+			tmp.pending--;
+			callback(null, tmp.body);
+		} else {
+			tmp.pending++;
+			setTimeout(FUNC.read, 500, type, id, callback);
+		}
+		return;
+	}
+
+	tmp = ReadCache[key] = { loaded: 0, pending: 0 };
+
 	TABLE(type + 'data').read().id(id).fields('body').callback(function(err, doc) {
-		callback(null, doc ? doc.body : '');
+		tmp.loaded = 1;
+		tmp.body = doc ? doc.body : '';
+		callback(null, tmp.body);
 	});
 };
 
@@ -41,3 +61,13 @@ FUNC.remove = function(type, id) {
 	var builder = TABLE(type + 'data').remove();
 	id && builder.search('id', id);
 };
+
+ON('service', function() {
+
+	for (var key in ReadCache) {
+		var tmp = ReadCache[key];
+		if (tmp.loaded && tmp.pending <= 0)
+			delete ReadCache[key];
+	}
+
+});
