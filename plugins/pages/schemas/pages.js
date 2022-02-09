@@ -868,14 +868,15 @@ Controller.prototype.CMSpage = function(callback, cache) {
 				repo.sitemap.unshift(tmp);
 				tmp = MAIN.sitemap[tmp.parent];
 
-				if (processed[tmp.url]) {
-					// infinite loop
-					break;
-				} else
-					processed[tmp.url] = 1;
-
-				if (tmp && tmp.url === tmp.parent)
-					break;
+				if (tmp) {
+					if (processed[tmp.url]) {
+						// infinite loop
+						break;
+					} else
+						processed[tmp.url] = 1;
+					if (tmp.url === tmp.parent)
+						break;
+				}
 			}
 
 			var counter = COUNTER('pages').hit('all').hit(response.id);
