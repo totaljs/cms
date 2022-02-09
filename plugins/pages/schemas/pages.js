@@ -862,9 +862,18 @@ Controller.prototype.CMSpage = function(callback, cache) {
 
 			// Sitemap
 			var tmp = page;
+			var processed = {};
+
 			while (tmp) {
 				repo.sitemap.unshift(tmp);
 				tmp = MAIN.sitemap[tmp.parent];
+
+				if (processed[tmp.url]) {
+					// infinite loop
+					break;
+				} else
+					processed[tmp.url] = 1;
+
 				if (tmp && tmp.url === tmp.parent)
 					break;
 			}
