@@ -10,6 +10,7 @@ MAIN.pages = [];
 MAIN.sitemap = {};
 MAIN.variables = {};
 MAIN.redirects = {};
+MAIN.wildcard = [];
 
 NEWSCHEMA('Pages', function(schema) {
 
