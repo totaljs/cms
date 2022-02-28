@@ -102,10 +102,13 @@
 					var parent = item.parent;
 					var path = item.name;
 					var is = false;
+					var cache = {};
+					var sub;
 					while (parent) {
-						var sub = response.items.findItem('id', parent);
-						if (!sub || sub.url === '/' || sub.id === parent)
+						sub = response.items.findItem('id', parent);
+						if (!sub || sub.url === '/' || cache[sub.id])
 							break;
+						cache[sub.id] = 1;
 						path = sub.name + ' / ' + path;
 						parent = sub.parent;
 						is = true;
@@ -274,7 +277,7 @@
 
 		for (var i = 0; i < arr.length - 1; i++) {
 			var path = arr[i];
-			builder.push('<span class="silver">{0} /</span>'.format(path.trim()));
+			builder.push('<span class="silver">{0} /</span>'.format(path.trim().encode()));
 		}
 
 		return (builder.length ? (builder.join('')) : '') + arr.last();
