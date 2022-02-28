@@ -287,6 +287,7 @@
 			var submit = function() {
 				var parts = { type: 'page', items: editor.getParts() };
 				FUNC.loading(true);
+				model.name = model.name.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;');
 				AJAX('POST [url]api/pages/ REPEAT', model, function(response) {
 					FUNC.loading(false, 1000);
 
