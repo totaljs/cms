@@ -42,10 +42,9 @@ NEWSCHEMA('Posts', function(schema) {
 			opt.template && filter.where('template', opt.template);
 			opt.published && filter.where('ispublished', true).where('date', '<=', NOW);
 			opt.search && filter.like('search', opt.search.keywords(true, true));
-			filter.fields('description');
 		}
 
-		filter.fields('id,template,category,name,dtcreated,dtupdated,date,linker,pictures,summary,ispublished,signals,author,template,type,language');
+		filter.fields('id,template,category,name,dtcreated,dtupdated,date,linker,pictures,summary,ispublished,signals,author,template,type,language,description');
 		filter.gridsort(opt.sort || 'date_desc');
 		filter.callback($.callback);
 	});
