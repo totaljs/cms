@@ -39,6 +39,10 @@ FUNC.read = function(type, id, callback) {
 	if (tmp) {
 		if (tmp.loaded) {
 			tmp.pending--;
+
+			if (tmp.pending <= 0)
+				delete ReadCache[key];
+
 			callback(null, tmp.body);
 		} else {
 			tmp.pending++;
