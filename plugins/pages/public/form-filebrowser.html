@@ -156,7 +156,7 @@
 		var Eitems, datasource, filter = null;
 		var skip = false;
 		var psel = '.ui-filelistbox-pagination';
-		var pages = { prev: self.find(psel + ' button[name="prev"]'), next: self.find(psel + ' button[name="next"]'), info: self.find(psel + ' div') };
+		var pages = {};
 
 		self.readonly();
 		self.nocompile();
@@ -290,6 +290,7 @@
 		self.redraw = function() {
 			self.html((typeof(config.search) === 'string' ? '<div class="ui-filelistbox-search"><span><i class="fa fa-search ui-filelistbox-search-icon"></i></span><div><input type="text" placeholder="{0}" /></div></div><div><div class="ui-filelistbox-search-empty"></div>'.format(config.search) : '') + '<div><ul style="height:{0}px"></ul></div><div class="ui-filelistbox-pagination"><button name="prev" disabled="disabled"><i class="fa fa-chevron-left"></i></button><button name="next" disabled="disabled"><i class="fa fa-chevron-right"></i></button><div></div></div>'.format(config.height));
 			Eitems = self.find('ul');
+			pages = { prev: self.find(psel + ' button[name="prev"]'), next: self.find(psel + ' button[name="next"]'), info: self.find(psel + ' div') };
 		};
 
 		self.bind = function(path, value) {
@@ -306,6 +307,7 @@
 			var skip = page * take;
 			var index = 0;
 			var builder = [];
+			var isnext = false;
 
 			self.datasource = [];
 
@@ -323,8 +325,10 @@
 				if (skip > index)
 					continue;
 
-				if (take-- <= 0)
+				if (take-- <= 0) {
+					isnext = true;
 					break;
+				}
 
 				var obj = { text: item.name, value: item.id, index: self.datasource.length, icon: item.type.substring(0, 5) === 'image' ? 'file-image' : 'file-o', size: item.size, width: item.width, height: item.height, mtime: item.mtime };
 				self.datasource.push(obj);
@@ -332,7 +336,7 @@
 			}
 
 			pages.prev.prop('disabled', page === 0);
-			pages.next.prop('disabled', self.datasource.length === 0);
+			pages.next.prop('disabled', !isnext || self.datasource.length === 0);
 			pages.info.html('<b>{0}</b> / @(page)'.format((page + 1)));
 			Eitems.empty().append(builder.join(''));
 		};
