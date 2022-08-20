@@ -80,6 +80,9 @@ function refresh(callback) {
 					if (CONF.proicons)
 						compiled.html = compiled.html.replace(/@18\.css/g, '@18pro.css');
 
+					if (CONF.jcomponent >= 19)
+						compiled.html = compiled.html.replace(/@18/g, '@19');
+
 					compiled.id = item.id;
 					compiled.name = item.name;
 					EMIT('templates.compile', compiled);

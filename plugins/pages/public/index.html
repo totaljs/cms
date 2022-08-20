@@ -211,8 +211,8 @@
 					SET('common.progress', (index / checked.length) * 100);
 					AJAX('DELETE [url]api/pages/', { id: el.id }, next);
 				}, function() {
-					exports.refresh();
 					FUNC.loading(false, 1000);
+					exports.refresh();
 					SETTER('snackbar/success', '@(Pages have been removed successfully.)');
 				});
 			});
