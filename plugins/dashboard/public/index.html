@@ -1,6 +1,23 @@
 <style>
-	/*auto*/
+	.CLASS .grid { display: grid; gap: 20px; }
+	.CLASS .row1 { grid-template-columns: 2fr 8fr; }
+	.CLASS .row2 { grid-template-columns: repeat(2, 1fr); }
+	.CLASS .panelbody { position: relative; padding: 20px 20px 5px; background-color: #fff; margin-bottom: 20px; border-radius: var(--radius); border: 1px solid #eaeaea; }
+	.CLASS .panelbody .caption { font-weight: bold; margin-bottom: 10px; }
+	.CLASS .panelbody .caption i { margin-right: 5px; }
+	.CLASS .stats { border-bottom: 1px solid #e0e0e0; padding: 2px 0 0; font-size: 12px; height: 25px; }
+	.CLASS .stats:last-child { border-bottom: 0; }
+	.CLASS .stats .value { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; float: right; width: 80px; text-align: right; }
+	.CLASS .stats .key { margin-right: 90px; color: #505050; }
+	.CLASS .stats .key i { margin-right: 5px; }
+	.CLASS .ui-statsbarsimple { border-radius: var(--radius); padding: 0; border: 0; }
+	.CLASS .ui-statsbarsimple-table > div:first-child { border-radius: var(--radius) 0 0 var(--radius); }
+	.CLASS .ui-statsbarsimple-table > div:last-child { border-radius: 0 var(--radius) var(--radius) 0; }
 
+	.CLASS .legend-1 { color: #3182BD; }
+	.CLASS .legend-2 { color: #FD8D3C; }
+
+	.pb20 { padding-bottom: 20px !important; }
 	.dashboard-online-position { position: absolute; width: 100%; margin: 110px 0 0 -20px; }
 	.dashboard-online { font-size: 70px; text-align: center; font-weight: bold; line-height: 70px; }
 	.dashboard-online-date { font-size: 12px; color: gray; text-align: center; margin-bottom: 20px; }
@@ -8,12 +25,7 @@
 	.dashboard-devices > div { height: 17px; border-radius: var(--radius); background-color: #EF914E; color: white; font-size: 11px; overflow: hidden; text-align: right; padding: 1px 5px 0 0; }
 	.browser { float: right; color: gray; font-size: 10px; }
 
-	@media (max-width: 1199px) {
-		.dashboard-online-position { margin-top: 90px; }
-		.dashboard-online { font-size: 50px; line-height: 50px; }
-	}
-
-	.ui-dashboardvisitors { border: 1px solid #E0E0E0; border-radius: var(--radius); }
+	.ui-dashboardvisitors.panelbody { padding: 0; }
 	.ui-dashboardvisitors .badge-silver { font-family: monospace; }
 	.ui-dashboardvisitors table { border: 0; width: 100%; table-layout: fixed; font-size: 12px; }
 	.ui-dashboardvisitors table i { margin-right: 5px; }
@@ -44,376 +56,266 @@
 	}
 </style>
 
-<div data-scope="dashboard">
-	<div data---="viewbox__null__parent:.ui-layout2-section;scrollbar:1">
-		<br />
-		<div class="container">
-			<div class="row">
-				<div class="col-md-8">
-					<div>@(The total number of visitors:) <b data-bind="?.stats.today.visitors__html:(value || 0).format(0) + ' ' + (value || 0).pluralize(@('visitors', 'visitor', 'visitors', 'visitors'))"></b></div>
-					<div class="help nmt m">@(Memory usage:) <span data-bind="?.stats.today.memory.heapUsed__html:Thelpers.filesize(value, 2)"></span> / <span data-bind="?.stats.today.memory.heapTotal__html:Thelpers.filesize(value, 2)"></span></div>
-				</div>
-				<div class="col-md-4 visible-md visible-lg right" data-bind="?.stats.today.performance__!html .rpm:value.request.format(0)__!html .fpm:value.file.format(0)">
-					<div class="help">
-						<div>@(Requests/min.) <b class="rpm">0</b></div>
-						<div>@(Files/min.) <b class="fpm">0</b></div>
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-4 m">
-					<div class="panel">
-						<label class="center"><i class="fa fa-circle green blink"></i>@(Online-visitors)</label>
-						<div class="panelbody">
-							<div class="dashboard-online-position hidden">
-								<div class="dashboard-online" data-bind="?.stats.today.online__html:value ? value : 0">0</div>
-								<div class="dashboard-online-date"><b>@(Last visitor:)</b> <span data-bind="?.stats.today.last__html:value ? Thelpers.time(value) : '...'"></span></div>
-							</div>
-							<div data---="donutchart__?.stats.sources__tooltip:false;redraw:?/redrawSources;select:?/selectSource;animate:false"></div>
-						</div>
-						<hr class="nmt nmb" />
-
-						<div class="panelbody">
-							<div class="stats m">
-								<div class="value" data-bind="?.stats.today.robots__html:?/count(value)"></div>
-								<div class="key">@(Robots / Crawlers)</div>
-							</div>
-							<div class="stats">
-								<div class="value" data-bind="?.stats.today.mobile__html:?/count(value)"></div>
-								<div class="key"><i class="fa fa-square" style="color:#EF914E"></i>@(Mobile devices)</div>
-							</div>
-							<div class="stats" style="border-bottom:0">
-								<div class="value" data-bind="?.stats.today.desktop__html:?/count(value)"></div>
-								<div class="key"><i class="fa fa-square" style="color:#4781B8"></i>@(Desktop)</div>
-							</div>
-							<div data---="statsbarsimple__?.stats.today.devices" style="margin:7px 0">
-								<script type="text/html">
-									{{ name }} {{ percentage }}%
-								</script>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="col-md-8 m">
-					<div class="row mt10">
-						<div class="col-md-6 m">
-							<div class="caption"><i class="fa fa-globe"></i>@(Sources today)</div>
-							<div class="stats" id="dashboard-sources-social">
-								<div class="value" data-bind="?.stats.today.social__html:?/count(value)"></div>
-								<div class="key"><i class="fa fa-square" style="color:#649BD0"></i>@(From social networks)</div>
-							</div>
-							<div class="stats" id="dashboard-sources-advert">
-								<div class="value" data-bind="?.stats.today.advert__html:?/count(value)"></div>
-								<div class="key"><i class="fa fa-square" style="color:#FD8D3C"></i>@(From adverts)</div>
-							</div>
-							<div class="stats" id="dashboard-sources-search">
-								<div class="value" data-bind="?.stats.today.search__html:?/count(value)"></div>
-								<div class="key"><i class="fa fa-square" style="color:#74C476"></i>@(From organic search)</div>
-							</div>
-							<div class="stats" id="dashboard-sources-direct">
-								<div class="value" data-bind="?.stats.today.direct__html:?/count(value)"></div>
-								<div class="key"><i class="fa fa-square" style="color:#9E9AC8"></i>@(Direct visitors)</div>
-							</div>
-							<div class="stats" id="dashboard-sources-unknown">
-								<div class="value" data-bind="?.stats.today.unknown__html:?/count(value)"></div>
-								<div class="key"><i class="fa fa-square" style="color:#969696"></i>@(From unknown source)</div>
-							</div>
-						</div>
-						<div class="col-md-6 m">
-							<div class="caption"><i class="fa fa-users"></i>@(Today statistics)</div>
-							<div class="stats">
-								<div class="value" data-bind="?.stats.today.hits__html:?/count(value)"></div>
-								<div class="key">@(Hits)</div>
-							</div>
-							<div class="stats">
-								<div class="value" data-bind="?.stats.today.count__html:?/count(value)"></div>
-								<div class="key">@(Visitors)</div>
-							</div>
-							<div class="stats">
-								<div class="value" data-bind="?.stats.today.unique__html:?/count(value)"></div>
-								<div class="key">@(Unique visitors)</div>
-							</div>
-							<div class="stats">
-								<div class="value" data-bind="?.stats.today.uniquemonth__html:?/count(value)"></div>
-								<div class="key">@(Unique visitors per month)</div>
-							</div>
-							<div class="stats">
-								<div class="value" data-bind="?.stats.today.pages__html:?/count(value)"></div>
-								<div class="key">@(Visited pages per user)</div>
-							</div>
-						</div>
-					</div>
-					<div data---="dashboardvisitors__?.visitors">
-						<table>
-							<thead>
-								<tr>
-									<th style="width:135px"><i class="fa fa-refresh fa-spin"></i>@(Type)</th>
-									<th><i class="fa fa-globe"></i>@(Address)</th>
-									<th style="width:110px" class="hidden-xs"><i class="fa fa-user"></i>@(User)</th>
-									<th style="width:110px" class="hidden-xs">@(IP address)</th>
-									<th style="width:70px" class="hidden-xs center"><i class="far fa-clock-o"></i>@(Time)</th>
-								</tr>
-							</thead>
-							<tbody>
-
-								<!-- WITH DATA -->
-								<script type="text/html">
-									<tr>
-										<td><div class="singline">{{ if newbie }}<i class="fa fa-plus-circle green"></i>{{ fi }}{{ type }}</div></td>
-										<td><div class="singline">{{ if browser }}<span class="browser">{{ browser }}</span>{{ fi }}<span class="badge badge-silver badge-small mr5">{{ id }}</span>{{ if unique }}<span class="badge badge-green mr5">@(+new)</span>{{ fi }}{{ if mobile }}<i class="fa fa-mobile"></i>{{ fi }}<a href="{{ url }}" target="_blank">{{ url }}</a></div></td>
-										<td class="hidden-xs"><div class="singline">{{ user }}</div></td>
-										<td class="hidden-xs"><a href="https://tools.keycdn.com/geo?host={{ ip }}" target="_blank">{{ ip }}</a></td>
-										<td class="hidden-xs center">{{ date | format('HH:mm:ss') }}</td>
-									</tr>
-								</script>
-
-								<!-- EMPTY -->
-								<script type="text/html">
-								<tr>
-									<td>&nbsp;</td>
-									<td></td>
-									<td class="hidden-xs"></td>
-									<td class="hidden-xs"></td>
-									<td class="hidden-xs"></td>
-								</tr>
-								</script>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-			<br />
+<div class="virtualwire hidden" data-if="~PATH~">
+	<ui-plugin>
+		<div class="pull-right">
+			<button class="exec" data-exec="?/refresh"><i class="ti ti-refresh"></i>@(Refresh)</button>
 		</div>
-		<div class="container">
-			<div class="row">
-				<div class="col-md-4">
-					<div class="caption"><i class="fa fa-user-circle"></i>@(Maximum daily online visitors)</div>
-				</div>
-				<div class="col-md-4 col-md-offset-4 right hidden-sm hidden-xs">
-					&empty; <span data-bind="?.stats.today.hoursavg__html:(value || 0).pluralize(@('# visitors', '# visitor', '# visitors', '# visitors'))" class="fs11 gray"></span>
-				</div>
-			</div>
-			<div data---="stats24__?.stats.today.hours" class="m"></div>
-
-			<div data-bind="?.stats.visitors__show" class="hidden m">
-				<div class="row">
-					<div class="col-md-6 m">
-
-						<div style="float:right;margin-top:-3px" data-bind="?.stats.history__template">
-							<script type="text/html">
-							{{ foreach m in value }}
-								<span class="exec fs12 link" style="margin-left:15px" data-exec="?/history" data-year="{{ m }}"><i class="fa fa-calendar mr5"></i>{{ m }}</span>
-							{{ end }}
-							</script>
-						</div>
-
-						<div class="legend m fs12">
-							<i class="fa fa-square legend-1 mr5"></i><span class="mr10">@(Visitors)</span>
-							<i class="fa fa-square legend-2 mr5"></i><span class="mr10">@(Unique)</span>
-						</div>
-						<div data---="barchart__?.stats.visitors__height:250"></div>
-						<div class="mt10" data-bind="?.stats.visitorssum__template">
-							<script type="text/html">
-								<span class="fs11 gray" style="float:right"><b>{{ value.unique | format(0) | def('0') }}</b> {{ value.unique | pluralize(@('uniques', 'unique', 'uniques', 'uniques')) }}</span>
-								<span class="fs11 gray"><b>{{ value.count | format(0) | def('0') }}</b> {{ value.count | pluralize(@('visitors', 'visitor', 'visitors', 'visitors')) }}</span>
-							</script>
-						</div>
-					</div>
-					<div class="col-md-6 m">
-						<div class="legend m fs12">
-							<i class="fa fa-square legend-1 mr5"></i><span class="mr10">@(Desktop)</span>
-							<i class="fa fa-square legend-2 mr5"></i><span class="mr10">@(Mobile devices)</span>
-						</div>
-						<div data---="barchart__?.stats.devices__height:250"></div>
-						<div style="margin-top:8px" data-bind="?.stats.devicessum__template">
-							<script type="text/html">
-								<span class="fs11 gray" style="float:right">@(Total mobile:) <b>{{ value.mobile | format(0) | def('0') }}</b></span>
-								<span class="fs11 gray">@(Total desktop:) <b>{{ value.desktop | format(0) | def('0') }}</b></span>
-							</script>
-						</div>
-					</div>
-				</div>
-
-				<div data---="statsbarsimple__?.stats.sourcesarr">
-					<script type="text/html">
-						{{ name }} {{ percentage }}%
-					</script>
-					<script type="text/html">
-						{{ name }} {{ percentage }}%
-					</script>
-				</div>
-
-			</div>
-
-			<br />
-
-			<div data-bind="?.stats.referrers__template">
-				<script type="text/html">
-					{{ if value && value.length }}
-					<div class="row">
-						<div class="col-md-4">
-							<div class="caption"><i class="fa fa-exchange"></i>@(Top referrers)</div>
-						</div>
-					</div>
-					<div class="row">
-						{{ foreach m in value }}
-						<div class="col-md-3 col-xs-6">
-							<div class="dashboard-referrer">
-								<div>{{ m.count | counter }}</div>
-								<div>{{ m.id }}</div>
-							</div>
-						</div>
-						{{ end }}
-					</div>
-					<br />
-					<br />
-					{{ fi }}
-				</script>
-			</div>
-
-			<div data-bind="?.stats.browsers__template">
-				<script type="text/html">
-					{{ if value && value.length }}
-					<div class="row">
-						<div class="col-md-4">
-							<div class="caption"><i class="fa fa-desktop"></i>@(Top devices)</div>
-						</div>
-					</div>
-					<div class="row">
-						{{ foreach m in value }}
-						<div class="col-md-3 col-xs-6">
-							<div class="dashboard-referrer">
-								<div>{{ m.count | counter }}</div>
-								<div>{{ m.id }}</div>
-							</div>
-						</div>
-						{{ end }}
-					</div>
-					<br />
-					<br />
-					{{ fi }}
-				</script>
-			</div>
-
-			<div data-bind="?.stats.trending__template">
-				<script type="text/html">
-					{{ if value && value.length }}
-					<div class="row">
-						<div class="col-md-4">
-							<div class="caption"><i class="far fa-file-text-o"></i>@(Top pages)</div>
-						</div>
-					</div>
-					<div class="row">
-						{{ foreach m in value }}
-						<div class="col-md-3 col-xs-6">
-							<div class="dashboard-referrer">
-								<div>{{ m.count | counter }}</div>
-								<div>{{ m.name }}</div>
-							</div>
-						</div>
-						{{ end }}
-					</div>
-					<br />
-					<br />
-					{{ fi }}
-				</script>
-			</div>
-
-			<div data-bind="?.stats.tracking__template__show:value && value.length">
-				<script type="text/html">
-					{{ if value && value.length }}
-					<div class="row">
-						<div class="col-md-4">
-							<div class="caption"><i class="fa fa-exchange"></i>@(Top links tracking)</div>
-						</div>
-					</div>
-					<div class="row">
-						{{ foreach m in value }}
-						<div class="col-md-3 col-xs-6">
-							<div class="dashboard-referrer">
-								<div>{{ m.count | counter }}</div>
-								<div>{{ m.id }}</div>
-							</div>
-						</div>
-						{{ end }}
-					</div>
-					<br />
-					<br />
-					{{ fi }}
-				</script>
-			</div>
-		</div>
-		<div class="tabmenu-container">
-			<div class="container">
-				<ul data---="tabmenu__?.tab__null__'pages'" class="tabmenu">
-					<li data-value="pages"><i class="far fa-file-text-o"></i>@(Pages)</li>
-					<li data-value="posts"><i class="fa fa-newspaper-o"></i>@(Posts)</li>
-					<li data-value="contactforms"><i class="far fa-envelope"></i>@(Contact forms)</li>
-					<li data-value="subscribers"><i class="far fa-address-card"></i>@(Subscribers)</li>
-					<li data-value="newsletters"><i class="far fa-envelope"></i>@(Newsletters)</li>
-				</ul>
-				<div data---="nosqlcounter__?.stats.nosqlcounter__height:250"></div>
-			</div>
-		</div>
-	</div>
+	</ui-plugin>
 </div>
 
+<ui-plugin class="CLASS">
+	<ui-component name="viewbox" path="common.page" config="parent:auto;margin:60;scrollbar:1;visibleY:1" class="invisible">
+		<div class="auto" style="max-width:1400px">
+			<div class="padding">
+				<div class="grid row1">
+					<div class="panelbody">
+						<div class="dashboard-online-position hidden">
+							<ui-bind path="?.stats.today.online" config="html:value ? value : 0" class="dashboard-online block">0</ui-bind>
+							<div class="dashboard-online-date"><b>@(Last visitor:)</b> <ui-bind path="?.stats.today.last" config="html:value ? Thelpers.time(value) : '...'"></ui-bind></div>
+						</div>
+						<ui-component name="donutchart" path="?.stats.sources" config="tooltip:false;redraw:?/redrawSources;select:?/selectSource;animate:false"></ui-component>
+						<div class="stats m">
+							<ui-bind path="?.stats.today.robots" config="html:?/count(value)" class="value"></ui-bind>
+							<div class="key">@(Robots / Crawlers)</div>
+						</div>
+						<div class="stats">
+							<ui-bind path="?.stats.today.mobile" config="html:?/count(value)" class="value"></ui-bind>
+							<div class="key"><i class="fa fa-square" style="color:#EF914E"></i>@(Mobile devices)</div>
+						</div>
+						<div class="stats" style="border-bottom:0">
+							<ui-bind path="?.stats.today.desktop" config="html:?/count(value)" class="value"></ui-bind>
+							<div class="key"><i class="fa fa-square" style="color:#4781B8"></i>@(Desktop)</div>
+						</div>
+						<ui-component name="statsbarsimple" path="?.stats.today.devices" style="margin:7px 0">
+							<script type="text/html">
+								{{ name }} {{ percentage }}%
+							</script>
+						</ui-component>
+					</div>
+					<div>
+						<div class="grid row2">
+							<div class="panelbody">
+								<div class="caption"><i class="fa fa-globe"></i>@(Sources today)</div>
+								<div class="stats" id="dashboard-sources-social">
+									<ui-bind path="?.stats.today.social" config="html:?/count(value)" class="value"></ui-bind>
+									<div class="key"><i class="fa fa-square" style="color:#649BD0"></i>@(From social networks)</div>
+								</div>
+								<div class="stats" id="dashboard-sources-advert">
+									<ui-bind class="value" path="?.stats.today.advert" config="html:?/count(value)"></ui-bind>
+									<div class="key"><i class="fa fa-square" style="color:#FD8D3C"></i>@(From adverts)</div>
+								</div>
+								<div class="stats" id="dashboard-sources-search">
+									<ui-bind class="value" path="?.stats.today.search" config="html:?/count(value)"></ui-bind>
+									<div class="key"><i class="fa fa-square" style="color:#74C476"></i>@(From organic search)</div>
+								</div>
+								<div class="stats" id="dashboard-sources-direct">
+									<ui-bind class="value" path="?.stats.today.direct" config="html:?/count(value)"></ui-bind>
+									<div class="key"><i class="fa fa-square" style="color:#9E9AC8"></i>@(Direct visitors)</div>
+								</div>
+								<div class="stats" id="dashboard-sources-unknown">
+									<ui-bind class="value" path="?.stats.today.unknown" config="html:?/count(value)"></ui-bind>
+									<div class="key"><i class="fa fa-square" style="color:#969696"></i>@(From unknown source)</div>
+								</div>
+							</div>
+
+							<div class="panelbody">
+								<div class="caption"><i class="fa fa-users"></i>@(Today statistics)</div>
+								<div class="stats">
+									<ui-bind class="value" path="?.stats.today.hits" config="html:?/count(value)"></ui-bind>
+									<div class="key">@(Hits)</div>
+								</div>
+								<div class="stats">
+									<ui-bind class="value" path="?.stats.today.count" config="html:?/count(value)"></ui-bind>
+									<div class="key">@(Visitors)</div>
+								</div>
+								<div class="stats">
+									<ui-bind class="value" path="?.stats.today.unique" config="html:?/count(value)"></ui-bind>
+									<div class="key">@(Unique visitors)</div>
+								</div>
+								<div class="stats">
+									<ui-bind class="value" path="?.stats.today.uniquemonth" config="html:?/count(value)"></ui-bind>
+									<div class="key">@(Unique visitors per month)</div>
+								</div>
+								<div class="stats">
+									<ui-bind class="value" path="?.stats.today.pages" config="html:?/count(value)"></ui-bind>
+									<div class="key">@(Visited pages per user)</div>
+								</div>
+							</div>
+						</div>
+
+						<ui-component name="dashboardvisitors" path="?.visitors" class="panelbody">
+							<table>
+								<thead>
+									<tr>
+										<th style="width:135px"><i class="fa fa-refresh fa-spin"></i>@(Type)</th>
+										<th><i class="fa fa-globe"></i>@(Address)</th>
+										<th style="width:110px" class="hidden-xs"><i class="fa fa-user"></i>@(User)</th>
+										<th style="width:110px" class="hidden-xs">@(IP address)</th>
+										<th style="width:70px" class="hidden-xs center"><i class="far fa-clock-o"></i>@(Time)</th>
+									</tr>
+								</thead>
+								<tbody>
+
+									<script type="text/html">
+										<tr>
+											<td><div class="singline">{{ if newbie }}<i class="fa fa-plus-circle green"></i>{{ fi }}{{ type }}</div></td>
+											<td><div class="singline">{{ if browser }}<span class="browser">{{ browser }}</span>{{ fi }}<span class="badge badge-silver badge-small mr5">{{ id }}</span>{{ if unique }}<span class="badge badge-green mr5">@(+new)</span>{{ fi }}{{ if mobile }}<i class="fa fa-mobile"></i>{{ fi }}<a href="{{ url }}" target="_blank">{{ url }}</a></div></td>
+											<td class="hidden-xs"><div class="singline">{{ user }}</div></td>
+											<td class="hidden-xs"><a href="https://tools.keycdn.com/geo?host={{ ip }}" target="_blank">{{ ip }}</a></td>
+											<td class="hidden-xs center">{{ date | format('HH:mm:ss') }}</td>
+										</tr>
+									</script>
+
+									<script type="text/html">
+									<tr>
+										<td>&nbsp;</td>
+										<td></td>
+										<td class="hidden-xs"></td>
+										<td class="hidden-xs"></td>
+										<td class="hidden-xs"></td>
+									</tr>
+									</script>
+								</tbody>
+							</table>
+						</ui-component>
+					</div>
+				</div>
+				<ui-bind path="?.stats.visitors" config="show" class="hidden">
+					<div class="panelbody">
+						<ui-bind path="?.stats.history" config="template" style="margin-top:-3px" class="block">
+							<script type="text/html">
+							{{ foreach m in value }}
+								<span class="exec fs12 link" style="margin-right:15px" data-exec="?/history" data-year="{{ m }}"><i class="fa fa-calendar mr5"></i>{{ m }}</span>
+							{{ end }}
+							</script>
+						</ui-bind>
+
+						<hr style="margin:10px 0"/>
+
+						<div class="grid row2">
+							<div>
+								<div class="legend fs12">
+									<i class="fa fa-square legend-1 mr5"></i><span class="mr10">@(Visitors)</span>
+									<i class="fa fa-square legend-2 mr5"></i><span class="mr10">@(Unique)</span>
+								</div>
+								<br />
+								<ui-component name="barchart" path="?.stats.visitors" config="height:250"></ui-component>
+								<ui-bind path="?.stats.visitorssum" config="template" class="mt10">
+									<script type="text/html">
+										<span class="fs11 gray" style="float:right"><b>{{ value.unique | format(0) | def('0') }}</b> {{ value.unique | pluralize(@('uniques', 'unique', 'uniques', 'uniques')) }}</span>
+										<span class="fs11 gray"><b>{{ value.count | format(0) | def('0') }}</b> {{ value.count | pluralize(@('visitors', 'visitor', 'visitors', 'visitors')) }}</span>
+									</script>
+								</ui-bind>
+							</div>
+							<div>
+								<div class="legend fs12">
+									<i class="fa fa-square legend-1 mr5"></i><span class="mr10">@(Desktop)</span>
+									<i class="fa fa-square legend-2 mr5"></i><span class="mr10">@(Mobile devices)</span>
+								</div>
+								<br />
+								<ui-component name="barchart" path="?.stats.devices" config="height:250"></ui-component>
+								<ui-bind path="?.stats.devicessum" config="template" class="mt10">
+									<script type="text/html">
+										<span class="fs11 gray" style="float:right">@(Total mobile:) <b>{{ value.mobile | format(0) | def('0') }}</b></span>
+										<span class="fs11 gray">@(Total desktop:) <b>{{ value.desktop | format(0) | def('0') }}</b></span>
+									</script>
+								</ui-bind>
+							</div>
+						</div>
+
+						<br />
+						<ui-component name="statsbarsimple" path="?.stats.sourcesarr" class="m">
+							<script type="text/html">
+								{{ name }} {{ percentage }}%
+							</script>
+							<script type="text/html">
+								{{ name }} {{ percentage }}%
+							</script>
+						</ui-component>
+					</div>
+
+				</ui-bind>
+				<div class="panelbody">
+					<div class="row">
+						<div class="col-md-4">
+							<div class="caption"><i class="fa fa-user-circle"></i>@(Maximum daily online visitors)</div>
+						</div>
+						<div class="col-md-4 col-md-offset-4 right hidden-sm hidden-xs">
+							&empty; <ui-bind path="?.stats.today.hoursavg" config="html:(value || 0).pluralize(@('# visitors', '# visitor', '# visitors', '# visitors'))" class="fs11 gray"></ui-bind>
+						</div>
+					</div>
+					<ui-component name="stats24" path="?.stats.today.hours" class="m"></ui-component>
+				</div>
+
+				<ui-bind path="?.stats.referrers" config="template">
+					<script type="text/html">
+						{{ if value && value.length }}
+						<div class="panelbody">
+							<div class="row">
+								<div class="col-md-4">
+									<div class="caption"><i class="fa fa-exchange"></i>@(Top referrers)</div>
+								</div>
+							</div>
+							<div class="row">
+								{{ foreach m in value }}
+								<div class="col-md-3 col-xs-6">
+									<div class="dashboard-referrer">
+										<div>{{ m.count | counter }}</div>
+										<div>{{ m.id }}</div>
+									</div>
+								</div>
+								{{ end }}
+							</div>
+						</div>
+						{{ fi }}
+					</script>
+				</ui-bind>
+
+				<ui-bind path="?.stats.browsers" config="template">
+					<script type="text/html">
+						{{ if value && value.length }}
+						<div class="panelbody">
+							<div class="row">
+								<div class="col-md-4">
+									<div class="caption"><i class="fa fa-desktop"></i>@(Top devices)</div>
+								</div>
+							</div>
+							<div class="row">
+								{{ foreach m in value }}
+								<div class="col-md-3 col-xs-6">
+									<div class="dashboard-referrer">
+										<div>{{ m.count | counter }}</div>
+										<div>{{ m.id }}</div>
+									</div>
+								</div>
+								{{ end }}
+							</div>
+						</div>
+						{{ fi }}
+					</script>
+				</ui-bind>
+			</div>
+		</div>
+	</ui-component>
+</ui-plugin>
+
 <script>
-
-	PLUGIN('dashboard', function(exports) {
-
-		var interval;
-		var prevsource;
-		var historystats;
+	PLUGIN(function(exports) {
+		var interval, historystats, prevsource;
 		var internalstats = {};
 
-		// Default scope
-		exports.scope = 'dashboard';
-
-		exports.destroy = function() {
-			clearInterval(interval);
+		exports.init = function() {
+			BREADCRUMB.add('@(Dashboard)', NAV.url);
+			exports.refresh();
 		};
 
-		exports.count = function(value) {
-			return (value || 0).format(0) + 'x';
-		};
-
-		exports.getOnline = function() {
-
-			if (common.page !== 'dashboard')
-				return;
-
-			AJAX('GET [url]api/dashboard/online/', function(response) {
-				//response.hoursavg = response.hours.filter(FN('n => n > 0')).scalar('median') >> 0;
-				SET('?.stats.sources', [{ name: '@(Social networks)', value: response.social, id: 'social' }, { name: '@(Visitors from advert)', value: response.advert, id: 'advert' }, { name: '@(Organic search)', value: response.search, id: 'search' }, { name: '@(Direct visitors)', value: response.direct, id: 'direct' }, { name: '@(From unknown sources)', value: response.unknown, id: 'unknown' }]);
-
-				var max = (response.mobile || 0) + (response.desktop || 0);
-				var mobile = 50;
-				var desktop = 50;
-
-				if (max) {
-					mobile = (response.mobile / max) * 100;
-					desktop = (response.desktop / max) * 100;
-				}
-
-				response.devices = [{ name: '@(Mobile devices)', value: mobile, color: '#EF914E' }, { name: '@(Desktop devices)', value: desktop, color: '#4781B8' }];
-				SET('?.stats.today', response);
-			});
-		};
-
-		exports.hidden = function() {
-			clearInterval(interval);
-		};
-
-		// Public methods
-		exports.reload = function() {
+		exports.refresh = function() {
 			interval = setInterval(exports.getOnline, 4000);
 			exports.getOnline();
 
 			setTimeout(function() {
-				AJAX('GET [url]api/dashboard/', function(response) {
-
+				exports.tapi('dashboard_stats', function(response) {
 					var keys = Object.keys(response);
 					var years = {};
 
@@ -442,20 +344,43 @@
 						SETTER('barchart .dashboard.stats.devices', 'reconfigure', 'limit:' + (Math.ceil(internalstats.devices / 10000) * 10000));
 					}
 
-					SET('?.visitors', response.visitors || []);
+					exports.set('visitors', response.visitors || []);
 					delete response.visitors;
 
-					SET('?.stats.history', years);
+					exports.set('stats.history', years);
 					years.length && exports.history(years.last());
 				});
-
-				AJAX('GET [url]api/dashboard/tracking/', '?.stats.tracking');
-
 			}, 500);
 		};
 
+		exports.count = function(value) {
+			return (value || 0).format(0) + 'x';
+		};
+
+		exports.getOnline = function() {
+			exports.tapi('dashboard_online', function(response) {
+				exports.set('stats.sources', [{ name: '@(Social networks)', value: response.social, id: 'social' }, { name: '@(Visitors from advert)', value: response.advert, id: 'advert' }, { name: '@(Organic search)', value: response.search, id: 'search' }, { name: '@(Direct visitors)', value: response.direct, id: 'direct' }, { name: '@(From unknown sources)', value: response.unknown, id: 'unknown' }]);
+
+				var max = (response.mobile || 0) + (response.desktop || 0);
+				var mobile = 50;
+				var desktop = 50;
+
+				if (max) {
+					mobile = (response.mobile / max) * 100;
+					desktop = (response.desktop / max) * 100;
+				}
+
+				response.devices = [{ name: '@(Mobile devices)', value: mobile, color: '#EF914E' }, { name: '@(Desktop devices)', value: desktop, color: '#4781B8' }];
+				exports.set('stats.today', response);
+			});
+		};
+
+		exports.hidden = function() {
+			clearInterval(interval);
+		};
+
 		exports.referrers = function(year) {
-			AJAX('GET [url]api/dashboard/referrers/' + (year ? ('?year=' + year) : ''), function(response) {
+			exports.tapi('dashboard_referrers' + (year ? ('?year=' + year) : ''), function(response) {
 
 				var ref = [];
 				var brw = [];
@@ -470,22 +395,18 @@
 						ref.push(item);
 				}
 
-				SET('?.stats.referrers', ref);
-				SET('?.stats.browsers', brw);
+				exports.set('stats.referrers', ref);
+				exports.set('stats.browsers', brw);
 			});
-		};
-
-		exports.trending = function(year) {
-			AJAX('GET [url]api/dashboard/trending/' + (year ? ('?year=' + year) : ''), '?.stats.trending');
 		};
 
 		exports.history = function(el) {
 			var year = +(typeof(el) === 'string' ? el : el.attrd('year'));
 
-			SET('?.stats.visitors', exports.getStats(year, ['count', 'unique']));
-			SET('?.stats.devices', exports.getStats(year, ['desktop', 'mobile']));
-			SET('?.stats.visitorssum', exports.getStatsSum(year, ['count', 'unique']));
-			SET('?.stats.devicessum', exports.getStatsSum(year, ['desktop', 'mobile']));
+			exports.set('stats.visitors', exports.getStats(year, ['count', 'unique']));
+			exports.set('stats.devices', exports.getStats(year, ['desktop', 'mobile']));
+			exports.set('stats.visitorssum', exports.getStatsSum(year, ['count', 'unique']));
+			exports.set('stats.devicessum', exports.getStatsSum(year, ['desktop', 'mobile']));
 
 			var source = exports.getStatsSum(year, ['search', 'direct', 'advert', 'unknown', 'social']);
 			var sum = 0;
@@ -506,10 +427,9 @@
 			sourcearr.push({ name: '@(Direct visitors)', value: source.direct, color: '#9D9BC5' });
 			sourcearr.push({ name: '@(From unknown sources:)', value: source.unknown, color: '#969696' });
 
-			SET('?.stats.sourcessum', source);
-			SET('?.stats.sourcesarr', sourcearr);
+			exports.set('stats.sourcessum', source);
+			exports.set('stats.sourcesarr', sourcearr);
 			exports.referrers(year);
-			exports.trending(year);
 		};
 
 		exports.getStatsSum = function(year, names) {
@@ -551,10 +471,6 @@
 			$('.dashboard-online-position').rclass('hidden');
 		};
 
-		WATCH('?.tab', function(path, value) {
-			value && AJAXCACHE('GET [url]api/{0}/stats/'.format(value), null, '?.stats.nosqlcounter', '5 minutes');
-		}, true);
-
 		exports.selectSource = function(item) {
 			prevsource && prevsource.rclass('selected');
 			prevsource = $('#dashboard-sources-' + item.id);
@@ -564,7 +480,49 @@
 		ON('visitor', function(data) {
 			SETTER('dashboardvisitors/add', data);
 		});
+
 	});
+
+	Thelpers.counter = function(value) {
+		if (value > 999999)
+			return (value / 100000).format(2) + ' M';
+		if (value > 9999)
+			return (value / 1000).format(2) + ' K';
+		return value.format(0);
+	};
+
+	Thelpers.time = function(value) {
+
+		if (!value)
+			return;
+
+		var diff = Date.now() - value.parseDate().getTime();
+		var minutes = ((diff / 1000) / 60) >> 0;
+
+		if (minutes <= 1) {
+			var seconds = (diff / 1000) >> 0;
+			if (seconds < 60)
+				return @(seconds + ' ' + Tangular.helpers.pluralize(seconds >> 0, 'seconds', 'second', 'seconds', 'seconds') + ' ago');
+		}
+
+		if (minutes < 60)
+			return minutes < 2 ? '@(less than minute ago)' : @(minutes + ' minutes ago');
+
+		var hours = (minutes / 60) >> 0;
+		if (hours < 24)
+			return @(hours + ' ' + Tangular.helpers.pluralize(hours, 'hours', 'hour', 'hours', 'hours') + ' ago');
+
+		var days = (hours / 24) >> 0;
+		if (days < 30)
+			return @(days + ' ' + Tangular.helpers.pluralize(days, 'days', 'day', 'days', 'days') + ' ago');
+
+		var months = (days / 29) >> 0;
+		if (months < 12)
+			return @(months + ' ' + Tangular.helpers.pluralize(months, 'months', 'month', 'months', 'months') + ' ago');
+
+		var years = (months / 12) >> 0;
+		return @(years + ' ' + Tangular.helpers.pluralize(years, 'years', 'year', 'years', 'years') + ' ago');
+	};
 
 	COMPONENT('dashboardvisitors', 'count:15', function(self, config, cls) {
 
@@ -645,5 +603,4 @@
 			}
 		};
 	});
-
 </script>

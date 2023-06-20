@@ -1,0 +1,87 @@
+<ui-component name="box" path="common.form2" config="if:~PATH~;icon:ti ti-copy;title:@(Files);autofocus:true;scrollbar:1;submit:?/submit;width:600;zindex:30;scrollbarshadow:1" class="hidden" plugin="~PATH~">
+	<nav>
+		<button class="exec" data-exec="?/upload"><i class="ti ti-cloud-upload"></i>@(Upload)</button>
+		<ui-component name="searchinput" path="?.search" config="placeholder:@(Search navigation)"></ui-component>
+	</nav>
+	<div>
+		<div class="padding">
+			<ui-bind path="?.items" config="template" class="listing small block">
+				<script type="text/html">
+					<ui-component name="search" path="?.search" config="selector:figure">
+						{{ foreach m in value }}
+						<figure class="exec" data-exec="?/submit" data-id="{{ m.id }}" data-search="{{ m.name }}">
+							<section>
+								<span class="exec pull-right" data-exec="?/options" data-prevent="true"><i class="ti ti-cog"></i></span>
+								{{ if m.color }}<div class="color" style="background:{{ m.color }}"></div>{{ fi }}
+								{{ if m.icon }}<i class="{{ m.icon }} icon"></i>{{ fi }}{{ m.name }}
+							</section>
+						</figure>
+						{{ end }}
+					</ui-component>
+				</script>
+			</ui-bind>
+		</div>
+	</div>
+	<nav>
+		<button name="cancel" style="width:100%">@(Close)</button>
+	</nav>
+</ui-component>
+
+<script>
+
+	PLUGIN(function(exports) {
+
+		var meta;
+
+		exports.refresh = function() {
+			exports.tapi('files_list', function(response) {
+				switch (meta.type) {
+					case 'images':
+						var tmp = { jpg: 1, png: 1, jpeg: 1, webp: 1, gif: 1, svg: 1 };
+						response = response.remove(n => !tmp[n.ext]);
+						break;
+				}
+				response.quicksort('date_desc');
+				exports.set('items', response);
+			});
+		};
+
+		exports.init = function(opt, callback) {
+			meta = opt;
+			if (callback)
+				meta.callback = callback;
+			exports.refresh();
+		};
+
+		exports.submit = function(el) {
+			var model = exports.model;
+			var item = model.items.findItem('id', el.attrd2('id'));
+			item.url = '/download/' + item.id + '.' + item.ext;
+			meta.callback(item, function() {
+				NULL('common.form2');
+			});
+		};
+
+		exports.upload = function() {
+			var opt = {};
+
+			opt.url = '/upload/' + common.openplatform;
+			opt.multiple = true;
+
+			switch (meta.type) {
+				case 'images':
+					opt.accept = 'image/*';
+					break;
+			}
+
+			opt.callback = function(response, err) {
+				exports.scope();
+				exports.refresh();
+			};
+
+			SETTER('fileuploader/upload', opt);
+		};
+
+	});
+
+</script>

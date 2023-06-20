@@ -1,0 +1,98 @@
+<ui-component name="form" path="cmseditor.form" config="if:~PATH~;width:900;reload:?/reload;submit:?/submit;scrollbar:true;$id:~PATH~;title:@(Image editor);icon:camera" class="hidden" plugin="~PATH~">
+	<div>
+		<br />
+		<ui-component name="crop" path="?.url" config="width:200;height:100;$id:cmsimagecrop;filebrowser:?/browse"></ui-component>
+		<hr class="nmt nmb" />
+		<div class="padding">
+			<ui-component name="input" path="?.alt" config="placeholder:@(Describe the picture)">@(Alternate text)</ui-component>
+		</div>
+	</div>
+	<nav>
+		<ui-component name="validate" path="?">
+			<button name="submit"><i class="ti ti-check-circle"></i>@(APPLY)</button>
+			<button name="cancel">@(Cancel)</button>
+		</ui-component>
+	</nav>
+</ui-component>
+
+<script>
+
+	PLUGIN(function(exports) {
+
+		exports.reload = function() {
+			var model = exports.model;
+			if (model.files && model.files[0] && model.files[0].type.substring(0, 6) === 'image/')
+				setTimeout(ASETTER(true, '#cmsimagecrop/load', model.files[0]), 1500);
+		};
+
+		exports.browse = function(set) {
+			var model = exports.model;
+			var config = model.instance.config;
+			config.files && model.instance.EXEC(config.files, function(response) {
+				set(typeof(response) === 'string' ? response : response.url);
+			});
+		};
+
+		function dataURLtoFile(dataurl, filename) {
+			var arr = dataurl.split(',');
+			var mime = arr[0].match(/:(.*?);/)[1];
+			var bstr = atob(arr[arr.length - 1]);
+			var n = bstr.length;
+			var u8arr = new Uint8Array(n);
+			while (n--)
+				u8arr[n] = bstr.charCodeAt(n);
+			return new File([u8arr], filename, {type:mime});
+		}
+
+		exports.submit = function(hide) {
+
+			var model = exports.model;
+			var target = model.element;
+			var cropper = FIND('#cmsimagecrop');
+
+			model.instance.backup(target);
+			target.attr('alt', model.alt);
+			// model.href && target.parent('a').attr('href', model.href);
+
+			// Is the picture changed?
+			if (cropper.dirty()) {
+				model.instance.change(true);
+				hide();
+				return;
+			}
+
+			var url = cropper.url;
+			if (url) {
+
+				var size = target.attrd('cms-size');
+				if (size) {
+					target.attrd('cms-src', url);
+					target.attr('src', url + '?s=' + size.replace('%', ''));
+				} else
+					target.attr('src', url);
+
+				model.instance.autoresize();
+				model.instance.change(true);
+				hide();
+				return;
+			}
+
+			var data = cropper.output(true);
+			var config = model.instance.config;
+
+			config.image && model.instance.EXEC(config.image, { files: [dataURLtoFile(data.data, data.filename)] }, function(response) {
+				var url = typeof(response) === 'string' ? response : response.url;
+				var size = target.attrd('cms-size');
+				if (size) {
+					target.attrd('cms-src', url);
+					target.attr('src', url + (url.indexOf('?') === -1 ? '?' : '&') + 's=' + size.replace('%', ''));
+				} else
+					target.attr('src', url);
+				model.instance.autoresize();
+				model.instance.change(true);
+				hide();
+			});
+		};
+	});
+
+</script>

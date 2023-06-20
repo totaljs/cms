@@ -1,0 +1,109 @@
+<style>
+	.~PATH~ figure { height: 100%; height: 140px; margin-bottom: var(--gap); }
+	.~PATH~ figure button { width: 80%; height: 90%; border: 1px solid #EAEAEA; background-color: #FFF; font-size: 14px; border-radius: 5px; margin: 5% 0 0 10%; }
+	.~PATH~ figure button.highlight { background-color: #F9F9F9; }
+	.~PATH~ figure button i { font-size: 25px; display: block; margin-bottom: 15px; }
+	.~PATH~ figure button:hover { background-color: #f8f8f8; }
+</style>
+
+<ui-plugin class="~PATH~">
+	<ui-component name="viewbox" path="common.page" config="parent:window;centered:1;margin:60;shadowscrollbar:1" class="emptybody">
+		<div style="width:100%;max-width:800px;margin:0 auto;text-align:left">
+			<br />
+			<ui-bind path="?.plugins" config="template" class="apps grid-4">
+				<script type="text/html">
+					{{ foreach m in value }}
+					<figure>
+						<button class="exec" {{ if m.exec }}data-exec="?/exec" data-id="{{ m.id }}"{{ else }}data-exec="common/redirect" data-url="{{ m.url }}"{{ fi }}><i class="{{ m.icon }}"></i><span>{{ m.name }}</span></button>
+					</figure>
+					{{ end }}
+				</script>
+			</ui-bind>
+			<br />
+		</div>
+	</ui-component>
+</ui-plugin>
+
+<script>
+
+	PLUGIN(function(exports) {
+
+		exports.refresh = function() {
+
+			var plugins = common.plugins.slice(0);
+
+			if (user.sa) {
+				plugins.push({ exec: true, id: 'enterprise', name: '@(Enterprise)', icon: 'ti ti-totaljs green' });
+				plugins.push({ exec: true, id: 'backup', name: '@(Backup)', icon: 'ti ti-download' });
+				plugins.push({ exec: true, id: 'restore', name: '@(Restore)', icon: 'ti ti-upload' });
+				plugins.push({ exec: true, id: 'clear', name: '@(Clear)', icon: 'ti ti-trash red' });
+			}
+
+			exports.set('plugins', plugins);
+
+		};
+
+		exports.exec = function(el) {
+			var id = ATTRD(el);
+			exports[id]();
+		};
+
+		exports.backup = function() {
+
+			if (!user.sa)
+				return;
+
+			SETTER('approve/show', '@(Are you sure you want to export all data?)', '"ti ti-cloud-download" @(Export)', function() {
+				location.href = '/admin/backup/';
+			});
+		};
+
+		exports.clear = function() {
+
+			if (!user.sa)
+				return;
+
+			SETTER('approve/show', '@(Are you sure you want to clear entire content?)', '"ti ti-trash" @(Clear)', function() {
+				exports.ajax('GET /admin/clear/', ASETTER('message/response @hideloading', '@(Done, the content has been cleared)'));
+			});
+		};
+
+		exports.restore = function() {
+
+			if (!user.sa)
+				return;
+
+			var opt = {};
+			opt.multiple = false;
+			opt.callback = function(files, e) {
+
+				var fd = new FormData();
+				for (var i = 0; i < files.length; i++) {
+
+					var filename = files[i].name;
+					var index = filename.lastIndexOf('/');
+
+					if (index === -1)
+						index = filename.lastIndexOf('\\');
+
+					if (index !== -1)
+						filename = filename.substring(index + 1);
+
+					fd.append('file' + i, files[i], filename);
+				}
+
+				SETTER('approve/show', '@(Are you sure you want to import data?)', '"ti ti-cloud-upload" @(Import)', function() {
+					SETTER('loading/show');
+					UPLOAD('/admin/restore/', fd, ASETTER('message/response @hideloading', '@(Done, data has been imported successfully)'));
+				});
+
+			};
+			SETTER('filebrowser/show', opt);
+		};
+
+
+		exports.refresh();
+
+	});
+
+</script>

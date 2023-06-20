@@ -1,0 +1,46 @@
+<style>
+	.CLASS .restricted > div { border: 1px solid #e0e0e0; border-radius: var(--radius); }
+</style>
+
+<ui-plugin class="CLASS">
+	<ui-component name="viewbox" path="common.page" config="parent:auto;margin:60;scrollbar:1;visibleY:1" class="invisible">
+		<div class="restricted" style="max-width:700px">
+			<br />
+			<div class="padding bg-body">
+				<div class="padding">
+
+					<div class="message message-alert">
+						<i class="ti ti-warning"></i><b>@(IMPORTANT)</b>:<br />
+						@(Variables are saved automatically for each change.)
+					</div>
+					<br />
+
+					<ui-component name="keyvalue" path="?.variables" config="placeholderkey:@(Type a key);placeholdervalue:@(Type a value and press enter)"></ui-component>
+				</div>
+			</div>
+			<br />
+		</div>
+	</ui-component>
+</ui-plugin>
+
+<script>
+
+	PLUGIN(function(exports) {
+
+		exports.init = function(id) {
+			BREADCRUMB.add('@(Variables)', NAV.url);
+			exports.refresh();
+		};
+
+		exports.refresh = function() {
+			exports.tapi('variables_read', 'variables @type:read');
+		};
+
+		exports.watch('variables', function(path, value, type) {
+			if (type !== 'read')
+				exports.tapi('variables_save', { vars: value }, ASETTER('notifybar/response', '@(Variables have been updated successfully)'));
+		});
+
+	});
+
+</script>

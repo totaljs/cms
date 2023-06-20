@@ -1,0 +1,180 @@
+<div class="virtualwire hidden" data-if="~PATH~">
+	<ui-plugin>
+		<ui-component name="searchinput" path="?.search" config="placeholder:@(Search navigation)" class="pull-right"></ui-component>
+		<div class="pull-right">
+			<button class="exec" data-exec="?/create"><i class="ti ti-plus-circle"></i>@(Create)</button>
+			<button class="exec" data-exec="?/refresh"><i class="ti ti-refresh"></i>@(Refresh)</button>
+		</div>
+	</ui-plugin>
+</div>
+
+<ui-plugin>
+
+	<ui-component name="empty" path="?.items" config="parent:auto" class="invisible">
+
+		<script type="text/html">
+			@(No data found)
+		</script>
+
+		<ui-component name="viewbox" path="common.page" config="parent:auto;margin:60;scrollbar:1;visibleY:1" class="invisible">
+			<div class="auto" style="max-width:1400px">
+				<ui-component name="selection" path="?.selection" config="datasource:?.items;cancel:?.search" class="padding">
+
+					<div class="heading">
+						<h3>@(Navigation)</h3>
+					</div>
+
+					<ui-bind path="?.items" config="template">
+						<script type="text/html">
+							<ui-component name="search" path="?.search" config="selector:figure">
+								<div class="listing4">
+									{{ foreach m in value }}
+									<figure class="exec" data-exec="?/open" data-id="{{ m.id }}" data-search="{{ m.name }}">
+										<section>
+											<span class="color-border" style="background-color:{{ m.color }}"></span>
+											<div class="listing-header">
+												{{ if m.icon }}<i class="{{ m.icon }} icon mr15"></i>{{ fi }}
+												<b>{{ m.name }}</b>
+											</div>
+											<div class="badges">
+												{{ if m.modified }}<span class="badge modified">@(Modified)</span>{{ fi }}
+												{{ if m.newbie }}<span class="badge newbie">@(Newbie)</span>{{ fi }}
+											</div>
+											<div class="controls">
+												<span class="gray mr15 date">{{ m.dtupdated | empty(m.dtcreated) | format('[ts]') }}</span>
+												<span class="exec mr10" data-exec="?/edit" data-prevent="true"><i class="ti ti-pencil"></i></span>
+												<span class="exec" data-exec="?/options" data-prevent="true"><i class="ti ti-cog"></i></span>
+											</div>
+										</section>
+									</figure>
+									{{ end }}
+								</div>
+							</ui-component>
+						</script>
+					</ui-bind>
+				</ui-component>
+			</div>
+		</ui-component>
+
+	</ui-component>
+
+</ui-plugin>
+
+<ui-component name="importer" path="common.form" config="if:navform;url:/~ID~/form.html"></ui-component>
+<ui-component name="importer" path="common.form" config="if:sitemapform;url:/~ID~/sitemap.html"></ui-component>
+<ui-component name="importer" path="common.form2" config="if:linkform;url:/~ID~/link.html"></ui-component>
+
+<script>
+
+	PLUGIN(function(exports) {
+
+		exports.init = function(id) {
+			BREADCRUMB.add('@(Navigation)', NAV.url);
+			exports.refresh();
+		};
+
+		exports.refresh = function(el) {
+			el && el.find('i').aclass('ti-spin').rclass('ti-spin', 800);
+			exports.tapi('nav_list', 'items @diff');
+		};
+
+		exports.edit = function(el) {
+			var id = el instanceof jQuery ? el.attrd2('id') : el;
+			exports.tapi('nav_read/' + id + ' ERROR', function(response) {
+				SET('navform @reset', response);
+				SET('common.form', 'navform');
+			});
+		};
+
+		exports.open = function(el) {
+			var id = el instanceof jQuery ? el.attrd2('id') : el;
+			exports.tapi('nav_read/' + id + ' ERROR', function(response) {
+				SET('sitemapform @reset', response);
+				SET('common.form', 'sitemapform');
+			});
+		};
+
+		exports.menu = function(el) {
+
+			var model = exports.model;
+			var opt = {};
+			opt.element = el;
+			opt.align = 'right';
+			opt.items = [];
+
+			opt.items.push({ id: 'create', name: '@(Create)', icon: 'ti ti-plus-circle green' });
+			opt.items.push('-');
+			opt.items.push({ id: 'selectall', name: '@(Select all)', icon: 'ti ti-check-square' });
+			opt.items.push({ id: 'selectnone', name: '@(Select none)', icon: 'ti ti-square' });
+
+			if (model.selection && model.selection.length)
+				opt.items.push({ id: 'remove', name: '@(Remove selected ({0}x))'.format(model.selection.length), icon: 'ti ti-trash red' });
+
+			opt.callback = function(item) {
+
+				if (item.id === 'selectall' || item.id === 'selectnone') {
+					exports.element.SETTER('selection/' + item.id);
+					return;
+				}
+
+				if (item.id === 'create')
+					exports.create();
+
+				if (item.id === 'remove') {
+					SETTER('approve/show', '@(Are you sure you want to remove selected ({0}x) navigations?)'.format(model.selection.length), '"ti ti-trash" @(Clear)', function() {
+						model.selection.wait(function(id, next) {
+							exports.tapi('nav_remove/' + id, next);
+						}, exports.refresh);
+					});
+					return;
+				}
+
+			};
+			SETTER('menu/show', opt);
+		};
+
+		exports.options = function(el) {
+			var items = exports.model.items;
+			var id = el.attrd2('id');
+			var data = items.findItem('id', id);
+			var opt = {};
+			opt.element = el;
+			opt.align = 'right';
+			opt.items = [];
+			opt.items.push({ id: 'open', name: '@(Open)', classname: 'b', icon: 'ti ti-bars' });
+			opt.items.push({ id: 'edit', name: '@(Edit)', icon: 'ti ti-pencil' });
+			opt.items.push('-');
+			opt.items.push({ id: 'remove', name: '@(Remove)', icon: 'ti ti-trash red' });
+			opt.callback = function(item) {
+
+				if (item.id === 'open') {
+					exports.open(id);
+					return;
+				}
+
+				if (item.id === 'edit') {
+					exports.edit(id);
+					return;
+				}
+
+				if (item.id === 'remove') {
+					SETTER('approve/show', '@(Are you sure you want to remove the "{name}" navigation?)'.arg(data, 'escape'), '"ti ti-trash" @(Remove)', function() {
+						exports.tapi('nav_remove/' + id + ' ERROR', function() {
+							exports.refresh(el);
+						});
+					});
+					return;
+				}
+
+			};
+			SETTER('menu/show', opt);
+		};
+
+		exports.create = function() {
+			SET('navform @default', {});
+			SET('common.form', 'navform');
+		};
+
+	});
+
+</script>

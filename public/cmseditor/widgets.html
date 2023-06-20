@@ -1,0 +1,78 @@
+<style>
+	.~PATH~ figure { float: left; width: 16.66%; cursor: pointer; }
+	.~PATH~ figure > div { border-radius: var(--radius); border: 1px solid #E0E0E0; margin: 10px; }
+	.~PATH~ figure .preview { padding: 10px; }
+	.~PATH~ figure .meta { border-top: 1px solid #E0E0E0; padding: 10px; font-size: 12px; }
+	.~PATH~ figure .meta .name { font-size: 14px; font-weight: bold; }
+</style>
+
+<ui-component name="box" path="cmseditor.form" config="if:~PATH~;title:@(Widgets);icon:ti ti-plug;autofocus:true;reload:?/reload;scrollbar:1;scrollbarshadow:1;submit:?/submit;width:1300;zindex:80" class="hidden" plugin="~PATH~">
+	<nav>
+		<ui-component name="searchinput" path="?.search" config="placeholder:@(Search widgets)"></ui-component>
+	</nav>
+	<div class="padding">
+		<ui-component name="search" path="?.search" config="selector:.search">
+			<ui-bind path="?.items" config="template" class="~PATH~">
+				<script type="text/plain">
+					{{ foreach m in value }}
+						<figure data-id="{{ m.id }}" class="exec search" data-exec="?/install" data-search="{{ m.name }}">
+							<div>
+								<div class="preview"><img src="{{ m.preview }}" class="img-responsive"onerror="onImageError(this)" data-empty="/_widgets/empty.png"  /></div>
+								<div class="meta">
+									<div class="name">{{ m.name }}</div>
+								</div>
+							</div>
+						</figure>
+					{{ end }}
+				</script>
+			</ui-bind>
+			<div class="clearfix"></div>
+		</ui-component>
+	</div>
+	<nav>
+		<button name="cancel" style="width:100%">@(Cancel)</button>
+	</nav>
+</ui-component>
+
+<script>
+
+	PLUGIN(function(exports) {
+
+		exports.reload = function(com) {
+			exports.set('search', '');
+		};
+
+		exports.install = function(el) {
+			var id = ATTRD(el);
+			var model = exports.data;
+			var item = model.items.findItem('id', id);
+			if (item)
+				model.next(item);
+			NUL('cmseditor.form');
+		};
+
+		exports.search = function() {
+			var model = exports.model;
+			var opt = {};
+			opt.id = 'cmswidgetimport';
+			opt.search = function(q, next) {
+				q = q.toSearch();
+				var arr = [];
+				for (var m of model.items) {
+					if (!m.search)
+						m.search = m.name.toSearch();
+					if (m.search.indexOf(q) !== -1)
+						arr.push({ id: m.id, name: m.name, html: '<img src="{0}" style="width:30px" class="mr10" onerror="onImageError(this)" data-empty="/_widgets/empty.png" />{1}'.format(m.preview, m.name.encode()) });
+				}
+				next(arr.take(30));
+			};
+			opt.callback = function(item) {
+				exports.install(item);
+			};
+			SETTER('spotlight/show', opt);
+		};
+
+
+	});
+
+</script>

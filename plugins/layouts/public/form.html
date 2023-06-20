@@ -1,0 +1,52 @@
+<ui-component name="miniform" path="common.form" config="if:~PATH~;icon:ti ti-paint-brush;autofocus:true;reload:?/reload;scrollbar:1;submit:?/submit;width:400" class="hidden" plugin="~PATH~">
+	<div class="padding" style="padding-bottom:5px">
+
+		<div class="m">
+			<ui-component name="input" path="?.name" config="required:1;innerlabel:1;placeholder:@(Enter layout name)">@(Name)</ui-component>
+		</div>
+
+		<div class="row">
+			<div class="col-md-6 m">
+				<ui-component name="input" path="?.color" config="type:color">@(Color)</ui-component>
+			</div>
+			<div class="col-md-6 m">
+				<ui-component name="input" path="?.icon" config="type:icon">@(Icon)</ui-component>
+			</div>
+		</div>
+	</div>
+	<hr class="nmt nmb" />
+	<div class="padding bg-smoke">
+
+		<ui-component name="textboxlist" path="?.scripts" config="type:url;placeholder:@(Enter URL address and press enter)">@(External client-side scripts)</ui-component>
+		<div class="help"><i class="ti ti-lightbulb"></i>@(Scripts will be injected into the HTML head)</div>
+
+	</div>
+	<nav>
+		<ui-component name="validate" path="?" config="changes:1">
+			<button name="submit" disabled><i class="ti ti-check-circle"></i>@(SUBMIT)</button>
+			<button name="cancel">@(Cancel)</button>
+		</ui-component>
+	</nav>
+</ui-component>
+
+<script>
+
+	PLUGIN(function(exports) {
+
+		exports.reload = function(com) {
+			var model = exports.model;
+			var id = model ? model.id : null;
+			com.reconfigure({ title: id ? '@(Update layout)' : '@(Create layout)' });
+		};
+
+		exports.submit = function(hide) {
+			var model = exports.form;
+			exports.tapi('layouts_save ERROR', model, function() {
+				hide();
+				EXEC('pluginlayouts/refresh');
+			});
+		};
+
+	});
+
+</script>

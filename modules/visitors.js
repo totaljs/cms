@@ -1,5 +1,5 @@
 // MIT License
-// Copyright 2017-2020 (c) Peter Širka <petersirka@gmail.com>
+// Copyright 2017-2023 (c) Peter Širka <petersirka@gmail.com>
 
 const CONCAT = [];
 const DBNAME = 'visitors';
@@ -37,7 +37,11 @@ W.blacklist = function(path) {
 W.clean = function() {
 
 	W.index++;
-	W.index % 2 === 0 && W.save();
+
+	if (W.index % 2 === 0) {
+		W.save();
+		W.hostname = getHostname(PREF.url);
+	}
 
 	NOW = new Date();
 	W.current = NOW.getTime();
@@ -164,7 +168,7 @@ W.counter = function(req) {
 	VISITOR.browser = req.ua;
 
 	if (exists) {
-		F.$events.visitor && W.emitvisitor('browse', req);
+		W.emitvisitor('browse', req);
 		return meta;
 	}
 
@@ -174,7 +178,7 @@ W.counter = function(req) {
 		if (sum < TIMEOUT_VISITORS) {
 			W.arr[1]++;
 			W.lastvisit = NOW;
-			F.$events.visitor && W.emitvisitor('visitor', req);
+			W.emitvisitor('visitor', req);
 			return W.checksum(ticks.toString(16) + req.visitorid);
 		}
 
@@ -214,7 +218,7 @@ W.counter = function(req) {
 
 	if (req.query.utm_medium || req.query.utm_source) {
 		W.stats.advert++;
-		F.$events.visitor && W.emitvisitor('advert', req);
+		W.emitvisitor('advert', req);
 		return W.checksum(ticks.toString(16) + req.visitorid);
 	}
 
@@ -222,7 +226,7 @@ W.counter = function(req) {
 
 	if (!VISITOR.referer || (W.hostname && VISITOR.referer.indexOf(W.hostname) !== -1)) {
 		W.stats.direct++;
-		F.$events.visitor && W.emitvisitor('direct', req);
+		W.emitvisitor('direct', req);
 		VISITOR.unique && VISITOR.browser && COUNTER(DBNAME).hit('!' + VISITOR.browser);
 		return W.checksum(ticks.toString(16) + req.visitorid);
 	}
@@ -236,7 +240,7 @@ W.counter = function(req) {
 	for (var i = 0, length = W.social.length; i < length; i++) {
 		if (VISITOR.referer.indexOf(W.social[i]) !== -1) {
 			W.stats.social++;
-			F.$events.visitor && W.emitvisitor('social', req);
+			W.emitvisitor('social', req);
 			return W.checksum(ticks.toString(16) + req.visitorid);
 		}
 	}
@@ -244,13 +248,13 @@ W.counter = function(req) {
 	for (var i = 0, length = W.search.length; i < length; i++) {
 		if (VISITOR.referer.indexOf(W.search[i]) !== -1) {
 			W.stats.search++;
-			F.$events.visitor && W.emitvisitor('search', req);
+			W.emitvisitor('search', req);
 			return W.checksum(ticks.toString(16) + req.visitorid);
 		}
 	}
 
 	W.stats.unknown++;
-	F.$events.visitor && W.emitvisitor('unknown', req);
+	W.emitvisitor('unknown', req);
 	return W.checksum(ticks.toString(16) + req.visitorid);
 };
 
@@ -270,7 +274,7 @@ W.emitvisitor = function(type, req) {
 	if (W.visitors.length > 20)
 		W.visitors.pop();
 
-	EMIT('visitor', VISITOR);
+	F.$events.visitor && EMIT('visitor', VISITOR);
 };
 
 W.save = function() {
@@ -307,19 +311,22 @@ W.load = function() {
 };
 
 W.append = function() {
-	var stats = U.clone(W.stats);
+	var stats = CLONE(W.stats);
 	var keys = Object.keys(stats);
 	var data = {};
 
 	for (var i = 0; i < keys.length; i++) {
 		var key = keys[i];
-		if (key !== 'year' && key !== 'month' && key !== 'day')
+		if (key !== 'year' && key !== 'month' && key !== 'day' && key !== 'hours')
 			data['+' + key] = stats[key] || 0;
 		else
 			data[key] = stats[key];
 	}
 
-	NOSQL(DBNAME).modify(data, true).where('year', stats.year).where('month', stats.month).where('day', stats.day);
+	if (!Object.keys(stats).length)
+		console.log('ERROR VISITORS --->', data, stats);
+
+	DB().modify('nosql/' + DBNAME, data, true).where('year', stats.year).where('month', stats.month).where('day', stats.day);
 };
 
 W.daily = function(callback) {
@@ -331,9 +338,9 @@ W.daily = function(callback) {
 		var output = [];
 		var value;
 
-		for (var i = 0, length = arr.length; i < length; i++) {
-			if (arr[i]) {
-				value = arr[i].parseJSON(true);
+		for (var m of arr) {
+			if (m) {
+				value = m.parseJSON(true);
 				value && output.push(value);
 			}
 		}
@@ -351,12 +358,12 @@ W.monthly = function(callback) {
 
 		var stats = {};
 
-		for (var i = 0, length = arr.length; i < length; i++) {
+		for (var m of arr) {
 
-			if (!arr[i])
+			if (!m)
 				continue;
 
-			var value = arr[i].parseJSON(true);
+			var value = m.parseJSON(true);
 			if (!value)
 				continue;
 
@@ -381,12 +388,12 @@ W.yearly = function(callback) {
 
 		var stats = {};
 
-		for (var i = 0, length = arr.length; i < length; i++) {
+		for (var m of arr) {
 
-			if (!arr[i])
+			if (!m)
 				continue;
 
-			var value = arr[i].parseJSON(true);
+			var value = m.parseJSON(true);
 			if (!value)
 				continue;
 
@@ -414,7 +421,6 @@ W.statistics = function(callback) {
 		data = Buffer.concat(CONCAT);
 	});
 	stream.on('end', () => callback(data.toString('utf8').split('\n')));
-	stream.resume();
 	return W;
 };
 
@@ -460,7 +466,7 @@ exports.instance = W;
 
 exports.install = function() {
 	setTimeout(refresh_hostname, 10000);
-	ON('service', delegate_service);
+	ON('service', counter => counter % 120 === 0 && refresh_hostname());
 	ROUTE('/$visitors/', function() {
 		var r = W.counter(this.req, this.res);
 		if (r)
@@ -469,10 +475,6 @@ exports.install = function() {
 			this.empty();
 	});
 };
-
-function delegate_service(counter) {
-	counter % 120 === 0 && refresh_hostname();
-}
 
 function isBlacklist(url) {
 	for (var i = 0; i < W.$blacklistlength; i++) {
@@ -528,7 +530,6 @@ exports.daily = function(callback) {
 W.interval = setInterval(W.clean, 45000);
 W.load();
 
-ON('settings', function() {
+ON('ready', function() {
 	W.hostname = getHostname(PREF.url);
-	W.blacklist('/admin/');
 });

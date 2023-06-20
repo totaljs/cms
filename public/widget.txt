@@ -1,0 +1,60 @@
+<script total>
+
+	// Meta
+	exports.id = 'yourwidget';
+	exports.name = 'Widget';
+	exports.author = 'Total.js';
+	exports.version = '1';
+	exports.group = 'Content';
+	exports.preview = 'https://www.yourdomain.com/preview300x200.jpg';
+	exports.config = { url: '', count: 9 };
+
+	// Optional
+	exports.render = function(opt, next) {
+		// opt.config
+		next('NEW HTML CONTENT');
+	};
+</script>
+
+<style>
+	// The class is assigned automatically
+	.w-yourwidget { border: 1px solid #E0E0E0; margin-bottom: 32px; }
+</style>
+
+<settings>
+
+	<div class="padding">
+		<ui-component name="configuration" path="?" class="invisible">
+			<script type="text/plain">
+				[
+					{
+						name: 'url',
+						text: 'RSS address',
+						type: 'string'
+					},
+					{
+						name: 'count',
+						text: 'Count',
+						type: 'number'
+					},
+					{
+						name: 'image',
+						text: 'Layout with image',
+						type: 'boolean'
+					}
+				]
+			</script>
+		</ui-component>
+	</div>
+
+	<script>
+		exports.save = function(config, el) {
+			el.find('b').text(config.url);
+		};
+	</script>
+
+</settings>
+
+<body>
+	<div>URL address: <b>---</b></div>
+</body>

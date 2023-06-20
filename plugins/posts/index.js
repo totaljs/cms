@@ -1,35 +1,15 @@
-exports.icon = 'fa fa-newspaper-o';
+exports.icon = 'ti ti-book-open';
 exports.name = '@(Posts)';
-exports.group = '@(Content)';
-exports.position = 50;
+exports.position = 5;
+exports.permissions = [{ id: 'posts', name: 'Posts' }];
+exports.visible = user => user.permissions.includes('posts');
 
 exports.install = function() {
-	ROUTE('GET     /admin/api/posts/                          *Posts --> @query');
-	ROUTE('GET     /admin/api/posts/{id}/                     *Posts --> @read');
-	ROUTE('POST    /admin/api/posts/                          *Posts --> @save');
-	ROUTE('DELETE  /admin/api/posts/{id}/                     *Posts --> @remove');
-	ROUTE('GET     /admin/api/posts/toggle/                   *Posts --> @toggle');
-	ROUTE('GET     /admin/api/posts/stats/                    *Posts --> @stats');
-	ROUTE('GET     /admin/api/posts/{id}/stats/               *Posts --> @stats');
-	ROUTE('GET     /admin/api/posts/{id}/backups/             *Common --> @backup');
-	ROUTE('POST    /admin/api/posts/preview/',                preview, ['json'], 512);
+	ROUTE('API    /admin/    -posts                *Posts   --> list');
+	ROUTE('API    /admin/    -posts_read/{id}      *Posts   --> read');
+	ROUTE('API    /admin/    +posts_create         *Posts   --> create');
+	ROUTE('API    /admin/    +posts_update/{id}    *Posts   --> update');
+	ROUTE('API    /admin/    -posts_remove/{id}    *Posts   --> remove');
+	ROUTE('API    /admin/    -posts_clear          *Posts   --> clear');
+	ROUTE('API    /admin/    -posts_categories     *Posts   --> categories');
 };
-
-// Creates a preview
-function preview() {
-	var self = this;
-
-	self.layout('');
-	self.repository.preview = true;
-
-	if (typeof(self.body.body) === 'string')
-		self.body.body = self.body.body.markdown();
-	else
-		self.body.body = '';
-
-	self.repository.page = self.body;
-	if (self.body.template)
-		self.view('cms' + self.body.template);
-	else
-		self.content('', 'text/html');
-}

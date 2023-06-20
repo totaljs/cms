@@ -1,0 +1,143 @@
+<style>
+	.~PATH~ .size { margin-left: 5px; font-size: 11px; color: #A0A0A0; }
+	.ui-dark .~PATH~ .size { color: #777; }
+</style>
+
+<div class="virtualwire hidden" data-if="~PATH~">
+	<ui-plugin>
+		<button class="exec" data-exec="?/upload"><i class="ti ti-cloud-upload"></i>@(Upload)</button>
+		<button class="exec" data-exec="?/refresh"><i class="ti ti-refresh"></i>@(Refresh)</button>
+		<button class="exec" data-exec="?/menu"><i class="ti ti-cog"></i>@(Options)</button>
+	</ui-plugin>
+</div>
+
+<ui-plugin class="~PATH~">
+	<ui-component name="datagrid" path="?.items" config="margin:0;parent:auto;noborder:1;button:?/buttons;checked:?.checked">
+		<script type="text/plain">
+			[
+				{ name: 'name', text: '@(Name)', width: 350 },
+				{ name: 'ext', text: '@(Extension)', width: 120, align: 1, monospace: 1, colorize: 1 },
+				{ name: 'dimension', text: '@(Dimension)', width: 120, align: 1, monospace: 1, sort: false },
+				{ name: 'size', text: '@(Size)', width: 120, align: 1, template: '{{ size | filesize }}', monospace: 1, filter: false, class: 'gray' },
+				{ name: 'date', text: '@(Uploaded)', format: '[ts]', type: 'date', align: 1 },
+				{ name: '@(Options)', filter: false, align: 1, sort: false, width: 120, template: '<a href="{{ url }}" class="fs12 mr5" target="_blank">@(download)</a><div class="inline"><button title="@(Remove)" name="remove"><i class="ti ti-trash"></i></button></div>' }
+			]
+		</script>
+	</ui-component>
+</ui-plugin>
+
+<script>
+
+	PLUGIN(function(exports) {
+
+		exports.init = function(id) {
+			BREADCRUMB.add('@(Files)', NAV.url);
+			exports.refresh();
+		};
+
+		exports.refresh = function(el) {
+			exports.tapi('files_list', function(response) {
+
+				var images = { jpg: 1, png: 1, gif: 1, svg: 1, jpeg: 1 };
+
+				for (var item of response) {
+					item.url = '/download/' + item.id + '.' + item.ext + (images[item.ext] ? '' : '?download=1');
+					item.dimension = (item.width && item.height ? (item.width + 'x' + item.height) : '');
+				}
+
+				response.quicksort('date_desc');
+				exports.set('items @hideloading', response);
+			});
+		};
+
+		exports.menu = function(el) {
+
+			var model = exports.model;
+			var opt = {};
+			opt.element = el;
+			opt.align = 'right';
+			opt.items = [];
+
+			opt.items.push({ id: 'upload', name: '@(Upload)', icon: 'ti ti-cloud-upload' });
+
+			if (model.items.length) {
+
+				opt.items.push('-');
+
+				if (model.checked && model.checked.length)
+					opt.items.push({ id: 'remove', name: '@(Remove selected ({0}x))'.format(model.checked.length), icon: 'ti ti-trash red' });
+
+				opt.items.push({ id: 'clear', name: '@(Clear all files)', icon: 'ti ti-trash red' });
+			}
+
+			opt.callback = function(item) {
+
+				if (item.id === 'selectall' || item.id === 'selectnone') {
+					exports.element.SETTER('selection/' + item.id);
+					return;
+				}
+
+				if (item.id === 'upload') {
+					exports.upload(id);
+					return;
+				}
+
+				if (item.id === 'remove') {
+					SETTER('approve/show', '@(Are you sure you want to remove selected ({0}x) files?)'.format(model.checked.length), '"ti ti-trash" @(Clear)', function() {
+						exports.scope();
+						SETTER('loading/show');
+						model.checked.wait(function(item, next) {
+							exports.tapi('files_remove/' + item.id, next);
+						}, function() {
+							exports.refresh();
+						});
+					});
+					return;
+				}
+
+				if (item.id === 'clear') {
+					SETTER('approve/show', '@(Are you sure you want to clear all files?)', '"ti ti-trash" @(Clear)', () => exports.tapi('files_clear @showloading', exports.refresh));
+					return;
+				}
+
+			};
+			SETTER('menu/show', opt);
+		};
+
+		exports.remove = function(el) {
+			var id = ATTRD(el);
+			var data = exports.model.items.findItem('id', id);
+			SETTER('approve/show', '@(Are you sure you want to remove the "{name}" file?)'.arg(data, 'escape'), '"ti ti-trash" @(Remove)', () => exports.tapi('files_remove/' + id, exports.refresh));
+		};
+
+		exports.buttons = function(btn, row) {
+			exports[btn](row);
+		};
+
+		exports.upload = function(e) {
+
+			var opt = {};
+
+			if (e && !(e instanceof jQuery))
+				opt.files = e;
+
+			opt.url = '/upload/' + common.openplatform;
+			opt.multiple = true;
+
+			opt.callback = function(response, err) {
+				if (err)
+					SETTER('message/warning', err);
+				else
+					exports.refresh();
+			};
+
+			SETTER('fileuploader/upload', opt);
+		};
+
+		exports.dropfiles = function(e) {
+			exports.upload(e);
+		};
+
+	});
+
+</script>
