@@ -1,0 +1,238 @@
+<div class="virtualwire hidden" data-if="~PATH~">
+	<ui-plugin>
+		<ui-component name="searchinput" path="?.search" config="placeholder:@(Search layouts)" class="pull-right"></ui-component>
+		<div class="pull-right">
+			<button class="exec" data-exec="?/create"><i class="ti ti-plus-circle"></i>@(Create)</button>
+			<button class="exec" data-exec="?/refresh"><i class="ti ti-refresh"></i>@(Refresh)</button>
+		</div>
+	</ui-plugin>
+</div>
+
+<ui-plugin class="CLASS">
+
+	<ui-component name="empty" path="?.items" config="parent:auto" class="invisible">
+
+		<script type="text/html">
+			@(No data found)
+		</script>
+
+		<ui-component name="viewbox" path="common.page" config="parent:auto;margin:60;scrollbar:1;visibleY:1" class="invisible">
+
+			<div class="auto" style="max-width:1400px">
+				<ui-component class="padding" name="selection" path="?.selection" config="datasource:?.items;cancel:?.search">
+
+					<div class="heading">
+						<h3>@(Layouts)</h3>
+					</div>
+
+					<ui-bind path="?.items" config="template" class="block">
+						<script type="text/html">
+							<ui-component name="search" path="?.search" config="selector:figure">
+								<div class="listing4">
+									{{ foreach m in value }}
+									<figure class="exec" data-exec="?/editor" data-id="{{ m.id }}" data-search="{{ m.name }}">
+										<section>
+											<span class="color-border" style="background-color:{{ m.color }}"></span>
+											<div class="listing-header">
+												{{ if m.icon }}<i class="{{ m.icon }} icon mr15"></i>{{ fi }}
+												<b>{{ m.name }}</b>
+											</div>
+											<div class="badges">
+												{{ if m.modified }}<span class="badge modified">@(Modified)</span>{{ fi }}
+												{{ if m.newbie }}<span class="badge newbie">@(Newbie)</span>{{ fi }}
+											</div>
+											<div class="controls">
+												<span class="gray mr15 date">{{ m.dtupdated | empty(m.dtcreated) | format('[ts]') }}</span>
+												<span class="exec mr10" data-exec="?/edit" data-prevent="true"><i class="ti ti-pencil"></i></span>
+												<span class="exec mr10" data-exec="?/code" data-prevent="true"><i class="ti ti-laptop-code"></i></span>
+												<span class="exec" data-exec="?/options" data-prevent="true"><i class="ti ti-cog"></i></span>
+											</div>
+										</section>
+									</figure>
+									{{ end }}
+								</div>
+							</ui-component>
+						</script>
+					</ui-bind>
+				</ui-component>
+			</div>
+		</ui-component>
+
+	</ui-component>
+
+</ui-plugin>
+
+<ui-component name="importer" path="common.form" config="if:formlayout;url:/~ID~/form.html"></ui-component>
+
+<script>
+
+	PLUGIN(function(exports) {
+
+		exports.reload = function() {
+			BREADCRUMB.add('@(Layouts)', NAV.url);
+			exports.refresh();
+		};
+
+		exports.layouts = function(value, path, el) {
+
+			if (!value || !value.length) {
+				el.empty();
+				return;
+			}
+
+			var html = [];
+
+			var render = function(value, level) {
+				for (var item of value.children) {
+					html.push(template({ value: item, level: level }));
+					if (item.children)
+						render(item, level + 1);
+				}
+			};
+
+			for (var item of value) {
+				html.push(template({ value: item, level: 0 }));
+				if (item.children)
+					render(item, 1);
+			}
+
+			el.html(html.join(''));
+		};
+
+		exports.menu = function(el) {
+
+			var model = exports.model;
+			var opt = {};
+			opt.element = el;
+			opt.align = 'right';
+			opt.items = [];
+
+			opt.items.push({ id: 'create', name: '@(Create)', icon: 'ti ti-plus-circle green' });
+			opt.items.push('-');
+			opt.items.push({ id: 'selectall', name: '@(Select all)', icon: 'ti ti-check-square' });
+			opt.items.push({ id: 'selectnone', name: '@(Select none)', icon: 'ti ti-square' });
+
+			if (model.selection && model.selection.length)
+				opt.items.push({ id: 'remove', name: '@(Remove selected ({0}x))'.format(model.selection.length), icon: 'ti ti-trash red' });
+
+			opt.callback = function(item) {
+
+				if (item.id === 'selectall' || item.id === 'selectnone') {
+					exports.element.SETTER('selection/' + item.id);
+					return;
+				}
+
+				if (item.id === 'remove') {
+					SETTER('approve/show', '@(Are you sure you want to remove selected ({0}x) layouts?)'.format(model.selection.length), '"ti ti-trash" @(Clear)', function() {
+						exports.scope();
+						model.selection.wait(function(id, next) {
+							exports.tapi('layouts_remove/' + id, next);
+						}, () => exports.refresh());
+					});
+					return;
+				}
+
+			};
+			SETTER('menu/show', opt);
+		};
+
+		exports.refresh = function(el) {
+			el && el.find('i').aclass('ti-spin').rclass('ti-spin', 800);
+			exports.tapi('layouts_list', function(response) {
+				response.quicksort('name_asc');
+				exports.set('items @diff', response);
+			});
+		};
+
+		exports.editor = function(el) {
+			var id = ATTRD(el);
+			REDIRECT('/admin/layouts/{0}/'.format(id));
+		};
+
+		exports.edit = function(el) {
+			var id = ATTRD(el);
+			exports.tapi('layouts_read/{0} ERROR'.format(id), function(response) {
+				SET('formlayout @reset', response);
+				SET('common.form', 'formlayout');
+			});
+		};
+
+		exports.code = function(el) {
+			var id = ATTRD(el);
+			exports.tapi('layouts_html/{0} ERROR'.format(id), function(response) {
+				var opt = {};
+				opt.html = response.html;
+				opt.callback = function(value, hide) {
+					var model = {};
+					model.id = id;
+					model.html = value.html;
+					exports.tapi('layouts_save_html', model, function() {
+						if (model.html.indexOf('<widget ') !== -1)
+							EMIT('refresh_widgets');
+						hide();
+					});
+				};
+				FUNC.code(opt);
+			});
+		};
+
+		exports.options = function(el) {
+			var items = exports.model.items;
+			var id = el.attrd2('id');
+			var data = items.findItem('id', id);
+			var opt = {};
+			opt.element = el;
+			opt.align = 'right';
+			opt.items = [];
+			opt.items.push({ id: 'editor', name: '@(Open editor)', classname: 'b', icon: 'ti ti-object' });
+			opt.items.push('-');
+			opt.items.push({ id: 'code', name: '@(Source-code)', icon: 'ti ti-laptop-code' });
+			opt.items.push({ id: 'edit', name: '@(Edit)', icon: 'ti ti-pencil' });
+			opt.items.push({ id: 'clone', name: '@(Clone)', icon: 'ti ti-clone' });
+			opt.items.push('-');
+			opt.items.push({ id: 'remove', name: '@(Remove)', icon: 'ti ti-trash red' });
+			opt.callback = function(item) {
+
+				if (item.id === 'editor') {
+					exports.editor(id);
+					return;
+				}
+
+				if (item.id === 'code') {
+					exports.code(id);
+					return;
+				}
+
+				if (item.id === 'edit') {
+					exports.edit(id);
+					return;
+				}
+
+				if (item.id === 'clone') {
+					exports.tapi('layouts_clone/' + id, ASETTER('notifybar/response', '@(The layout has been cloned successfully)', function(response) {
+						exports.refresh();
+						exports.edit(response.value);
+					}));
+					return;
+				}
+
+				if (item.id === 'remove') {
+					SETTER('approve/show', '@(Are you sure you want to remove the "{name}" layout?)'.arg(data, 'escape'), '"ti ti-trash" @(Remove)', function() {
+						exports.tapi('layouts_remove/' + id + ' ERROR', function() {
+							exports.refresh(el);
+						});
+					});
+				}
+
+			};
+			SETTER('menu/show', opt);
+		};
+
+		exports.create = function() {
+			SET('formlayout @default', {});
+			SET('common.form', 'formlayout');
+		};
+
+	});
+
+</script>

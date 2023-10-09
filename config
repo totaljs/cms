@@ -1,6 +1,4 @@
-name                      : CMS
-version                   : 14.0.0
-jcomponent                : 18
+default_uid           : f
+allow_totalapi        : true
 
-// Secret for administrators
-admin_secret  (generate)  : 10
+salt      (generate)  : 10

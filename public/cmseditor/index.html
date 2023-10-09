@@ -1,0 +1,1921 @@
+<style>
+	.ui-cmseditor .fs10 { font-size: 10px; }
+	.ui-cmseditor { line-height: 0; }
+	.ui-cmseditor iframe { width: 100%; min-height: 300px; border: 0; margin: 0; padding: 0; background-color: #F0F0F0 }
+	.ui-cmseditor-bg { background-color: #F0F0F0; }
+	.ui-cmseditor-resized .ui-cmseditor-bg { padding: 25px; }
+	.ui-cmseditor-resized .ui-cmseditor-container { box-shadow: 0 0 30px rgba(0,0,0,0.15); }
+	.cmseditor-widget { border-bottom: 1px solid #F0F0F0; padding: 4px 5px; cursor: pointer }
+	.cmseditor-widget:hover { background-color: #F0F0F0; }
+	.cmseditor-help { font-size: 11px; color: #909090; line-height: 13px; padding: 0; height: 22px; border-bottom: 1px solid #E0E0E0; }
+	.cmseditor-help nav { padding: 0; margin: 0; text-align: center; }
+	.cmseditor-help button { min-width: 21px; height: 21px; border: 0; background-color: transparent; margin-right: 5px; font-size: 10px; border-radius: 0; color: #000 }
+	.cmseditor-help button span { font-size: 11px; margin-left: 5px; }
+	.cmseditor-help button:hover { background-color: #F0F0F0; }
+	.ui-dark .ui-cmseditor iframe { background-color: #151515; }
+	.ui-dark .ui-cmseditor-bg { background-color: #151515; }
+	.ui-dark .cmseditor-widget { border-bottom-color: #151515; }
+	.ui-dark .cmseditor-widget:hover { background-color: #151515; }
+	.ui-dark .cmseditor-help { color: #909090; border-bottom-color: #404040; }
+	.ui-dark .cmseditor-help button { background-color: transparent; color: #FFF; }
+	.ui-dark .cmseditor-help button:hover { background-color: #333; }
+</style>
+
+<script type="text/html" id="cmseditortoolbar">
+	<div class="cmseditor-help">
+		<nav>
+			<button name="undo" class="red hidden"><i class="ti ti-undo"></i><span>@(Undo change)</span></button>
+			<button name="device"><i class="ti ti-desktop"></i><span>@(Full width)</span></button>
+			<button name="bold" title="@(Bold)"><i class="ti ti-bold"></i></button>
+			<button name="italic" title="@(Italic)"><i class="ti ti-italic"></i></button>
+			<button name="underline" title="@(Underline)"><i class="ti ti-underline"></i></button>
+			<button name="link" title="@(Make a link)"><i class="ti ti-link"></i></button>
+			<button name="icon" title="@(Add icon)"><i class="ti ti-icons"></i></button>
+			<button name="expression" title="@(Add expression)"><i class="ti ti-highlighter"></i></button>
+		</nav>
+	</div>
+</script>
+
+<ui-component name="importer" path="cmseditor.form" config="if:cmssourcecodeform;url:/cmseditor/sourcecode.html"></ui-component>
+<ui-component name="importer" path="cmseditor.form" config="if:cmslinkform;url:/cmseditor/link.html"></ui-component>
+<ui-component name="importer" path="cmseditor.form" config="if:cmsattributesform;url:/cmseditor/attributes.html"></ui-component>
+<ui-component name="importer" path="cmseditor.form" config="if:cmsimageform;url:/cmseditor/image.html"></ui-component>
+<ui-component name="importer" path="cmseditor.form" config="if:cmswidgetsform;url:/cmseditor/widgets.html"></ui-component>
+<ui-component name="importer" path="cmseditor.form" config="if:cmssettingsform;url:/cmseditor/settings.html"></ui-component>
+
+<script>
+
+	W.cmseditor = {};
+
+	COMPONENT('cmseditor', 'parent:auto;margin:52', function(self, config, cls) {
+
+		var myid = self.name + self.ID;
+		var scripts = [];
+		var cls2 = '.' + cls;
+		var target, iframe, container, width = 0, height = 0;
+		var offsetter = '<span id="cmseditorheight"></span><scr' + 'ipt>window.parent.' + myid + '()</sc' + 'ript>';
+		var locked = false;
+		var temporary = {};
+		var emptyimage;
+		var backup = document.createElement('DIV');
+		var undobutton;
+		var instances = {};
+		var init = 0;
+
+		self.readonly();
+
+		self.makeimage = function(width, height) {
+
+			var canvas = document.createElement('CANVAS');
+
+			canvas.width = width;
+			canvas.height = height;
+
+			var fs = ((canvas.width / 100) * 8) >> 0;
+			var ctx = canvas.getContext('2d');
+			ctx.fillStyle = '#D91500';
+			ctx.fillRect(0, 0, canvas.width, canvas.height);
+			ctx.font = 'bold ' + fs + 'px Arial';
+			ctx.fillStyle = '#FFF';
+			ctx.textAlign = 'center';
+			ctx.textBaseline = 'middle';
+			ctx.fillText('PHOTO', (canvas.width / 2), (canvas.height / 2 >> 0) + 5);
+			return canvas.toDataURL('image/png');
+		};
+
+		self.make = function() {
+
+			emptyimage = self.makeimage();
+
+			var el = $('#cmseditortoolbar');
+			var toolbar = el.html();
+
+			self.aclass(cls);
+
+			if ((/win/i).test(navigator.platform))
+				toolbar = toolbar.replace(/\&\#8984/g, 'CTRL');
+
+			self.html(toolbar + '<ui-component name="viewbox" config="scrollbar:1;visibleY:1;scrollbarshadow:1;parent:{1};margin:{2}"><div class="{0}-bg"><div class="{0}-container" style="margin:0 auto"><iframe frameborder="0" scrolling="no" allowtransparency="true" allow="geolocation *; microphone *; camera *; midi *; encrypted-media *"></iframe></div></div></div></ui-component>'.format(cls, config.parent, config.margin + 22));
+			iframe = self.find('iframe');
+			container = self.find(cls2 + '-container');
+
+			toolbar = self.find('.cmseditor-help');
+			undobutton = toolbar.find('button[name="undo"]');
+			toolbar.on('click', 'button', function() {
+				var el = $(this);
+				var name = this.name;
+				switch (name) {
+					case 'bold':
+					case 'italic':
+					case 'underline':
+					case 'expression':
+					case 'link':
+					case 'icon':
+						self['dom_' + name]();
+						break;
+					case 'undo':
+						self.undo();
+						break;
+					case 'device':
+						var opt = {};
+						opt.element = el;
+						opt.items = [];
+						opt.items.push({ id: 'auto', name: '@(Full width)', icon: 'ti ti-arrows-h' });
+						opt.items.push({ id: 'lg', name: '@(Desktop computer)', icon: 'ti ti-desktop' });
+						opt.items.push({ id: 'md', name: '@(Laptop)', icon: 'ti ti-laptop' });
+						opt.items.push({ id: 'sm', name: '@(Tablet)', icon: 'ti ti-tablet' });
+						opt.items.push({ id: 'xs', name: '@(Mobile phone)', icon: 'ti ti-tablet fs10' });
+						opt.callback = function(item) {
+							switch (item.id) {
+								case 'auto':
+									container.css('width', '');
+									break;
+								case 'lg':
+									container.css('width', '1600px');
+									break;
+								case 'md':
+									container.css('width', '1120px');
+									break;
+								case 'sm':
+									container.css('width', '960px');
+									break;
+								case 'xs':
+									container.css('width', '400px');
+									break;
+							}
+							self.tclass(cls + '-resized', item.id !== 'auto');
+							el.find('span').text(item.name);
+							self.autoresize();
+						};
+						SETTER('menu/show', opt);
+						break;
+				}
+			});
+		};
+
+		self.autoresize = function() {
+			setTimeout(self.resize, 500, true);
+			setTimeout(self.resize, 1500, false);
+		};
+
+		self.iframe_css = function(value) {
+			var doc = self.iframe_document();
+			var style = doc.getElementById('cmscss');
+			style && style.parentNode.removeChild(style);
+			style = doc.createElement('style');
+			style.id = 'cmscss';
+			style.type = 'text/css';
+			if (style.styleSheet)
+				style.styleSheet.cssText = value;
+			else
+				style.appendChild(document.createTextNode(value));
+			var el = (doc.head || doc.getElementsByTagName('head')[0]);
+			el.appendChild(style);
+		};
+
+		self.configure = function(key, value, init, prev) {
+			switch (key) {
+				case 'device':
+					if (value !== prev) {
+						container.css({ width: value === 'md' ? '1140px' : value === 'sm' ? '960px' : value === 'xs' ? '400px' : 'auto' });
+						init && self.resize();
+					}
+					break;
+			}
+		};
+
+		self.write = function(content) {
+
+			var frm = iframe[0].contentWindow;
+			if (!frm)
+				return;
+
+			var doc = frm.document;
+
+			doc.open('text/html', 'replace');
+
+			if (!content) {
+				doc.write(('<ht' + 'ml><hea' + 'd></he' + 'ad><bo' + 'dy style="color:gray;text-align:center;padding:140px 0 0;margin:0;font-family:Arial;font-size:11px;color:#ADADAD;line-height:16px">{0}</bo' + 'dy></ht' + 'ml>').format(config.empty || DEF.empty));
+				doc.close();
+				iframe.css({ height: 'auto' });
+				return;
+			}
+
+			W[myid] =  self.iframe_events;
+			doc.write(content.replace('</b' + 'ody>', offsetter + '</b' + 'ody>'));
+			doc.close();
+			frm.$cmseditor = true;
+			iframe.css({ height: 'auto' });
+			setTimeout(self.resize, 500, 10);
+			setTimeout(self.resize, 3000);
+			setTimeout(self.resize, 6000);
+			setTimeout(self.resize, 10000);
+		};
+
+		self.iframe_toolbar = function() {
+			return self.iframe_find('#CMS_panel');
+		};
+
+		self.iframe_body = function() {
+			return iframe.contents();
+		};
+
+		self.iframe_find = function(selector) {
+			return iframe.contents().find(selector);
+		};
+
+		self.iframe_document = function() {
+			return self.iframe_window().document;
+		};
+
+		self.iframe_window = function() {
+			return iframe[0].contentWindow;
+		};
+
+		self.iframe_container = function(max) {
+			if (target.hclass('CMS_widget') || target.hclass('CMS_widgets'))
+				return target;
+			var parent = target.parent();
+			for (var i = 0; i < max; i++) {
+				if (parent.hclass('CMS_widget') || parent.hclass('CMS_widgets'))
+					return parent;
+				parent = parent.parent();
+			}
+			return null;
+		};
+
+		self.iframe_refresh = function() {
+			var elements = self.iframe_find('#CMS').find('.CMS_widget');
+			var model = self.get();
+			for (var i = 0; i < elements.length; i++) {
+				var el = elements[i];
+				if (!el.$widget) {
+					el = $(el);
+
+					var meta = self.widget_config_parse(el);
+					var widget = model.widgets.findItem('id', meta.id);
+
+					// Not found
+					if (!widget) {
+						WARN('CMS widget not found:', meta.id, el);
+						el.remove();
+						continue;
+					}
+
+					var instance = {};
+					el.$widget = meta;
+					instance.events = {};
+					instance.id = el.attrd('cms-id');
+					instance.el = instance.element = el;
+					instance.widget = instance;
+					instance.config = meta.config;
+					instance.on = function(name, fn) {
+						if (instance.events[name])
+							instance.events[name].push(fn);
+						else
+							instance.events[name] = [fn];
+					};
+					instance.emit = function(name, a, b, c, d) {
+						var arr = instance.events[name] || EMPTYARRAY;
+						for (var item of arr)
+							item.call(instance, a, b, c, d);
+					};
+					widget.js && widget.js(instance);
+				}
+			}
+		};
+
+		self.iframe_replace = function(html) {
+
+			self.iframe_toolbar().hide();
+
+			if (target) {
+				self.close();
+				target.rattr('contenteditable');
+				target.rclass('CMS_selected');
+				target = null;
+			}
+
+			self.iframe_find('#CMS').html(html);
+			self.change(true);
+			self.autoresize();
+		};
+
+		self.iframe_keywords = function() {
+			var text = [];
+			var arr = self.iframe_find('.CMS_search,.CMS_edit');
+			for (var i = 0; i < arr.length; i++)
+				text.push(arr[i].innerText);
+			return find_keywords(text.join(' '));
+		};
+
+		self.dom_parent = function(name) {
+			if (target[0].nodeName === name)
+				return target;
+			var parent = target.parent();
+			for (var i = 0; i < 20; i++) {
+				var el = parent[0];
+				if (!el)
+					break;
+				if (el.nodeName === name)
+					return parent;
+				parent = parent.parent();
+			}
+			return null;
+		};
+
+		self.dom_parent_class = function(cls, max) {
+
+			if (!target)
+				return null;
+
+			if (target.hclass(cls))
+				return target;
+
+			var parent = target.parent();
+			if (!max)
+				max = 20;
+
+			for (var i = 0; i < max; i++) {
+				if (parent.hclass(cls))
+					return parent;
+				parent = parent.parent();
+			}
+
+			return null;
+		};
+
+		self.state = function(type, who) {
+			if (who === 2) {
+				if (type === 1)
+					config.change && self.EXEC(config.change, self);
+				self.resize();
+			}
+		};
+
+		self.close = function() {
+
+			if (!target || !target.length)
+				return;
+
+			var node = target[0];
+			var tag = target[0].tagName;
+			var a = node;
+			var is = false;
+
+			for (var i = 0; i < 4; i++) {
+				if (a.tagName === 'A') {
+					is = true;
+					break;
+				} else {
+					a = a.parentNode;
+					if (!a)
+						return;
+				}
+			}
+
+			if (!is || (a && a.$cmsskipupdate))
+				return;
+
+			a = $(a);
+
+			var content = target.text().replace(/\s/g, '');
+			var href = a.attr('href');
+			var ismail = /[#|@|\:]/;
+			if (content.indexOf('@') !== -1) {
+				if (!href || ismail.test(href))
+					a.attr('href', 'mailto:' + content);
+			} else if (!(/[a-z]/i).test(content) && content.length > 5)
+				a.attr('href', 'tel:' + content);
+		};
+
+		self.iframe_toolbar_move = function(el) {
+			var sel = $(self.iframe_document()).find('.CMS_selected');
+			if (sel.length) {
+				if (target) {
+					self.close();
+					target.rclass('CMS_selected');
+					target.rattr('contenteditable');
+					target = null;
+				}
+				sel.trigger('click');
+			}
+		};
+
+		function find_keywords(content, alternative, count, max, min) {
+
+			min = min || 2;
+			count = count || 200;
+			max = max || 20;
+
+			var words = content.toLowerCase().match(/[a-zá-žа-я]+/gi);
+
+			if (words === null)
+				words = EMPTYARRAY;
+
+			var length = words.length;
+			var dic = {};
+			var counter = 0;
+
+			for (var i = 0; i < length; i++) {
+				var word = words[i].trim();
+
+				if (word.length < min || counter >= count)
+					continue;
+
+				if (alternative)
+					word = word.substring(0, (word.length / 100) * 80);
+
+				if (word.length < min || word.length > max)
+					continue;
+
+				if (dic[word])
+					dic[word]++;
+				else
+					dic[word] = 1;
+
+				counter++;
+			}
+
+			var keys = Object.keys(dic);
+
+			keys.sort(function(a, b) {
+
+				var countA = dic[a];
+				var countB = dic[b];
+
+				if (countA > countB)
+					return -1;
+
+				if (countA < countB)
+					return 1;
+
+				return 0;
+			});
+
+			return keys.join(' ');
+		}
+
+		self.iframe_images = function() {
+			var images = [];
+			self.iframe_find('img.CMS_edit').each(function() {
+				var url = this.getAttribute('src') || '';
+				if (url.substring(0, 5).toLowerCase() !== 'data:' && images.indexOf(url) === -1 && images.length < 5)
+					images.push(url);
+			});
+			return images;
+		};
+
+		self.iframe_source = function() {
+			target && self.close();
+			var content = self.iframe_body().clone(true);
+			content.find('[contenteditable]').rattr('contenteditable');
+			content.find('.CMS_selected').rclass('CMS_selected');
+			return (content.find('#CMS').html() || '').trim().replace(/&nbsp;/g, ' ').replace(offsetter, '');
+		};
+
+		self.iframe_html = function() {
+			target && self.close();
+			var body = self.iframe_body();
+			var content = body.find('#CMS').clone(true);
+			content.find('.CMS_preview').rclass('CMS_preview');
+			content.find('[contenteditable]').rattr('contenteditable');
+			content.find('.CMS_selected').rclass('CMS_selected');
+			content.find('.CMS_edit:empty,.CMS_remove:empty,.CMS_widgets:empty').each(function() {
+				var tag = this.nodeName;
+				if (tag !== 'IMG' && tag !== 'IFRAME') {
+					var cls = this.getAttribute('class');
+					if (cls.indexOf('CMS_widget') === -1 && cls.indexOf('ti') === -1)
+						$(this).detach().remove();
+				}
+			});
+			content.find('#CMS_panel').remove();
+			content.find('#cmscss,#cmscsseditor').remove();
+
+			var html = (content.html() || '').trim().replace(offsetter, '');
+			for (var scr of scripts)
+				html = html.replace(scr.id, scr.html);
+
+			return html;
+		};
+
+		self.iframe_layout = function() {
+			target && self.close();
+			var body = self.iframe_body();
+			var content = $(body[0].documentElement).clone(true);
+			content.find('.CMS_preview').rclass('CMS_preview');
+			content.find('[contenteditable]').rattr('contenteditable');
+			content.find('.CMS_selected').rclass('CMS_selected');
+			content.find('.CMS_edit:empty,.CMS_remove:empty,.CMS_widgets:empty').each(function() {
+				var tag = this.nodeName;
+				if (tag !== 'IMG' && tag !== 'IFRAME') {
+					var cls = this.getAttribute('class');
+					if (cls.indexOf('CMS_widget') === -1 && cls.indexOf('ti') === -1)
+						$(this).detach().remove();
+				}
+			});
+			content.find('#cmscss,#cmscsseditor').remove();
+			content.find('#CMS_panel').remove();
+			var html = '<!DOCTYPE html>\n<html>\n' + (content.html() || '').trim().replace(offsetter, '') + '\n</html>';
+
+			for (var scr of scripts)
+				html = html.replace(scr.id, scr.html);
+
+			return html;
+		};
+
+		self.check = function(el) {
+			// var type = el[0].tagName;
+			// if (type === 'DIV' || type === 'P' || type === 'B' || type.substring(0, 1) === 'H')
+			// 	!el.html() && el.html('&nbsp;');
+		};
+
+		self.widget_config_clone = function(parent) {
+
+			// Regenerates widget IDs + copies settings
+
+			var oldid = parent.attrd('cms-id');
+			var newid;
+
+			if (oldid) {
+				newid = Date.now().toString(36);
+				parent.attrd('cms-id', newid);
+			}
+
+			parent.find('[data-cms-id]').each(function() {
+				this.setAttribute('data-cms-id', GUID(10));
+			});
+
+			var cls = 'CMS_selected CMS_operation';
+			parent.find('.CMS_selected,.CMS_operation').rclass(cls);
+			parent.find('[contenteditable="true"]').rattr('contenteditable');
+			parent.rclass(cls);
+			return parent;
+		};
+
+		self.iframe_toolbar_copypaste = function() {
+			var elements = self.iframe_toolbar().find('#CMS_panel_buttons_copy span,#CMS_panel_buttons_body span[data-name="sourcecode"]');
+			for (var node of elements) {
+
+				var el = $(node);
+
+				switch (el.attrd('name')) {
+
+					case 'copy':
+					case 'sourcecode':
+						el.toggle(!!temporary.wrap);
+						break;
+
+					case 'paste':
+
+						var cur = target;
+						if (!cur.hclass('CMS_widgets'))
+							cur = null;
+
+						temporary.copypasteparent = cur ? cur : temporary.wrap_widgets ? temporary.wrap_widgets : temporary.wrap ? temporary.wrap.closest('.CMS_widgets') : null;
+						var can = !!(temporary.copypaste && (temporary.copypasteparent && temporary.copypasteparent.length));
+						el.toggle(can);
+						break;
+				}
+			}
+		};
+
+		self.response = function() {
+			var model = self.get();
+			return model.type === 'layout' ? self.iframe_layout() : self.iframe_html();
+		};
+
+		// Removes non-exist widgets
+		self.clean = function() {
+			var content = self.iframe_body();
+			var model = self.get();
+			content.find('.CMS_widget').each(function() {
+				var el = $(this);
+				var meta = self.widget_config_parse(el);
+				var is = model.widgets.findItem('id', meta.id);
+				if (!is)
+					el.remove();
+			});
+			self.reconfig();
+		};
+
+		self.undo = function() {
+
+			var item = temporary.history.pop();
+
+			if (!item)
+				return;
+
+			undobutton.tclass('hidden', temporary.history.length === 0);
+			self.iframe_toolbar().hide();
+
+			if (item.clone != null) {
+
+				for (var i = 0; i < temporary.history.length; i++) {
+					var history = temporary.history[i];
+					if (history.node === item.node)
+						history.node = item.clone[0];
+				}
+
+				$(item.node).replaceWith(item.clone);
+				self.autoresize();
+				return;
+			}
+
+			if (target) {
+				self.close();
+				target.rattr('contenteditable');
+				target.rclass('CMS_selected');
+				target = null;
+			}
+
+			if (!item.parent.children.length) {
+				item.parent.appendChild(item.node);
+				self.autoresize();
+				return;
+			}
+
+			var sibling = item.parent.children[item.index];
+			if (sibling)
+				item.parent.insertBefore(item.node, sibling);
+			else
+				item.parent.appendChild(item.node);
+
+			self.autoresize();
+		};
+
+		self.iframe_events = function() {
+
+			if (init !== 2) {
+				init = 2;
+				setTimeout(() => self.refresh(), 100);
+				return;
+			}
+
+			var body = self.iframe_body();
+			var touch = { time: 0, target: null };
+
+			body.off('click touchstart touchmove touchend dblclick keydown');
+
+			$(self.iframe_window()).on('keydown', function(e) {
+				if (e.which === 27 && target) {
+					self.close();
+					self.check(target);
+					target.rclass('CMS_selected');
+					target.rattr('contenteditable');
+					self.iframe_toolbar().hide();
+					target = null;
+				}
+			});
+
+			body.on('dblclick', '.CMS_edit', function(e) {
+
+				if (locked)
+					return;
+
+				e.preventDefault();
+				e.stopPropagation();
+
+				if (!this.getAttribute('contenteditable')) {
+					var btn = body.find('.CMS_panel_buttons').find('span[data-name="edit"]');
+					if (!btn.hclass('CMS_panel_disabled'))
+						btn.trigger('click');
+				}
+
+			});
+
+			body.on('dblclick', '.CMS_widgets', function(e) {
+
+				if (locked)
+					return;
+
+				e.preventDefault();
+				e.stopPropagation();
+
+				var btn = body.find('.CMS_panel_buttons').find('span[data-name="settings"]');
+				if (!btn.hclass('CMS_panel_disabled'))
+					btn.trigger('click');
+			});
+
+			body.on('click touchstart touchmove touchend', '.CMS_edit,.CMS_repeat,.CMS_remove,.CMS_widgets,.CMS_attribute', function(e) {
+
+				var t = this;
+
+				if (e.type === 'touchstart') {
+					touch.time = Date.now();
+					touch.target = t;
+					return;
+				} else if (e.type === 'touchmove' || e.type === 'touchend') {
+					if (Date.now() - touch.time < 300)
+						return;
+					touch.time = 0;
+				}
+
+				if (locked)
+					return;
+
+				SETTER('!icons/hide', true);
+				SETTER('!datepicker/hide', true);
+				SETTER('!directory/hide', true);
+
+				e.preventDefault();
+				e.stopPropagation();
+
+				var el = $(t);
+
+				if (target && t !== target[0]) {
+					self.close();
+					self.check(target);
+					target.rclass('CMS_selected');
+					target.rattr('contenteditable');
+					target = null;
+				}
+
+				var off = el.offset();
+				var panel = self.iframe_toolbar();
+				var left = off.left;
+
+				if ((left + 270) > width)
+					left = width - 270;
+
+				// Firefox
+				setTimeout(() => panel.show(), 100);
+
+				var arr = el.attr('class').split(/\s+/);
+				var tag = t.nodeName;
+				var info = body.find('#CMS_panel_info');
+
+				target = el;
+
+				var wrap = self.dom_parent_class('CMS_widget');
+				var reposition = !!self.dom_parent_class('CMS_repeat', 5);
+
+				if (tag === 'IMG')
+					info.html('<span>{0}x{1}</span>'.format(t.getAttribute('data-cms-width') || t.width, t.getAttribute('data-cms-height') || t.height));
+				else if (tag) {
+					var id = wrap && wrap.length ? wrap.attrd('cms').split('__')[0] : '';
+					var widget = id ? self.get().widgets.findItem('id', id) : null;
+					info.html(widget ? ('<span>' + widget.name.encode() + '</span>') : '');
+				}
+
+				temporary.wrap = wrap;
+				temporary.wrapremove = self.dom_parent_class('CMS_remove');
+
+				panel.find('#CMS_panel_buttons_move').toggle(!!(wrap && wrap.length));
+				panel.find('#CMS_panel_buttons_reposition').toggle(reposition);
+				panel.find('.CMS_panel_buttons span').each(function() {
+
+					var el = $(this);
+					var name = el.attrd('name');
+					if (name === 'hide')
+						return;
+
+					var disabled = name === 'settings' ? true : arr.indexOf('CMS_' + name) === -1;
+
+					if (disabled && name === 'attribute')
+						disabled = arr.indexOf('CMS_edit') === -1;
+
+					if (name === 'link')
+						disabled = self.dom_parent('A') === null;
+
+					// Are some widgets?
+					if (name === 'widgets' && !disabled) {
+						var model = self.get();
+						disabled = !model.widgets || model.widgets.length === 0;
+					}
+
+					if ((name === 'settings' || name === 'part') && disabled)
+						disabled = self.dom_parent_class('CMS_widget') === null;
+
+					if (disabled && name === 'repeat')
+						disabled = self.dom_parent_class('CMS_repeat') === null;
+
+					if (disabled && name === 'remove') {
+						disabled = temporary.wrapremove === null;
+						if (disabled) {
+							// is link created manually?
+							if (t.tagName === 'A' && target.hclass('CMS_edit')) {
+								var parent = target.parent().closest('.CMS_edit');
+								disabled = parent.length === 0;
+							}
+						}
+					}
+
+					if (disabled && name === 'widgets') {
+						temporary.wrap_widgets = self.dom_parent_class('CMS_widgets', 10);
+						disabled = temporary.wrap_widgets == null;
+					}
+
+					if (name === 'edit' && tag === 'IFRAME')
+						disabled = true;
+
+					if (name === 'generate') {
+
+						if (tag !== 'IMG' && disabled)
+							disabled = false;
+
+						if (name === 'generate' && tag === 'I')
+							disabled = true;
+					}
+
+					if (name === 'settings' || name === 'partial' || name === 'generate')
+						el.tclass('CMS_panel_disabled CMS_panel_hidden', disabled);
+					else
+						el.tclass('CMS_panel_disabled', disabled);
+
+				});
+
+				panel.find('#CMS_panel_buttons_body').toggle(!!wrap || arr.indexOf('CMS_widgets') !== -1);
+				panel.find('#CMS_panel_buttons_copy').toggle((wrap ? (!!wrap.length) : false) || (!!temporary.wrap_widgets));
+				panel.css({ left: left, top: off.top - panel.innerHeight() - 5 });
+				panel.rclass('invisible');
+				target.aclass('CMS_selected');
+				self.iframe_toolbar_copypaste();
+			});
+
+			body.off('paste');
+			body.on('paste', function(e) {
+
+				e.preventDefault();
+				e.stopPropagation();
+
+				if (locked)
+					return;
+
+				var text = e.originalEvent.clipboardData.getData('text/plain');
+				if (target) {
+					if (!target.hclass('CMS_multiline'))
+						text = text.replace(/\n\r|\n|\r/g, ' ');
+					self.iframe_document().execCommand('insertText', false, text.trim().replace(/\s{2,}/g, ' ').replace(/\&nbsp;/g, ' '));
+				}
+			});
+
+			body.on('dragenter dragover dragexit drop dragleave', function (e) {
+
+				e.stopPropagation();
+				e.preventDefault();
+
+				if (locked)
+					return;
+
+				switch (e.type) {
+					case 'drop':
+						break;
+					case 'dragenter':
+					case 'dragover':
+						return;
+					case 'dragexit':
+					case 'dragleave':
+					default:
+						return;
+				}
+
+				var el = $(e.target);
+
+				if (e.target.nodeName !== 'IMG')
+					return;
+
+				var files = e.originalEvent.dataTransfer.files;
+
+				if (!files[0])
+					return;
+
+				var w, h;
+
+				if (el.hclass('CMS_edit') && (el.attrd('cms-width') || el.attrd('cms-height'))) {
+					w = el.attrd('cms-width');
+					h = el.attrd('cms-height');
+					if (w)
+						w = w.parseFloat();
+					if (h)
+						h = h.parseFloat();
+				}
+
+				var opt = {};
+
+				opt.files = files;
+				opt.alt = el.attr('alt');
+				opt.href = '';
+				opt.element = el;
+				opt.isimage = true;
+				opt.url = el.attrd('cms-src') || el.attr('src');
+				opt.bg = el.attrd('cms-bg');
+				opt.width = w;
+				opt.height = h;
+				opt.instance = self;
+
+				var parent = el.parent('a');
+				if (parent.length)
+					opt.href = parent.attr('href');
+
+				opt.ishref = !!opt.href;
+
+				if (w && h) {
+					// show crop editor
+					FIND('#cmsimagecrop', com => com.reconfigure('width:{0};height:{1};background:{2}'.format(opt.width, opt.height, opt.bg)));
+					SET('cmsimageform @default', opt);
+					SET('cmseditor.form', 'cmsimageform');
+				} else if (config.image) {
+					self.EXEC(config.image, opt, function(response) {
+						opt.element.attr('src', typeof(response) === 'string' ? response : response.url);
+						self.autoresize();
+					});
+				}
+			});
+
+			body.unbind('keydown').on('keydown', function(e) {
+
+				// save
+				if ((e.metaKey || e.ctrlKey) && e.keyCode === 91) {
+					config.save && self.EXEC(config.save);
+					e.preventDefault();
+					e.stopPropagation();
+					return;
+				}
+
+				if (!target || locked)
+					return;
+
+				if (e.keyCode === 13 && !target.hclass('CMS_multiline')) {
+					self.close();
+					target.rattr('contenteditable');
+					target.rclass('CMS_selected');
+					target = null;
+					self.iframe_toolbar().hide();
+					e.preventDefault();
+					e.stopPropagation();
+					return;
+				}
+
+				if (e.keyCode === 13) {
+					// "div" prevention
+					var tmp = target.html();
+					self.iframe_document().execCommand('insertHTML', false, '<br>');
+					var end = target.html().trim();
+					if (end.substring(end.length - 3) !== tmp.substring(tmp.length - 3))
+						self.iframe_document().execCommand('insertHTML', false, '<br><br>');
+					e.preventDefault();
+					e.stopPropagation();
+					self.autoresize();
+					return;
+				}
+
+				if (!e.metaKey && !e.ctrlKey)
+					return;
+
+				if (e.keyCode === 77) {
+					self.dom_expression();
+					e.preventDefault();
+					e.stopPropagation();
+					return;
+				}
+
+				if (e.keyCode === 80) {
+					self.dom_icon();
+					e.preventDefault();
+					e.stopPropagation();
+					return;
+				}
+
+				if (e.keyCode === 66) {
+					// bold
+					self.dom_bold();
+					e.preventDefault();
+					e.stopPropagation();
+					return;
+				}
+
+				if (e.keyCode === 76) {
+					// link
+					e.preventDefault();
+					e.stopPropagation();
+					self.dom_link();
+					return;
+				}
+
+				if (e.keyCode === 73) {
+					// italic
+					self.dom_italic();
+					e.preventDefault();
+					e.stopPropagation();
+					return;
+				}
+
+				if (e.keyCode === 85) {
+					// underline
+					self.dom_underline();
+					e.preventDefault();
+					e.stopPropagation();
+					return;
+				}
+
+				if (e.keyCode === 32) {
+					self.iframe_document().execCommand('insertHTML', false, '&nbsp;');
+					e.preventDefault();
+					e.stopPropagation();
+					return;
+				}
+
+			});
+
+			body.on('click', function(e) {
+				SETTER('!datepicker/hide');
+				SETTER('!faicons/hide');
+				SETTER('!directory/hide');
+			});
+
+			body.on('click', 'a', function(e) {
+				e.preventDefault();
+			});
+
+			body.find('#CMS_panel').on('mouseenter mouseleave', '.ti-arrow-up,.ti-arrow-down', function(e) {
+				if (!locked && temporary.wrap && temporary.wrap.length)
+					temporary.wrap.tclass('CMS_selected_template', e.type === 'mouseenter');
+			});
+
+			body.find('#CMS_panel').on('mouseenter mouseleave', '.ti-plug', function(e) {
+				if (!locked && temporary.wrap_widgets && temporary.wrap_widgets.length)
+					temporary.wrap_widgets.tclass('CMS_selected_template', e.type === 'mouseenter');
+			});
+
+			body.find('#CMS_panel').on('mouseenter mouseleave', '.ti-trash,.ti-object-ungroup,.ti-copy', function(e) {
+				if (!locked && this.classList.value.indexOf('_disabled') === -1 && temporary.wrapremove)
+					temporary.wrapremove.tclass('CMS_operation', e.type === 'mouseenter');
+			});
+
+			body.find('#CMS_panel').on('click', 'span', function(e) {
+
+				e.preventDefault();
+				e.stopPropagation();
+
+				var el = $(this);
+				if (el.hclass('CMS_panel_disabled') || locked)
+					return;
+
+				var hide = function() {
+					body.find('#CMS_panel').find('[data-name="hide"]').trigger('click');
+				};
+
+				var name = el.attrd('name');
+				var tmp;
+
+				SETTER('!icons/hide', true);
+				SETTER('!datepicker/hide', true);
+				SETTER('!directory/hide', true);
+
+				switch (name) {
+
+					case 'generate':
+
+						var toolbar = self.iframe_toolbar();
+						var t = temporary.wrap || target;
+						var opt = {};
+						var offset = toolbar.position();
+						var editor = self.element.offset();
+						var viewbox = self.find('ui-component[name="viewbox"]').component();
+
+						opt.x = (editor.left + offset.left) - viewbox.scrollbar.scrollLeft();
+						opt.y = (editor.top + offset.top + 46) - viewbox.scrollbar.scrollTop();
+						opt.element = t;
+						opt.config = self.widget_config_parse(t);
+
+						opt.isimage = t[0].tagName === 'IMG';
+						opt.instance = self;
+						opt.text = $(t).text();
+
+						if (opt.isimage) {
+
+							var tw = t.attrd('cms-width');
+							var th = t.attrd('cms-height');
+
+							opt.imgdefined = tw != null || th != null;
+
+							if (!opt.imgdefined) {
+								tw = t.attr('width');
+								th = t.attr('height');
+							}
+
+							opt.width = t[0].width;
+							opt.height = t[0].height;
+							opt.datawidth = tw;
+							opt.dataheight = th;
+							opt.datasize = t.attrd('cms-size');
+						}
+
+						config.generate && self.EXEC(config.generate, opt);
+						break;
+
+					case 'sourcecode':
+						var t = temporary.wrap || target;
+						var opt = {};
+						opt.element = t;
+						opt.config = self.widget_config_parse(t);
+						config.widgetsource && self.EXEC(config.widgetsource, opt);
+						break;
+
+					case 'CMS_mh':
+					case 'CMS_mv':
+						var t = temporary.wrap || target;
+						if (t.length)
+							t.tclass(name);
+						self.change(true);
+						break;
+
+					case 'paste':
+
+						target && self.close();
+
+						var clone = temporary.copypaste.clone();
+						clone = self.widget_config_clone(clone).rattr('contenteditable').rclass('CMS_selected').aclass('CMS_remove');
+
+						var parent = target.closest('.CMS_widget');
+						if (parent.parent()[0] === temporary.copypasteparent[0])
+							parent.after(clone);
+						else
+							temporary.copypasteparent.append(clone);
+
+						self.autoresize();
+						self.change(true);
+						break;
+
+					case 'copy':
+						temporary.copypaste = temporary.wrap.clone();
+						temporary.copypaste.rclass('CMS_operation CMS_selected');
+						self.iframe_toolbar_copypaste();
+						break;
+
+					case 'up2':
+
+						if (!target) {
+							self.iframe_toolbar().hide();
+							return;
+						}
+
+						if (!target.hclass('CMS_repeat'))
+							target = self.dom_parent_class('CMS_repeat');
+						if (!target.length)
+							return hide();
+						var prev = target.prev();
+						if (!prev.length || !prev.hclass('CMS_repeat'))
+							return hide();
+						tmp = prev.clone();
+						var n = target.clone();
+						prev.replaceWith(n);
+						target.replaceWith(tmp);
+						self.change(true);
+						self.iframe_toolbar_move();
+						self.autoresize();
+						break;
+
+					case 'down2':
+
+						if (!target) {
+							self.iframe_toolbar().hide();
+							return;
+						}
+
+						if (!target.hclass('CMS_repeat'))
+							target = self.dom_parent_class('CMS_repeat');
+						if (!target.length)
+							return hide();
+						var next = target.next();
+						if (!next.length || !next.hclass('CMS_repeat'))
+							return hide();
+						tmp = next.clone();
+						var n = target.clone();
+						next.replaceWith(n);
+						target.replaceWith(tmp);
+						self.change(true);
+						self.iframe_toolbar_move();
+						self.autoresize();
+						break;
+
+					case 'up':
+
+						tmp = temporary.wrap.prev();
+						if (tmp.length) {
+							tmp.before(temporary.wrap);
+							self.iframe_toolbar_move();
+						} else
+							hide();
+
+						self.change(true);
+						break;
+
+					case 'down':
+
+						tmp = temporary.wrap.next();
+						if (tmp.length) {
+							tmp.after(temporary.wrap);
+							self.iframe_toolbar_move();
+						} else
+							hide();
+
+						self.change(true);
+						break;
+
+					case 'hide':
+
+						if (!target) {
+							self.iframe_toolbar().hide();
+							return;
+						}
+
+						self.iframe_toolbar().hide();
+						self.close();
+						self.check(target);
+						target.rattr('contenteditable');
+						body.find('.CMS_selected').rclass('CMS_selected');
+						body.find('.CMS_selected_template').rclass('CMS_selected_template');
+						target = null;
+						return;
+
+					case 'widgets':
+
+						var arr = [];
+						var tmp = self.dom_parent_class('CMS_widgets', 10);
+						var after = target.hclass('CMS_widgets') ? null : self.dom_parent_class('CMS_widget', 10);
+
+						var container = tmp;
+
+						if (!container.hclass('CMS_widgets')) {
+							container = self.iframe_container(10);
+							if (!container)
+								return;
+						}
+
+						var opt = {};
+						opt.element = container;
+						opt.items = self.get().widgets;
+						opt.target = target;
+						opt.next = function(widget) {
+
+							// widget.id
+							// widget.config
+							// widget.html || widget.body
+
+							self.backup(target);
+
+							var cls = 'w-' + (widget.id || widget.name).slug().replace(/\-/g, '');
+							var content = '<div class="CMS_widget CMS_remove {0} CMS_mh CMS_mv" data-cms="{2}__{3}" data-cms-id="{1}">\n{4}</div>'.format(cls, Date.now().toString(36), widget.id, encodeURIComponent(STRINGIFY(widget.config || {})), widget.html || widget.body);
+
+							if (after && after.length) {
+								after.after(content);
+							} else
+								container.append(content);
+
+							var arr = container[0].querySelectorAll('img');
+
+							for (var t of arr) {
+								if (!t.src) {
+									var w = t.getAttribute('data-cms-width');
+									var h = t.getAttribute('data-cms-height');
+									t.src = w && h ? self.makeimage(+w, +h) : emptyimage;
+								}
+							}
+
+							self.autoresize();
+							self.change(true);
+						};
+
+						if (config.widgets) {
+							self.EXEC(self.widgets, opt);
+						} else {
+							SET('cmswidgetsform @default', opt);
+							SET('cmseditor.form', 'cmswidgetsform');
+						}
+
+						return;
+
+					case 'attribute':
+
+						if (!target) {
+							self.iframe_toolbar().hide();
+							return;
+						}
+
+						var targettmp = target.hclass('CMS_unwrap') ? target.parent() : target;
+						var classes = (targettmp.attr('class') || '').split(' ');
+						var arr = [];
+
+						for (var i = 0; i < classes.length; i++) {
+							if (classes[i].substring(0, 4) !== 'CMS_')
+								arr.push(classes[i]);
+						}
+
+						var tag = targettmp[0].nodeName;
+						var cattr = {};
+
+						cattr.isimage = tag === 'IMG';
+						cattr.config = targettmp.attrd('---');
+
+						if (cattr.config)
+							cattr.config = cattr.config.split('__')[2] || '';
+						else
+							cattr.config = null;
+
+						cattr.element = targettmp;
+						cattr.isconfig = cattr.config != null;
+						cattr.isiframe = tag === 'IFRAME';
+						cattr.isnone = !cattr.isimage && !cattr.isiframe;
+						cattr.id = targettmp.attr('id') || '';
+						cattr.cls = arr.join(' ');
+						cattr.css = targettmp.attr('style') || '';
+						cattr.title = targettmp.attr('title') || '';
+						cattr.src = targettmp.attr('src') || '';
+						cattr.instance = self;
+
+						if (cattr.isimage) {
+
+							var tw = targettmp.attrd('cms-width');
+							var th = targettmp.attrd('cms-height');
+
+							cattr.imgdefined = tw != null || th != null;
+
+							if (!cattr.imgdefined) {
+								tw = targettmp.attr('width');
+								th = targettmp.attr('height');
+							}
+
+							cattr.datawidth = tw;
+							cattr.dataheight = th;
+							cattr.datasize = targettmp.attrd('cms-size');
+
+							if (cattr.datasize)
+								cattr.datasize += '%';
+
+							cattr.alt = targettmp.attr('alt') || '';
+							cattr.databg = targettmp.attrd('cms-bg') || '';
+						}
+
+						if (config.attributes) {
+							self.EXEC(config.attributes, cattr);
+						} else {
+							SET('cmsattributesform @default', cattr);
+							SET('cmseditor.form', 'cmsattributesform');
+						}
+						return;
+
+					case 'link':
+
+						if (!target) {
+							self.iframe_toolbar().hide();
+							return;
+						}
+
+						self.backup(target);
+
+						var href = '';
+						var targ = '';
+						var title = '';
+
+						if (target.prop('tagName') === 'A') {
+							href = target.attr('href');
+							title = target.attr('title');
+							targ = target.attr('target') || '';
+						} else {
+							var tmp = self.dom_parent('A');
+							href = tmp.attr('href');
+							title = tmp.attr('title');
+							targ = tmp.attr('target') || '';
+						}
+
+						var link = {};
+						link.element = target;
+						link.href = href;
+						link.target = targ;
+						link.title = (title || '').trim();
+						link.instance = self;
+
+						if (config.link) {
+							self.EXEC(config.link, link);
+						} else {
+							SET('cmslinkform @default', link);
+							SET('cmseditor.form', 'cmslinkform');
+						}
+						return;
+
+					case 'settings':
+
+						if (!target) {
+							self.iframe_toolbar().hide();
+							return;
+						}
+
+						var model = self.get();
+						var widget = target.hclass('CMS_widget') ? target : self.dom_parent_class('CMS_widget');
+						var meta = self.widget_config_parse(widget);
+						var instance = model.widgets ? model.widgets.findItem('id', meta.id) : null;
+
+						if (!instance)
+							return;
+
+						meta.element = widget;
+						meta.hiddenxs = widget.hclass('hidden-xs');
+						meta.hiddensm = widget.hclass('hidden-sm');
+						meta.hiddenmd = widget.hclass('hidden-md');
+						meta.hiddenlg = widget.hclass('hidden-lg');
+						meta.widget = instance;
+
+						instance.compiled && instance.compiled.load && instance.compiled.load(meta.config);
+
+						meta.save = function(config) {
+							if (instance.compiled && instance.compiled.save) {
+								try {
+									instance.compiled.save(config, meta.element);
+								} catch (e) {
+									WARN(instance.name + ': ' + e);
+								}
+							}
+							self.widget_config_stringify(meta.element, config);
+							self.change(true);
+							self.iframe_toolbar_move();
+							self.autoresize();
+						};
+
+						if (config.config) {
+							self.EXEC(config.config, meta);
+						} else {
+							SET('cmseditor.settings.{0} @default'.format(meta.id), meta.config);
+							SET('cmseditor.form', 'cmssettingsform');
+							EXEC(true, 'cmssettingsform/refresh', meta, e);
+						}
+						return;
+
+					case 'edit':
+
+						if (!target) {
+							self.iframe_toolbar().hide();
+							return;
+						}
+
+						if (target.attr('contenteditable')) {
+							self.close();
+							self.iframe_toolbar().hide();
+							target.rattr('contenteditable');
+							target.rclass('CMS_selected');
+							target = null;
+							return;
+						}
+
+						if (target.hclass('ti')) {
+
+							var ti = target.attr('class').match(/ti-[a-z0-9\-]+/i);
+							ti = ti ? ti.toString() : '';
+
+							var opt = {};
+							var off = target.offset();
+							var mainoffset = self.element.offset();
+
+							opt.y = off.top + mainoffset.top - self.element.FIND('viewbox').scrolltop() + 50;
+							opt.x = off.left + mainoffset.left;
+							// opt.element = target;
+							opt.scrolltop = 0;
+							opt.callback = function(icon) {
+								target.rclass('ti').rclass2('ti-').aclass(icon);
+							};
+
+							SETTER('icons/show', opt);
+							return;
+						}
+
+						if (target.prop('tagName') === 'IMG') {
+
+							var w = (target.attrd('cms-width') || '').parseFloat();
+							var h = (target.attrd('cms-height') || '').parseFloat();
+
+							var opt = {};
+							opt.accept = (/^image\/*/);
+							opt.element = target;
+							opt.isimage = true;
+							opt.size = target.attrd('cms-size');
+							opt.url = target.attrd('cms-src') || target.attr('src');
+							opt.alt = target.attr('alt');
+							opt.bg = target.attrd('cms-bg');
+							opt.instance = self;
+
+							if (w)
+								opt.width = w;
+
+							if (h)
+								opt.height = h;
+
+							var parent = target.parent('a');
+							if (parent.length)
+								opt.href = parent.attr('href');
+
+							opt.ishref = !!opt.href;
+
+							if (opt.width && opt.height) {
+								FIND('#cmsimagecrop', com => com.reconfigure('width:{0};height:{1};background:{2}'.format(opt.width, opt.height, opt.bg)));
+								SET('cmsimageform @default', opt);
+								SET('cmseditor.form', 'cmsimageform');
+							} else {
+								// Load files
+								config.files && self.EXEC(config.files, opt, function(item) {
+									var url = typeof(item) === 'string' ? item : item.url;
+									if (opt.size) {
+										opt.element.attrd('cms-src', url);
+										opt.element.attr('src', url + '?s=' + opt.size.replace('%', ''));
+									} else
+										opt.element.attr('src', url);
+									self.autoresize();
+								});
+							}
+							return;
+						}
+
+						target.attr('contenteditable', true).focus();
+						self.change(true);
+						break;
+
+					case 'remove':
+
+						if (!target) {
+							self.iframe_toolbar().hide();
+							return;
+						}
+
+						if (target.hclass('CMS_expression')) {
+							target.replaceWith(target.html());
+							return;
+						}
+
+						if (target[0].tagName === 'A' && target.hclass('CMS_edit')) {
+							target.replaceWith(target.html());
+							self.iframe_toolbar().hide();
+							return;
+						}
+
+						if (!target.hclass('CMS_remove')) {
+							target = self.dom_parent_class('CMS_remove');
+							if (!target) {
+								self.iframe_toolbar().hide();
+								return;
+							}
+						}
+
+						tmp = target.next();
+						if (!tmp.length)
+							tmp = target.prev();
+
+						var parent = target[0].parentNode;
+						var node = target[0];
+						var index = 0;
+
+						for (var i = 0; i < parent.children.length; i++) {
+							if (parent.children[i] == node) {
+								index = i;
+								break;
+							}
+						}
+
+						var repeatable;
+
+						if (target.hclass('CMS_repeat'))
+							repeatable = target.parent();
+
+						$(parent).find('.CMS_selected,.CMS_operation').rclass('CMS_selected CMS_operation');
+						backup.appendChild(node);
+						temporary.history.push({ node: node, parent: parent, index: index });
+						undobutton.rclass('hidden');
+
+						if (repeatable) {
+							if (!repeatable.find('> .CMS_repeat').length) {
+								var w = repeatable.closest('.CMS_widget');
+								if (w && w.length)
+									w.remove();
+							}
+						}
+
+						self.iframe_toolbar().hide();
+						self.change(true);
+
+						if (tmp.length && (tmp.hclass('CMS_edit') || tmp.hclass('CMS_remove')))
+							tmp.trigger('click');
+
+						self.autoresize();
+						break;
+
+					case 'repeat':
+
+						if (!target) {
+							self.iframe_toolbar().hide();
+							return;
+						}
+
+						if (target.hclass('CMS_repeat')) {
+							self.close();
+							target.after(self.widget_config_clone(target.clone()).rattr('contenteditable').rclass('CMS_selected').aclass('CMS_remove'));
+						} else {
+							var parent = self.dom_parent_class('CMS_repeat');
+							if (parent) {
+								self.close();
+								target.rclass('CMS_selected');
+								parent.after(self.widget_config_clone(parent.clone()).rattr('contenteditable').rclass('CMS_selected').aclass('CMS_remove'));
+							}
+						}
+
+						self.autoresize();
+						self.change(true);
+						break;
+				}
+			});
+
+			self.resize(10);
+		};
+
+		self.reconfig = function() {
+			var model = self.get();
+			for (var i = 0; i < model.widgets.length; i++) {
+				var item = model.widgets[i];
+				if (!item.compiled) {
+					var index = (item.settings || '').indexOf('<scr' + 'ipt>');
+					if (index !== -1) {
+						var scr = item.settings.substring(index + 8, item.settings.indexOf('</scr' + 'ipt>', index + 8));
+						try {
+							item.compiled = {};
+							(new Function('exports', scr)(item.compiled));
+						} catch (e) {
+							WARN(item.name + ': ' + e);
+							item.compiled = EMPTYOBJECT;
+						}
+					} else
+						item.compiled = EMPTYOBJECT;
+				}
+			}
+
+			self.iframe_body().find('.CMS_widget').each(function() {
+				var el = $(this);
+				var cms = self.widget_config_parse(el);
+				var widget = model.widgets.findItem('id', cms.id);
+				if (widget && widget.compiled && widget.compiled.check) {
+					try {
+						widget.compiled.check(cms.config, el);
+						// self.widget_config_stringify(el, cms.config);
+					} catch (e) {
+						WARN(widget.name + ': ' + e);
+					}
+				}
+			});
+		};
+
+		self.resizeforce = function() {
+			var contents = self.iframe_body();
+			var elheight = contents.find('#cmseditorheight');
+			if (elheight.length) {
+				var h = navigator.userAgent.indexOf('Safari') === -1 ? $(contents).find('body')[0].scrollHeight : elheight.offset().top + 80;
+				iframe.css('height', h);
+				width = contents.width();
+				height = h;
+			}
+		};
+
+		self.widget_config_parse = function(el) {
+			var data = el.attrd('cms');
+			try {
+				var index = data.indexOf('__');
+				var id = data.substring(0, index).trim();
+				var config = PARSE(decodeURIComponent(data.substring(index + 2)));
+				return { id: id, config: config };
+			} catch(e) {
+				// console.log(e, data, el.html(), el[0].parentNode, el[0]);
+				return null;
+			}
+		};
+
+		self.widget_config_stringify = function(el, config) {
+			var data = el.attrd('cms');
+			var index = data.indexOf('__');
+			var id = data.substring(0, index).trim();
+			el.attrd('cms', id + '__' + encodeURIComponent(STRINGIFY(config)));
+		};
+
+		self.resize = function(force) {
+			setTimeout2(self.ID, self.resizeforce, force ? 10 : 500);
+		};
+
+		self.refresh_widgets = function() {
+
+			var model = self.get();
+			var css = [];
+			if (model.widgets) {
+				if (model.widgets instanceof Array) {
+					for (var w of model.widgets)
+						css.push(w.css);
+				} else {
+					for (var key in model.widgets)
+						css.push(model.widgets[key].css);
+				}
+			}
+
+			self.iframe_css(css.join(''));
+			self.reconfig();
+
+			if (cmseditor.form === 'cmswidgetsform')
+				SET('cmswidgetsform.items', model.widgets);
+		};
+
+		self.dom_icon = function() {
+
+			self.backup(target);
+
+			// Font-Awesome icon
+			var tmp = target;
+			var tag = tmp[0].nodeName.toLowerCase();
+			var icon = '<i class="ti ti-flag-alt CMS_edit CMS_remove" contenteditable="false"></i>';
+
+			self.backup(target);
+
+			switch (tag) {
+				case 'span':
+					tmp.parent().prepend(icon);
+					break;
+				default:
+					self.iframe_document().execCommand('insertHTML', false, icon);
+					break;
+			}
+		};
+
+		self.dom_bold = function() {
+			self.backup(target);
+			self.iframe_document().execCommand('Bold', false, null);
+		};
+
+		self.dom_italic = function() {
+			self.backup(target);
+			self.iframe_document().execCommand('Italic', false, null);
+		};
+
+		self.dom_underline = function() {
+			self.backup(target);
+			self.iframe_document().execCommand('Underline', false, null);
+		};
+
+		self.dom_expression = function() {
+			var url = '#exp' + Date.now().toString(36);
+			self.iframe_document().execCommand('CreateLink', false, url);
+			var a = target.find('a[href="{0}"]'.format(url));
+			a.replaceWith('<span class="CMS_remove CMS_expression">' + a.html() + '</span>');
+		};
+
+		self.dom_link = function() {
+
+			var url = '#link' + Date.now().toString(36);
+			var mt = target;
+			var mtd = mt[0];
+
+			for (var i = 0; i < 5; i++) {
+				if (mtd.tagName === 'A')
+					return;
+				mtd = mtd.parentNode;
+				if (!mtd)
+					break;
+			}
+
+			self.iframe_document().execCommand('CreateLink', false, url);
+
+			var tmp = mt.find('a[href="' + url + '"]');
+			if (!tmp.length)
+				return;
+
+			tmp.attr('class', 'CMS_edit');
+			self.close();
+			target.rattr('contenteditable');
+			target.rclass('CMS_selected');
+
+			var content = tmp.text();
+			target = tmp;
+			target.data('temporary', true);
+
+			var link = {};
+
+			link.element = tmp;
+			link.href = '';
+
+			if (content.indexOf('@') !== -1)
+				link.href = 'mailto:' + content;
+			else if ((/\d+/).test(content))
+				link.href = 'tel:' + content;
+			else if (content.indexOf(' ') === -1 && content.indexOf(',') === -1 && content.indexOf('.') !== -1)
+				link.href = (/http(s):\/\//).test(content) ? content : ('https://' + content);
+
+			link.target = link.href.indexOf('.') !== -1 && link.href.indexOf(location.hostname) === -1 ? '_blank' : '';
+			link.instance = self;
+
+			self.close();
+			self.iframe_toolbar().hide();
+
+			if (config.link) {
+				self.EXEC(config.link, link);
+			} else {
+				SET('cmslinkform @default', link);
+				SET('cmseditor.form', 'cmslinkform');
+			}
+		};
+
+		self.backup = function(el) {
+			var node = $(el);
+			var clone = el.clone();
+			var rem = 'CMS_selected CMS_operation';
+			clone.rclass(rem).find('.CMS_selected,.CMS_operation').rclass(rem);
+			temporary.history.push({ node: node[0], clone: clone, html: clone.html() });
+			undobutton.rclass('hidden');
+		};
+
+		self.setter = function(value, path, type) {
+
+			if (init === 0) {
+				init = 1;
+				self.write('<ht' + 'ml><bo' + 'dy><div id="CMS"></div></bo' + 'dy></ht' + 'ml>');
+				return;
+			}
+
+			if (type === 'norender' || init != 2)
+				return;
+
+			// temporary.copypaste = null;
+			temporary.copypasteparent = null;
+
+			// Sets the current instance of editor to global variable
+			temporary.history = [];
+			backup.innerHTML = '';
+			undobutton.aclass('hidden');
+			iframe.aclass('invisible');
+
+			if (value) {
+
+				var css = [];
+
+				if (value.widgets) {
+					if (value.widgets instanceof Array) {
+						for (var w of value.widgets)
+							css.push(w.css);
+					} else {
+						for (var key in value.widgets)
+							css.push(value.widgets[key].css);
+					}
+				}
+
+				scripts = [];
+				self.write(value.layout.replace(new RegExp('<scr' + 'ipt.*?</scr' + 'ipt>', 'g'), function(text) {
+					var key = '<!-' + '-' + HASH(text).toString(36) + '-' + '->';
+					scripts.push({ id: key, html: text });
+					return key;
+				}).replace('</head>', '<link rel="stylesheet" href="/cmseditor/iframe.css" id="cmscsseditor" />' + (css.length ? ('<sty' + 'le id="cmscss">{0}</sty' + 'le>').format(css.join('')) : '') + '</head>').replace('</body>', '<div id="CMS_panel" class="invisible"><div id="CMS_panel_buttons_move"><span class="ti ti-arrow-up" data-name="up" title="@(Move up)"></span><span class="ti ti-arrow-down" data-name="down" title="@(Move down)"></span></div><div id="CMS_panel_buttons_reposition"><span class="ti ti-chevron-up" data-name="up2" title="@(Move up current repeated element)"></span><span class="ti ti-chevron-down" data-name="down2" title="@(Move down current repeated element)"></span></div><div id="CMS_panel_info"></div><div class="CMS_panel_buttons"><span class="ti ti-pencil" title="@(Edit)" data-name="edit"></span><span class="ti ti-openai" title="@(Generate via AI)" data-name="generate"></span><span class="ti ti-cog-alt" title="@(Widget settings)" data-name="settings"></span><span class="ti ti-link" title="@(Change link)" data-name="link"></span><span class="ti ti-quote-left" title="@(Change attributes)" data-name="attribute"></span><span class="ti ti-copy" title="@(Duplicate)" data-name="repeat"></span></span><span class="ti ti-plus-circle" title="@(Add a widget)" data-name="widgets"></span><span class="ti ti-trash" title="@(Remove)" data-name="remove"></span><span class="ti ti-caret-square-down" title="@(Hide)" data-name="hide"></span></div><div id="CMS_panel_buttons_copy"><span class="ti ti-paste" data-name="paste" title="@(Paste widget)"></span><span class="ti ti-copy" data-name="copy" title="@(Copy widget)"></span></div><div id="CMS_panel_buttons_body"><span class="ti ti-arrows-v" data-name="CMS_mv" title="@(Toggle vertical margin)"></span><span class="ti ti-arrows-h" data-name="CMS_mh" title="@(Toggle horizontal margin)"></span><span class="ti ti-code" data-name="sourcecode" title="@(Source code)"></span></div></div></body>'));
+
+				var body = self.iframe_body();
+
+				body.find('body').aclass('CMS_preview');
+
+				var cms = body.find('#CMS');
+
+				if (value.type !== 'layout') {
+
+					var cache = document.createElement('DIV');
+
+					while (cms[0].children.length)
+						cache.appendChild(cms[0].children[0]);
+
+					body.find('.CMS_edit,.CMS_remove,.CMS_repeat,.CMS_attribute,.CMS_widgets').rclass('CMS_edit CMS_remove CMS_repeat CMS_attribute CMS_widgets');
+					body.find('.CMS_render').remove();
+
+					while (cache.children.length)
+						cms.append(cache.children[0]);
+				}
+
+				if (value.html && cms.length)
+					cms.html(value.html);
+
+				if (!value.layout && !value.html) {
+					var html = cms.html();
+					cms.empty();
+					body.find('.CMS_edit,.CMS_remove,.CMS_repeat,.CMS_attribute,.CMS_multiline,.CMS_widgets').rclass('CMS_edit CMS_remove CMS_repeat CMS_attribute CMS_multiline CMS_widgets');
+					cms.html(html);
+				}
+
+				body.find('img').on('error', function() {
+					var t = this;
+					var w = t.getAttribute('data-cms-width');
+					var h = t.getAttribute('data-cms-height');
+					t.src = w && h ? self.makeimage(+w, +h) : emptyimage;
+				});
+
+				setTimeout(self.clean, 50);
+
+			} else
+				self.write('');
+
+			self.iframe_refresh();
+			iframe.rclass('invisible', 500);
+		};
+
+	});
+
+	function onImageError(img) {
+		img.onerror = null;
+		img.src = img.getAttribute('data-empty');
+		return true;
+	}
+
+</script>

@@ -1,0 +1,23 @@
+<script>
+	ROUTE('/admin/pages/{id}/', function(id) {
+		TAPI('pages_html/' + id + ' ERROR', function(response) {
+
+			var opt = {};
+			opt.name = response.name;
+			opt.html = response.html;
+			opt.layout = response.layout.replace(new RegExp('<scri' + 'pt\\b[^<]*(?:(?!<\\/scr' + 'ipt>)<[^<]*)*<\\/scr' + 'ipt>', 'gi'), '');
+			opt.type = 'html';
+			opt.callback = function(value, hide) {
+				var model = {};
+				model.id = id;
+				model.html = value.html;
+				TAPI('pages_save_html', model, hide);
+			};
+
+			EXEC(true, 'editor/init', opt);
+			SET('common.page', 'editor');
+			BREADCRUMB.add('@(Pages)', '../')(response.name, NAV.url);
+		});
+
+	}, 'init');
+</script>

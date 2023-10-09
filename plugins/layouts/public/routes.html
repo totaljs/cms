@@ -1,0 +1,31 @@
+<script>
+	ROUTE('/admin/layouts/{id}/', function(id) {
+		TAPI('layouts_html/{0} ERROR'.format(id), function(response) {
+
+			var reg = new RegExp('<scri' + 'pt\\b[^<]*(?:(?!<\\/scr' + 'ipt>)<[^<]*)*<\\/scr' + 'ipt>', 'gi');
+			var arr = [];
+			var opt = {};
+			opt.name = response.name;
+			opt.layout = response.html.replace(reg, function(text) {
+				return '<!-' + '-#' + arr.push(text) + '#-' + '->';
+			});
+
+			opt.html = '';
+			opt.type = 'layout';
+
+			opt.callback = function(value, hide) {
+				var model = {};
+				model.id = id;
+				model.html = value.html.replace(new RegExp('<!-' + '-#\\d+#-' + '->', 'g'), function(text) {
+					var index = +(text.match(/\d+/) + '');
+					return arr[index - 1];
+				});
+				TAPI('layouts_save_html ERROR', model, hide);
+			};
+
+			EXEC(true, 'editor/init', opt);
+			SET('common.page', 'editor');
+			BREADCRUMB.add('@(Layouts)', '../')(response.name, NAV.url);
+		});
+	}, 'init');
+</script>

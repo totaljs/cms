@@ -1,0 +1,193 @@
+<div class="virtualwire hidden" data-if="CLASS">
+	<button class="exec b" data-exec="CLASS/save"><i class="ti ti-check-circle"></i>@(Save)</button>
+	<button class="exec" data-exec="CLASS/close">@(Cancel)</button>
+</div>
+
+<ui-plugin>
+	<ui-bind path="?.ready" config="visible" class="invisible">
+		<ui-component name="cmseditor" path="?.html" config="margin:60;parent:window;generate:?/generate;links:?/links;widgetsource:?/widgetsource;$assign:EDITOR;image:?/image;files:?/files">
+			 <ui-import config="url:/cmseditor/index.html;target:body"></ui-import>
+		</ui-component>
+	</ui-bind>
+</ui-plugin>
+
+<ui-component name="importer" path="cmseditor.form" config="if:cmsgenerateform;url:/forms/chatgpt.html"></ui-component>
+
+<script>
+	PLUGIN(function(exports) {
+
+		var meta;
+
+		exports.reload = function() {
+			SETTER('shortcuts/session', function(register) {
+				register('cmd+s,ctrl+s', function() {
+					if (common.page === 'editor')
+						exports.save(true);
+				}, true);
+			});
+		};
+
+		exports.files = function(meta, next) {
+			SET('common.form2', 'formfiles');
+			var opt = {};
+			if (meta.isimage) {
+				opt.type = 'images';
+				opt.width = meta.width;
+				opt.height = meta.height;
+			}
+			EXEC(true, 'formfiles/init', opt, function(item, hide) {
+				next(item.url);
+				hide();
+			});
+		};
+
+		exports.links = function(next) {
+			next(DEF.cl.links);
+		};
+
+		exports.generate = function(opt) {
+
+			var menu = {};
+			menu.x = opt.x + 30;
+			menu.y = opt.y + 40;
+			menu.items = [];
+			menu.items.push({ id: 'grammar', name: '@(Fix Spelling and Grammar)', icon: '!ti ti-spellcheck' });
+			menu.items.push({ id: 'generate', name: '@(Generate text)', icon: '!ti ti-align-justify' });
+			menu.items.push({ id: 'keywords', name: '@(Make keywords)', icon: '!ti ti-font' });
+			menu.items.push({ id: 'summarize', name: '@(Summarize)', icon: '!ti ti-compress' });
+			menu.items.push('-');
+			menu.items.push({ id: 'ask', name: '@(Ask)', icon: '!ti ti-question-circle' });
+			menu.callback = function(selected) {
+
+				var prompt = '';
+				switch (selected.id) {
+					case 'grammar':
+						prompt = '@(Correct this to standard English:)\n\n' + opt.text;
+						break;
+					case 'keywords':
+						prompt = '@(Extract keywords from this text:)\n\n' + opt.text;
+						break;
+					case 'summarize':
+						prompt = '@(Summarize this text:)\n\n' + opt.text;
+						break;
+					case 'generate':
+						prompt = '@(Expand this text:)\n\n' + opt.text;
+						break;
+					case 'ask':
+						SET('cmsgenerateform @default', opt);
+						SET('cmseditor.form', 'cmsgenerateform');
+						return;
+				}
+
+				exports.tapi('chatgpt @showloading ERROR', { value: prompt }, function(response) {
+					opt.element.html(response.text);
+					SETTER('loading/hide');
+				});
+
+			};
+
+			SETTER('menu/show', menu);
+
+		};
+
+		exports.upload = function(file, next) {
+			var opt = {};
+			opt.url = ENV('upload');
+			opt.files = [file];
+			opt.height = file.height;
+			opt.width = file.width;
+			opt.onlylarger = true;
+			opt.callback = function(response, err) {
+				if (response && response[0] && response[0].id)
+					next('/download/' + response[0].id + '.' + response[0].ext);
+			};
+			SETTER('fileuploader/upload', opt);
+		};
+
+		exports.image = function(meta, next) {
+
+			if (meta.files && meta.files[0] && meta.files[0].type.substring(0, 6) !== 'image/')
+				return;
+
+			var opt = {};
+			opt.url = ENV('upload');
+			opt.width = meta.width;
+			opt.height = meta.height;
+			opt.files = meta.files;
+			opt.onlylarger = true;
+
+			opt.callback = function(response, err) {
+				if (response && response[0] && response[0].id)
+					next('/download/' + response[0].id + '.' + response[0].ext);
+			};
+
+			SETTER('fileuploader/upload', opt);
+		};
+
+		function parsejs(item) {
+			if (item.editor)
+				item.js = new Function('$', item.editor.trim());
+		}
+
+		exports.init = function(opt) {
+			meta = opt;
+			exports.tapi('widgets_list', function(widgets) {
+				for (var item of widgets)
+					parsejs(item);
+				exports.set({ name: opt.name, ready: true, html: { html: opt.html, layout: opt.layout, type: opt.type, widgets: widgets }});
+			});
+		};
+
+		exports.close = function() {
+			REDIRECT('../');
+			exports.set('ready', false);
+		};
+
+		exports.refresh_widgets = function() {
+			exports.tapi('widgets_list', function(response) {
+				exports.scope();
+				exports.set('html.widgets', response, 'norender');
+				SETTER('cmseditor/refresh_widgets');
+			});
+		};
+
+		ON('refresh_widgets', exports.refresh_widgets);
+
+		exports.save = function(force) {
+			var opt = {};
+			opt.html = EDITOR.response();
+			meta.callback(opt, force === true ? NOOP : exports.close);
+		};
+
+		exports.import = function() {
+			SET('cmseditor.form', 'cmsimport');
+		};
+
+		exports.widgetsource = function(widget) {
+			exports.tapi('widgets_read/' + widget.config.id, ASETTER('message/response', function(response) {
+				var opt = {};
+				var data = exports.model;
+				opt.html = response.html;
+				opt.callback = function(value, hide) {
+					var model = {};
+					model.id = widget.config.id;
+					model.html = value.html;
+					exports.tapi('widgets_save ERROR', model, function() {
+						exports.tapi('widgets_detail/' + model.id, function(response) {
+							hide();
+							exports.scope();
+							var index = data.html.widgets.findIndex('id', model.id);
+							parsejs(response);
+							data.html.widgets[index] = response;
+							exports.element.SETTER('cmseditor/clearwidgetcache', model.id);
+							exports.element.SETTER('cmseditor/refresh_widgets');
+						});
+					});
+				};
+				SETTER('loading/hide', 1000);
+				FUNC.code(opt);
+			}));
+		};
+
+	});
+</script>

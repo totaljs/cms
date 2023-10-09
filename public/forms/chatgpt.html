@@ -1,0 +1,95 @@
+<style>
+	.CLASS .title { font-size: 16px; }
+	.CLASS .result-container { position: relative; min-height: 200px; background-color: #fff; border-radius: var(--radius); }
+	.CLASS .result-container:before { display: none; content: 'Generating'; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); color: gray; font-size: 12px; }
+	.CLASS .result-container.isgenerating { animation: bgcolor 2s infinite; }
+	.CLASS .result-container.isgenerating:before { display: block; }
+	.CLASS .result-container .val { background-color: #fff; border: 1px solid #e0e0e0; border-radius: var(--radius); padding: 20px; transition: background-color .2s; }
+	.CLASS .result-container .val.copied { background-color: #f0f0f0; }
+	.CLASS .result-container .val.isimage { padding: 0; }
+	.CLASS .result-container label { display: block; }
+	.CLASS .result-container label i { color: var(--color); }
+	.CLASS .result-container .heading { display: flex; align-items: center; justify-content: space-between; }
+
+	@keyframes bgcolor {
+		0% { background-color: #fff; }
+		50% { background-color: #f0f0f0; }
+		100 { background-color: #fff; }
+	}
+</style>
+
+<ui-component name="box" path="cmseditor.form" config="if:~PATH~;width:780;title:@(AI text generator);autofocus:true;reload:?/reload;icon:ti ti-robot" class="hidden CLASS" plugin="CLASS">
+	<div class="padding nmb">
+
+		<div class="title center">
+			<img src="/img/ai.jpg" alt="@(AI text generator)" class="img-responsive" style="max-width:200px;margin:0 auto 30px;width:100%" />
+			<i class="ti ti-robot mr5"></i>@(Create custom content with an AI generator.<br>Simply describe your requirements and it will generate text for you. )
+		</div>
+	</div>
+
+	<div class="padding bg-smoke">
+		<ui-component name="enter" path="?.value" config="exec:?/generate;validate:1">
+			<ui-component name="input" path="?.value" config="required:1;placeholder:@(e.g., Create a title for the bicycle eshop)" class="m">@(What is important to mention)</ui-component>
+			<ui-component name="validate" path="?.value" config="selector:.op">
+				<div class="toolbar">
+					<button class="exec op" data-exec="?/generate" disabled><i class="ti ti-rocket mr5"></i>@(Generate)</button>
+				</div>
+			</ui-component>
+		</ui-component>
+	</div>
+
+	<div class="padding">
+		<ui-bind path="?.isgenerating" config=".isgenerating" child=".result-container" class="block">
+			<div class="result-container">
+				<ui-bind path="?.result" config="show">
+					<figure>
+						<div class="heading">
+							<label class="b"><i class="ti ti-align-left mr5"></i>@(Generated text)</label>
+							<div class="toolbar">
+								<button class="exec" data-exec="?/copy"><i class="ti ti-copy mr5"></i>@(Copy)</button>
+								<button class="exec b" data-exec="?/submit"><i class="ti ti-check-circle green mr5"></i>@(Apply)</button>
+							</div>
+						</div>
+						<ui-bind path="?.result" config="text" child=".val">
+							<div class="val m"></div>
+						</ui-bind>
+					</figure>
+				</ui-bind>
+			</div>
+		</ui-bind>
+	</div>
+</ui-component>
+
+<script>
+
+	PLUGIN(function(exports) {
+
+		exports.reload = function() {
+		};
+
+		exports.generate = function(el) {
+			var model = exports.model;
+
+			SETTER('loading/show', '@(Generating text ...)');
+
+			exports.tapi('chatgpt ERROR', { value: model.value }, function(response) {
+				exports.set('result @hideloading', response.text);
+			});
+		};
+
+		exports.copy = function(el) {
+			var parent = el.closest('figure');
+			var value = parent.find('.val');
+			value.aclass('copied').rclass('copied', 300);
+			SETTER('clipboard/copy', value.text());
+		};
+
+		exports.submit = function() {
+			var model = exports.model;
+			var value = model.result;
+			model.element.html(value);
+			NUL('cmseditor.form');
+		};
+	});
+
+</script>

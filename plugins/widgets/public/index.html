@@ -1,169 +1,225 @@
-<div data-scope="widgets">
-	<div data---="layout2__null__parent:.ui-layout2-section" class="invisible">
+<style>
+	.CLASS h3 { margin: 0 10px; }
+	.CLASS figure { cursor: pointer; margin-bottom: var(--gap); }
+	.CLASS figure > section { border-radius: var(--radius); border: 1px solid #eaeaea; margin: 10px 10px 0; padding: 0; text-align: left; background-color: #fff; }
+	.CLASS figure .meta { padding: 18px 0 5px 15px; border-top: 1px solid #eaeaea; height: 56px; }
+	.CLASS figure .name { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; font-weight: bold; }
+	.CLASS figure .options { float: right; margin: 0 15px 0 0; color: gray; }
+	.CLASS figure .options:hover { color: #333; }
+	.CLASS figure img { border-radius: var(--radius) var(--radius) 0 0; width: 100%; max-width: 234px; }
+</style>
 
-		<section data-type="top2" data-size="44">
-			<div class="header">
-				<label><i class="fa fa-plug"></i>@(List of widgets)</label>
-				<nav data-bind="?.checked__enabled .S:value && value.length">
-					<button class="exec" data-exec="?/create"><i class="fa fa-plus-circle green"></i><span>@(Create)</span></button>
-					<button class="exec" data-exec="?/import" data-bind="common.componentator__show"><i class="fa fa-cloud-download"></i><span>@(Import)</span></button>
-					<button class="exec" data-exec="?/options"><i class="fa fa-wrench"></i><span>@(Options)</span></button>
-					<button class="exec" data-exec="?/remove" data-bind="?__enabled:value&&(value.selected||(value.checked&&value.checked.length))__track:checked,selected" disabled><i class="far fa-trash-o red"></i>@(Remove)</button>
-				</nav>
-			</div>
-		</section>
-
-		<section data-type="right" data-size="250,250,200,0">
-			<div class="padding">
-				<div class="caption"><i class="fa fa-clone"></i>@(Options)</div>
-				<nav class="links">
-					<button class="exec hidden b" data-bind="common.componentator__show" data-exec="?/import"><i class="fa fa-cloud-download"></i>@(Import widgets)</button>
-					<button class="exec" data-exec="?/create"><i class="fa fa-plus-circle green"></i>@(Create widget)</button>
-					<button class="exec" data-path="common.form" data-value="'pagesglobals'"><i class="fa fa-cog"></i>@(Variables)</button>
-					<button class="exec" data-path="common.form" data-value="'widgetsglobals'"><i class="fa fa-paint-brush"></i>@(Global style/script)</button>
-				</nav>
-			</div>
-		</section>
-
-		<section data-type="main">
-			<div data---="datagrid__?.grid__filterlabel:@(Search);checked:?.checked;button:?/button;noborder:1;height:window;margin:45;dblclick:?/update;highlight:1;click:?.selected">
-				<script type="text/plain">
-					[
-						{ name: 'id', text: '@(ID)', width: 120, hide: true, class: 'monospace' },
-						{ name: 'name', text: '@(Name)', width: 430, template: '{{ if picture }}<i class="fa fa-camera mr5 blue"></i>{{ fi }}{{ name }}' },
-						{ name: 'category', text: '@(Category)', width: 200 },
-						{ name: 'dtupdated', text: '@(Updated)', format: '[date]', width: 150, align: 1 },
-						{ name: '@(Options)', filter: false, align: 1, sort: false, width: 100, template: '<button title="@(Duplicate)" name="duplicate"><i class="far fa-copy"></i></button><button name="update" title="@(Edit)"><i class="fa fa-pencil"></i></button><button class="btn-remove" name="remove" title="@(Remove)"><i class="far fa-trash-o"></i></button>' }
-					]
-				</script>
-			</div>
-
-		</section>
-	</div>
+<div class="virtualwire hidden" data-if="~PATH~">
+	<ui-plugin>
+		<ui-component name="searchinput" path="?.search" config="placeholder:@(Search widgets)" class="pull-right"></ui-component>
+		<div class="pull-right">
+			<button class="exec b" data-exec="?/import"><i class="ti ti-arrow-circle-down"></i>@(Import)</button>
+			<button class="exec" data-exec="?/refresh"><i class="ti ti-refresh"></i>@(Refresh)</button>
+			<button class="exec" data-exec="?/menu"><i class="ti ti-cog"></i>@(Options)</button>
+		</div>
+	</ui-plugin>
 </div>
 
-<div data---="importer__common.form__if:widgetsform;url:@{#}/_widgets/form.html"></div>
+<ui-plugin class="CLASS">
+
+	<ui-component name="searchdata" path="?.search" config="datasource:?.items;output:?.filtered">
+		<ui-component name="empty" path="?.filtered" config="parent:auto" class="invisible">
+
+			<script type="text/html">
+				@(No data found)
+			</script>
+
+			<ui-component name="viewbox" path="common.page" config="parent:auto;margin:60;scrollbarshadow:1">
+				<div style="max-width:1400px;margin:0 auto">
+					<ui-component name="display" class="padding">
+						<h3>@(Widgets)</h3>
+						<ui-bind path="?.filtered" config="template:figure -> data-id" class="grid-5">
+							<script type="text/html">
+								{{ foreach m in value }}
+									<figure data-id="{{ m.id }}" data-search="{{ m.name }}" class="exec" data-exec="?/edit">
+										<section>
+											<img src="{{ if m.preview }}{{ m.preview }}{{ else }}/~ID~/empty.png{{ fi }}" onerror="onImageError(this)" data-empty="/~ID~/empty.png" class="img-responsive" loading="lazy" />
+											<div class="meta">
+												<span class="exec options" data-exec="?/options" data-prevent="true"><i class="ti ti-cog"></i></span>
+												<div class="name">{{ m.name }}</div>
+											</div>
+										</section>
+									</figure>
+								{{ end }}
+							</script>
+						</ui-bind>
+					</ui-component>
+				</div>
+			</ui-component>
+		</ui-component>
+	</ui-component>
+
+</ui-plugin>
 
 <script>
-	PLUGIN('widgets', function(exports) {
 
-		exports.refresh = function() {
-			FUNC.loading(true);
-			AJAX('GET [url]api/widgets/', function(response) {
+	PLUGIN(function(exports) {
 
-				var categories = {};
+		exports.reload = function() {
+			BREADCRUMB.add('@(Widgets)', NAV.url);
+			exports.refresh();
+		};
 
-				for (var i = 0, length = response.items.length; i < length; i++)
-					categories[response.items[i].category] = true;
-
-				SET('?.categories', Object.keys(categories));
-				SET('?.grid', response);
-
-				if (W.cmseditor)
-					W.cmseditor.widgetcachereset = true;
-
-				FUNC.loading(false, 200);
+		exports.create = function() {
+			var opt = {};
+			exports.ajax('GET /widget.txt', function(response) {
+				opt.html = response || '';
+				opt.callback = function(value, hide) {
+					var model = {};
+					model.html = value.html;
+					exports.tapi('widgets_save @showloading ERROR', model, function() {
+						exports.scope();
+						exports.refresh();
+						hide();
+					});
+				};
+				SETTER('loading/hide', 1000);
+				FUNC.code(opt);
 			});
 		};
 
 		exports.import = function() {
-			SET('common.form3', 'widgetsimport');
+			SET('common.form2', 'formwidgets');
 		};
 
-		exports.reload = function() {
-			exports.refresh();
+		exports.refresh = function(el) {
+			el && el.find('i').aclass('ti-spin').rclass('ti-spin', 800);
+			exports.tapi('widgets_list?list=1 ERROR', function(response) {
+				for (var item of response) {
+					if (item.name) {
+						item.html = '<img src="{0}" style="width:30px" class="mr10" />{1}'.format(item.preview, item.name.encode());
+						item.search = item.name.toSearch();
+					}
+				}
+
+				response.quicksort('name');
+				exports.set('items @hideloading', response);
+			});
 		};
 
-		exports.button = function(name, row, grid) {
-			switch (name) {
-				case 'remove':
-					SETTER('approve/show', '@(Are you sure you want to remove selected widget?)', '"trash" @(Remove)', function() {
-						FUNC.loading(true);
-						AJAX('DELETE [url]api/widgets/{id}/'.arg(row), function(response) {
-							FUNC.loading(false, 1000);
-							if (response.success) {
-								SETTER('snackbar/success', '@(Widget has been removed successfully.)');
-								exports.refresh();
-							}
+		exports.edit = function(el) {
+			var id = ATTRD(el);
+			exports.tapi('widgets_read/{0} @showloading ERROR'.format(id), function(response) {
+				var opt = {};
+				opt.html = response.html;
+				opt.callback = function(value, hide) {
+					var model = {};
+					model.id = id;
+					model.html = value.html;
+					exports.tapi('widgets_save ERROR', model, function() {
+						exports.scope();
+						exports.refresh();
+						hide();
+					});
+				};
+				SETTER('loading/hide', 1000);
+				FUNC.code(opt);
+			});
+		};
+
+		exports.search = function() {
+			var model = exports.data;
+			var opt = {};
+			opt.id = 'widgets';
+			opt.search = function(q, next) {
+				q = q.toSearch();
+				var arr = [];
+				for (var m of model.items) {
+					if (m.search.indexOf(q) !== -1)
+						arr.push(m);
+				}
+				next(arr.take(30));
+			};
+			opt.callback = function(item) {
+				exports.edit(item);
+			};
+			SETTER('spotlight/show', opt);
+		};
+
+		exports.menu = function(el) {
+
+			var model = exports.model;
+			var opt = {};
+			opt.element = el;
+			opt.align = 'right';
+			opt.items = [];
+
+			opt.items.push({ id: 'create', name: '@(Create)', icon: 'ti ti-plus-circle green' });
+			opt.items.push({ id: 'import', name: '@(Import)', icon: 'ti ti-arrow-circle-down' });
+
+			if (model.selection && model.selection.length) {
+				opt.items.push('-');
+				opt.items.push({ id: 'remove', name: '@(Remove selected ({0}x))'.format(model.selection.length), icon: 'ti ti-trash red' });
+			}
+
+			opt.callback = function(item) {
+
+				if (item.id === 'create' || item.id === 'enterprise' || item.id === 'import') {
+					exports[item.id]();
+					return;
+				}
+
+				if (item.id === 'remove') {
+					SETTER('approve/show', '@(Are you sure you want to remove selected ({0}x) widgets?)'.format(model.selection.length), '"ti ti-trash" @(Clear)', function() {
+						exports.scope();
+						SETTER('loading/show');
+						model.selection.wait(function(id, next) {
+							exports.tapi('widgets_remove/' + id, next);
+						}, function() {
+							exports.scope();
+							exports.refresh();
 						});
 					});
-					break;
-				case 'update':
-				case 'duplicate':
-					FUNC.loading(true);
-					AJAX('GET [url]api/widgets/{id}/'.arg(row), function(response) {
-
-						if (name === 'duplicate') {
-							response.id = '';
-							response.reference = '';
-						}
-
-						SETR('widgetsform.form', response);
-						SET('common.form', 'widgetsform');
-					});
-					break;
-			}
-		};
-
-		exports.update = function(row) {
-			exports.button('update', row);
-		};
-
-		exports.create = function() {
-			SETR('widgetsform.form', {});
-			SET('common.form', 'widgetsform');
-		};
-
-		exports.options = function(el) {
-			var opt = {};
-			opt.align = 'right';
-			opt.element = el;
-			opt.items = [];
-			opt.items.push({ id: 'create', name: '@(Create widget)', icon: 'plus-circle green' });
-			opt.items.push({ id: 'refresh', name: '@(Refresh)', icon: 'refresh' });
-			opt.items.push('-');
-			opt.items.push({ id: 'import', name: '@(Import widgets)', icon: 'cloud-download' });
-			opt.items.push({ id: 'widgetsglobals', name: '@(Global CSS/JS)', icon: 'paint-brush' });
-			opt.items.push({ id: 'pagesglobals', name: '@(Variables)', icon: 'clone' });
-			opt.callback = function(item) {
-				switch (item.id) {
-					case 'refresh':
-					case 'create':
-					case 'import':
-						exports[item.id]();
-						break;
-					default:
-						SET('common.form', item.id);
-						break;
+					return;
 				}
-			};
 
+			};
 			SETTER('menu/show', opt);
 		};
 
-		exports.remove = function(el) {
-			var model = GET('?');
-			SETTER('approve/show', '@(Are you sure you want to remove all selected widgets?)', '"trash" @(Remove)', function() {
+		exports.options = function(el) {
+			var items = exports.model.items;
+			var id = ATTRD(el);
+			var data = items.findItem('id', id);
+			var opt = {};
+			opt.element = el;
+			opt.align = 'right';
+			opt.items = [];
+			opt.items.push({ id: 'code', name: '@(Edit)', icon: 'ti ti-laptop-code' });
+			opt.items.push('-');
+			opt.items.push({ id: 'remove', name: '@(Remove)', icon: 'ti ti-trash red' });
+			opt.callback = function(item) {
 
-				FUNC.loading(true);
-
-				var checked = model.checked;
-				if (!checked || !checked.length) {
-					checked = model.selected;
-					if (checked)
-						checked = [checked];
+				if (item.id === 'code') {
+					exports.edit(id);
+					return;
 				}
 
-				checked.wait(function(el, next, index) {
-					SET('common.progress', (index / checked.length) * 100);
-					AJAX('DELETE [url]api/widgets/', { id: el.id }, next);
-				}, function() {
-					exports.refresh();
-					FUNC.loading(false, 1000);
-					SETTER('snackbar/success', '@(Widgets have been removed successfully.)');
-				});
-			});
+				if (item.id === 'remove') {
+					SETTER('approve/show', '@(Are you sure you want to remove the "{name}" widget?)'.arg(data, 'escape'), '"ti ti-trash" @(Remove)', function() {
+						exports.tapi('widgets_remove/' + id, function() {
+							exports.scope();
+							exports.refresh();
+						});
+					});
+				}
+
+			};
+			SETTER('menu/show', opt);
 		};
+
+		ON('refresh_widgets', function() {
+			setTimeout(function() {
+				exports.scope();
+				exports.refresh();
+			}, 1000);
+		});
+
 	});
 
 </script>

@@ -1,0 +1,142 @@
+<script id="template_cmssettingsform" type="text/html">
+	<ui-plugin path="cmseditor.settings.@NAME@" id="cmssettings_w@NAME@">
+		@BODY@
+		<div class="bg-smoke padding">
+			<ui-component name="input" path="?.hiddenlg" config="type:checkbox">@(Hide for large display)</ui-component>
+			<ui-component name="input" path="?.hiddenmd" config="type:checkbox">@(Hide for medium display)</ui-component>
+			<ui-component name="input" path="?.hiddensm" config="type:checkbox">@(Hide for small display)</ui-component>
+			<ui-component name="input" path="?.hiddenxs" config="type:checkbox">@(Hide for extra small display)</ui-component>
+		</div>
+	</ui-plugin>
+</script>
+
+<ui-component name="box" path="cmseditor.form" config="if:~PATH~;width:800;visibleY:1;icon:ti ti-cog-alt;submit:~PATH~/submit;$id:~PATH~" class="hidden invisible">
+	<div id="cmseditor_settings"></div>
+	<nav>
+		<ui-component name="validate" path="settings" config="$id:cmssettingsformvalidation">
+			<button name="submit"><i class="ti ti-check-circle"></i>@(APPLY)</button>
+			<button name="cancel">@(Cancel)</button>
+		</ui-component>
+	</nav>
+</ui-component>
+
+<div id="cmseditor_repo" class="hidden"></div>
+
+<script>
+	PLUGIN(function(exports) {
+
+		var initialized_settings = {};
+		var settings_current;
+		var settings_data;
+		var checksum = {};
+
+		exports.clear = function(id) {
+			id = 'cmssettings_w' + id;
+			if (initialized_settings[id]) {
+				$('#' + id).remove();
+				delete initialized_settings[id];
+			}
+		};
+
+		exports.refresh = function(meta, e) {
+
+			if (e && e.target && (e.target.tagName === 'BUTTON' || e.target.tagName === 'A'))
+				return;
+
+			var widget = meta.widget;
+
+			if (!widget.settings)
+				widget.settings = '';
+
+			var stamp = widget.settings ? HASH(widget.settings).toString(36) : '0';
+
+			if (!widget.settings2)
+				widget.settings2 = widget.settings;
+
+			if (checksum[widget.id] && checksum[widget.id] !== stamp) {
+				exports.clear(widget.id);
+				widget.settings2 = widget.settings;
+			}
+
+			checksum[widget.id] = stamp;
+
+			var id = 'cmssettings_w' + widget.id;
+			var dom = $('#cmseditor_settings')[0];
+			var domrepo = $('#cmseditor_repo')[0];
+			var domsettings = $('#' + id)[0];
+			var move = false;
+
+			if (!domsettings && initialized_settings[id])
+				delete initialized_settings[id];
+
+			if (dom.children[0] && dom.children[0] !== domsettings) {
+				domrepo.appendChild(dom.children[0]);
+				move = true;
+			}
+
+			var config = CLONE(meta.config);
+			var path = 'cmseditor.settings.' + widget.id;
+			var opt = {};
+
+			opt.widget = widget;
+			opt.element = meta.element;
+			opt.config = config;
+			opt.path = path;
+
+			if (widget.settings2) {
+				var beg = widget.settings2.indexOf('<scr' + 'ipt>');
+				if (beg !== -1) {
+					var end = widget.settings2.indexOf('</scr' + 'ipt>', beg + 10);
+					var scr = widget.settings2.substring(beg + 8, end);
+					widget.settings2 = widget.settings2.substring(0, beg) + widget.settings2.substring(end + 9);
+					new Function('exports', scr)(opt);
+				}
+			}
+
+			RECONFIGURE('#cmssettingsform', { title: '@(Configuration): ' + widget.name });
+
+			if (initialized_settings[id]) {
+				move && dom.appendChild(domsettings);
+			} else {
+				initialized_settings[id] = 1;
+				$(dom).aclass('invisible').append($('#template_cmssettingsform').html().replace(/@NAME@/g, widget.id).replace(/@BODY@/g, widget.settings2));
+				COMPILE();
+			}
+
+			var el = meta.element;
+
+			config.hiddenlg = el.hclass('hidden-lg');
+			config.hiddenmd = el.hclass('hidden-md');
+			config.hiddensm = el.hclass('hidden-sm');
+			config.hiddenxs = el.hclass('hidden-xs');
+
+			settings_data = meta;
+			settings_current = widget;
+			setTimeout(() => $('#cmseditor_settings').rclass('invisible'), 1000);
+			SETTER(true, '#cmssettingsformvalidation/setPath', path);
+			SET('cmseditor.settings.{0} @reset'.format(widget.id), config);
+			SET('cmseditor.form', 'cmssettingsform');
+		};
+
+		exports.submit = function(hide) {
+			var widget = settings_current;
+			var model = GET('cmseditor.settings.{0} @reset'.format(widget.id));
+
+			var el = settings_data.element;
+
+			el.tclass('hidden-lg', model.hiddenlg === true);
+			el.tclass('hidden-md', model.hiddenmd === true);
+			el.tclass('hidden-sm', model.hiddensm === true);
+			el.tclass('hidden-xs', model.hiddenxs === true);
+
+			delete model.hiddenlg;
+			delete model.hiddenmd;
+			delete model.hiddensm;
+			delete model.hiddenxs;
+
+			settings_data.save(model);
+			hide();
+		};
+
+	});
+</script>

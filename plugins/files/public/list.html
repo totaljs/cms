@@ -1,0 +1,94 @@
+<ui-component name="box" path="common.form2" config="if:~PATH~;icon:ti ti-copy;title:@(Files);width:700;zindex:30" class="hidden ~PATH~" plugin="~PATH~">
+	<nav>
+		<div class="mr10 pull-right">
+			<button class="exec" data-exec="?/upload"><i class="ti ti-cloud-upload"></i>@(Upload)</button>
+		</div>
+	</nav>
+	<div>
+		<ui-component name="datagrid" path="?.items" config="margin:93;noborder:1;click:?/submit;checkbox:0">
+			<script type="text/plain">
+				[
+					{ name: 'name', text: '@(Name)', width: 350 },
+					{ name: 'dimension', text: '@(Dimension)', width: 120, align: 1, monospace: 1, sort: false },
+					{ name: 'size', text: '@(Size)', width: 120, align: 2, alignheader: 2, template: '{{ size | filesize }}', monospace: 1, filter: false, class: 'gray' },
+				]
+			</script>
+		</ui-component>
+	</div>
+	<nav>
+		<button name="cancel" style="width:100%">@(Close)</button>
+	</nav>
+</ui-component>
+
+<script>
+
+	PLUGIN(function(exports) {
+
+		var meta;
+
+		exports.refresh = function() {
+			exports.tapi('files_list', function(response) {
+
+				for (var item of response)
+					item.dimension = (item.width && item.height ? (item.width + 'x' + item.height) : '');
+
+				switch (meta.type) {
+					case 'images':
+						var tmp = { jpg: 1, png: 1, jpeg: 1, webp: 1, gif: 1, svg: 1 };
+						response = response.remove(n => !tmp[n.ext]);
+						break;
+				}
+
+				response.quicksort('date_desc');
+				exports.set('search', '');
+				exports.set('items', response);
+
+			});
+		};
+
+		exports.init = function(opt, callback) {
+			meta = opt;
+			if (callback)
+				meta.callback = callback;
+			exports.refresh();
+		};
+
+		exports.submit = function(row, grid, row_el) {
+			row.url = '/download/' + row.id + '.' + row.ext;
+			meta.callback(row, () => NULL('common.form2'));
+		};
+
+		exports.upload = function(e) {
+
+			var opt = {};
+
+			if (e && !(e instanceof jQuery))
+				opt.files = e;
+
+			opt.url = ENV('upload');
+			opt.multiple = true;
+			opt.width = meta.width;
+			opt.height = meta.height;
+			opt.onlylarger = true;
+
+			switch (meta.type) {
+				case 'images':
+					opt.accept = 'image/*';
+					break;
+			}
+
+			opt.callback = function(response, err) {
+				exports.scope();
+				exports.refresh();
+			};
+
+			SETTER('fileuploader/upload', opt);
+		};
+
+		exports.dropfiles = function(e) {
+			exports.upload(e);
+		};
+
+	});
+
+</script>

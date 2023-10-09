@@ -1,27 +1,15 @@
-exports.icon = 'fa fa-plug';
+exports.icon = 'ti ti-plug';
 exports.name = '@(Widgets)';
-exports.group = '@(Content)';
-exports.position = 80;
+exports.position = 4;
+exports.permissions = [{ id: 'widgets', name: 'Widgets' }];
+exports.visible = user => user.sa || user.permissions.includes('widgets');
 
 exports.install = function() {
 
-	// Widgets
-	ROUTE('GET     /admin/api/widgets/                        *Widgets --> @query');
-	ROUTE('GET     /admin/api/widgets/{id}/                   *Widgets --> @read');
-	ROUTE('POST    /admin/api/widgets/                        *Widgets --> @save');
-	ROUTE('DELETE  /admin/api/widgets/{id}/                   *Widgets --> @remove');
-	ROUTE('GET     /admin/api/widgets/{id}/editor/            *Widgets --> @editor');
-	ROUTE('GET     /admin/api/widgets/dependencies/           *Widgets --> @dependencies');
-	ROUTE('GET     /admin/api/widgets/{id}/settings/          *Widgets', settings);
-	ROUTE('GET     /admin/api/widgets/{id}/backups/           *Common --> @backup');
+	ROUTE('+API    /admin/    +widgets_save           *Widgets   --> save');
+	ROUTE('+API    /admin/    -widgets_list           *Widgets   --> list');
+	ROUTE('+API    /admin/    -widgets_read/{id}      *Widgets   --> read');
+	ROUTE('+API    /admin/    -widgets_remove/{id}    *Widgets   --> remove');
+	ROUTE('+API    /admin/    -widgets_detail/{id}    *Widgets   --> detail');
 
-	// Widget globals
-	ROUTE('GET     /admin/api/widgets/globals/                *Widgets/Globals --> @read');
-	ROUTE('POST    /admin/api/widgets/globals/                *Widgets/Globals --> @save', 30);
 };
-
-function settings(id) {
-	var self = this;
-	var item = MAIN.widgets[id];
-	self.json(item ? item.editor : null);
-}

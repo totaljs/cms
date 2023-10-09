@@ -1,172 +1,101 @@
-<div data---="form__common.form__icon:plug;if:widgetsform;width:1000;reload:widgetsform/reload;submit:widgetsform/submit;autofocus:true" class="hidden">
+<style>
+	.~PATH~ figure { cursor: pointer; position: relative; margin-bottom: var(--gap); }
+	.~PATH~ figure > div { border-radius: var(--radius); border: 1px solid #E0E0E0; }
+	.~PATH~ figure .preview { padding: 10px; }
+	.~PATH~ figure img { border-radius: var(--radius); }
+	.~PATH~ figure .meta { border-top: 1px solid #E0E0E0; padding: 10px; font-size: 12px; }
+	.~PATH~ figure .meta .name { font-size: 13px; font-weight: bold; }
+	.~PATH~ figure .is { position: absolute; font-size: 30px; right: 5px; margin: -10px 0 0 0; color: #68B25B; display: none; background-color: #FFF; width: 40px; height: 40px; border-radius: 100px; text-align: center; line-height: 40px; box-shadow: 1px 1px 3px rgba(0,0,0,0.1); }
+	.~PATH~ figure.installed > div { background-color: #F0F0F0; }
+	.~PATH~ figure.installed .is { display: block; }
+	.~PATH~ .ui-listing-fixed .ui-listing-paginate { padding-left: 15px; }
+	.~PATH~ .items { padding: 5px; }
+	.jc-sm .~PATH~ figure { width: 33.33%; }
+	.jc-xs .~PATH~ figure { width: 50%; }
+</style>
 
-	<div data-scope="widgetsform.form">
-		<div class="padding bg-smoke">
-			<div class="row">
-				<div class="col-sm-6">
-					<div data---="input__?.name__required:true;maxlength:50" class="m">@(Name)</div>
-					<div data-bind="?.id__show" class="hidden m">
-						<div data---="checkbox__?.replace">@(Replace the widget body in the entire content)</div>
-					</div>
-				</div>
-				<div class="col-sm-6 m">
-					<div data---="input__?.category__dirsource:widgetsform.categories;icon:folder-o;required:true;placeholder:@(Choose a category)">@(Category)</div>
-				</div>
-			</div>
-		</div>
-		<div class="padding">
-			<div data---="codemirror__?.body__height:500;icon:code;required:true;tabs:true;trim:true;type:totaljs">@(Source-code)</div>
-			<div class="row fs12 mt10">
-				<div class="col-xs-6">
-					<span class="link exec mr10 b" data-exec="widgetsform/upload"><i class="far fa-folder mr5"></i>@(Insert file)</span>
-					<span class="link exec hidden" data-exec="widgetsform/backups" data-bind="?.id__show"><i class="far fa-clock-o mr5"></i>@(Restore a backup)</span>
-				</div>
-				<div class="col-xs-6 right">
-					<span class="link exec mr10" data-exec="widgetsform/template"><i class="fa fa-code mr5"></i>@(Preddefined template)</span>
-					<a href="https://wiki.totaljs.com/?q=cms%20widgets" class="link" target="_blank"><i class="fa fa-book mr5"></i>@(Documentation)</a>
-				</div>
-			</div>
-		</div>
-		<hr class="nmb nmt" />
-		<div class="padding bg-yellow">
-			<div class="row">
-				<div class="col-md-4 col-md-offset-4">
-					<br class="hidden-xs" />
-					<div data---="preview__?.picture__width:300;height:200;url:[url]api/upload/base64/" class="m"></div>
-					<div class="center help">
-						@(Drag & Drop preview of the widget)<br />
-						<b>@(300x200px)</b>
-					</div>
-					<br class="hidden-xs" />
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<nav data---="validation__widgetsform.form">
-		<button name="submit"><i class="fa fa-check-circle"></i>@(SAVE)</button>
-		<button name="cancel">@(Cancel)</button>
+<ui-component name="box" path="common.form2" config="if:~PATH~;title:@(Import widgets);icon:ti ti-plug;autofocus:true;reload:?/reload;scrollbarshadow:1;submit:?/submit;width:1400;zindex:30" class="hidden ~PATH~" plugin="~PATH~">
+	<nav>
+		<ui-component name="searchinput" path="?.search" config="placeholder:@(Search widgets)"></ui-component>
 	</nav>
-
-</div>
-
-<script id="widgetstemplate" type="text/plain">
-<CSS>
-	/* "$color" variable needs to be defined in globals */
-	.wmywidgetname { border: 2px solid $color; }
-</CSS>
-
-<JS editor>
-
-	// Optional, this code you can remove
-
-	// option(id, label, defValue, [type]);
-	// https://componentator.com/#j-multioptions
-	option('size', 'Size', 10);
-
-	exports.configure = function(options, element, prev) {
-
-		// is executed if the user change the widget settings
-		// options = defined options (always Object)
-		// element = jQuery element
-		// prev    = previous options (can be "null")
-
-		// Here you can transform the widget e.g. like this:
-		element.find('.wmywidgetname').css('font-size', options.size);
-	};
-
-</JS>
-
-<JS total>
-
-	// Optional, you can remove this code
-
-	exports.install = function() {
-		// optional
-	};
-
-	exports.uninstall = function() {
-		// optional
-	};
-
-	// Server-side processing (async)
-	exports.render = function(options, html, next, template) {
-
-		// optional
-
-		// options   = defined options (always Object)
-		// html      = String (a content of the whole widget element)
-		// next      = Function
-		// template  = String (a content defined as a script with type="text/html")
-
-		// Next needs to return a new HTML string
-		// CMS replaces old HTML with a new
-		next(html + 'UPDATED');
-
-	};
-</JS>
-
-<JS type="text/html">
-	Optional, custom {{ template }}
-</JS>
-
-<div class="wmywidgetname CMS_edit wb wm wp">Lorem Ispum Text</div>
-</script>
+	<div class="padding">
+		<ui-component name="search" path="?.search" config="selector:figure">
+			<ui-bind path="?.items" config="template:figure -> data-id" class="block grid-6 grid-sm-3 grid-xs-2">
+				<script type="text/plain">
+					{{ foreach m in value }}
+					<figure data-id="{{ m.id }}" class="exec{{ if m.imported }} installed{{ fi }}" data-exec="?/install" data-search="{{ m.name }}">
+						<div>
+							<div class="is"><i class="ti ti-check-circle"></i></div>
+							<div class="preview"><img src="{{ m.preview }}" class="img-responsive" onerror="onImageError(this)" data-empty="/_widgets/empty.png" loading="lazy" /></div>
+							<div class="meta">
+								<div class="name">{{ m.name }}</div>
+							</div>
+						</div>
+					</figure>
+					{{ end }}
+				</script>
+			</ui-bind>
+		</ui-component>
+	</div>
+	<nav>
+		<button name="cancel" style="width:100%">@(Cancel)</button>
+	</nav>
+</ui-component>
 
 <script>
 
-	PLUGIN('widgetsform', function(exports) {
-
-		var categories = [{ name: '@(Layout)', id: 'Layouts'},{ name: '@(Columns)', id: 'Columns' },{ name: '@(Content)', id: 'Content' },{ name: '@(Inline)', id: 'Inline' },{ name: '@(Newsletter)', id: 'Newsletter' }];
-		categories.quicksort('name');
-
-		SET('?.categories', categories);
+	PLUGIN(function(exports) {
 
 		exports.reload = function(com) {
-			com.reconfigure({ title: GET('widgetsform.form.id') ? '@(Edit widget)' : '@(New widget)' });
-			FUNC.loading(false, 1000);
+			exports.refresh();
 		};
 
-		exports.upload = function(el) {
-			refresh_filebrowser(function(file) {
-				SETTER('.widgetsform.form.body/insert', file);
-			});
-		};
-
-		exports.template = function() {
-			SET('?.form.body', $('#widgetstemplate').html().replace(/<CSS/g, '<style').replace(/<\/CSS/g, '</style').replace(/<JS/g, '<script').replace(/<\/JS/g, '</script').trim());
-		};
-
-		exports.submit = function(hide) {
-			FUNC.loading(true);
-			AJAX('POST [url]api/widgets/ REPEAT', GETR('widgetsform.form'), function(response) {
-				FUNC.loading(false, 1000);
-				if (response.success) {
-					SETTER('snackbar/success', '@(Widget has been saved successfully.)');
-					EXEC('widgets/refresh');
-					hide();
-				}
-			});
-		};
-
-		exports.backups = function(el) {
-
-			FUNC.loading(true);
-			AJAX('GET [url]api/widgets/{0}/backups/'.format(GET('?.id')), function(response) {
-
-				FUNC.loading(false, 1000);
-
-				for (var i = 0, length = response.length; i < length; i++) {
-					var item = response[i];
-					item.name = '{0} <b class="badge badge-blue"><i class="fa fa-user mr5"></i>{1}</b>'.format(item.date.format('@(yyyy-MM-dd HH:mm)'), item.user);
-				}
-
-				SETTER('suggestion/show', 'left', el, response, function(value) {
-					FUNC.loading(true);
-					MODIFY('widgetsform.form.body', value.body);
-					FUNC.loading(false, 1000);
+		exports.refresh = function() {
+			exports.ajax('GET https://cdn.totaljs.com/pages/db.json', function(response) {
+				var items = PARSE(response);
+				exports.tapi('widgets_list?list=1', function(response) {
+					for (var item of items) {
+						item.html = '<img src="{0}" style="width:30px" class="mr10" />{1}'.format(item.preview, item.name.encode());
+						item.search = item.name.toSearch();
+						item.imported = !!response.findItem('id', item.id);
+					}
+					exports.set('items', items);
 				});
 			});
 		};
+
+		exports.install = function(el) {
+			var id = ATTRD(el);
+			var item = exports.data.items.findItem('id', id);
+			SETTER('approve/show', '@(Are you sure you want to install the "{0}" widget?)'.format(item.name.encode()), '"ti ti-cloud-download" @(Install)', function() {
+				exports.ajax('GET {0}'.format(item.url), function(response) {
+					exports.tapi('widgets_save @showloading', { id: id, html: response }, function(response) {
+						el.aclass('installed');
+						EMIT('refresh_widgets @hideloading');
+					});
+				});
+			});
+		};
+
+		exports.search = function() {
+			var model = exports.data;
+			var opt = {};
+			opt.id = 'widgetsimport';
+			opt.search = function(q, next) {
+				q = q.toSearch();
+				var arr = [];
+				for (var m of model.items) {
+					if (m.search.indexOf(q) !== -1)
+						arr.push(m);
+				}
+				next(arr.take(30));
+			};
+			opt.callback = function(item) {
+				exports.install(item);
+			};
+			SETTER('spotlight/show', opt);
+		};
+
 	});
+
 </script>

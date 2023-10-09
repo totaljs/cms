@@ -1,26 +1,60 @@
-mkdir -p .bundle
+#!/usr/bin/env node
 
-cd .bundle
-cp -a ../controllers/ controllers
-cp -a ../definitions/ definitions
-cp -a ../modules/ modules
-cp -a ../plugins/ plugins
-cp -a ../public/ public
-cp -a ../resources/ resources
-cp -a ../views/ views
+require('total4');
 
-echo "ZXhwb3J0cy5pbnN0YWxsID0gZnVuY3Rpb24oKSB7CglST1VURSgnLyonLCBmdW5jdGlvbigpIHsKCQl0aGlzLkNNU3BhZ2UoKTsKCX0pOwp9Owo=" | base64 --decode > controllers/cms-default.js
+var path = '--bundles--';
 
-# cd definitions
-# for f in *.js; do mv "$f" "`echo cms-$f`"; done
+function buildplugin(name, callback) {
+	console.log('| |--', name + '.bundle');
+	BACKUP(path + '/' + name + '.bundle', PATH.root(), callback, function(path, isdir) {
+		return path === '/' || path === '/plugins/' || (path.indexOf('plugins/' + name) !== -1);
+	});
+}
 
-# cd ../schemas
-# for f in *.js; do mv "$f" "`echo cms-$f`"; done
+console.log('|-- Total.js bundle compiler');
+console.time('|-- Compilation');
 
-# cd ..
-total4 --bundle cms.bundle
-cp cms.bundle ../cms.bundle
+console.log('| |--', 'app.bundle');
+BACKUP(path + '/app.bundle', PATH.root(), function() {
+	F.Fs.readdir(PATH.root('plugins'), function(err, response) {
+		response.wait(function(key, next) {
 
-cd ..
-rm -rf .bundle
-echo "DONE"
+			switch (key) {
+				case 'dashboard':
+				case 'files':
+				case 'layouts':
+				case 'nav':
+				case 'pages':
+				case 'settings':
+				case 'variables':
+				case 'widgets':
+					next();
+					return;
+				default:
+					buildplugin(key, next);
+					return;
+			}
+
+		}, function() {
+			console.timeEnd('|-- Compilation');
+		});
+	});
+}, function(path, isdir) {
+
+	if (!isdir)
+		return path.split('/').length > 2;
+
+	var p = path.split('/').trim();
+
+	if (!p[0] || (p.length === 1 && p[0] === 'plugins'))
+		return true;
+
+	var allowed = ['controllers', 'definitions', 'modules', 'public', 'schemas', 'views', 'plugins/pages', 'plugins/layouts', 'plugins/widgets', 'plugins/settings', 'plugins/files', 'plugins/nav', 'plugins/variables', 'plugins/dashboard'];
+
+	for (var m of allowed) {
+		if (path.indexOf(m) === 1)
+			return true;
+	}
+
+	return false;
+});
