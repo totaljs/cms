@@ -1,34 +1,12 @@
 # Total.js CMS
 
-- [Documentation](https://docs.totaljs.com/cms/)
+- [Documentation](https://docs.totaljs.com)
 - [Join Total.js Telegram](https://t.me/totaljs)
 - [Support](https://www.totaljs.com/support/)
 
-## Installation
+__Instructions__:
 
-### Locally
-
-- install [Node.js platform](https://nodejs.org/en/)
-- download Flow source code
-- open terminal/command-line:
-	- `cd cms`
-	- `npm install`
-
-__Run__:
-
-```
-npm run start
-```
-
-or directly using node executable (port is optional, default 8000)
-
-```
-node index.js <port>
-```
-
-### Docker
-
-```bash
-docker pull totalplatform/cms
-docker run -p 8000:8000 totalplatform/cms
-````
+- install the latest version of __Total.js framework 4__ from NPM `$ npm install total4`
+- download project
+- run `$ node index.js`
+- open browser `http://127.0.0.1:8000`

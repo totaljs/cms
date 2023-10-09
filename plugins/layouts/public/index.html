@@ -62,13 +62,13 @@
 
 </ui-plugin>
 
-<ui-component name="importer" path="common.form" config="if:formlayout;url:/~ID~/form.html"></ui-component>
+<ui-component name="importer" path="common.form" config="if:layoutform;url:/_layouts/form.html"></ui-component>
 
 <script>
 
 	PLUGIN(function(exports) {
 
-		exports.reload = function() {
+		exports.init = function() {
 			BREADCRUMB.add('@(Layouts)', NAV.url);
 			exports.refresh();
 		};
@@ -152,8 +152,8 @@
 		exports.edit = function(el) {
 			var id = ATTRD(el);
 			exports.tapi('layouts_read/{0} ERROR'.format(id), function(response) {
-				SET('formlayout @reset', response);
-				SET('common.form', 'formlayout');
+				SET('layoutform @reset', response);
+				SET('common.form', 'layoutform');
 			});
 		};
 
@@ -229,8 +229,8 @@
 		};
 
 		exports.create = function() {
-			SET('formlayout @default', {});
-			SET('common.form', 'formlayout');
+			SET('layoutform @default', {});
+			SET('common.form', 'layoutform');
 		};
 
 	});

@@ -1,5 +1,4 @@
 const PARSER = { settings: '<settings>', css: '<style>', total: '<script total>', html: '<body>', js: '<script>', template: '<template>', readme: '<readme>' };
-const REG_CLASS = /CLASS/g;
 
 FUNC.recompile = function(item) {
 	var meta = item.html.parseComponent(PARSER);
@@ -19,17 +18,6 @@ FUNC.recompile = function(item) {
 			console.log(e + '', metadata);
 	}
 
-	if (!item.ref.id)
-		item.ref.id = item.ref.name;
-
-	var uid = item.ref.id.slug().replace(/\-/g, '');
-
-	if (meta.css)
-		meta.css = meta.css.replace(REG_CLASS, 'w-' + uid);
-
-	if (meta.html)
-		meta.html = meta.html.replace(REG_CLASS, 'w-' + uid);
-
 	item.ref.ui = meta;
 
 	var index = (meta.html || '').indexOf('<scr' + 'ipt>');
@@ -46,7 +34,7 @@ FUNC.breadcrumb = function(url) {
 	var processed = {};
 	if (page) {
 
-		arr.push({ id: page.id, parentid: page.id, url: page.url, name: page.name, title: page.title, color: page.color, icon: page.icon, language: page.language });
+		arr.push(page);
 		processed[page.id] = 1;
 
 		while (page) {
@@ -62,11 +50,8 @@ FUNC.breadcrumb = function(url) {
 			}
 
 			page = tmp;
-			page && arr.unshift({ id: page.id, parentid: page.id, url: page.url, name: page.name, title: page.title, color: page.color, icon: page.icon, language: page.language });
+			page && arr.unshift(page);
 		}
-
-		arr[0].first = true;
-		arr[arr.length - 1].last = true;
 	}
 
 	return arr;
@@ -88,9 +73,6 @@ FUNC.refresh = function() {
 	var db = MAIN.db;
 	var cache = MAIN.cache;
 
-	// Internal cache for rendered navigation & breadcrumb
-	cache.pages = {};
-
 	db.widgets.quicksort('dtcreated_desc');
 	cache.widgets = [];
 
@@ -99,7 +81,7 @@ FUNC.refresh = function() {
 			cache.widgets.push(item.ref);
 	}
 
-	cache.nav = {};
+	cache.nav = [];
 
 	for (var item of db.nav) {
 
@@ -125,7 +107,7 @@ FUNC.refresh = function() {
 			m.level = level;
 		}
 
-		cache.nav[item.id] = item;
+		cache.nav.push(item);
 	}
 };
 
@@ -143,8 +125,6 @@ FUNC.save = function() {
 	model.roles = site.roles;
 	model.widgets = [];
 	model.nav = site.nav;
-	model.storage = site.storage || {};
-
 	for (var item of site.widgets) {
 		var obj = {};
 		for (var key in item) {
@@ -153,7 +133,6 @@ FUNC.save = function() {
 		}
 		model.widgets.push(obj);
 	}
-
 	FILESTORAGE(MAIN.id).savejson('meta', model);
 };
 
@@ -173,12 +152,9 @@ FUNC.unload = function(callback) {
 	}
 
 	FILESTORAGE(MAIN.id).drop(callback);
-	EMIT('unload');
-
 };
 
 FUNC.reconfigure = function() {
-
 	var config = {};
 
 	for (var key in PREF) {
@@ -187,12 +163,7 @@ FUNC.reconfigure = function() {
 			config[key] = val;
 	}
 
-	for (var key in MAIN.db.config)
-		config[key] = MAIN.db.config[key];
-
 	LOADCONFIG(config);
-	EMIT('configure');
-
 };
 
 FUNC.load = function(callback) {
@@ -201,24 +172,32 @@ FUNC.load = function(callback) {
 		var empty = false;
 
 		if (!value) {
-			value = { id: MAIN.id, widgets: [], pages: [], layouts: [], vars: {}, nav: [], config: {}, roles: [], storage: {} };
+			value = { id: MAIN.id, widgets: [], pages: [], layouts: [], vars: {}, nav: [], config: {}, roles: [] };
 			empty = true;
 		}
 
-		value.config.allow_totalapi = true;
 		MAIN.db = value;
+
+		// 7973 is a folder indentifier for the meta file
+		MAIN.db_posts = 'nosql/~' + PATH.databases('fs-' + MAIN.id + '/7973/posts.nosql');
 		MAIN.views = {};
 
-		if (!value.storage)
-			value.storage = {};
-
 		value.ready = true;
+
+		if (!empty && value.config)
+			LOADCONFIG(value.config);
+
+		if (!value.config)
+			value.config = {};
+
+		if (!value.nav)
+			value.nav = [];
+
 		value.fs = FILESTORAGE(MAIN.id);
 
 		var rem = [];
 
 		for (var item of value.widgets) {
-
 			if (item.html)
 				FUNC.recompile(item);
 
@@ -245,72 +224,8 @@ FUNC.load = function(callback) {
 			}
 		}
 
-		for (var key in F.plugins) {
-			var item = F.plugins[key];
-			if (item.config) {
-				for (let m of item.config) {
-					if (MAIN.db.config[m.id] == null)
-						MAIN.db.config[m.id] = m.value;
-				}
-			}
-		}
-
 		FUNC.refresh();
-		FUNC.reconfigure();
 		callback && callback();
 		empty && FUNC.save();
-		EMIT('reload', MAIN.db);
 	});
-};
-
-FUNC.importwidget = function(html, rewrite, callback) {
-
-	if (typeof(rewrite) === 'function') {
-		callback = rewrite;
-		rewrite = false;
-	}
-
-	if (!callback)
-		callback = NOOP;
-
-	if (html.indexOf('<') === -1) {
-		// filename?
-		F.Fs.readFile(html, 'utf8', function(err, response) {
-			if (err)
-				callback(err);
-			else
-				FUNC.importwidget(response, rewrite, callback);
-		});
-		return;
-	}
-
-	var widgets = [];
-	var arr = html.match(/<widget.*?>/g);
-	var error = new ErrorBuilder();
-
-	if (arr) {
-		for (var i = 0; i < arr.length; i++) {
-			var item = arr[i];
-			var index = item.indexOf(' data="');
-			if (index !== -1) {
-				try {
-					var widget = decodeURIComponent(Buffer.from(item.substring(index + 7, item.indexOf('"', index + 8)), 'base64')).toString('utf8');
-					widget && widgets.push(widget);
-				} catch (e) {
-					error.push(e);
-				}
-			}
-		}
-	} else {
-		// HTML is a widget
-		widgets.push(html);
-	}
-
-	widgets.wait(function(item, next) {
-		CALL('+Widgets --> save', { html: item, singleton: rewrite !== true }).user({ sa: true }).callback(function(err) {
-			err && error.push(err);
-			next();
-		});
-	}, () => callback(error.length ? error : null));
-
 };

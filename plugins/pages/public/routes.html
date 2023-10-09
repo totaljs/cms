@@ -16,8 +16,8 @@
 
 			EXEC(true, 'editor/init', opt);
 			SET('common.page', 'editor');
-			BREADCRUMB.add('@(Pages)', '../')(response.name, NAV.url);
+			BREADCRUMB.add('@(Pages)', '../', FUNC.breadcrumb)(response.name, NAV.url);
 		});
 
-	}, 'init');
+	}, 'breadcrumb');
 </script>

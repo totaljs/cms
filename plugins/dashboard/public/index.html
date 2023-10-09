@@ -67,7 +67,6 @@
 <ui-plugin class="CLASS">
 	<ui-component name="viewbox" path="common.page" config="parent:auto;margin:60;scrollbar:1;visibleY:1" class="invisible">
 		<div class="auto" style="max-width:1400px">
-			<ui-component name="extend" config="name:dashboard"></ui-component>
 			<div class="padding">
 				<div class="grid row1">
 					<div class="panelbody">
@@ -182,7 +181,7 @@
 						</ui-component>
 					</div>
 				</div>
-				<ui-bind path="?.stats.visitors" config="show" class="block hidden">
+				<ui-bind path="?.stats.visitors" config="show" class="hidden">
 					<div class="panelbody">
 						<ui-bind path="?.stats.history" config="template" style="margin-top:-3px" class="block">
 							<script type="text/html">
@@ -249,7 +248,7 @@
 					<ui-component name="stats24" path="?.stats.today.hours" class="m"></ui-component>
 				</div>
 
-				<ui-bind path="?.stats.referrers" config="template" class="block">
+				<ui-bind path="?.stats.referrers" config="template">
 					<script type="text/html">
 						{{ if value && value.length }}
 						<div class="panelbody">
@@ -273,7 +272,7 @@
 					</script>
 				</ui-bind>
 
-				<ui-bind path="?.stats.browsers" config="template" class="block">
+				<ui-bind path="?.stats.browsers" config="template">
 					<script type="text/html">
 						{{ if value && value.length }}
 						<div class="panelbody">
@@ -296,7 +295,6 @@
 						{{ fi }}
 					</script>
 				</ui-bind>
-
 			</div>
 		</div>
 	</ui-component>
@@ -304,17 +302,15 @@
 
 <script>
 	PLUGIN(function(exports) {
-
 		var interval, historystats, prevsource;
 		var internalstats = {};
 
-		exports.reload = function() {
+		exports.init = function() {
 			BREADCRUMB.add('@(Dashboard)', NAV.url);
 			exports.refresh();
 		};
 
-		exports.refresh = function(el) {
-			el && el.find('i').aclass('ti-spin').rclass('ti-spin', 800);
+		exports.refresh = function() {
 			interval = setInterval(exports.getOnline, 4000);
 			exports.getOnline();
 
@@ -510,7 +506,7 @@
 		}
 
 		if (minutes < 60)
-			return minutes < 2 ? '@(less than a minute)' : @(minutes + ' minutes ago');
+			return minutes < 2 ? '@(less than minute ago)' : @(minutes + ' minutes ago');
 
 		var hours = (minutes / 60) >> 0;
 		if (hours < 24)

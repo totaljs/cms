@@ -1,0 +1,123 @@
+<style>
+	.~PATH~ .dg-colorize { display: block; padding: 0 5px; }
+</style>
+
+<div class="virtualwire hidden" data-if="~PATH~">
+	<button class="exec" data-exec="~PATH~/create"><i class="ti ti-plus-circle"></i>@(Create)</button>
+	<button class="exec" data-exec="~PATH~/refresh"><i class="ti ti-refresh"></i>@(Refresh)</button>
+	<button class="exec" data-exec="~PATH~/menu"><i class="ti ti-cog"></i>@(Options)</button>
+</div>
+
+<ui-plugin config="aclass:1">
+	<ui-component name="datagrid" path="?.items" config="margin:0;exec:?/filter;parent:auto;noborder:1;button:?/buttons;click:?/edit;checked:?.checked">
+		<script type="text/plain">
+			[
+				{ name: 'category', text: '@(Category)', width: 150, colorize: 1 },
+				{ name: 'name', text: '@(Name)', width: 400, template: '{{ name }}{{ if ishidden }}<span class="badge badge-red badge-small ml5">@(hidden)</span>{{ fi }}' },
+				{ name: 'date', text: '@(From)', format: '[date]', type: 'date', align: 1, width: 130 },
+				{ name: 'dtupdated', text: '@(Updated)', format: '[ts]', type: 'date', align: 1 },
+				{ name: '@(Options)', filter: false, align: 1, sort: false, width: 120, template: '<div class="inline"><button title="@(Remove)" name="remove"><i class="ti ti-trash"></i></button></div>' }
+			]
+		</script>
+	</ui-component>
+</ui-plugin>
+
+<ui-component name="importer" path="common.form" config="if:postform;url:/_posts/form.html"></ui-component>
+
+<script>
+
+	PLUGIN(function(exports) {
+
+		exports.init = function(id) {
+			BREADCRUMB.add('@(Posts)', NAV.url);
+			exports.refresh();
+			exports.refresh_categories();
+		};
+
+		exports.refresh = function(el) {
+			el && el.find('i').aclass('ti-spin').rclass('ti-spin', 800);
+			exports.tapi('posts @showloading ERROR', 'items @hideloading');
+		};
+
+		exports.refresh_categories = function() {
+			exports.tapi('posts_categories', 'DEF.cl.postscategories');
+		};
+
+		exports.filter = function(type, filter, sort, page) {
+
+			if (!filter)
+				filter = {};
+
+			filter.sort = sort;
+			filter.page = page;
+
+			exports.tapi(QUERIFY('posts', filter) + ' @showloading ERROR', function(response) {
+				exports.set('items @hideloading', response, type === 'refresh' ? 'noscroll' : null);
+			});
+
+		};
+
+		exports.menu = function(el) {
+
+			var model = exports.model;
+			var opt = {};
+			opt.element = el;
+			opt.align = 'right';
+			opt.items = [];
+
+			if (model.checked && model.checked.length)
+				opt.items.push({ id: 'remove', name: '@(Remove selected ({0}x))'.format(model.checked.length), icon: 'ti ti-trash red' });
+
+			if (model.items.items.length)
+				opt.items.push({ id: 'clear', name: '@(Clear all posts)', icon: 'ti ti-trash red' });
+
+			opt.callback = function(item) {
+
+				if (item.id === 'remove') {
+					EXEC('-approve/show', '@(Are you sure you want to remove selected ({0}x) posts?)'.format(model.checked.length), '"ti ti-trash" @(Clear)', function() {
+						SETTER('loading/show');
+						model.checked.wait(function(item, next) {
+							exports.tapi('posts_remove/' + item.id, next);
+						}, exports.refresh);
+					});
+					return;
+				}
+
+				if (item.id === 'clear') {
+					EXEC('-approve/show', '@(Are you sure you want to clear all posts?)', '"ti ti-trash" @(Clear)', () => exports.tapi('posts_clear @showloading', exports.refresh));
+					return;
+				}
+
+			};
+			EXEC('-menu/show', opt);
+		};
+
+		exports.edit = function(el) {
+			var id = ATTRD(el);
+			exports.tapi('posts_read/{0} @showloading ERROR'.format(id), function(response) {
+				SET('postform @reset @hideloading', response);
+				SET('common.form', 'postform');
+			});
+		};
+
+		exports.remove = function(el) {
+			var id = ATTRD(el);
+			var data = exports.model.items.items.findItem('id', id);
+			SETTER('approve/show', '@(Are you sure you want to remove the "{name}" post?)'.arg(data, 'escape'), '"ti ti-trash" @(Remove)', function() {
+				exports.scope();
+				exports.tapi('posts_remove/' + id, exports.refresh);
+			});
+		};
+
+		exports.buttons = function(btn, row) {
+			exports[btn](row);
+		};
+
+		exports.create = function() {
+			SET('postform @default', { body: '' });
+			SET('common.form', 'postform');
+		};
+
+	});
+
+</script>

@@ -33,6 +33,7 @@
 			var plugins = common.plugins.slice(0);
 
 			if (user.sa) {
+				plugins.push({ exec: true, id: 'enterprise', name: '@(Enterprise)', icon: 'ti ti-totaljs green' });
 				plugins.push({ exec: true, id: 'backup', name: '@(Backup)', icon: 'ti ti-download' });
 				plugins.push({ exec: true, id: 'restore', name: '@(Restore)', icon: 'ti ti-upload' });
 				plugins.push({ exec: true, id: 'clear', name: '@(Clear)', icon: 'ti ti-trash red' });
@@ -99,6 +100,7 @@
 			};
 			SETTER('filebrowser/show', opt);
 		};
+
 
 		exports.refresh();
 

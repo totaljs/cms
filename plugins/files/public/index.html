@@ -1,9 +1,9 @@
 <style>
-	.CLASS .size { margin-left: 5px; font-size: 11px; color: #A0A0A0; }
-	.ui-dark .CLASS .size { color: #777; }
+	.~PATH~ .size { margin-left: 5px; font-size: 11px; color: #A0A0A0; }
+	.ui-dark .~PATH~ .size { color: #777; }
 </style>
 
-<div class="virtualwire hidden" data-if="CLASS">
+<div class="virtualwire hidden" data-if="~PATH~">
 	<ui-plugin>
 		<button class="exec" data-exec="?/upload"><i class="ti ti-cloud-upload"></i>@(Upload)</button>
 		<button class="exec" data-exec="?/refresh"><i class="ti ti-refresh"></i>@(Refresh)</button>
@@ -11,7 +11,7 @@
 	</ui-plugin>
 </div>
 
-<ui-plugin class="CLASS">
+<ui-plugin class="~PATH~">
 	<ui-component name="datagrid" path="?.items" config="margin:0;parent:auto;noborder:1;button:?/buttons;checked:?.checked">
 		<script type="text/plain">
 			[
@@ -30,13 +30,12 @@
 
 	PLUGIN(function(exports) {
 
-		exports.reload = function(id) {
+		exports.init = function(id) {
 			BREADCRUMB.add('@(Files)', NAV.url);
 			exports.refresh();
 		};
 
 		exports.refresh = function(el) {
-			el && el.find('i').aclass('ti-spin').rclass('ti-spin', 800);
 			exports.tapi('files_list', function(response) {
 
 				var images = { jpg: 1, png: 1, gif: 1, svg: 1, jpeg: 1 };
@@ -122,7 +121,7 @@
 			if (e && !(e instanceof jQuery))
 				opt.files = e;
 
-			opt.url = ENV('upload');
+			opt.url = '/upload/' + common.openplatform;
 			opt.multiple = true;
 
 			opt.callback = function(response, err) {

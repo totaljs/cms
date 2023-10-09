@@ -22,7 +22,7 @@
 
 	</div>
 	<nav>
-		<ui-component name="validate" path="?">
+		<ui-component name="validate" path="?" config="changes:1">
 			<button name="submit" disabled><i class="ti ti-check-circle"></i>@(SUBMIT)</button>
 			<button name="cancel">@(Cancel)</button>
 		</ui-component>
@@ -40,25 +40,11 @@
 		};
 
 		exports.submit = function(hide) {
-
 			var model = exports.form;
-
-			var save = function() {
-				exports.tapi('layouts_save ERROR', model, function() {
-					hide();
-					EXEC('pluginlayouts/refresh');
-				});
-			};
-
-			if (model.id) {
-				save();
-			} else {
-				AJAX('GET /_layouts/template.txt', function(response) {
-					model.html = response;
-					save();
-				});
-			}
-
+			exports.tapi('layouts_save ERROR', model, function() {
+				hide();
+				EXEC('pluginlayouts/refresh');
+			});
 		};
 
 	});

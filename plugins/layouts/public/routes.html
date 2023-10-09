@@ -25,7 +25,7 @@
 
 			EXEC(true, 'editor/init', opt);
 			SET('common.page', 'editor');
-			BREADCRUMB.add('@(Layouts)', '../')(response.name, NAV.url);
+			BREADCRUMB.add('@(Layouts)', '../', FUNC.breadcrumb)(response.name, NAV.url);
 		});
-	}, 'init');
+	}, 'breadcrumb');
 </script>

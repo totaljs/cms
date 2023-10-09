@@ -9,8 +9,8 @@
 	<meta name="format-detection" content="telephone=no" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover" />
 	<meta name="robots" content="all,follow" />
-	<link href="//cdn.componentator.com/spa.min@19.css" rel="stylesheet" />
-	<script src="//cdn.componentator.com/spa.min@19.js"></script>
+	<link href="@{'%cdn'}/spa.min@19.css" rel="stylesheet" />
+	<script src="@{'%cdn'}/spa.min@19.js"></script>
 	<script src="@{REPO.ui}"></script>
 	@{import('meta', 'head', 'favicon.ico')}
 	<style>
@@ -21,6 +21,7 @@
 		footer a { color: #777; }
 		h1 { font-size: 20px; margin: 0 0 15px 0; padding: 0; }
 		h1 i { margin-right: 8px; font-size: 30px; vertical-align: middle; }
+
 		h2 { font-size: 16px; margin: 0 0 15px 0; padding: 0; font-weight: normal; color: #777; }
 		button { width: 100%; border: 0; padding: 8px 10px; font-size: 14px; background-color: var(--color); color: #FFF; border-radius: var(--radius); font-weight: bold; outline: 0; }
 		button:hover { opacity: 0.8; }
@@ -39,7 +40,7 @@
 	<ui-component name="exec"></ui-component>
 
 	<ui-component name="viewbox" config="centered:1;parent:window" class="invisible">
-		<div class="login" data-scope="signinform">
+		<ui-plugin path="signinform" class="login">
 			<div>
 				<ui-component name="autofill">
 
@@ -76,7 +77,7 @@
 			</div>
 			<br />
 			<footer>&copy; @{NOW.getFullYear()} - <a href="https://www.totaljs.com" target="_blank">@(Powered by <b>Total.js</b>)</a></footer>
-		</div>
+		</ui-plugin>
 	</ui-component>
 
 	<script>
@@ -84,7 +85,7 @@
 		PLUGIN('signinform', function(exports) {
 
 			exports.submit = function() {
-				exports.api('/admin/ login', exports.form, ERROR(function(response) {
+				exports.ajax('POST @{#}/admin/auth/', exports.form, ERROR(function(response) {
 					location.href = '/admin/' + ($('.alert').length ? '?welcome=1' : '');
 				}, function(response) {
 					SET('%error', response[0].error);
@@ -94,6 +95,7 @@
 			exports.fill = function() {
 				SET('signinform @change', { login: '@{PREF.user.login}', password: '@{PREF.user.raw}' });
 			};
+
 		});
 
 	</script>

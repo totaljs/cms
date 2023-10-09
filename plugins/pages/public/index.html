@@ -5,7 +5,7 @@
 	.CLASS .listing .disabled { color: #999; }
 </style>
 
-<div class="virtualwire hidden" data-if="CLASS">
+<div class="virtualwire hidden" data-if="~PATH~">
 	<ui-plugin>
 		<ui-bind path="?.checked" config="enable .D:value && value.length">
 			<button class="exec" data-exec="?/create"><i class="ti ti-plus-circle"></i>@(Create)</button>
@@ -15,7 +15,7 @@
 	</ui-plugin>
 </div>
 
-<ui-plugin class="CLASS">
+<ui-plugin class="~PATH~">
 	<ui-component name="datagrid" path="?.items" config="margin:0;parent:auto;noborder:1;button:?/options;click:?/editor;checked:?.checked">
 		<script type="text/plain">
 			[
@@ -30,13 +30,13 @@
 	</ui-component>
 </ui-plugin>
 
-<ui-component name="importer" path="common.form" config="if:formpage;url:/~ID~/form.html"></ui-component>
+<ui-component name="importer" path="common.form" config="if:pageform;url:/_pages/form.html"></ui-component>
 
 <script>
 
 	PLUGIN(function(exports) {
 
-		exports.reload = function() {
+		exports.init = function() {
 			BREADCRUMB.add('@(Pages)', NAV.url);
 			exports.refresh();
 		};
@@ -167,14 +167,14 @@
 		exports.edit = function(el) {
 			var id = ATTRD(el);
 			exports.tapi('pages_read/{0} @showloading ERROR'.format(id), function(response) {
-				SET('formpage @reset @hideloading', response);
-				SET('common.form', 'formpage');
+				SET('pageform @reset @hideloading', response);
+				SET('common.form', 'pageform');
 			});
 		};
 
 		exports.code = function(el) {
-			var id = ATTRD(el);
-			exports.tapi('pages_html/{0} ERROR'.format(id), function(response) {
+			var id = el instanceof jQuery ? el.attrd2('id') : el;
+			exports.tapi('pages_html/' + id + ' ERROR', function(response) {
 				var opt = {};
 				opt.html = response.html;
 				opt.callback = function(value, hide) {
@@ -270,8 +270,8 @@
 		};
 
 		exports.create = function() {
-			SET('formpage @default', {});
-			SET('common.form', 'formpage');
+			SET('pageform @default', {});
+			SET('common.form', 'pageform');
 		};
 
 	});

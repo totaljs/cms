@@ -2,7 +2,7 @@ NEWSCHEMA('Widgets', function(schema) {
 
 	schema.define('id', String);
 	schema.define('html', String, true);
-	schema.define('singleton', Boolean); // for inline widget defined in layouts
+	schema.define('upsert', Boolean); // for inline widget defined in layouts
 
 	schema.action('list', {
 		name: 'Widgets list',
@@ -34,7 +34,7 @@ NEWSCHEMA('Widgets', function(schema) {
 				data.html = item.html;
 				$.callback(data);
 			} else {
-				$.invalid(404);
+				$.invalid('@(Widget not found)');
 				return;
 			}
 		}
@@ -48,7 +48,6 @@ NEWSCHEMA('Widgets', function(schema) {
 			var cms = MAIN.db;
 			var item = model.id ? cms.widgets.findItem('id', model.id) : null;
 			var done = function() {
-				cms.widgets.quicksort('name');
 				FUNC.refresh();
 				FUNC.save();
 				MAIN.views = {};
@@ -74,7 +73,7 @@ NEWSCHEMA('Widgets', function(schema) {
 
 				if (item.ref.install) {
 					try {
-						item.ref.install.call(cms);
+						item.ref.install.call(site);
 					} catch (e) {
 						// what next?
 						console.log('install', e);
@@ -99,7 +98,7 @@ NEWSCHEMA('Widgets', function(schema) {
 				item = cms.widgets.findItem('id', model.id);
 
 				// Widget is already imported
-				if (item && model.singleton) {
+				if (item && model.upsert) {
 					$.success();
 					return;
 				}
@@ -146,7 +145,7 @@ NEWSCHEMA('Widgets', function(schema) {
 				FUNC.refresh();
 				FUNC.save();
 			} else
-				$.invalid(404);
+				$.invalid('@(Widget not found)');
 		}
 	});
 
@@ -159,7 +158,7 @@ NEWSCHEMA('Widgets', function(schema) {
 				var meta = item.ref;
 				$.callback({ id: item.id, name: meta.name, preview: meta.preview, author: meta.author, version: meta.version, config: meta.config, css: meta.ui.css, html: meta.ui.html, settings: meta.ui.settings });
 			} else
-				$.invalid(404);
+				$.invalid('@(Widget not found)');
 		}
 	});
 });

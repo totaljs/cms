@@ -11,6 +11,7 @@ ROUTE('FILE /openplatform.json', function(req, res) {
 
 	var model = {};
 
+	console.log(CONF.op_name, CONF.name);
 	model.name = CONF.op_name || CONF.name;
 	model.icon = CONF.op_icon;
 	model.color = CONF.op_color;
