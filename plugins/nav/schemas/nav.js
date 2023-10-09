@@ -22,10 +22,6 @@ NEWSCHEMA('Nav', function(schema) {
 	schema.define('title', 'String');
 	schema.define('icon', 'String');
 	schema.define('color', 'String');
-	schema.define('istop', 'Boolean');
-	schema.define('ishighlight', 'Boolean');
-	schema.define('action', 'String');
-	schema.define('isexternal', 'Boolean');
 	schema.define('children', '[Nav/Link]');
 
 	schema.action('list', {
@@ -35,7 +31,7 @@ NEWSCHEMA('Nav', function(schema) {
 
 			var arr = [];
 			for (var item of MAIN.db.nav)
-				arr.push({ id: item.id, name: item.name, title: item.title, icon: item.icon, color: item.color, ishighlight: item.ishighlight, istop: item.istop, action: item.action, dtcreated: item.dtcreated, dtupdated: item.dtupdated });
+				arr.push({ id: item.id, name: item.name, title: item.title, icon: item.icon, color: item.color, dtcreated: item.dtcreated, dtupdated: item.dtupdated });
 
 			$.callback(arr);
 		}
@@ -52,7 +48,7 @@ NEWSCHEMA('Nav', function(schema) {
 			if (item)
 				$.callback(item);
 			else
-				$.invalid('@(Navigation not found)');
+				$.invalid(404);
 		}
 	});
 
@@ -67,7 +63,7 @@ NEWSCHEMA('Nav', function(schema) {
 
 				var item = db.nav.findItem('id', model.id);
 				if (!item) {
-					$.invalid('@(Navigation not found)');
+					$.invalid(404);
 					return;
 				}
 
@@ -115,7 +111,7 @@ NEWSCHEMA('Nav', function(schema) {
 				FUNC.save();
 				FUNC.refresh();
 			} else
-				$.invalid('@(Navigation not found)');
+				$.invalid(404);
 		}
 	});
 

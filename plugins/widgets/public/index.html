@@ -1,14 +1,12 @@
 <style>
 	.CLASS h3 { margin: 0 10px; }
-	.CLASS .flex { margin-bottom: var(--gap); }
-	.CLASS figure { width: 100%; cursor: pointer; }
+	.CLASS figure { cursor: pointer; margin-bottom: var(--gap); }
 	.CLASS figure > section { border-radius: var(--radius); border: 1px solid #eaeaea; margin: 10px 10px 0; padding: 0; text-align: left; background-color: #fff; }
 	.CLASS figure .meta { padding: 18px 0 5px 15px; border-top: 1px solid #eaeaea; height: 56px; }
 	.CLASS figure .name { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; font-weight: bold; }
 	.CLASS figure .options { float: right; margin: 0 15px 0 0; color: gray; }
 	.CLASS figure .options:hover { color: #333; }
 	.CLASS figure img { border-radius: var(--radius) var(--radius) 0 0; width: 100%; max-width: 234px; }
-	.CLASS .flex { display: flex; align-items: center; justify-content: center; height: 100%; }
 </style>
 
 <div class="virtualwire hidden" data-if="~PATH~">
@@ -35,11 +33,10 @@
 				<div style="max-width:1400px;margin:0 auto">
 					<ui-component name="display" class="padding">
 						<h3>@(Widgets)</h3>
-						<ui-bind path="?.filtered" config="template:.flex -> data-id" class="grid-5 grid-xs-2">
+						<ui-bind path="?.filtered" config="template:figure -> data-id" class="grid-5">
 							<script type="text/html">
 								{{ foreach m in value }}
-								<div class="flex" data-id="{{ m.id }}">
-									<figure data-search="{{ m.name }}" class="exec" data-exec="?/edit">
+									<figure data-id="{{ m.id }}" data-search="{{ m.name }}" class="exec" data-exec="?/edit">
 										<section>
 											<img src="{{ if m.preview }}{{ m.preview }}{{ else }}/~ID~/empty.png{{ fi }}" onerror="onImageError(this)" data-empty="/~ID~/empty.png" class="img-responsive" loading="lazy" />
 											<div class="meta">
@@ -48,7 +45,6 @@
 											</div>
 										</section>
 									</figure>
-								</div>
 								{{ end }}
 							</script>
 						</ui-bind>
@@ -65,9 +61,6 @@
 	PLUGIN(function(exports) {
 
 		exports.reload = function() {
-		};
-
-		exports.init = function(id) {
 			BREADCRUMB.add('@(Widgets)', NAV.url);
 			exports.refresh();
 		};
@@ -91,7 +84,7 @@
 		};
 
 		exports.import = function() {
-			SET('common.form2', 'widgetsform');
+			SET('common.form2', 'formwidgets');
 		};
 
 		exports.refresh = function(el) {

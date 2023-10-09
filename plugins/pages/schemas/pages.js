@@ -27,9 +27,7 @@ NEWSCHEMA('Pages', function(schema) {
 
 	schema.action('links', {
 		name: 'Pages Links',
-		permissions: 'pages',
 		action: function($) {
-
 			var arr = [];
 			for (var item of MAIN.db.pages)
 				arr.push({ id: item.id, parentid: item.parentid, name: item.name, url: item.url, language: item.language, disabled: item.disabled });
@@ -47,7 +45,7 @@ NEWSCHEMA('Pages', function(schema) {
 			if (item)
 				$.callback(item);
 			else
-				$.invalid('@(Page not found)');
+				$.invalid(404);
 		}
 	});
 
@@ -82,7 +80,7 @@ NEWSCHEMA('Pages', function(schema) {
 
 				var item = db.pages.findItem('id', model.id);
 				if (!item) {
-					$.invalid('@(Page not found)');
+					$.invalid(404);
 					return;
 				}
 
@@ -155,7 +153,7 @@ NEWSCHEMA('Pages', function(schema) {
 				$.success();
 				FUNC.save();
 			} else
-				$.invalid('@(Page not found)');
+				$.invalid(404);
 		}
 	});
 
@@ -184,7 +182,7 @@ NEWSCHEMA('Pages', function(schema) {
 				});
 
 			} else
-				$.invalid('@(Page not found)');
+				$.invalid(404);
 		}
 	});
 
@@ -215,7 +213,7 @@ NEWSCHEMA('Pages/HTML', function(schema) {
 						$.callback(obj);
 				});
 			} else
-				$.invalid('@(Page not found)');
+				$.invalid(404);
 		}
 	});
 
@@ -229,7 +227,7 @@ NEWSCHEMA('Pages/HTML', function(schema) {
 				db.fs.save(model.id, model.id + '.html', Buffer.from(model.html, 'utf8'), $.done());
 				delete MAIN.views[model.id];
 			} else
-				$.invalid('@(Page not found)');
+				$.invalid(404);
 		}
 	});
 

@@ -60,15 +60,15 @@
 
 </ui-plugin>
 
-<ui-component name="importer" path="common.form" config="if:navform;url:/~ID~/form.html"></ui-component>
-<ui-component name="importer" path="common.form" config="if:sitemapform;url:/~ID~/sitemap.html"></ui-component>
-<ui-component name="importer" path="common.form2" config="if:linkform;url:/~ID~/link.html"></ui-component>
+<ui-component name="importer" path="common.form" config="if:formnav;url:/~ID~/form.html"></ui-component>
+<ui-component name="importer" path="common.form" config="if:formsitemap;url:/~ID~/sitemap.html"></ui-component>
+<ui-component name="importer" path="common.form2" config="if:formlink;url:/~ID~/link.html"></ui-component>
 
 <script>
 
 	PLUGIN(function(exports) {
 
-		exports.init = function(id) {
+		exports.reload = function(id) {
 			BREADCRUMB.add('@(Navigation)', NAV.url);
 			exports.refresh();
 		};
@@ -79,18 +79,18 @@
 		};
 
 		exports.edit = function(el) {
-			var id = el instanceof jQuery ? el.attrd2('id') : el;
-			exports.tapi('nav_read/' + id + ' ERROR', function(response) {
-				SET('navform @reset', response);
-				SET('common.form', 'navform');
+			var id = ATTRD(el);
+			exports.tapi('nav_read/{0} ERROR'.format(id), function(response) {
+				SET('formnav @reset', response);
+				SET('common.form', 'formnav');
 			});
 		};
 
 		exports.open = function(el) {
-			var id = el instanceof jQuery ? el.attrd2('id') : el;
-			exports.tapi('nav_read/' + id + ' ERROR', function(response) {
-				SET('sitemapform @reset', response);
-				SET('common.form', 'sitemapform');
+			var id = ATTRD(el);
+			exports.tapi('nav_read/{0} ERROR'.format(id), function(response) {
+				SET('formsitemap @reset', response);
+				SET('common.form', 'formsitemap');
 			});
 		};
 
@@ -171,8 +171,8 @@
 		};
 
 		exports.create = function() {
-			SET('navform @default', {});
-			SET('common.form', 'navform');
+			SET('formnav @default', {});
+			SET('common.form', 'formnav');
 		};
 
 	});

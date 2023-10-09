@@ -99,7 +99,7 @@
 			iframe = self.find('iframe');
 			container = self.find(cls2 + '-container');
 
-			var toolbar = self.find('.cmseditor-help');
+			toolbar = self.find('.cmseditor-help');
 			undobutton = toolbar.find('button[name="undo"]');
 			toolbar.on('click', 'button', function() {
 				var el = $(this);
@@ -770,9 +770,6 @@
 					if (name === 'hide')
 						return;
 
-					if (name === 'generate')
-						name = 'edit';
-
 					var disabled = name === 'settings' ? true : arr.indexOf('CMS_' + name) === -1;
 
 					if (disabled && name === 'attribute')
@@ -793,8 +790,16 @@
 					if (disabled && name === 'repeat')
 						disabled = self.dom_parent_class('CMS_repeat') === null;
 
-					if (disabled && name === 'remove')
+					if (disabled && name === 'remove') {
 						disabled = temporary.wrapremove === null;
+						if (disabled) {
+							// is link created manually?
+							if (t.tagName === 'A' && target.hclass('CMS_edit')) {
+								var parent = target.parent().closest('.CMS_edit');
+								disabled = parent.length === 0;
+							}
+						}
+					}
 
 					if (disabled && name === 'widgets') {
 						temporary.wrap_widgets = self.dom_parent_class('CMS_widgets', 10);
@@ -804,10 +809,20 @@
 					if (name === 'edit' && tag === 'IFRAME')
 						disabled = true;
 
-					if (name === 'settings' || name === 'partial')
+					if (name === 'generate') {
+
+						if (tag !== 'IMG' && disabled)
+							disabled = false;
+
+						if (name === 'generate' && tag === 'I')
+							disabled = true;
+					}
+
+					if (name === 'settings' || name === 'partial' || name === 'generate')
 						el.tclass('CMS_panel_disabled CMS_panel_hidden', disabled);
 					else
 						el.tclass('CMS_panel_disabled', disabled);
+
 				});
 
 				panel.find('#CMS_panel_buttons_body').toggle(!!wrap || arr.indexOf('CMS_widgets') !== -1);
@@ -1051,13 +1066,22 @@
 				switch (name) {
 
 					case 'generate':
+
+						var toolbar = self.iframe_toolbar();
 						var t = temporary.wrap || target;
 						var opt = {};
+						var offset = toolbar.position();
+						var editor = self.element.offset();
+						var viewbox = self.find('ui-component[name="viewbox"]').component();
+
+						opt.x = (editor.left + offset.left) - viewbox.scrollbar.scrollLeft();
+						opt.y = (editor.top + offset.top + 46) - viewbox.scrollbar.scrollTop();
 						opt.element = t;
 						opt.config = self.widget_config_parse(t);
 
 						opt.isimage = t[0].tagName === 'IMG';
 						opt.instance = self;
+						opt.text = $(t).text();
 
 						if (opt.isimage) {
 
@@ -1210,7 +1234,7 @@
 
 						var arr = [];
 						var tmp = self.dom_parent_class('CMS_widgets', 10);
-						var after = self.dom_parent_class('CMS_widget', 10);
+						var after = target.hclass('CMS_widgets') ? null : self.dom_parent_class('CMS_widget', 10);
 
 						var container = tmp;
 
@@ -1232,8 +1256,8 @@
 
 							self.backup(target);
 
-							var cls = 'w-' + widget.id.slug().replace(/\-/g, '');
-							var content = '<div class="CMS_widget CMS_remove {0}" data-cms="{2}__{3}" data-cms-id="{1}">{4}</div>'.format(cls, Date.now().toString(36), widget.id, encodeURIComponent(STRINGIFY(widget.config || {})), widget.html || widget.body);
+							var cls = 'w-' + (widget.id || widget.name).slug().replace(/\-/g, '');
+							var content = '<div class="CMS_widget CMS_remove {0} CMS_mh CMS_mv" data-cms="{2}__{3}" data-cms-id="{1}">\n{4}</div>'.format(cls, Date.now().toString(36), widget.id, encodeURIComponent(STRINGIFY(widget.config || {})), widget.html || widget.body);
 
 							if (after && after.length) {
 								after.after(content);
@@ -1393,6 +1417,8 @@
 						meta.hiddenlg = widget.hclass('hidden-lg');
 						meta.widget = instance;
 
+						instance.compiled && instance.compiled.load && instance.compiled.load(meta.config);
+
 						meta.save = function(config) {
 							if (instance.compiled && instance.compiled.save) {
 								try {
@@ -1512,6 +1538,12 @@
 
 						if (target.hclass('CMS_expression')) {
 							target.replaceWith(target.html());
+							return;
+						}
+
+						if (target[0].tagName === 'A' && target.hclass('CMS_edit')) {
+							target.replaceWith(target.html());
+							self.iframe_toolbar().hide();
 							return;
 						}
 
@@ -1830,7 +1862,7 @@
 					var key = '<!-' + '-' + HASH(text).toString(36) + '-' + '->';
 					scripts.push({ id: key, html: text });
 					return key;
-				}).replace('</head>', '<link rel="stylesheet" href="/cmseditor/iframe.css" id="cmscsseditor" />' + (css.length ? ('<sty' + 'le id="cmscss">{0}</sty' + 'le>').format(css.join('')) : '') + '</head>').replace('</body>', '<div id="CMS_panel" class="invisible"><div id="CMS_panel_buttons_move"><span class="ti ti-arrow-up" data-name="up" title="@(Move up)"></span><span class="ti ti-arrow-down" data-name="down" title="@(Move down)"></span></div><div id="CMS_panel_buttons_reposition"><span class="ti ti-chevron-up" data-name="up2" title="@(Move up current repeated element)"></span><span class="ti ti-chevron-down" data-name="down2" title="@(Move down current repeated element)"></span></div><div id="CMS_panel_info"></div><div class="CMS_panel_buttons"><span class="ti ti-pencil" title="@(Edit)" data-name="edit"></span><span class="ti ti-robot" title="@(Generate via AI)" data-name="generate"></span><span class="ti ti-cog-alt" title="@(Widget settings)" data-name="settings"></span><span class="ti ti-link" title="@(Change link)" data-name="link"></span><span class="ti ti-quote-left" title="@(Change attributes)" data-name="attribute"></span><span class="ti ti-copy" title="@(Duplicate)" data-name="repeat"></span></span><span class="ti ti-plus-circle" title="@(Add a widget)" data-name="widgets"></span><span class="ti ti-trash" title="@(Remove)" data-name="remove"></span><span class="ti ti-caret-square-down" title="@(Hide)" data-name="hide"></span></div><div id="CMS_panel_buttons_copy"><span class="ti ti-paste" data-name="paste" title="@(Paste widget)"></span><span class="ti ti-copy" data-name="copy" title="@(Copy widget)"></span></div><div id="CMS_panel_buttons_body"><span class="ti ti-arrows-v" data-name="CMS_mv" title="@(Toggle vertical margin)"></span><span class="ti ti-arrows-h" data-name="CMS_mh" title="@(Toggle horizontal margin)"></span><span class="ti ti-code" data-name="sourcecode" title="@(Source code)"></span></div></div></body>'));
+				}).replace('</head>', '<link rel="stylesheet" href="/cmseditor/iframe.css" id="cmscsseditor" />' + (css.length ? ('<sty' + 'le id="cmscss">{0}</sty' + 'le>').format(css.join('')) : '') + '</head>').replace('</body>', '<div id="CMS_panel" class="invisible"><div id="CMS_panel_buttons_move"><span class="ti ti-arrow-up" data-name="up" title="@(Move up)"></span><span class="ti ti-arrow-down" data-name="down" title="@(Move down)"></span></div><div id="CMS_panel_buttons_reposition"><span class="ti ti-chevron-up" data-name="up2" title="@(Move up current repeated element)"></span><span class="ti ti-chevron-down" data-name="down2" title="@(Move down current repeated element)"></span></div><div id="CMS_panel_info"></div><div class="CMS_panel_buttons"><span class="ti ti-pencil" title="@(Edit)" data-name="edit"></span><span class="ti ti-openai" title="@(Generate via AI)" data-name="generate"></span><span class="ti ti-cog-alt" title="@(Widget settings)" data-name="settings"></span><span class="ti ti-link" title="@(Change link)" data-name="link"></span><span class="ti ti-quote-left" title="@(Change attributes)" data-name="attribute"></span><span class="ti ti-copy" title="@(Duplicate)" data-name="repeat"></span></span><span class="ti ti-plus-circle" title="@(Add a widget)" data-name="widgets"></span><span class="ti ti-trash" title="@(Remove)" data-name="remove"></span><span class="ti ti-caret-square-down" title="@(Hide)" data-name="hide"></span></div><div id="CMS_panel_buttons_copy"><span class="ti ti-paste" data-name="paste" title="@(Paste widget)"></span><span class="ti ti-copy" data-name="copy" title="@(Copy widget)"></span></div><div id="CMS_panel_buttons_body"><span class="ti ti-arrows-v" data-name="CMS_mv" title="@(Toggle vertical margin)"></span><span class="ti ti-arrows-h" data-name="CMS_mh" title="@(Toggle horizontal margin)"></span><span class="ti ti-code" data-name="sourcecode" title="@(Source code)"></span></div></div></body>'));
 
 				var body = self.iframe_body();
 

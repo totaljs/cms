@@ -3,6 +3,11 @@
 		<div class="m">
 			<ui-component name="input" path="?.name" config="required:1">@(Name)</ui-component>
 		</div>
+		<div class="m">
+			<ui-component name="input" path="?.title" config="placeholder:@(A navigation title)">@(Title)</ui-component>
+			<div class="help">@(Optional)</div>
+		</div>
+		<hr />
 		<div class="row">
 			<div class="col-md-6 m">
 				<ui-component name="input" path="?.color" config="type:color">@(Color)</ui-component>
@@ -34,6 +39,7 @@
 			var model = exports.form;
 			exports.tapi('nav_save ERROR', model, function() {
 				EXEC('pluginnav/refresh');
+				CLRELOAD('nav');
 				hide();
 			});
 		};

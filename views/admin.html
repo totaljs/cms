@@ -14,7 +14,7 @@
 	<script src="@{REPO.ui}"></script>
 	@{import('meta', 'head', 'default.js + func.js', 'default.css', 'favicon.ico')}
 </head>
-<body>
+<body class="invisible">
 
 	<ui-component name="exec"></ui-component>
 	<ui-component name="errorhandler"></ui-component>
@@ -33,14 +33,15 @@
 	<ui-component name="LAZY fileuploader"></ui-component>
 	<ui-component name="LAZY features"></ui-component>
 	<ui-component name="LAZY spotlight"></ui-component>
+	<ui-component name="LAZY clipboard"></ui-component>
 
 	<ui-component name="shortcuts"></ui-component>
-	<ui-component name="loading" config="style:2" class="hidden"></ui-component>
+	<ui-component name="loading" class="hidden"></ui-component>
 	<ui-component name="dropfiles" config="exec:common/dropfiles;check:common/dropcheck" class="hidden">@(Drag &amp; Drop files here)</ui-component>
 
 	<header>
 		<a href="/" title="@(Website)" target="_blank"><i class="ti ti-globe"></i></a>
-		<ui-component name="breadcrumb" path="common.breadcrumb" config="$assign:BREADCRUMB;style:2;root:@(Home);icon:ti ti-home" class="invisible">
+		<ui-component name="breadcrumb" path="common.breadcrumb" config="$assign:BREADCRUMB;style:2;root:@(Home);icon:ti ti-home;rooturl:/admin/;title:@{'%name'}" class="invisible">
 			<ui-component name="virtualwire" path="common.page" class="toolbar" style="float:right"></ui-component>
 		</ui-component>
 	</header>
@@ -67,44 +68,87 @@
 		</section>
 
 		<main>
-			<div class="parts" id="mainparts">
-				@{foreach m in model}
-				<ui-component name="part" path="common.page" config="if:plugin@{m.id};url:@{#}/_@{m.id}/index.html;id:_@{m.id}" class="hidden" data-pname="@{m.name}" data-pid="@{m.id}" data-picon="@{m.icon}" data-pimport="@{m.import}"  data-pposition="@{m.position}"></ui-component>
-				@{end}
-			</div>
-			<ui-component name="part" path="common.page" config="if:mainplugins;url:@{#}/parts/index.html;reload:?/reload" class="hidden"></ui-component>
-			<ui-component name="part" path="common.page" config="if:editor;url:@{#}/parts/editor.html;reload:?/reload" class="hidden"></ui-component>
+			<ui-bind path="common.plugins" config="template" class="block">
+				<script type="text/html">
+					{{ foreach m in value }}
+						{{ if !m.hidden }}
+						<ui-component name="page" path="common.page" config="if:plugin{{ m.id }};url:/_{{ m.id }}/index.html;reload:?/reload;hidden:?/hide;id:_{{ m.id }}" class="hidden invisible"></ui-component>
+						{{ if m.routes }}
+							{{ foreach route in m.routes }}
+							<ui-component name="page" path="common.page" config="if:plugin{{ m.id }}{{ route.html }};url:/_{{ m.id }}/{{ route.html }}.html;reload:?/reload;hidden:?/hide;id:_{{ m.id }}" class="hidden invisible"></ui-component>
+							{{ end }}
+						{{ fi }}
+					{{ fi }}
+					{{ end }}
+				</script>
+			</ui-bind>
+			<ui-component name="page" path="common.page" config="if:welcome;url:@{#}/pages/index.html;reload:?/reload" class="hidden"></ui-component>
+			<ui-component name="page" path="common.page" config="if:editor;url:@{#}/pages/editor.html;reload:?/reload" class="hidden"></ui-component>
 		</main>
 	</ui-component>
 
-	<ui-component name="importer" path="common.form" config="if:codeform;url:/forms/code.html"></ui-component>
-	<ui-component name="importer" path="common.form" config="if:passwordform;url:/forms/password.html"></ui-component>
-	<ui-component name="importer" path="common.form2" config="if:filesform;url:/_files/list.html"></ui-component>
-	<ui-component name="importer" path="common.form2" config="if:widgetsform;url:/_widgets/form.html"></ui-component>
+	<ui-component name="importer" path="common.form" config="if:formcode;url:/forms/code.html"></ui-component>
+	<ui-component name="importer" path="common.form2" config="if:formfiles;url:/_files/list.html"></ui-component>
+	<ui-component name="importer" path="common.form2" config="if:formwidgets;url:/_widgets/form.html"></ui-component>
+
+	@{json(model, 'pluginsdata')}
+
+	@{if user.iframe}
+	<script src="@{user.iframe}"></script>
+	@{fi}
 
 	<script>
 
-		DEBUG();
 		ENVIRONMENT('cms');
 
 		var user = null;
 		var common = {};
 
 		common.breadcrumb = [];
+		common.clientid = GUID(5) + Date.now().toString(36);
+		common.name = document.title;
 		common.openplatform = NAV.query.openplatform || '';
+		common.plugins = PARSE('#pluginsdata');
+		common.api = '/admin/';
+		common.root = '/admin/';
+		common.redirect = REDIRECT;
 
-		if (common.openplatform) {
-			(function() {
-				var hostname = common.openplatform.substring(0, common.openplatform.indexOf('/', 10));
-				hostname && IMPORT(hostname + '/iframe.js');
-				common.openplatform = '?openplatform=' + encodeURIComponent(common.openplatform);
-			})();
-		}
+		ENV('margin', 60);
+
+		DEF.versionhtml = '@{CONF.version}';
+		DEF.languagehtml = '@{user.language}';
+
+		ENVIRONMENT('pages');
+
+		// Injects Token to every API request
+		(function() {
+			var openplatform = NAV.query.openplatform || '';
+			if (openplatform) {
+				var hostname = openplatform.substring(0, openplatform.indexOf('/', 10));
+				openplatform = '?openplatform=' + encodeURIComponent(openplatform);
+			} else
+				common.ready = true;
+			DEF.api = common.api + openplatform;
+			ENV('upload', common.api + 'upload/' + openplatform);
+			$('body').rclass('invisible', 200);
+		})();
 
 		NAV.clientside('.jR');
-		NAV.custom();
 
+		if (W.top !== W)
+			NAV.custom(true);
+
+		REDIRECT = function(url) {
+			if (url.charAt(0) !== '.' && url.substring(0, common.root.length) !== common.root)
+				url = common.root + url.substring(1);
+			common.redirect(url);
+		};
+
+		// A simple integration for navigation
 		W.APP_INIT = function() {
+
+			common.ready = true;
+
 			APP.on('init', function() {
 
 				var ready = false;
@@ -121,12 +165,8 @@
 				if (NAV.url !== path)
 					REDIRECT(path);
 			});
-		};
 
-		(function() {
-			DEF.api = '/admin/' + common.openplatform;
-			enterprise.init(DEF.api);
-		})();
+		};
 
 		Thelpers.selection = function(id) {
 			return '<span class="selection" data-id="{0}"><i class="ti ti-check"></i></span>'.format(id);
@@ -134,41 +174,22 @@
 
 		PLUGIN('common', function(exports) {
 
-			var plugins = [];
+			var model = exports.model;
 
 			(function() {
-				var nodes = $('#mainparts').find('> ui-component').toArray();
-				nodes.wait(function(node, next) {
-					var el = $(node);
-					var obj = {};
-					obj.id = el.attrd('pid');
-					obj.name = el.attrd('pname');
-					obj.icon = el.attrd('picon');
-					obj.import = el.attrd('pimport');
-					obj.position = +el.attrd('pposition');
-					obj.url = '/admin/' + obj.id + '/';
-					obj.import && IMPORT(obj.import);
-					plugins.push(obj);
-
-					ROUTE(obj.url, function() {
-						SET('common.page', 'plugin' + obj.id);
-						EXEC(true, 'plugin{0}/init'.format(obj.id));
-					}, 'breadcrumb');
-
-					next();
-
-				}, function() {
-					plugins.quicksort('position');
-					exports.set('plugins', plugins);
+				model.plugins.quicksort('position');
+				model.plugins.forEach(function(plugin) {
+					plugin.url = model.root + plugin.id + '/';
+					if (!plugin.hidden) {
+						ROUTE(plugin.url, () => exports.set('page', 'plugin' + plugin.id), 'init');
+						plugin.routes && plugin.routes.forEach(item => ROUTE('@{#}' + item.url, () => exports.set('page', 'plugin' + plugin.id + item.html), 'init'));
+					}
+					plugin.import && $(document.body).append('<ui-import config="url:{0};id:_{1}"></ui-import>'.format('@{#}/_' + plugin.id + '/' + plugin.import, plugin.id));
 				});
-
 			})();
 
-			exports.password = function() {
-				exports.tapi('auth ERROR', function(response) {
-					SET('passwordform @reset', response);
-					exports.set('form', 'passwordform');
-				});
+			exports.refresh = function() {
+				TAPI('account', 'user');
 			};
 
 			exports.redirect = function(el) {
@@ -180,37 +201,56 @@
 			};
 
 			exports.dropfiles = function(e) {
-				if (common.form2)
-					EXEC(common.form2 + '/dropfiles', e);
-				else if (common.form)
-					EXEC(common.form + '/dropfiles', e);
-				else if (common.page)
-					EXEC(common.page + '/dropfiles', e);
+				var plugin = model.form3 || model.form2 || model.form || model.page;
+				var tmp = PLUGINS[plugin];
+				if (tmp && tmp.dropfiles)
+					tmp.dropfiles(e);
 			};
 
 			exports.dropcheck = function(e) {
-				if (common.form === 'filesform' || common.page === 'pluginfiles' || common.page === 'postform')
+
+				if (model.form2 === 'formfiles' || model.page === 'pluginfiles')
 					return true;
+
+				var plugin = model.form3 || model.form2 || model.form || model.page;
+				var tmp;
+
+				if (plugin) {
+					tmp = PLUGINS[plugin];
+					if (tmp && tmp.dropcheck)
+						return tmp.dropcheck(e);
+				}
+
 				return false;
 			};
 
 			exports.logout = function() {
 				exports.ajax('GET @{#}/admin/logout/ ERROR', () => location.href = '/admin/');
 			};
+
+			exports.refresh();
+
+			ON('service', function(counter) {
+				if (counter % 5 === 0)
+					exports.refresh();
+			});
+
+			ON('ready', exports.refresh);
+
 		});
 
-		TAPI('account', 'user');
-
-		MIDDLEWARE('breadcrumb', function(next) {
-			WAIT(function() {
-				return W.user && common.breadcrumb && W.BREADCRUMB;
-			}, next);
+		MIDDLEWARE('init', function(next) {
+			WAIT(() => common.ready && W.user && common.breadcrumb && W.BREADCRUMB, next, null, 60000);
 		});
 
 		ROUTE('/', function() {
+			REDIRECT(common.root);
+		}, 'init');
+
+		ROUTE(common.root, function() {
 			BREADCRUMB.add();
-			SET('common.page', 'mainplugins');
-		}, 'breadcrumb');
+			SET('common.page', 'welcome');
+		}, 'init');
 
 		ON('@flag diff', function(path, value) {
 			FUNC.diff(path, value, 'id');
@@ -223,6 +263,15 @@
 		ON('@flag hideloading', function() {
 			SETTER('loading/hide', 1000);
 		});
+
+		CLINIT('links', function(next) {
+			TAPI('pages_links', response => next(FUNC.sitemap(response)));
+		}, true);
+
+		CLINIT('nav', function(next) {
+			TAPI('nav_editor', next);
+		}, true);
+
 
 	</script>
 

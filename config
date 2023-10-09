@@ -1,1 +1,4 @@
-default_uid   : f
+default_uid           : f
+allow_totalapi        : true
+
+salt      (generate)  : 10

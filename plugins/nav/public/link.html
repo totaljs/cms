@@ -1,7 +1,7 @@
 <ui-component name="miniform" path="common.form2" config="if:~PATH~;icon:ti ti-link;autofocus:true;reload:?/reload;submit:?/submit;width:400;zindex:40" class="hidden" plugin="~PATH~">
 	<div class="padding">
 		<ui-component name="input" path="?.name" config="required:1" class="m">@(Name)</ui-component>
-		<ui-component name="input" path="?.url" config="required:1;dirsource:%pagelinks;dirvalue:url;dircustom:true;dirplaceholder:@(Search or add new)" default="''" class="m">@(URL address)</ui-component>
+		<ui-component name="input" path="?.url" config="required:1;dirsource:#links;dirvalue:url;dircustom:true;dirplaceholder:@(Search or add new)" default="''" class="m">@(URL address)</ui-component>
 		<ui-component name="input" path="?.target" config="dirsource:|@(Current tab),_blank|@(New tab)" default="''" class="m">@(Target)</ui-component>
 		<div class="row">
 			<div class="col-md-6 m">
@@ -30,12 +30,6 @@
 			var model = exports.model;
 			var id = model ? model.id : null;
 			com.reconfigure({ title: id ? '@(Update link)' : '@(Create link)' });
-			var path = '%pagelinks';
-			if (!GET(path)) {
-				exports.tapi('pages_links', function(response) {
-					SET(path, FUNC.sitemap(response));
-				});
-			}
 		};
 
 		exports.submit = function(hide) {

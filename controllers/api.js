@@ -4,11 +4,7 @@ exports.install = function() {
 	ROUTE('+API     /admin/             -account            *Account      --> read');
 	ROUTE('+API     /admin/             -auth               *Auth         --> read');
 	ROUTE('+API     /admin/             -permissions        *Roles        --> permissions');
-	ROUTE('+API     /admin/             +enterprise         *Enterprise   --> download');
-
-	ROUTE('+API     /admin/             +enterprise         *Enterprise   --> download');
-	ROUTE('+API     /admin/             -enterprise_read    *Enterprise   --> read');
-	ROUTE('+API     /admin/             +enterprise_save    *Enterprise   --> save');
+	ROUTE('+API     /admin/             +chatgpt            *ChatGPT      --> ask', [60000]);
 
 	// Admin
 	ROUTE('-POST    /admin/auth/                            *Auth         --> exec');

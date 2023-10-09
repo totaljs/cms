@@ -1,17 +1,11 @@
 const REG_META = /<\/head>/;
+const REG_UI = /@\{ui\}/i;
+const REG_YEAR = /@\{year\}/i;
 
 exports.install = function() {
-	ROUTE('+GET /admin/', admin);
-	ROUTE('-GET /admin/', login);
+	ROUTE('+GET /admin/*', admin);
 	ROUTE('GET  /*', render);
 };
-
-function login() {
-	if (CONF.op_reqtoken && CONF.op_restoken)
-		this.throw401();
-	else
-		this.view('login');
-}
 
 function admin() {
 
@@ -24,13 +18,15 @@ function admin() {
 
 	for (var key in F.plugins) {
 		var item = F.plugins[key];
-		if (self.user.sa || !item.visible || item.visible(self.user)) {
+		if (!item.visible || item.visible(self.user)) {
 			var obj = {};
 			obj.id = item.id;
 			obj.position = item.position;
 			obj.name = TRANSLATOR(self.user.language || '', item.name);
 			obj.icon = item.icon;
 			obj.import = item.import;
+			obj.routes = item.routes;
+			obj.hidden = item.hidden;
 			plugins.push(obj);
 		}
 	}
@@ -43,9 +39,18 @@ function compile_page(id, widgets, callback) {
 		if (err) {
 			callback(err);
 		} else {
+
 			var html = buffer ? buffer.toString('utf8') : '';
-			MAIN.views[id] = CMSCOMPILER(html, widgets);
-			callback(null, MAIN.views[id]);
+			var value = {};
+			value.id = id;
+			value.html = html;
+			value.widgets = widgets;
+
+			TRANSFORM('page', value, function(err, value) {
+				MAIN.views[id] = CMSCOMPILER(value.html.replace(REG_UI, REPO.ui).replace(REG_YEAR, NOW.getFullYear() + ''), widgets);
+				callback(null, MAIN.views[id]);
+			});
+
 		}
 	});
 }
@@ -55,11 +60,44 @@ function compile_layout(id, widgets, callback) {
 		if (err) {
 			callback(err);
 		} else {
+
 			var html = buffer ? buffer.toString('utf8') : '';
-			MAIN.views[id] = CMSCOMPILER(html, widgets).importcss().importjs();
-			callback(null, MAIN.views[id]);
+			var value = {};
+
+			value.id = id;
+			value.html = html;
+			value.widgets = widgets;
+
+			TRANSFORM('layout', value, function(err, value) {
+				MAIN.views[id] = CMSCOMPILER(value.html.replace(REG_UI, REPO.ui).replace(REG_YEAR, NOW.getFullYear() + ''), widgets).importcss().importjs();
+				callback(null, MAIN.views[id]);
+			});
+
 		}
 	});
+}
+
+function navigation(id) {
+
+	var nav = this.nav[id] || { children: EMPTYARRAY };
+
+	if (nav.links) {
+		for (var m of nav.links)
+			m.selected = false;
+	}
+
+	nav.current = nav.links ? nav.links.findItem('url', this.url) : null;
+	var parent = nav.current;
+
+	while (parent) {
+		parent.selected = true;
+		parent = parent.parent;
+	}
+
+	nav.url = this.url;
+	nav.page = this.page;
+
+	return nav;
 }
 
 function render() {
@@ -81,6 +119,11 @@ function render() {
 		}
 	}
 
+	if (!page && url === '/') {
+		self.redirect('/admin/');
+		return;
+	}
+
 	if (page) {
 
 		if (!db.refs)
@@ -90,12 +133,20 @@ function render() {
 			db.vars = {};
 
 		var opt = {};
+		var cache = MAIN.cache.pages;
+		var key = page.id;
+
+		if (!cache[key])
+			cache[key] = {};
+
+		opt.inlinecache = cache[key];
 		opt.controller = self;
 		opt.vars = db.vars;
 		opt.refs = db.refs;
 		opt.widgets = MAIN.cache.widgets || EMPTYARRAY;
 		opt.nav = MAIN.cache.nav;
 		opt.url = url;
+		opt.user = self.user;
 		opt.ua = self.req.headers['user-agent'];
 
 		if (opt.ua)
@@ -107,11 +158,14 @@ function render() {
 		opt.robot = self.robot;
 		opt.breadcrumb = FUNC.breadcrumb(url);
 		opt.page = page;
+		opt.navigation = navigation;
 
 		opt.callback = function(err, response) {
-			if (response.css && response.css.length)
-				response.html = response.html.replace(/<\/style>/, '\n' + U.minify_css(response.css.join('')) + '</style>');
-			self.content(response.html, 'text/html');
+			TRANSFORM('render', response, function(err, response) {
+				if (response.css && response.css.length)
+					response.html = response.html.replace(/<\/style>/, '\n' + U.minify_css(response.css.join('')) + '</style>');
+				self.content(response.html, 'text/html');
+			}, self);
 		};
 
 		var title = page.title || page.name;

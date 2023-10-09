@@ -1,6 +1,6 @@
 FUNC.code = function(opt, callback) {
-	SET('common.form', 'codeform');
-	EXEC(true, 'codeform/init', opt, callback);
+	SET('common.form', 'formcode');
+	EXEC(true, 'formcode/init', opt, callback);
 };
 
 FUNC.sitemap = function(items, skip) {

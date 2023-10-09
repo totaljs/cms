@@ -6,14 +6,22 @@
 	.~PATH~ figure .meta .name { font-size: 14px; font-weight: bold; }
 </style>
 
-<ui-component name="box" path="cmseditor.form" config="if:~PATH~;title:@(Widgets);icon:ti ti-plug;autofocus:true;reload:?/reload;scrollbar:1;scrollbarshadow:1;submit:?/submit;width:1300;zindex:80" class="hidden" plugin="~PATH~">
+<ui-component name="box" path="cmseditor.form" config="if:~PATH~;title:@(Widgets);icon:ti ti-plug;autofocus:true;reload:?/reload;scrollbar:1;scrollbarshadow:1;submit:?/submit;width:1300;zindex:30" class="hidden" plugin="~PATH~">
 	<nav>
+		<button class="exec" data-exec="?/import" style="margin-right:10px!important;border-radius:var(--radius)"><i class="ti ti-arrow-circle-down"></i>@(Import widgets)</button>
 		<ui-component name="searchinput" path="?.search" config="placeholder:@(Search widgets)"></ui-component>
 	</nav>
 	<div class="padding">
 		<ui-component name="search" path="?.search" config="selector:.search">
 			<ui-bind path="?.items" config="template" class="~PATH~">
 				<script type="text/plain">
+
+					{{ if !value.length }}
+					<div class="center" style="padding-top:80px">
+						<div class="gray">@(The app doesn't contain any widgets)</div>
+						<div class="fs12 link exec mt5" data-exec="?/import"><i class="ti ti-plus-circle green mr5"></i>@(Import widgets)</div>
+					</div>
+					{{ fi }}
 					{{ foreach m in value }}
 						<figure data-id="{{ m.id }}" class="exec search" data-exec="?/install" data-search="{{ m.name }}">
 							<div>
@@ -49,6 +57,10 @@
 			if (item)
 				model.next(item);
 			NUL('cmseditor.form');
+		};
+
+		exports.import = function() {
+			SET('common.form2', 'formwidgets');
 		};
 
 		exports.search = function() {

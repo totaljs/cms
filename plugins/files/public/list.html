@@ -1,30 +1,19 @@
-<ui-component name="box" path="common.form2" config="if:~PATH~;icon:ti ti-copy;title:@(Files);autofocus:true;submit:?/submit;width:800;zindex:61" class="hidden" plugin="~PATH~">
+<ui-component name="box" path="common.form2" config="if:~PATH~;icon:ti ti-copy;title:@(Files);width:700;zindex:30" class="hidden ~PATH~" plugin="~PATH~">
 	<nav>
-		<ui-component name="searchinput" path="?.search" config="placeholder:@(Search navigation)"></ui-component>
 		<div class="mr10 pull-right">
 			<button class="exec" data-exec="?/upload"><i class="ti ti-cloud-upload"></i>@(Upload)</button>
 		</div>
 	</nav>
 	<div>
-		<div class="padding">
-			<ui-bind path="?.items" config="template" class="listing small block">
-				<script type="text/html">
-					<ui-component name="search" path="?.search" config="selector:figure">
-						{{ foreach m in value }}
-						<figure class="exec" data-exec="?/submit" data-id="{{ m.id }}" data-search="{{ m.name }}">
-							<section>
-								<!--<span class="exec pull-right" data-exec="?/options" data-prevent="true"><i class="ti ti-cog"></i></span>-->
-								<span class="monospace pull-right fs11 silver mr5">{{ m.size | filesize }}</span>
-								{{ if m.color }}<div class="color" style="background:{{ m.color }}"></div>{{ fi }}
-								{{ if m.icon }}<i class="{{ m.icon }} icon"></i>{{ fi }}{{ m.name }}
-								{{ if m.width && m.height }} <span class="monospace fs11 silver">({{ m.width }}x{{ m.height }})</span>{{ fi }}
-							</section>
-						</figure>
-						{{ end }}
-					</ui-component>
-				</script>
-			</ui-bind>
-		</div>
+		<ui-component name="datagrid" path="?.items" config="margin:93;noborder:1;click:?/submit;checkbox:0">
+			<script type="text/plain">
+				[
+					{ name: 'name', text: '@(Name)', width: 350 },
+					{ name: 'dimension', text: '@(Dimension)', width: 120, align: 1, monospace: 1, sort: false },
+					{ name: 'size', text: '@(Size)', width: 120, align: 2, alignheader: 2, template: '{{ size | filesize }}', monospace: 1, filter: false, class: 'gray' },
+				]
+			</script>
+		</ui-component>
 	</div>
 	<nav>
 		<button name="cancel" style="width:100%">@(Close)</button>
@@ -39,15 +28,21 @@
 
 		exports.refresh = function() {
 			exports.tapi('files_list', function(response) {
+
+				for (var item of response)
+					item.dimension = (item.width && item.height ? (item.width + 'x' + item.height) : '');
+
 				switch (meta.type) {
 					case 'images':
 						var tmp = { jpg: 1, png: 1, jpeg: 1, webp: 1, gif: 1, svg: 1 };
 						response = response.remove(n => !tmp[n.ext]);
 						break;
 				}
+
 				response.quicksort('date_desc');
 				exports.set('search', '');
 				exports.set('items', response);
+
 			});
 		};
 
@@ -58,10 +53,9 @@
 			exports.refresh();
 		};
 
-		exports.submit = function(el) {
-			var item = exports.data.items.findItem('id', el.attrd2('id'));
-			item.url = '/download/' + item.id + '.' + item.ext;
-			meta.callback(item, () => NULL('common.form2'));
+		exports.submit = function(row, grid, row_el) {
+			row.url = '/download/' + row.id + '.' + row.ext;
+			meta.callback(row, () => NULL('common.form2'));
 		};
 
 		exports.upload = function(e) {
@@ -71,7 +65,7 @@
 			if (e && !(e instanceof jQuery))
 				opt.files = e;
 
-			opt.url = '/upload/' + common.openplatform;
+			opt.url = ENV('upload');
 			opt.multiple = true;
 			opt.width = meta.width;
 			opt.height = meta.height;

@@ -10,24 +10,31 @@
 	.ui-dark .~PATH~ .item .url { color: #C0C0C0; }
 </style>
 
-<ui-component name="box" path="common.form" config="if:~PATH~;icon:ti ti-align-justify;autofocus:true;reload:?/reload;scrollbar:1;submit:?/submit;width:880" class="hidden" plugin="~PATH~">
+<ui-component name="box" path="common.form" config="if:CLASS;icon:ti ti-align-justify;autofocus:true;reload:?/reload;scrollbar:1;submit:?/submit;width:880" class="hidden" plugin="CLASS">
 	<nav>
 		<button class="exec" data-exec="?/add" ><i class="ti ti-plus-circle green"></i>@(Add link)</button>
 		<ui-bind path="?.children" config="enabled .D:value && value.length">
 			<button class="exec D" data-exec="?/clear" disabled style="border-top-left-radius:0;border-bottom-left-radius:0;border-left:1px solid #E0E0E0;"><i class="ti ti-trash red"></i>@(Clear links)</button>
 		</ui-bind>
 	</nav>
-	<div class="padding ~PATH~">
-		<ui-component name="children" path="?.children">
+	<div>
+		<ui-component name="empty" path="?.children" config="parent:auto">
 			<script type="text/html">
-				<div class="item">
-					<div{{ if level }} style="margin-left:{{ level * 30 }}px"{{ fi }}>
-						<span class="exec pull-right" data-exec="?/options"><i class="ti ti-cog"></i></span>
-						<span class="exec pull-right mr10" data-exec="?/edit" data-prevent="true"><i class="ti ti-pencil"></i></span>
-						<div class="hellip">{{ if value.icon }}<i class="{{ value.icon }} mr5"></i>{{ fi }}{{ value.name }}<span class="url">{{ value.url }}</span></div>
-					</div>
-				</div>
+				@(This navigation contains no links.)
 			</script>
+			<div class="padding CLASS">
+				<ui-component name="children" path="?.children">
+					<script type="text/html">
+						<div class="item">
+							<div{{ if level }} style="margin-left:{{ level * 30 }}px"{{ fi }}>
+								<span class="exec pull-right" data-exec="?/options"><i class="ti ti-cog"></i></span>
+								<span class="exec pull-right mr10" data-exec="?/edit" data-prevent="true"><i class="ti ti-pencil"></i></span>
+								<div class="hellip">{{ if value.icon }}<i class="{{ value.icon }} mr5"></i>{{ fi }}{{ value.name }}<span class="url">{{ value.url }}</span></div>
+							</div>
+						</div>
+					</script>
+				</ui-component>
+			</div>
 		</ui-component>
 	</div>
 	<nav>
@@ -86,8 +93,8 @@
 							exports.scope();
 							exports.upd('children');
 						};
-						SET('linkform @default', model);
-						SET('common.form2', 'linkform');
+						SET('formlink @default', model);
+						SET('common.form2', 'formlink');
 						break;
 					case 'edit':
 						exports.edit(el);
@@ -131,8 +138,8 @@
 				exports.scope();
 				exports.upd('children');
 			};
-			SET('linkform @default', model);
-			SET('common.form2', 'linkform');
+			SET('formlink @default', model);
+			SET('common.form2', 'formlink');
 		};
 
 		exports.add = function(el) {
@@ -144,8 +151,8 @@
 				exports.scope();
 				PUSH('?.children', data);
 			};
-			SET('linkform @default', model);
-			SET('common.form2', 'linkform');
+			SET('formlink @default', model);
+			SET('common.form2', 'formlink');
 		};
 
 	});

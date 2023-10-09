@@ -14,25 +14,11 @@
 	.jc-xs .~PATH~ figure { width: 50%; }
 </style>
 
-<ui-component name="box" path="common.form2" config="if:~PATH~;title:@(Import widgets);icon:ti ti-plug;autofocus:true;reload:?/reload;scrollbarshadow:1;submit:?/submit;width:1300;zindex:20" class="hidden ~PATH~" plugin="~PATH~">
+<ui-component name="box" path="common.form2" config="if:~PATH~;title:@(Import widgets);icon:ti ti-plug;autofocus:true;reload:?/reload;scrollbarshadow:1;submit:?/submit;width:1400;zindex:30" class="hidden ~PATH~" plugin="~PATH~">
 	<nav>
 		<ui-component name="searchinput" path="?.search" config="placeholder:@(Search widgets)"></ui-component>
-		<div class="buttons mr10">
-			<button class="exec" data-exec="?/enterprise"><i class="ti ti-totaljs green"></i>@(Enterprise)</button>
-		</div>
 	</nav>
 	<div class="padding">
-
-		<ui-bind path="enterprise.hidden" config="hide" class="block hidden">
-			<ui-bind path="enterprise.account" config="template;show:value && value.status=='ok'" class="block">
-				<script type="text/html">
-					<div class="bg-smoke padding m" style="border-radius:var(--radius)">
-						<i class="ti ti-totaljs mr5 green"></i>@(Your Total.js Enterprise Account expires on) <i class="ti ti-bull"></i> <b>{{ value.dtexpire | format('[date]') }}</b>
-					</div>
-				</script>
-			</ui-bind>
-		</ui-bind>
-
 		<ui-component name="search" path="?.search" config="selector:figure">
 			<ui-bind path="?.items" config="template:figure -> data-id" class="block grid-6 grid-sm-3 grid-xs-2">
 				<script type="text/plain">
@@ -61,11 +47,7 @@
 	PLUGIN(function(exports) {
 
 		exports.reload = function(com) {
-			enterprise.load(() => exports.refresh());
-		};
-
-		exports.enterprise = function() {
-			enterprise.edit();
+			exports.refresh();
 		};
 
 		exports.refresh = function() {

@@ -2,17 +2,17 @@ exports.icon = 'ti ti-copy';
 exports.name = '@(Files)';
 exports.position = 5;
 exports.permissions = [{ id: 'files', name: 'Files' }];
-exports.visible = user => user.permissions.includes('files');
+exports.visible = user => user.sa || user.permissions.includes('files');
 
 exports.install = function() {
 
-	ROUTE('+POST    /upload/           +files_upload   *Files          --> insert', ['upload'], 1024 * 5);
-	ROUTE('+POST    /upload/base64/    +files_base64   *Files          --> insert', 1024 * 5);
+	ROUTE('+POST    /admin/upload/                  +files_upload   *Files          --> insert', ['upload'], 1024 * 5);
+	ROUTE('+POST    /admin/upload/base64/           +files_base64   *Files          --> insert', 1024 * 5);
 	ROUTE('FILE     /download/*.*',   files);
 
-	ROUTE('API    /admin/    -files_list           *Files   --> list');
-	ROUTE('API    /admin/    -files_clear          *Files   --> clear');
-	ROUTE('API    /admin/    -files_remove/{id}    *Files   --> remove');
+	ROUTE('+API    /admin/    -files_list           *Files   --> list');
+	ROUTE('+API    /admin/    -files_clear          *Files   --> clear');
+	ROUTE('+API    /admin/    -files_remove/{id}    *Files   --> remove');
 
 };
 

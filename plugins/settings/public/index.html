@@ -2,7 +2,7 @@
 	<ui-component name="viewbox" path="common.page" config="parent:window;margin:50;scrollbarshadow:1">
 
 		<br />
-		<div style="margin:0 auto;max-width:600px;text-align:left;padding:var(--gap)">
+		<div style="margin:0 auto;max-width:720px;text-align:left;padding:var(--gap)">
 			<div class="panel">
 				<label><i class="ti ti-cog"></i>@(Configuration)</label>
 				<div style="padding:var(--gap)">
@@ -10,6 +10,25 @@
 						<div class="m">
 							<ui-component name="input" path="?.name" config="required:1">@(Website name)</ui-component>
 						</div>
+					</div>
+
+					<div class="m">
+						<div class="caption m">
+							<label><i class="ti ti-totaljs"></i>@(TMS)</label>
+						</div>
+						<p>@(The Total.js Message Service (TMS) allows you to publish data, subscribe to events, and call remote procedures to this app.)</p>
+
+						<ui-component name="input" path="?.allow_tms" config="type:checkbox">@(Enable TMS)</ui-component>
+						<ui-bind path="?.allow_tms" config="show" class="hidden block" style="margin-top:15px">
+
+							<p class="m"><i class="ti ti-globe blue mr5"></i>@(URL address:) <ui-bind path="location.origin" config="html:value + '/$tms/'" class="b"></ui-bind></p>
+
+							<ui-component name="input" path="?.secret_tms" config="camouflage:1">@(Security token)</ui-component>
+							<div class="help">
+								<i class="ti ti-warning red"></i>@(<b>Recommended</b>. You can secure TMS communication with your own custom security token.) <span class="exec link ml5" data-exec="?/generate"><i class="ti ti-dice"></i>@(Generate)</span>
+							</div>
+
+						</ui-bind>
 					</div>
 
 					<div class="caption m">
@@ -23,7 +42,7 @@
 				<div style="padding:var(--gap)">
 
 					<div class="caption m">
-						<label><i class="ti ti-totaljs green"></i>Total.js OpenPlatform</label>
+						<label><i class="ti ti-openplatform color"></i>OpenPlatform</label>
 					</div>
 
 					<p>@(The application is designed to work with the Total.js OpenPlatform. First, you must obtain tokens from the application registration form in the OpenPlatform instance.)</p>
@@ -50,7 +69,7 @@
 				</div>
 
 				<hr class="nmt nmb" />
-				<div style="padding:var(--gap)">
+				<div style="padding:var(--gap)" class="bg-smoke">
 
 					<div class="caption m">
 						<div class="toolbar">
@@ -88,6 +107,12 @@
 						</script>
 					</ui-bind>
 				</div>
+				<ui-bind path="?.items" config="show:value&&value.length" class="block hidden">
+					<hr class="nmt nmb" />
+					<div style="padding:var(--gap)">
+						<ui-component name="configuration" path="?.data" config="style:1;$assign:?|configuration"></ui-component>
+					</div>
+				</ui-bind>
 				<hr class="nmt nmb" />
 				<div style="padding:var(--gap)">
 					<ui-component name="validate" path="?">
@@ -106,19 +131,38 @@
 <script>
 	PLUGIN(function(exports) {
 
-		exports.init = function() {
+		exports.reload = function() {
 			BREADCRUMB.add('@(Settings)', NAV.url);
-			exports.tapi('settings_read ERROR', function(response) {
-				exports.set(response);
+			exports.tapi('settings_read ERROR @showloading', function(response) {
+				exports.configuration.rebind(response.items);
+
+				var data = {};
+
+				for (var m of response.items) {
+					if (m.type !== 'group')
+						data[m.id] = m.value;
+				}
+
+				response.data = data;
+				exports.set('@reset @hideloading', response);
+
 				if (response.mail_smtp)
 					exports.test();
+
 			});
 		};
 
 		exports.submit = function() {
-			var form = exports.form;
-			exports.tapi('settings_save ERROR', form, function() {
-				EXEC('-notify/success', '@(Settings have been saved successfully).');
+			var form = CLONE(exports.form);
+			var items = [];
+			for (var key in form.data)
+				items.push({ id: key, value: form.data[key] });
+
+			delete form.data;
+			form.items = items;
+
+			exports.tapi('settings_save ERROR @showloading', form, function() {
+				EXEC('-notify/success @hideloading', '@(Settings have been saved successfully).');
 			});
 		};
 

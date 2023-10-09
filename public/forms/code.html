@@ -1,4 +1,4 @@
-<ui-component name="box" path="common.form" config="if:~PATH~;title:@(Source-code);icon:ti ti-laptop-code;autofocus:true;reload:?/reload;scrollbar:0;submit:?/submit;width:1200;zindex:60" class="hidden" plugin="~PATH~">
+<ui-component name="box" path="common.form" config="if:~PATH~;title:@(Source-code);icon:ti ti-laptop-code;autofocus:true;reload:?/reload;scrollbar:0;submit:?/submit;width:1600;zindex:60" class="hidden" plugin="~PATH~">
 	<div>
 		<ui-component name="cloudeditor" path="?.html" config="parent:auto;$id:cloudeditor;contextmenu:?/menu"></ui-component>
 	</div>
@@ -30,7 +30,7 @@
 
 		exports.dropfiles = function(e) {
 			var opt = {};
-			opt.url = '/upload/';
+			opt.url = ENV('upload');
 			opt.files = e;
 			opt.callback = function(response, err) {
 				var builder = [];
