@@ -1,4 +1,4 @@
-<ui-component name="box" path="common.form" config="if:~PATH~;title:@(Source-code);icon:ti ti-laptop-code;autofocus:true;reload:?/reload;scrollbar:0;submit:?/submit;width:1600;zindex:60" class="hidden" plugin="~PATH~">
+<ui-component name="box" path="common.form" config="if:~PATH~;title:@(Source-code);icon:ti ti-laptop-code;autofocus:true;reload:?/reload;scrollbar:0;submit:?/submit;width:1600;zindex:30" class="hidden" plugin="~PATH~">
 	<div>
 		<ui-component name="cloudeditor" path="?.html" config="parent:auto;$id:cloudeditor;contextmenu:?/menu"></ui-component>
 	</div>
@@ -28,6 +28,10 @@
 			});
 		};
 
+		exports.dropcheck = function() {
+			return true;
+		};
+
 		exports.dropfiles = function(e) {
 			var opt = {};
 			opt.url = ENV('upload');
@@ -47,11 +51,19 @@
 			opt.y = e.y;
 			opt.items = [];
 			opt.items.push({ id: 'upload', name: '@(Insert file)', icon: 'ti ti-cloud-upload' });
+			opt.items.push({ id: 'icons', name: '@(Insert icon)', icon: 'ti ti-icons' });
 			opt.callback = function(selected) {
 				switch (selected.id) {
+					case 'icons':
+						opt.items = null;
+						opt.callback = function(selected) {
+							SETTER('#cloudeditor/insert', selected);
+						};
+						SETTER('icons/show', opt);
+						break;
 					case 'upload':
-						SET('common.form2', 'filesform');
-						EXEC(true, 'filesform/init', {}, function(item, hide) {
+						SET('common.form2', 'formfiles');
+						EXEC(true, 'formfiles/init', {}, function(item, hide) {
 							SETTER('#cloudeditor/insert', item.url);
 							hide();
 						});
