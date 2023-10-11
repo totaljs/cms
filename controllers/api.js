@@ -2,14 +2,7 @@ exports.install = function() {
 
 	// Misc
 	ROUTE('+API     /admin/             -account            *Account      --> read');
-	ROUTE('+API     /admin/             -auth               *Auth         --> read');
-	ROUTE('+API     /admin/             -permissions        *Roles        --> permissions');
 	ROUTE('+API     /admin/             +chatgpt            *ChatGPT      --> ask', [60000]);
-
-	// Admin
-	ROUTE('-POST    /admin/auth/                            *Auth         --> exec');
-	ROUTE('+GET     /admin/logout/                          *Auth         --> logout');
-	ROUTE('+POST    /admin/password/                        *Auth         --> save');
 
 	// Internal
 	ROUTE('+GET     /admin/backup/',  backup, [1000 * 60]);
