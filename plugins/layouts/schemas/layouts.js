@@ -199,14 +199,13 @@ NEWSCHEMA('Layouts/HTML', function(schema) {
 			if (db.layouts.findItem('id', model.id)) {
 				importnavigation(model, null, function(err, resave) {
 
-					if (resave) {
+					if (resave)
 						FUNC.save();
-						FUNC.refresh();
-					}
 
 					importwidgets(model, function() {
 						db.fs.save(model.id, model.id + '.html', Buffer.from(model.html, 'utf8'), $.done());
 						delete MAIN.views[model.id];
+						FUNC.refresh();
 					});
 				});
 			} else
