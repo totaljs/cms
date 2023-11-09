@@ -926,8 +926,8 @@
 			body.unbind('keydown').on('keydown', function(e) {
 
 				// save
-				if ((e.metaKey || e.ctrlKey) && e.keyCode === 91) {
-					config.save && self.EXEC(config.save);
+				if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+					config.save && self.EXEC(config.save, true);
 					e.preventDefault();
 					e.stopPropagation();
 					return;
