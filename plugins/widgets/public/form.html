@@ -51,7 +51,7 @@
 		};
 
 		exports.refresh = function() {
-			exports.ajax('GET https://cdn.totaljs.com/pages/db.json', function(response) {
+			exports.ajax('GET https://cdn.totaljs.com/cms/db.json', function(response) {
 				var items = PARSE(response);
 				exports.tapi('widgets_list?list=1', function(response) {
 					for (var item of items) {
@@ -59,6 +59,7 @@
 						item.search = item.name.toSearch();
 						item.imported = !!response.findItem('id', item.id);
 					}
+					items.quicksort('name');
 					exports.set('items', items);
 				});
 			});
