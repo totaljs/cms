@@ -1236,6 +1236,9 @@
 						var tmp = self.dom_parent_class('CMS_widgets', 10);
 						var after = target.hclass('CMS_widgets') ? null : self.dom_parent_class('CMS_widget', 10);
 
+						if (after && after[0].contains(tmp[0]))
+							after = null;
+
 						var container = tmp;
 
 						if (!container.hclass('CMS_widgets')) {
