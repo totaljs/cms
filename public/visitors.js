@@ -1,3 +1,6 @@
+if (window.DEF)
+	window.DEF.fallback = '/cdn/j-{0}.html';
+
 // Online statistics for visitors
 (function() {
 

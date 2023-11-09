@@ -156,6 +156,7 @@
 		exports.save = function(force) {
 			var opt = {};
 			opt.html = EDITOR.response();
+			SETTER('notify/success', '@(Saved)');
 			meta.callback(opt, force === true ? NOOP : exports.close);
 		};
 

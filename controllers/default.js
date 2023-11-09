@@ -47,7 +47,7 @@ function compile_page(id, widgets, callback) {
 			value.widgets = widgets;
 
 			TRANSFORM('page', value, function(err, value) {
-				MAIN.views[id] = CMSCOMPILER(value.html.replace(REG_UI, REPO.ui).replace(REG_YEAR, NOW.getFullYear() + ''), widgets);
+				MAIN.views[id] = CMSCOMPILER(value.html.replace(REG_UI, REPO.webui).replace(REG_YEAR, NOW.getFullYear() + ''), widgets);
 				callback(null, MAIN.views[id]);
 			});
 
@@ -69,7 +69,7 @@ function compile_layout(id, widgets, callback) {
 			value.widgets = widgets;
 
 			TRANSFORM('layout', value, function(err, value) {
-				MAIN.views[id] = CMSCOMPILER(value.html.replace(REG_UI, REPO.ui).replace(REG_YEAR, NOW.getFullYear() + ''), widgets).importcss().importjs();
+				MAIN.views[id] = CMSCOMPILER(value.html.replace(REG_UI, REPO.webui).replace(REG_YEAR, NOW.getFullYear() + ''), widgets).importcss().importjs();
 				callback(null, MAIN.views[id]);
 			});
 
