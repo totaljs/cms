@@ -3,6 +3,7 @@
 - [Documentation](https://docs.totaljs.com/cms/)
 - [Join Total.js Telegram](https://t.me/totaljs)
 - [Support](https://www.totaljs.com/support/)
+- [Widgets](https://github.com/totaljs/cms-widgets)
 
 ## Installation
 
