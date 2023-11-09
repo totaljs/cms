@@ -134,6 +134,7 @@
 			exports.tapi('widgets_list', function(widgets) {
 				for (var item of widgets)
 					parsejs(item);
+				widgets.quicksort('name');
 				exports.set({ name: opt.name, ready: true, html: { html: opt.html, layout: opt.layout, type: opt.type, widgets: widgets }});
 			});
 		};
@@ -146,6 +147,7 @@
 		exports.refresh_widgets = function() {
 			exports.tapi('widgets_list', function(response) {
 				exports.scope();
+				response.quicksort('name');
 				exports.set('html.widgets', response, 'norender');
 				SETTER('cmseditor/refresh_widgets');
 			});
