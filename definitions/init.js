@@ -24,7 +24,7 @@ ON('ready', function() {
 	setTimeout(FUNC.load, 500);
 
 	// UI components
-	COMPONENTATOR('ui', 'exec,locale,aselected,page,fileuploader,viewbox,navlayout,extend,crop,form,input,importer,box,validate,loading,selected,intranetcss,notify,message,errorhandler,empty,menu,autofill,enter,dropfiles,breadcrumb,virtualwire,noscrollbar,preview,miniform,datagrid,filebrowser,approve,shortcuts,searchdata,search,searchinput,display,selection,children,icons,directory,colorpicker,cloudeditor,tangular-filesize,textboxlist,datepicker,cloudeditorsimple,ready,listing,keyvalue,configuration,donutchart,statsbarsimple,stats24,barchart,clipboard', true);
-	COMPONENTATOR('webui', 'exec,errorhandler,locale,uibuilder,uistudio,datepicker,directory,menu,input,icons', true);
+	COMPONENTATOR('ui', 'exec,locale,aselected,page,fileuploader,viewbox,navlayout,extend,crop,form,importer,input,box,validate,loading,selected,intranetcss,notify,message,errorhandler,empty,menu,autofill,enter,dropfiles,breadcrumb,virtualwire,noscrollbar,preview,miniform,datagrid,filebrowser,approve,shortcuts,searchdata,search,searchinput,display,selection,children,icons,directory,colorpicker,cloudeditor,tangular-filesize,textboxlist,datepicker,cloudeditorsimple,ready,listing,keyvalue,configuration,donutchart,statsbarsimple,stats24,barchart,clipboard', true);
+	COMPONENTATOR('webui', 'exec,errorhandler,locale,uibuilder,uistudio,datepicker,directory,menu,icons,input', true);
 
 });

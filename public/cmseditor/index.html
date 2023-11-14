@@ -1262,7 +1262,7 @@
 							var parentwidget = self.dom_parent_class('CMS_widget', 15);
 
 							var cls = 'w-' + (widget.id || widget.name).slug().replace(/\-/g, '');
-							var content = '<div class="CMS_widget CMS_remove {0} CMS_mv{5}" data-cms="{2}__{3}" data-cms-id="{1}">\n{4}</div>'.format(cls, Date.now().toString(36), widget.id, encodeURIComponent(STRINGIFY(widget.config || {})), widget.html || widget.body, parentwidget || !parentwidget.hclass('CMS_mv') ? ' ' : ' CMS_mv');
+							var content = '<div class="CMS_widget CMS_remove {0} CMS_mv{5}" data-cms="{2}__{3}" data-cms-id="{1}">\n{4}</div>'.format(cls, Date.now().toString(36), widget.id, encodeURIComponent(STRINGIFY(widget.config || {})), widget.html || widget.body, parentwidget && !parentwidget.hclass('CMS_mh') ? '' : ' CMS_mh');
 
 							if (after && after.length)
 								after.after(content);
