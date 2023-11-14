@@ -33,7 +33,7 @@
 				<div style="max-width:1400px;margin:0 auto">
 					<ui-component name="display" class="padding">
 						<h3>@(Widgets)</h3>
-						<ui-bind path="?.filtered" config="template:figure -> data-id" class="grid-5">
+						<ui-bind path="?.filtered" config="template:figure" class="grid-5">
 							<script type="text/html">
 								{{ foreach m in value }}
 									<figure data-id="{{ m.id }}" data-search="{{ m.name }}" class="exec" data-exec="?/edit">
