@@ -1422,7 +1422,7 @@
 						meta.hiddenlg = widget.hclass('hidden-lg');
 						meta.widget = instance;
 
-						instance.compiled && instance.compiled.load && instance.compiled.load(meta.config);
+						instance.compiled && instance.compiled.load && instance.compiled.load(meta.config, meta.element);
 
 						meta.save = function(config) {
 							if (instance.compiled && instance.compiled.save) {
