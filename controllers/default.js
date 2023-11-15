@@ -9,20 +9,20 @@ exports.install = function() {
 
 function admin() {
 
-	var self = this;
+	var $ = this;
 	var plugins = [];
-	var hostname = self.hostname();
+	var hostname = $.hostname();
 
 	if (PREF.url !== hostname)
 		PREF.set('url', hostname);
 
 	for (var key in F.plugins) {
 		var item = F.plugins[key];
-		if (!item.visible || item.visible(self.user)) {
+		if (!item.visible || item.visible($.user)) {
 			var obj = {};
 			obj.id = item.id;
 			obj.position = item.position;
-			obj.name = TRANSLATOR(self.user.language || '', item.name);
+			obj.name = TRANSLATOR($.user.language || '', item.name);
 			obj.icon = item.icon;
 			obj.import = item.import;
 			obj.routes = item.routes;
@@ -31,7 +31,7 @@ function admin() {
 		}
 	}
 
-	self.view('admin', plugins);
+	$.view('admin', plugins);
 }
 
 function compile_page(id, widgets, callback) {
@@ -102,13 +102,13 @@ function navigation(id) {
 
 function render() {
 
-	var self = this;
+	var $ = this;
 	var db = MAIN.db;
-	var url = self.url;
+	var url = $.url;
 	var page = null;
 
 	if (!db.ready) {
-		self.throw404();
+		$.throw404();
 		return;
 	}
 
@@ -120,7 +120,7 @@ function render() {
 	}
 
 	if (!page && url === '/') {
-		self.redirect('/admin/');
+		$.redirect('/admin/');
 		return;
 	}
 
@@ -140,22 +140,22 @@ function render() {
 			cache[key] = {};
 
 		opt.inlinecache = cache[key];
-		opt.controller = self;
+		opt.controller = $;
 		opt.vars = db.vars;
 		opt.refs = db.refs;
 		opt.widgets = MAIN.cache.widgets || EMPTYARRAY;
 		opt.nav = MAIN.cache.nav;
 		opt.url = url;
-		opt.user = self.user;
-		opt.ua = self.req.headers['user-agent'];
+		opt.user = $.user;
+		opt.ua = $.req.headers['user-agent'];
 
 		if (opt.ua)
 			opt.ua = opt.ua.parseUA(true);
 		else
 			opt.ua = EMPTYOBJECT;
 
-		opt.mobile = self.mobile;
-		opt.robot = self.robot;
+		opt.mobile = $.mobile;
+		opt.robot = $.robot;
 		opt.breadcrumb = FUNC.breadcrumb(url);
 		opt.page = page;
 		opt.navigation = navigation;
@@ -164,8 +164,8 @@ function render() {
 			TRANSFORM('render', response, function(err, response) {
 				if (response.css && response.css.length)
 					response.html = response.html.replace(/<\/style>/, '\n' + U.minify_css(response.css.join('')) + '</style>');
-				self.content(response.html, 'text/html');
-			}, self);
+				$.content(response.html, 'text/html');
+			}, $);
 		};
 
 		var title = page.title || page.name;
@@ -194,66 +194,66 @@ function render() {
 			opt.cache = cmspage.cache;
 			cmspage.render(opt, cmslayout === 1 ? null : cmslayout, function(err, response) {
 				if (err)
-					self.throw404();
+					$.throw404();
 				else
-					self.content(response.replace(REG_META, meta), 'text/html');
+					$.content(response.replace(REG_META, meta), 'text/html');
 			});
 		} else if (cmspage && !cmslayout) {
 			compile_layout(page.layoutid, opt.widgets, function(err, cmslayout) {
 
 				if (err) {
-					self.throw404();
+					$.throw404();
 					return;
 				}
 
 				cmspage.render(opt, cmslayout === 1 ? null : cmslayout, function(err, response) {
 					if (err)
-						self.throw404();
+						$.throw404();
 					else
-						self.content(response.replace(REG_META, meta), 'text/html');
+						$.content(response.replace(REG_META, meta), 'text/html');
 				});
 			});
 		} else if (!cmspage && cmslayout) {
 			compile_page(page.id, opt.widgets, function(err, cmspage) {
 
 				if (err) {
-					self.throw404();
+					$.throw404();
 					return;
 				}
 
 				opt.cache = cmspage.cache;
 				cmspage.render(opt, cmslayout === 1 ? null : cmslayout, function(err, response) {
 					if (err)
-						self.throw404();
+						$.throw404();
 					else
-						self.content(response.replace(REG_META, meta), 'text/html');
+						$.content(response.replace(REG_META, meta), 'text/html');
 				});
 			});
 		} else {
 			compile_page(page.id, opt.widgets, function(err, cmspage) {
 
 				if (err) {
-					self.throw404();
+					$.throw404();
 					return;
 				}
 
 				compile_layout(page.layoutid, opt.widgets, function(err, cmslayout) {
 
 					if (err) {
-						self.throw404();
+						$.throw404();
 						return;
 					}
 
 					opt.cache = cmspage.cache;
 					cmspage.render(opt, cmslayout === 1 ? null : cmslayout, function(err, response) {
 						if (err)
-							self.throw404();
+							$.throw404();
 						else
-							self.content(response.replace(REG_META, meta), 'text/html');
+							$.content(response.replace(REG_META, meta), 'text/html');
 					});
 				});
 			});
 		}
 	} else
-		self.throw404();
+		$.throw404();
 }

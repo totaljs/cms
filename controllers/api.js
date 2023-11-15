@@ -33,9 +33,7 @@ function clear() {
 	if (UNAUTHORIZED($, 'admin'))
 		return;
 
-	FUNC.unload(function() {
-		FUNC.load($.done());
-	});
+	FUNC.unload(() => FUNC.load($.done()));
 }
 
 function restore() {
