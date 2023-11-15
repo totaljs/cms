@@ -243,27 +243,27 @@
 							<div class="caption"><i class="fa fa-user-circle"></i>@(Maximum daily online visitors)</div>
 						</div>
 						<div class="col-md-4 col-md-offset-4 right hidden-sm hidden-xs">
-							&empty; <ui-bind path="?.stats.today.hoursavg" config="html:(value || 0).pluralize(@('# visitors', '# visitor', '# visitors', '# visitors'))" class="fs11 gray"></ui-bind>
+							&empty; <ui-bind path="?.stats.today.hoursavg" config="html:(value || 0).pluralize('@(# visitors,# visitor,# visitors,# visitors)'" class="fs11 gray"></ui-bind>
 						</div>
 					</div>
 					<ui-component name="stats24" path="?.stats.today.hours" class="m"></ui-component>
 				</div>
 
-				<ui-bind path="?.stats.referrers" config="template" class="block">
+				<ui-bind path="?.stats.referers" config="template" class="block">
 					<script type="text/html">
 						{{ if value && value.length }}
 						<div class="panelbody">
 							<div class="row">
 								<div class="col-md-4">
-									<div class="caption"><i class="fa fa-exchange"></i>@(Top referrers)</div>
+									<div class="caption"><i class="fa fa-exchange"></i>@(Top referers)</div>
 								</div>
 							</div>
 							<div class="row">
 								{{ foreach m in value }}
 								<div class="col-md-3 col-xs-6">
 									<div class="dashboard-referrer">
-										<div>{{ m.count | counter }}</div>
-										<div>{{ m.id }}</div>
+										<div>{{ m.value | counter }}</div>
+										<div>{{ m.name }}</div>
 									</div>
 								</div>
 								{{ end }}
@@ -286,8 +286,8 @@
 								{{ foreach m in value }}
 								<div class="col-md-3 col-xs-6">
 									<div class="dashboard-referrer">
-										<div>{{ m.count | counter }}</div>
-										<div>{{ m.id }}</div>
+										<div>{{ m.value | counter }}</div>
+										<div>{{ m.name }}</div>
 									</div>
 								</div>
 								{{ end }}
@@ -348,9 +348,6 @@
 						SETTER('barchart .dashboard.stats.devices', 'reconfigure', 'limit:' + (Math.ceil(internalstats.devices / 10000) * 10000));
 					}
 
-					exports.set('visitors', response.visitors || []);
-					delete response.visitors;
-
 					exports.set('stats.history', years);
 					years.length && exports.history(years.last());
 				});
@@ -363,7 +360,10 @@
 
 		exports.getOnline = function() {
 			exports.tapi('dashboard_online', function(response) {
+
 				exports.set('stats.sources', [{ name: '@(Social networks)', value: response.social, id: 'social' }, { name: '@(Visitors from advert)', value: response.advert, id: 'advert' }, { name: '@(Organic search)', value: response.search, id: 'search' }, { name: '@(Direct visitors)', value: response.direct, id: 'direct' }, { name: '@(From unknown sources)', value: response.unknown, id: 'unknown' }]);
+				exports.set('visitors', response.visitors || []);
+				delete response.visitors;
 
 				var max = (response.mobile || 0) + (response.desktop || 0);
 				var mobile = 50;
@@ -383,25 +383,9 @@
 			clearInterval(interval);
 		};
 
-		exports.referrers = function(year) {
-			exports.tapi('dashboard_referrers' + (year ? ('?year=' + year) : ''), function(response) {
-
-				var ref = [];
-				var brw = [];
-
-				for (var i = 0; i < response.length; i++) {
-					var item = response[i];
-					item.count = item.sum;
-					if (item.id.charAt(0) === '!') {
-						item.id = item.id.substring(1);
-						brw.push(item);
-					} else
-						ref.push(item);
-				}
-
-				exports.set('stats.referrers', ref);
-				exports.set('stats.browsers', brw);
-			});
+		exports.referers = function(year) {
+			exports.tapi('dashboard_referers' + (year ? ('?year=' + year) : ''), 'stats.referers');
+			exports.tapi('dashboard_browsers' + (year ? ('?year=' + year) : ''), 'stats.browsers');
 		};
 
 		exports.history = function(el) {
@@ -433,7 +417,7 @@
 
 			exports.set('stats.sourcessum', source);
 			exports.set('stats.sourcesarr', sourcearr);
-			exports.referrers(year);
+			exports.referers(year);
 		};
 
 		exports.getStatsSum = function(year, names) {

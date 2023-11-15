@@ -1,92 +1,82 @@
-NEWSCHEMA('Files', function(schema) {
+NEWACTION('Files/list', {
+	name: 'Files list',
+	action: function($) {
+		MAIN.db.fs.browse2(function(err, response) {
+			var arr = [];
+			for (var file of response) {
+				if (file.custom && file.custom.public)
+					arr.push(file);
+			}
+			$.callback(arr);
+		});
+	}
+});
 
-	schema.define('data', 'Base64');
+NEWACTION('Files/insert', {
+	name: 'Insert files',
+	query: 'name:String',
+	input: 'data:Base64',
+	action: function($, model) {
+		var response = [];
 
-	schema.action('list', {
-		name: 'Files list',
-		action: function($) {
-			MAIN.db.fs.browse2(function(err, response) {
-				var arr = [];
-				for (var file of response) {
-					if (file.custom && file.custom.public)
-						arr.push(file);
-				}
-				$.callback(arr);
-			});
-		}
-	});
+		// Base64
+		if (model.data) {
 
-	schema.action('insert', {
-		name: 'Insert files',
-		query: 'name:String',
-		action: function($, model) {
-			var response = [];
+			var data = model.data.parseDataURI();
+			var ext;
 
-			// Base64
-			if (model.data) {
-
-				var type = model.data.base64ContentType();
-				var ext;
-
-				switch (type) {
-					case 'image/png':
-						ext = 'png';
-						break;
-					case 'image/jpeg':
-						ext = 'jpg';
-						break;
-					case 'image/gif':
-						ext = 'gif';
-						break;
-					default:
-						$.callback(response);
-						return;
-				}
-
-				var data = model.data.base64ToBuffer();
-				var meta = {};
-				meta.id = UID();
-				meta.size = data.length;
-				meta.type = type;
-				meta.ext = ext;
-				meta.name = ($.query.name || (U.random_string(10) + '_base64')).replace(/\.[0-9a-z]+$/i, '').max(40) + '.' + ext;
-				response.push(meta);
-				MAIN.db.fs.save(meta.id, meta.name, data, () => $.callback(response), { public: 1 });
-				return;
+			switch (data.type) {
+				case 'image/png':
+					ext = 'png';
+					break;
+				case 'image/jpeg':
+					ext = 'jpg';
+					break;
+				case 'image/gif':
+					ext = 'gif';
+					break;
+				default:
+					$.callback(response);
+					return;
 			}
 
+			let meta = {};
+			meta.id = UID();
+			meta.size = data.buffer.length;
+			meta.type = data.type;
+			meta.ext = ext;
+			meta.name = ($.query.name || (U.random_string(10) + '_base64')).replace(/\.[0-9a-z]+$/i, '').max(40) + '.' + ext;
+			response.push(meta);
+			MAIN.db.fs.save(meta.id, meta.name, data.buffer, () => $.callback(response), { public: 1 });
+
+		} else {
 			$.files.wait(function(file, next) {
-				var meta = {};
+				let meta = {};
 				meta.id = UID();
 				meta.name = file.filename;
 				meta.type = file.type;
 				meta.ext = file.extension;
 				meta.size = file.size;
 				response.push(meta);
-				file.fs(MAIN.id, meta.id, { public: 1 }, function() {
-					next();
-				});
-			}, function() {
-				$.callback(response);
-			});
+				file.fs(MAIN.id, meta.id, { public: 1 }, next);
+			}, () => $.callback(response));
 		}
-	});
+	}
+});
 
-	schema.action('clear', {
-		name: 'Clear files',
-		permissions: 'files',
-		action: function($) {
-			MAIN.db.fs.clear($.done());
-		}
-	});
+NEWACTION('Files/clear', {
+	name: 'Clear files',
+	permissions: 'files',
+	action: function($) {
+		MAIN.db.fs.clear($.done());
+	}
+});
 
-	schema.action('remove', {
-		name: 'Remove files',
-		params: '*id:String',
-		permissions: 'files',
-		action: function($) {
-			MAIN.db.fs.remove($.params.id, $.done());
-		}
-	});
-
+NEWACTION('Files/remove', {
+	name: 'Remove files',
+	params: '*id:String',
+	permissions: 'files',
+	action: function($) {
+		MAIN.db.fs.remove($.params.id, $.done());
+	}
 });

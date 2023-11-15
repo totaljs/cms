@@ -181,12 +181,6 @@ FUNC.reconfigure = function() {
 
 	var config = {};
 
-	for (var key in PREF) {
-		var val = PREF[key];
-		if (key !== 'user' && typeof(val) !== 'function')
-			config[key] = val;
-	}
-
 	for (var key in MAIN.db.config)
 		config[key] = MAIN.db.config[key];
 
@@ -261,56 +255,4 @@ FUNC.load = function(callback) {
 		empty && FUNC.save();
 		EMIT('reload', MAIN.db);
 	});
-};
-
-FUNC.importwidget = function(html, rewrite, callback) {
-
-	if (typeof(rewrite) === 'function') {
-		callback = rewrite;
-		rewrite = false;
-	}
-
-	if (!callback)
-		callback = NOOP;
-
-	if (html.indexOf('<') === -1) {
-		// filename?
-		F.Fs.readFile(html, 'utf8', function(err, response) {
-			if (err)
-				callback(err);
-			else
-				FUNC.importwidget(response, rewrite, callback);
-		});
-		return;
-	}
-
-	var widgets = [];
-	var arr = html.match(/<widget.*?>/g);
-	var error = new ErrorBuilder();
-
-	if (arr) {
-		for (var i = 0; i < arr.length; i++) {
-			var item = arr[i];
-			var index = item.indexOf(' data="');
-			if (index !== -1) {
-				try {
-					var widget = decodeURIComponent(Buffer.from(item.substring(index + 7, item.indexOf('"', index + 8)), 'base64')).toString('utf8');
-					widget && widgets.push(widget);
-				} catch (e) {
-					error.push(e);
-				}
-			}
-		}
-	} else {
-		// HTML is a widget
-		widgets.push(html);
-	}
-
-	widgets.wait(function(item, next) {
-		CALL('+Widgets --> save', { html: item, singleton: rewrite !== true }).user({ sa: true }).callback(function(err) {
-			err && error.push(err);
-			next();
-		});
-	}, () => callback(error.length ? error : null));
-
 };

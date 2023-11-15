@@ -43,16 +43,16 @@
 			<div>
 				<ui-component name="autofill">
 
-					@{if PREF.user.raw}
+					@{if MAIN.admin.user.raw}
 					<div class="alert" style="margin-bottom:20px">
 						<div><i class="ti ti-user"></i>@(Default account:)</div>
 						<div class="kv" style="margin-top:10px">
 							<div class="key">@(User name)</div>
-							<div class="value b">@{PREF.user.login}</div>
+							<div class="value b">@{MAIN.admin.user.login}</div>
 						</div>
 						<div class="kv">
 							<div class="key">@(Password)</div>
-							<div class="value b">@{PREF.user.raw}</div>
+							<div class="value b">@{MAIN.admin.user.raw}</div>
 						</div>
 						<button name="submit" class="button exec mt10" data-exec="?/fill">@(Fill in the form)</button>
 					</div>
@@ -92,7 +92,7 @@
 			};
 
 			exports.fill = function() {
-				SET('signinform @change', { login: '@{PREF.user.login}', password: '@{PREF.user.raw}' });
+				SET('signinform @change', { login: '@{MAIN.admin.user.login}', password: '@{MAIN.admin.user.raw}' });
 			};
 		});
 

@@ -1,14 +1,12 @@
 // Fixed settings
-CONF.allow_custom_titles = true;
+CONF.$customtitles = true;
+
+if (!CONF.cdn)
+	CONF.cdn = 'https://cdn.componentator.com';
+
 CONF.version = '1';
 CONF.op_icon = 'ti ti-rss-square';
 CONF.op_path = '/admin/';
-
-if (!PREF.name)
-	PREF.name = 'CMS';
-
-if (!PREF.cdn)
-	PREF.cdn = '//cdn.componentator.com';
 
 ON('ready', function() {
 

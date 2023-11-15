@@ -1,24 +1,18 @@
-NEWSCHEMA('Variables', function(schema) {
+NEWACTION('Variables/read', {
+	name: 'Read variables',
+	permissions: 'variables',
+	action: function($) {
+		$.callback(MAIN.db.vars);
+	}
+});
 
-	schema.define('vars', Object);
-
-	schema.action('read', {
-		name: 'Read variables',
-		permissions: 'variables',
-		action: function($) {
-			$.callback(MAIN.db.vars);
-		}
-	});
-
-	schema.action('save', {
-		name: 'Save variables',
-		permissions: 'variables',
-		action: function($, model) {
-
-			MAIN.db.vars = model.vars;
-			FUNC.save();
-			$.success();
-		}
-	});
-
+NEWACTION('Variables/save', {
+	name: 'Save variables',
+	input: 'vars:Object',
+	permissions: 'variables',
+	action: function($, model) {
+		MAIN.db.vars = model.vars;
+		FUNC.save();
+		$.success();
+	}
 });

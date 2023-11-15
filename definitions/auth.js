@@ -2,7 +2,7 @@ const ADMIN = { id: 'admin', sa: true, name: 'Admin', permissions: [] };
 const BOT = { id: 'bot', sa: true, name: 'Bot', permissions: [] };
 
 AUTH(function($) {
-	var path = $.req.split[0];
+	var path = $.split[0];
 	if (path === 'admin') {
 		var token = $.headers['x-token'];
 		if (token) {
