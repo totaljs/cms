@@ -99,7 +99,7 @@ NEWACTION('Layouts/import', {
 		db.layouts.push(model);
 
 		widgets.wait(function(item, next) {
-			EXEC('+Widgets --> save', { html: item }, function(err) {
+			ACTION('Widgets/save', { html: item }, function(err) {
 				err && console.log(err);
 				next();
 			});

@@ -360,10 +360,7 @@ W.append = function() {
 			data[key] = stats[key];
 	}
 
-	if (!Object.keys(stats).length)
-		console.log('ERROR VISITORS --->', data, stats);
-
-	DB().modify('nosql/' + DBNAME, data, true).where('year', stats.year).where('month', stats.month).where('day', stats.day);
+	DATA.modify('nosql/' + DBNAME, data, true).where('year', stats.year).where('month', stats.month).where('day', stats.day);
 };
 
 W.daily = function(callback) {
