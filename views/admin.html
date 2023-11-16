@@ -130,12 +130,13 @@
 				common.ready = true;
 			DEF.api = common.api + openplatform;
 			ENV('upload', common.api + 'upload/' + openplatform);
+			common.openplatform = openplatform;
 			$('body').rclass('invisible', 200);
 		})();
 
 		NAV.clientside('.jR');
 
-		if (W.top !== W)
+		if (W.top !== W && common.openplatform)
 			NAV.custom();
 
 		REDIRECT = function(url) {
@@ -227,8 +228,6 @@
 			exports.logout = function() {
 				exports.ajax('GET @{#}/admin/logout/ ERROR', () => location.href = '/admin/');
 			};
-
-			exports.refresh();
 
 			ON('service', function(counter) {
 				if (counter % 5 === 0)

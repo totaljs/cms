@@ -89,7 +89,6 @@ NEWACTION('Settings/test', {
 	input: 'mail_smtp:String, mail_smtp_options:JSON, mail_from:Email',
 	permissions: 'settings',
 	action: async function($, model) {
-
 		var options = (model.mail_smtp_options || '').parseJSON();
 		Mail.try(model.mail_smtp, options, $.done(true));
 	}

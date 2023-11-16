@@ -130,8 +130,10 @@ FUNC.refresh = function() {
 };
 
 FUNC.save = function() {
+
 	var site = MAIN.db;
 	var model = {};
+
 	model.id = site.id;
 	model.dtcreated = site.dtcreated;
 	model.dtupdated = NOW;
@@ -199,7 +201,7 @@ FUNC.load = function(callback) {
 			empty = true;
 		}
 
-		value.config.allow_totalapi = true;
+		value.config.$tapi = true;
 		MAIN.db = value;
 		MAIN.views = {};
 

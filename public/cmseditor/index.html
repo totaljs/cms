@@ -257,7 +257,7 @@
 
 					// Not found
 					if (!widget) {
-						WARN('CMS widget not found:', meta.id, el);
+						WARN('Widget "{0}": not found'.format(meta.id), el);
 						el.remove();
 						continue;
 					}
@@ -1429,7 +1429,7 @@
 								try {
 									instance.compiled.save(config, meta.element);
 								} catch (e) {
-									WARN(instance.name + ': ' + e);
+									WARN('Widget "{0}".save(): {1}'.format(instance.name, e));
 								}
 							}
 							self.widget_config_stringify(meta.element, config);
@@ -1642,7 +1642,7 @@
 							item.compiled = {};
 							(new Function('exports', scr)(item.compiled));
 						} catch (e) {
-							WARN(item.name + ': ' + e);
+							WARN('Widget "{0}" compilation: {1}'.format(item.name, e));
 							item.compiled = EMPTYOBJECT;
 						}
 					} else
@@ -1659,7 +1659,7 @@
 						widget.compiled.check(cms.config, el);
 						// self.widget_config_stringify(el, cms.config);
 					} catch (e) {
-						WARN(widget.name + ': ' + e);
+						WARN('Widget "{0}".check(): {1}'.format(widget.name, e));
 					}
 				}
 			});
