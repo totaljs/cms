@@ -6,8 +6,8 @@ NEWACTION('Settings/read', {
 		var model = {};
 		var language = $.user.language;
 
-		for (let key in PREF) {
-			var val = PREF[key];
+		for (let key in MAIN.db.config) {
+			var val = MAIN.db.config[key];
 			if (key !== 'user' && typeof(val) !== 'function')
 				model[key] = val;
 		}
@@ -52,7 +52,7 @@ NEWACTION('Settings/save', {
 
 		for (var key in model) {
 			if (key !== 'items')
-				PREF.set(key, model[key]);
+				MAIN.db.config[key] = model[key];
 		}
 
 		for (let m of model.items) {
