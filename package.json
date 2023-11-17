@@ -8,7 +8,7 @@
       "url": "https://github.com/totaljs/cms"
   },
   "dependencies": {
-    "total5": "latest"
+    "total5": "beta"
   },
   "scripts": {
     "start": "node index.js 8000"
