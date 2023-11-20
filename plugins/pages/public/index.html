@@ -125,7 +125,6 @@
 
 				if (item.id === 'remove') {
 					SETTER('approve/show', '@(Are you sure you want to remove selected ({0}x) pages?)'.format(model.checked.length), '"ti ti-trash" @(Clear)', function() {
-						exports.scope();
 						SETTER('loading/show');
 						model.checked.wait(function(item, next) {
 							exports.tapi('pages_remove/' + item.id, next);
