@@ -201,6 +201,7 @@ NEWACTION('Pages/HTML/save', {
 		var db = MAIN.db;
 		if (db.pages.findItem('id', model.id)) {
 			db.fs.save(model.id, model.id + '.html', Buffer.from(model.html, 'utf8'), $.done());
+			MAIN.cache.pages = {};
 			delete MAIN.views[model.id];
 		} else
 			$.invalid(404);

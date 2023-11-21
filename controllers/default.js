@@ -112,7 +112,7 @@ function render($) {
 	var page = null;
 
 	if (!db.ready) {
-		$.invalid(404);
+		$.fallback(404);
 		return;
 	}
 

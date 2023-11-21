@@ -192,6 +192,7 @@ NEWACTION('Layouts/HTML/save', {
 
 				importwidgets(model, function() {
 					db.fs.save(model.id, model.id + '.html', Buffer.from(model.html, 'utf8'), $.done());
+					MAIN.cache.pages = {};
 					delete MAIN.views[model.id];
 				});
 			});
