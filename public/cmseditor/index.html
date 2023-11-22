@@ -31,7 +31,9 @@
 			<button name="underline" title="@(Underline)"><i class="ti ti-underline"></i></button>
 			<button name="link" title="@(Make a link)"><i class="ti ti-link"></i></button>
 			<button name="icon" title="@(Add icon)"><i class="ti ti-icons"></i></button>
-			<button name="expression" title="@(Add expression)"><i class="ti ti-highlighter"></i></button>
+			<button name="span" title="@(Highlight)"><i class="ti ti-highlighter"></i></button>
+			<button name="code" title="@(Monospace)"><i class="ti ti-barcode-alt"></i></button>
+		<!-- <button name="expression" title="@(Add expression)"><i class="ti ti-highlighter"></i></button> -->
 		</nav>
 	</div>
 </script>
@@ -109,6 +111,8 @@
 					case 'italic':
 					case 'underline':
 					case 'expression':
+					case 'span':
+					case 'code':
 					case 'link':
 					case 'icon':
 						self['dom_' + name]();
@@ -1762,6 +1766,20 @@
 			self.iframe_document().execCommand('CreateLink', false, url);
 			var a = target.find('a[href="{0}"]'.format(url));
 			a.replaceWith('<span class="CMS_remove CMS_expression">' + a.html() + '</span>');
+		};
+
+		self.dom_span = function() {
+			var url = '#exp' + Date.now().toString(36);
+			self.iframe_document().execCommand('CreateLink', false, url);
+			var a = target.find('a[href="{0}"]'.format(url));
+			a.replaceWith('<span class="CMS_remove CMS_highlight">' + a.html() + '</span>');
+		};
+
+		self.dom_code = function() {
+			var url = '#exp' + Date.now().toString(36);
+			self.iframe_document().execCommand('CreateLink', false, url);
+			var a = target.find('a[href="{0}"]'.format(url));
+			a.replaceWith('<code class="CMS_remove CMS_monospace">' + a.html() + '</code>');
 		};
 
 		self.dom_link = function() {

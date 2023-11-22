@@ -22,6 +22,7 @@ iframe.CMS_edit { padding: 5px; border: 5px solid red; }
 #CMS_panel_buttons_body span { font-size: 11px; color: #FFF; background-color: rgba(246,187,66,0.8); position: relative; display: inline-block; padding: 3px 0; border-radius: 4px; margin: 3px 3px 0 0; cursor: pointer; vertical-align: top; width: 17px; text-align: center; transform: scale(1); }
 
 .CMS_expression { background-color: #FFFE7E66; padding: 1px 5px; border-radius: 4px; }
+.CMS_highlight { background-color: #FFFE7E66; }
 .CMS_panel_buttons { background-color: #fff; padding: 6px; border-radius: 4px; box-shadow: 0 0 10px rgb(0 0 0 / 20%); }
 .CMS_panel_buttons span { position: relative; display: inline-block; background-color: #fff; font-size: 15px; cursor: pointer; padding: 3px 0; margin: 1px 2px; width: 20px; text-align: center; border-radius: 4px; color: #000; transform: scale(1); transition: transform .1s; }
 .CMS_panel_buttons span:last-child { color: #DF452D; }
