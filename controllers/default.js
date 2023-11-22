@@ -198,7 +198,7 @@ function render($) {
 			opt.cache = cmspage.cache;
 			cmspage.render(opt, cmslayout === 1 ? null : cmslayout, function(err, response) {
 				if (err)
-					$.invalid(404);
+					$.fallback(404);
 				else
 					$.html(response.replace(REG_META, meta).replace(REG_VARS, variables));
 			});
@@ -206,13 +206,13 @@ function render($) {
 			compile_layout(page.layoutid, opt.widgets, function(err, cmslayout) {
 
 				if (err) {
-					$.invalid(404);
+					$.fallback(404);
 					return;
 				}
 
 				cmspage.render(opt, cmslayout === 1 ? null : cmslayout, function(err, response) {
 					if (err)
-						$.invalid(404);
+						$.fallback(404);
 					else
 						$.html(response.replace(REG_META, meta).replace(REG_VARS, variables));
 				});
@@ -221,14 +221,14 @@ function render($) {
 			compile_page(page.id, opt.widgets, function(err, cmspage) {
 
 				if (err) {
-					$.invalid(404);
+					$.fallback(404);
 					return;
 				}
 
 				opt.cache = cmspage.cache;
 				cmspage.render(opt, cmslayout === 1 ? null : cmslayout, function(err, response) {
 					if (err)
-						$.invalid(404);
+						$.fallback(404);
 					else
 						$.html(response.replace(REG_META, meta).replace(REG_VARS, variables));
 				});
@@ -237,21 +237,21 @@ function render($) {
 			compile_page(page.id, opt.widgets, function(err, cmspage) {
 
 				if (err) {
-					$.invalid(404);
+					$.fallback(404);
 					return;
 				}
 
 				compile_layout(page.layoutid, opt.widgets, function(err, cmslayout) {
 
 					if (err) {
-						$.invalid(404);
+						$.fallback(404);
 						return;
 					}
 
 					opt.cache = cmspage.cache;
 					cmspage.render(opt, cmslayout === 1 ? null : cmslayout, function(err, response) {
 						if (err)
-							$.invalid(404);
+							$.fallback(404);
 						else
 							$.html(response.replace(REG_META, meta).replace(REG_VARS, variables));
 					});
@@ -259,5 +259,5 @@ function render($) {
 			});
 		}
 	} else
-		$.invalid(404);
+		$.fallback(404);
 }
