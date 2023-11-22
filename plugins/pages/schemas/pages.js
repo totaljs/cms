@@ -52,7 +52,7 @@ NEWACTION('Pages/save', {
 				var parent = db.pages.findItem('id', model.parentid);
 				if (parent) {
 					var arr = FUNC.breadcrumb(parent.url);
-					model.url = U.join(arr[arr.length - 1].url, model.url + '/').replace(/\/{2,}/g, '/');
+					model.url = ('/' + arr[arr.length - 1].url + '/' + model.url + '/').toLowerCase().replace(/\/{2,}/g, '/');
 				} else
 					model.parentid = null;
 			}
