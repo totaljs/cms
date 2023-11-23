@@ -11,7 +11,8 @@ iframe.CMS_edit { padding: 5px; border: 5px solid red; }
 #CMS_panel { position: absolute; z-index: 102; display: none; line-height: 16px; box-sizing: content-box; font-family: Arial; font-size: 12px; font-weight: normal; }
 #CMS_panel * { user-select: none; box-sizing: content-box; transform: scale(1); }
 #CMS_panel_info { height: 25px; pointer-events: none; }
-#CMS_panel_info span { margin: 5px 0 5px; position: relative; display: inline-block; border-radius: 4px; padding: 0 3px; font-size: 10px; color: white; background-color: #E9573F; height: 14px; line-height: 14px; }
+#CMS_panel_info b, #CMS_panel_info span { margin: 5px 0 5px; position: relative; display: inline-block; border-radius: 4px; padding: 0 3px; font-size: 10px; color: #FFF; background-color: #E9573F; height: 14px; line-height: 14px; }
+#CMS_panel_info b { background-color: #4285F4; margin-right: 5px; font-family: Menlo, Consolas, monospace; }
 #CMS_panel_buttons_move { float: right; }
 #CMS_panel_buttons_move span { font-size: 12px; color: #FFF; background-color: rgba(0,0,0,0.5); position: relative; display: inline-block; padding: 3px 0; border-radius: 4px; margin: 3px 0 0 3px; cursor: pointer; vertical-align: top; width: 18px; text-align: center; }
 #CMS_panel_buttons_reposition { float: right; }

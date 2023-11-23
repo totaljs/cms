@@ -74,10 +74,19 @@
 			<ui-component name="style" path="?.css"></ui-component>
 		</div>
 
-		<ui-bind path="?.isconfig" config="show" class="hidden padding">
-			<ui-component name="input" path="?.config" config="placeholder:@(keyA)\:@(valueA);@(keyB)\:@(valueB)">@(j-Configuration)</ui-component>
-			<div class="help">@(Be careful with this item.)</div>
+		<ui-bind path="?.isconfig" config="show" class="hidden padding block">
+			<ui-component name="input" path="?.config" config="placeholder:@(keyA)\:@(valueA);@(keyB)\:@(valueB)">@(UI component configuration)</ui-component>
+			<div class="help">@(Be careful with this configuration)</div>
 		</ui-bind>
+
+		<ui-bind data-bind="?.isnone" config="hide" class="hidden block">
+			<hr class="nmt" />
+			<div class="padding npt">
+				<ui-component name="input" path="?.src" config="icon:globe">@(Source URL)</ui-component>
+				<div class="mt10 fs12"><span class="link exec" data-exec="?/files"><i class="ti ti-folder mr5"></i>@(Browse files)</span></div>
+			</div>
+		</ui-bind>
+
 	</div>
 
 	<nav>
@@ -129,11 +138,9 @@
 				target.attr('src', model.src.trim());
 
 			model.isimage && target.attr('alt', model.alt ? model.alt.trim() : '');
-			if (model.isconfig) {
-				var jc = target.attrd('---').split('__');
-				jc[2] = model.config.trim();
-				target.attrd('---', jc.join('__'));
-			}
+
+			if (model.isconfig)
+				target.attr('config', model.config);
 
 			if (model.id)
 				target.attr('id', model.id);
@@ -194,6 +201,14 @@
 			instance.change(true);
 			instance.autoresize();
 			hide();
+		};
+
+		exports.files = function() {
+			var model = exports.model;
+			var config = model.instance.config;
+			config.files && model.instance.EXEC(config.files, {}, function(item) {
+				exports.set('src', typeof(item) === 'string' ? item : item.url);
+			});
 		};
 
 	});

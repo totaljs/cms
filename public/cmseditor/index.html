@@ -759,7 +759,7 @@
 				else if (tag) {
 					var id = wrap && wrap.length ? wrap.attrd('cms').split('__')[0] : '';
 					var widget = id ? self.get().widgets.findItem('id', id) : null;
-					info.html(widget ? ('<span>' + widget.name.encode() + '</span>') : '');
+					info.html('<b>' + tag + '</b>' + (widget ? ('<span>' + widget.name.encode() + '</span>') : ''));
 				}
 
 				temporary.wrap = wrap;
@@ -1316,13 +1316,7 @@
 						var cattr = {};
 
 						cattr.isimage = tag === 'IMG';
-						cattr.config = targettmp.attrd('---');
-
-						if (cattr.config)
-							cattr.config = cattr.config.split('__')[2] || '';
-						else
-							cattr.config = null;
-
+						cattr.config = targettmp.attr('config') || null;
 						cattr.element = targettmp;
 						cattr.isconfig = cattr.config != null;
 						cattr.isiframe = tag === 'IFRAME';
