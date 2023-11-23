@@ -1573,7 +1573,7 @@
 							}
 						}
 
-						var repeatable;
+						var repeatable = null;
 
 						if (target.hclass('CMS_repeat'))
 							repeatable = target.parent();
@@ -1583,12 +1583,10 @@
 						temporary.history.push({ node: node, parent: parent, index: index });
 						undobutton.rclass('hidden');
 
-						if (repeatable) {
-							if (!repeatable.find('> .CMS_repeat').length) {
-								var w = repeatable.closest('.CMS_widget');
-								if (w && w.length)
-									w.remove();
-							}
+						if (repeatable && !repeatable[0].children.length) {
+							var w = repeatable.closest('.CMS_widget');
+							if (w && w.length)
+								w.remove();
 						}
 
 						self.iframe_toolbar().hide();
