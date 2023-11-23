@@ -27,6 +27,15 @@ FUNC.recompile = function(item) {
 	if (meta.css)
 		meta.css = meta.css.replace(REG_CLASS, 'w-' + uid);
 
+	if (meta.settings)
+		meta.settings = meta.settings.replace(REG_CLASS, 'w-' + uid);
+
+	if (meta.template)
+		meta.template = meta.template.replace(REG_CLASS, 'w-' + uid);
+
+	if (meta.js)
+		meta.js = meta.js.replace(REG_CLASS, 'w-' + uid);
+
 	if (meta.html)
 		meta.html = meta.html.replace(REG_CLASS, 'w-' + uid);
 

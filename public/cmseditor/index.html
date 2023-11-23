@@ -1545,7 +1545,7 @@
 							return;
 						}
 
-						if (target.hclass('CMS_expression')) {
+						if (target.hclass('CMS_expression') || target.hclass('CMS_keyword') || target.hclass('CMS_monospace')) {
 							target.replaceWith(target.html());
 							return;
 						}
@@ -1772,7 +1772,7 @@
 			var url = '#exp' + Date.now().toString(36);
 			self.iframe_document().execCommand('CreateLink', false, url);
 			var a = target.find('a[href="{0}"]'.format(url));
-			a.replaceWith('<span class="CMS_remove CMS_highlight">' + a.html() + '</span>');
+			a.replaceWith('<span class="CMS_remove CMS_keyword">' + a.html() + '</span>');
 		};
 
 		self.dom_code = function() {
