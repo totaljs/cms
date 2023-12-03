@@ -30,7 +30,7 @@
 </script>
 
 <style>
-	// The class is assigned automatically
+	/* The class is assigned automatically */
 	.CLASS { border: 1px solid #E0E0E0; margin-bottom: 32px; }
 </style>
 
