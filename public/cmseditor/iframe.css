@@ -46,7 +46,7 @@ iframe.CMS_edit { padding: 5px; border: 5px solid red; }
 .CMS_visible, .jcomponent { display: block !important; visibility: visible !important; }
 .CMS_panel_hidden { display: none !important; }
 
-.CMS_preview .totaljs { background-color: #F0F0F0; background-image: repeating-linear-gradient(45deg, #E0E0E0, #E0E0E0 10px, #F0F0F0 10px, #F0F0F0 20px); text-align: center; padding: 50px 0; font-weight: bold; color: black; margin: 1px; text-align: center; font-size: 11px; text-transform: uppercase; border-radius: 4px; }
+.CMS_preview .totaljs { background-color: #F3F3F3; background-image: repeating-linear-gradient(45deg, #E9E9E9, #E9E9E9 10px, #F5F5F5 10px, #F5F5F5 20px); text-align: center; padding: 30px 0; color: #000; margin: 1px; text-align: center; font-size: 11px; border-radius: var(--radius); }
 .CMS_preview .CMS_input { font-size: 12px; }
 .CMS_preview .CMS_input:after { height: 40px; background-color: #F0F0F0; background-image: repeating-linear-gradient(45deg, #E0E0E0, #E0E0E0 10px, #F0F0F0 10px, #F0F0F0 20px); margin-top: 4px; display: block; content: ' '; border-radius: 4px; }
 .CMS_preview [data-cms-info]:before { position: absolute; content: attr(data-cms-info); color: black; background-color: #ebe36a; padding: 2px 5px 2px 3px; border-radius: 4px; margin: -15px 0 0 0; font-size: 9px; z-index: 100; }
