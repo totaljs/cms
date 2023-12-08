@@ -51,7 +51,7 @@ h3 { font-size: 16px; margin-top: 0; }
 .toolbar .ui-searchinput { float: left; margin-left: 15px; }
 
 .ui-searchinput { border-radius: var(--radius); height: 24px; background-color: #FFF; line-height: 14px; }
-.ui-dark .ui-searchinput { background-color: #333; }
+.ui-searchinput input { color: #000; }
 
 .panel > .ui-searchinput { border-radius: 0; border-top: 0; border-left: 0; border-right: 0; height: 30px; border-bottom-color: #E0E0E0; }
 .panel > .ui-searchinput input { height: 28px; font-size: 11px; }
