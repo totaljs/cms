@@ -68,10 +68,10 @@
 		exports.create = function() {
 			var opt = {};
 			exports.ajax('GET /widget.txt', function(response) {
-				opt.html = response || '';
+				opt.body = response || '';
 				opt.callback = function(value, hide) {
 					var model = {};
-					model.html = value.html;
+					model.html = value;
 					exports.tapi('widgets_save @showloading ERROR', model, function() {
 						exports.scope();
 						exports.refresh();
@@ -106,11 +106,11 @@
 			var id = ATTRD(el);
 			exports.tapi('widgets_read/{0} @showloading ERROR'.format(id), function(response) {
 				var opt = {};
-				opt.html = response.html;
+				opt.body = response.html;
 				opt.callback = function(value, hide) {
 					var model = {};
 					model.id = id;
-					model.html = value.html;
+					model.html = value;
 					exports.tapi('widgets_save ERROR', model, function() {
 						exports.scope();
 						exports.refresh();

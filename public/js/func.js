@@ -1,5 +1,5 @@
 FUNC.code = function(opt, callback) {
-	SET('common.form', 'formcode');
+	SET('common.form2', 'formcode');
 	EXEC(true, 'formcode/init', opt, callback);
 };
 

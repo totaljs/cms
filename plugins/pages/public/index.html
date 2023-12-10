@@ -175,11 +175,11 @@
 			var id = ATTRD(el);
 			exports.tapi('pages_html/{0} ERROR'.format(id), function(response) {
 				var opt = {};
-				opt.html = response.html;
+				opt.body = response.html;
 				opt.callback = function(value, hide) {
 					var model = {};
 					model.id = id;
-					model.html = value.html;
+					model.html = value;
 					exports.tapi('pages_save_html', model, hide);
 				};
 				FUNC.code(opt);
