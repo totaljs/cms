@@ -62,7 +62,7 @@
 						SETTER('icons/show', opt);
 						break;
 					case 'upload':
-						SET('common.form2', 'formfiles');
+						SET('common.form3', 'formfiles');
 						EXEC(true, 'formfiles/init', {}, function(item, hide) {
 							SETTER('#cloudeditor/insert', item.url);
 							hide();

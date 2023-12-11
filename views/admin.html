@@ -89,8 +89,8 @@
 	</ui-component>
 
 	<ui-component name="importer" path="common.form2" config="if:formcode;url:/forms/code.html"></ui-component>
-	<ui-component name="importer" path="common.form2" config="if:formfiles;url:/_files/list.html"></ui-component>
 	<ui-component name="importer" path="common.form2" config="if:formwidgets;url:/_widgets/form.html"></ui-component>
+	<ui-component name="importer" path="common.form3" config="if:formfiles;url:/_files/list.html"></ui-component>
 
 	@{json(model, 'pluginsdata')}
 
@@ -211,7 +211,7 @@
 
 			exports.dropcheck = function(e) {
 
-				if (model.form2 === 'formfiles' || model.page === 'pluginfiles')
+				if (model.form3 === 'formfiles' || model.page === 'pluginfiles')
 					return true;
 
 				var plugin = model.form3 || model.form2 || model.form || model.page;
