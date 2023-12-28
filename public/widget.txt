@@ -24,7 +24,7 @@
 		next('NEW HTML CONTENT');
 
 		// Example:
-		// next(opt.html.replace('<img ', '<img loading="lazy" '), false, true);
+		// next(opt.html.replace(/<img\s/g, '<img loading="lazy" '), false, true);
 	};
 
 </script>
