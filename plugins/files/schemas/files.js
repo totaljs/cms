@@ -55,7 +55,7 @@ NEWACTION('Files/insert', {
 				meta.id = UID();
 				meta.name = file.filename;
 				meta.type = file.type;
-				meta.ext = file.extension;
+				meta.ext = file.ext;
 				meta.size = file.size;
 				response.push(meta);
 				file.fs(MAIN.id, meta.id, { public: 1 }, next);
