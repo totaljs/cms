@@ -1,7 +1,7 @@
 <ui-component name="form" path="cmseditor.form" config="if:~PATH~;width:900;reload:?/reload;submit:?/submit;scrollbar:true;$id:~PATH~;title:@(Image editor);icon:camera" class="hidden" plugin="~PATH~">
 	<div>
 		<br />
-		<ui-component name="crop" path="?.url" config="width:200;height:100;$id:cmsimagecrop;filebrowser:?/browse"></ui-component>
+		<ui-component name="crop" path="?.url" config="width:200;height:100;$id:cmsimagecrop;browse:?/browse"></ui-component>
 		<hr class="nmt nmb" />
 		<div class="padding">
 			<ui-component name="input" path="?.alt" config="placeholder:@(Describe the picture)">@(Alternate text)</ui-component>
@@ -28,7 +28,7 @@
 		exports.browse = function(set) {
 			var model = exports.model;
 			var config = model.instance.config;
-			config.files && model.instance.EXEC(config.files, function(response) {
+			config.files && model.instance.EXEC(config.files, { isimage: true, width: model.width, height: model.height }, function(response) {
 				set(typeof(response) === 'string' ? response : response.url);
 			});
 		};
@@ -61,16 +61,14 @@
 				return;
 			}
 
-			var url = cropper.url;
+			var url = cropper.samesize;
 			if (url) {
-
 				var size = target.attrd('cms-size');
 				if (size) {
 					target.attrd('cms-src', url);
 					target.attr('src', url + '?s=' + size.replace('%', ''));
 				} else
 					target.attr('src', url);
-
 				model.instance.autoresize();
 				model.instance.change(true);
 				hide();
