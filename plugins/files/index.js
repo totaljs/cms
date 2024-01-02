@@ -11,9 +11,9 @@ exports.install = function() {
 
 	ROUTE('FILE     /download/*.*', files);
 
-	ROUTE('+API    /admin/    -files_list           --> Files/list');
-	ROUTE('+API    /admin/    -files_clear          --> Files/clear');
-	ROUTE('+API    /admin/    -files_remove/{id}    --> Files/remove');
+	ROUTE('+API     /admin/    -files_list           --> Files/list');
+	ROUTE('+API     /admin/    -files_clear          --> Files/clear');
+	ROUTE('+API     /admin/    -files_remove/{id}    --> Files/remove');
 
 };
 
