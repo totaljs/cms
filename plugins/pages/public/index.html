@@ -19,7 +19,7 @@
 	<ui-component name="datagrid" path="?.items" config="margin:0;parent:auto;noborder:1;button:?/options;click:?/editor;checked:?.checked">
 		<script type="text/plain">
 			[
-				{ name: 'search', text: '@(Name)', template: '{{ language | colorize }}{{ if pinned }}<i class="ti ti-pin-alt orange mr5"></i>{{ fi }}{{ if icon }}<i class="{{ icon }} mr5"></i>{{ fi }}{{ breadcrumb | raw }}{{ if disabled }}<span class="badge badge-red ml5 badge-small">@(disabled)</span>{{ fi }}', width: 350 },
+				{ name: 'search', text: '@(Name)', template: '{{ language | colorize }}{{ if pinned }}<i class="ti ti-pin-alt orange mr5"></i>{{ fi }}{{ if icon }}<i class="{{ icon }} mr5"></i>{{ fi }}{{ breadcrumb | raw }}{{ if disabled }}<span class="badge badge-red ml5 badge-small">@(disabled)</span>{{ fi }}{{ if auth }}<span class="badge badge-orange ml5 badge-small">@(authorized)</span>{{ fi }}', width: 350 },
 				{ name: 'url', text: '@(URL address)', width: 250 },
 				{ name: 'layout', text: '@(Layout)', template: '{{ if layout }}<i class="icon {{ layout.icon | empty(\'ti ti-bull\') }} mr5"{{ if layout.color }} style="color:{{ layout.color }}"{{ fi }}></i>{{ layout.name }}{{ fi }}', width: 150 },
 				{ name: 'language', text: '@(Language)', width: 120, align: 1 },

@@ -33,7 +33,7 @@ NEWACTION('Pages/read', {
 NEWACTION('Pages/save', {
 	name: 'Save pages',
 	permissions: 'pages',
-	input: 'id,parentid,*layoutid,language,title,description,keywords,color,icon,url,*name,nocache:Boolean,disabled:Boolean,pinned:Boolean,permissions:[string]',
+	input: 'id,parentid,*layoutid,language,title,description,keywords,color,icon,url,*name,nocache:Boolean,disabled:Boolean,pinned:Boolean,auth:Boolean,permissions:[string]',
 	action: function($, model) {
 
 		var db = MAIN.db;
@@ -90,6 +90,7 @@ NEWACTION('Pages/save', {
 			item.keywords = model.keywords;
 			item.icon = model.icon;
 			item.color = model.color;
+			item.auth = model.auth;
 			delete MAIN.views[item.id];
 
 		} else {
