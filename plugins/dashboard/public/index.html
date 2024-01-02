@@ -307,6 +307,8 @@
 
 		exports.refresh = function(el) {
 			el && el.find('i').aclass('ti-spin').rclass('ti-spin', 800);
+
+			interval && clearInterval(interval);
 			interval = setInterval(exports.getOnline, 4000);
 			exports.getOnline();
 
@@ -351,6 +353,13 @@
 		};
 
 		exports.getOnline = function() {
+
+			if (common.page !== exports.name) {
+				clearInterval(interval);
+				interval = null;
+				return;
+			}
+
 			exports.tapi('dashboard_online', function(response) {
 
 				exports.set('stats.sources', [{ name: '@(Social networks)', value: response.social, id: 'social' }, { name: '@(Visitors from advert)', value: response.advert, id: 'advert' }, { name: '@(Organic search)', value: response.search, id: 'search' }, { name: '@(Direct visitors)', value: response.direct, id: 'direct' }, { name: '@(From unknown sources)', value: response.unknown, id: 'unknown' }]);
