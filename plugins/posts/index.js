@@ -1,6 +1,6 @@
 exports.icon = 'ti ti-book-open';
 exports.name = '@(Posts)';
-exports.position = 5;
+exports.position = 4;
 exports.permissions = [{ id: 'posts', name: 'Posts' }];
 exports.visible = user => user.sa || user.permissions.includes('posts');
 
