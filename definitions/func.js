@@ -115,6 +115,9 @@ FUNC.refresh = function() {
 		item = CLONE(item);
 		item.links = [];
 
+		if (!item.children)
+			item.children = [];
+
 		for (var m of item.children) {
 			item.links.push(m);
 			if (m.children.length)

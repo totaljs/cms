@@ -37,6 +37,9 @@ NEWACTION('Nav/save', {
 
 		var db = MAIN.db;
 
+		if (!model.children)
+			model.children = [];
+
 		if (model.id) {
 
 			var item = db.nav.findItem('id', model.id);
