@@ -22,7 +22,7 @@ ON('ready', function() {
 	setTimeout(FUNC.load, 500);
 
 	// UI components
-	COMPONENTATOR('ui', 'locale,exec,aselected,fileuploader,page,viewbox,navlayout,extend,crop,form,importer,input,box,validate,loading,selected,intranetcss,prompt,notify,message,errorhandler,empty,menu,autofill,enter,dropfiles,breadcrumb,virtualwire,noscrollbar,preview,miniform,datagrid,filebrowser,approve,shortcuts,searchdata,search,searchinput,display,selection,children,icons,directory,colorpicker,cloudeditor,tangular-filesize,textboxlist,datepicker,cloudeditorsimple,ready,listing,keyvalue,configuration,donutchart,statsbarsimple,stats24,barchart,clipboard,edit,choose,imageviewer', true);
-	COMPONENTATOR('webui', 'exec,errorhandler,locale,uibuilder,uistudio,datepicker,directory,menu,icons,input', true);
+	COMPONENTATOR('ui', 'locale,aselected,exec,fileuploader,page,viewbox,navlayout,extend,crop,form,importer,input,box,validate,loading,selected,intranetcss,prompt,notify,message,errorhandler,empty,menu,autofill,enter,dropfiles,breadcrumb,virtualwire,noscrollbar,preview,miniform,datagrid,filebrowser,approve,shortcuts,searchdata,search,searchinput,display,selection,children,icons,directory,colorpicker,cloudeditor,tangular-filesize,textboxlist,datepicker,cloudeditorsimple,ready,listing,keyvalue,configuration,donutchart,statsbarsimple,stats24,barchart,clipboard,edit,choose,imageviewer', true);
+	COMPONENTATOR('webui', 'exec,errorhandler,locale,uibuilder,uistudio,directory,message,approve,datepicker,menu,icons,input,imageviewer', true);
 
 });
