@@ -92,6 +92,7 @@ function navigation(id) {
 	}
 
 	nav.current = nav.links ? nav.links.findItem('url', this.url) : null;
+
 	var parent = nav.current;
 
 	while (parent) {
