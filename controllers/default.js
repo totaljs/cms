@@ -211,10 +211,12 @@ function render($) {
 	if (cmspage && cmslayout) {
 		opt.cache = cmspage.cache;
 		cmspage.render(opt, cmslayout === 1 ? null : cmslayout, function(err, response) {
-			if (err)
+			if (err) {
 				$.fallback(404);
-			else
+			} else {
+				$.response.minify = false;
 				$.html(response.replace(REG_META, meta).replace(REG_VARS, variables));
+			}
 		});
 	} else if (cmspage && !cmslayout) {
 		compile_layout(page.layoutid, opt.widgets, function(err, cmslayout) {
@@ -264,10 +266,12 @@ function render($) {
 
 				opt.cache = cmspage.cache;
 				cmspage.render(opt, cmslayout === 1 ? null : cmslayout, function(err, response) {
-					if (err)
+					if (err) {
 						$.fallback(404);
-					else
+					} else {
+						$.response.minify = false;
 						$.html(response.replace(REG_META, meta).replace(REG_VARS, variables));
+					}
 				});
 			});
 		});
