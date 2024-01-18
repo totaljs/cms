@@ -6,7 +6,7 @@ exports.visible = user => user.sa || user.permissions.includes('widgets');
 
 exports.install = function() {
 
-	ROUTE('+API    /admin/    +widgets_save           --> Widgets/save');
+	ROUTE('+API    /admin/    +widgets_save     <5MB  --> Widgets/save');
 	ROUTE('+API    /admin/    -widgets_list           --> Widgets/list');
 	ROUTE('+API    /admin/    -widgets_read/{id}      --> Widgets/read');
 	ROUTE('+API    /admin/    -widgets_remove/{id}    --> Widgets/remove');

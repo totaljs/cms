@@ -12,6 +12,6 @@ exports.install = function() {
 	ROUTE('+API    /admin/    -layouts_remove/{id}        --> Layouts/remove');
 	ROUTE('+API    /admin/    -layouts_list               --> Layouts/list');
 	ROUTE('+API    /admin/    +layouts_import             --> Layouts/import');
-	ROUTE('+API    /admin/    +layouts_save_html          --> Layouts/HTML/save');
+	ROUTE('+API    /admin/    +layouts_save_html    <5MB  --> Layouts/HTML/save');
 	ROUTE('+API    /admin/    +layouts_save               --> Layouts/save');
 };

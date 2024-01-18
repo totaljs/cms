@@ -14,5 +14,5 @@ exports.install = function() {
 	ROUTE('+API    /admin/    -pages_links               --> Pages/links');
 	ROUTE('+API    /admin/    -pages_html/{id}           --> Pages/HTML/read');
 	ROUTE('+API    /admin/    -pages_copy/{from}/{to}    --> Pages/HTML/copy');
-	ROUTE('+API    /admin/    +pages_save_html           --> Pages/HTML/save');
+	ROUTE('+API    /admin/    +pages_save_html    <5MB   --> Pages/HTML/save');
 };
