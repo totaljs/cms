@@ -6,7 +6,7 @@ exports.install = function() {
 
 	// Internal
 	ROUTE('+GET     /admin/backup/          <60s', backup);
-	ROUTE('+POST    /admin/restore/ @upload <60s <10MB', restore);
+	ROUTE('+POST    /admin/restore/ @upload <60s <100MB', restore);
 	ROUTE('+GET     /admin/clear/           <60s', clear);
 };
 
@@ -19,7 +19,7 @@ function backup($) {
 
 	MAIN.db.fs.backup(PATH.temp(filename), function(err, meta) {
 		if (meta)
-			$.file('~' + meta.filename, filename);
+			$.file(meta.filename, filename);
 		else
 			$.invalid(err);
 	});
