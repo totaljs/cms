@@ -2,6 +2,7 @@
 
 h1.CMS_selected,h2.CMS_selected,h3.CMS_selected,h4.CMS_selected,h5.CMS_selected,img.CMS_selected,p.CMS_selected,span.CMS_selected,div.CMS_selected, section.CMS_selected, i.CMS_selected { outline: 1px solid #4285F4; background-color: rgb(66 133 244 / 5%) }
 iframe.CMS_edit { padding: 5px; border: 5px solid red; }
+.ti { transform: none; }
 
 /*
 .CMS_mv { margin-bottom: 20px; }
