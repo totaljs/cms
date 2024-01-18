@@ -243,7 +243,7 @@
 
 					opt.callback = function(item) {
 						SETTER('approve/show', '@(Are you sure you want to copy the content to the "{name}" page?)'.arg(item, 'escape'), '"ti ti-copy" @(Copy)', function() {
-							exports.tapi('pages_copy/' + id + '/' + item.id, ASETTER('notifybar/response', '@(Done, the content has been copied successfully.)'));
+							exports.tapi('pages_copy/' + id + '/' + item.id, ASETTER('notify/response', '@(Done, the content has been copied successfully.)'));
 						});
 					};
 
@@ -251,8 +251,7 @@
 				}
 
 				if (item.id === 'clone') {
-					exports.tapi('pages_clone/' + id, ASETTER('notifybar/response', '@(The page has been cloned successfully)', function(response) {
-						exports.scope();
+					exports.tapi('pages_clone/' + id, ASETTER('notify/response', '@(The page has been cloned successfully)', function(response) {
 						exports.refresh();
 						exports.edit(response.value);
 					}));

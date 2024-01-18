@@ -146,7 +146,7 @@ NEWACTION('Pages/clone', {
 	permissions: 'pages',
 	action: function($) {
 
-		var id = $.id;
+		var id = $.params.id;
 		var db = MAIN.db;
 		var model = db.pages.findItem('id', id);
 		if (model) {
@@ -154,8 +154,10 @@ NEWACTION('Pages/clone', {
 			model = CLONE(model);
 			model.id = UID();
 			model.dtcreated = NOW;
+			model.name += ' (CLONED)';
+			model.url = model.url.replace(/\/$/g, '-cloned/');
+
 			delete model.dtupdated;
-			model.disabled = true;
 			db.pages.push(model);
 
 			db.fs.readbuffer(id, function(err, buffer) {
