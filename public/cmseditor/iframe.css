@@ -2,6 +2,7 @@
 
 h1.CMS_selected,h2.CMS_selected,h3.CMS_selected,h4.CMS_selected,h5.CMS_selected,img.CMS_selected,p.CMS_selected,span.CMS_selected,div.CMS_selected, section.CMS_selected, i.CMS_selected { outline: 1px solid #4285F4; background-color: rgb(66 133 244 / 5%) }
 iframe.CMS_edit { padding: 5px; border: 5px solid red; }
+.ti { transform: none; }
 
 /*
 .CMS_mv { margin-bottom: 20px; }
@@ -11,7 +12,8 @@ iframe.CMS_edit { padding: 5px; border: 5px solid red; }
 #CMS_panel { position: absolute; z-index: 102; display: none; line-height: 16px; box-sizing: content-box; font-family: Arial; font-size: 12px; font-weight: normal; }
 #CMS_panel * { user-select: none; box-sizing: content-box; transform: scale(1); }
 #CMS_panel_info { height: 25px; pointer-events: none; }
-#CMS_panel_info span { margin: 5px 0 5px; position: relative; display: inline-block; border-radius: 4px; padding: 0 3px; font-size: 10px; color: white; background-color: #E9573F; height: 14px; line-height: 14px; }
+#CMS_panel_info b, #CMS_panel_info span { margin: 5px 0 5px; position: relative; display: inline-block; border-radius: 4px; padding: 0 3px; font-size: 10px; color: #FFF; background-color: #E9573F; height: 14px; line-height: 14px; }
+#CMS_panel_info b { background-color: #4285F4; margin-right: 5px; font-family: Menlo, Consolas, monospace; }
 #CMS_panel_buttons_move { float: right; }
 #CMS_panel_buttons_move span { font-size: 12px; color: #FFF; background-color: rgba(0,0,0,0.5); position: relative; display: inline-block; padding: 3px 0; border-radius: 4px; margin: 3px 0 0 3px; cursor: pointer; vertical-align: top; width: 18px; text-align: center; }
 #CMS_panel_buttons_reposition { float: right; }
@@ -22,6 +24,7 @@ iframe.CMS_edit { padding: 5px; border: 5px solid red; }
 #CMS_panel_buttons_body span { font-size: 11px; color: #FFF; background-color: rgba(246,187,66,0.8); position: relative; display: inline-block; padding: 3px 0; border-radius: 4px; margin: 3px 3px 0 0; cursor: pointer; vertical-align: top; width: 17px; text-align: center; transform: scale(1); }
 
 .CMS_expression { background-color: #FFFE7E66; padding: 1px 5px; border-radius: 4px; }
+.CMS_keyword { background-color: #FFFE7E66; }
 .CMS_panel_buttons { background-color: #fff; padding: 6px; border-radius: 4px; box-shadow: 0 0 10px rgb(0 0 0 / 20%); }
 .CMS_panel_buttons span { position: relative; display: inline-block; background-color: #fff; font-size: 15px; cursor: pointer; padding: 3px 0; margin: 1px 2px; width: 20px; text-align: center; border-radius: 4px; color: #000; transform: scale(1); transition: transform .1s; }
 .CMS_panel_buttons span:last-child { color: #DF452D; }
@@ -44,7 +47,7 @@ iframe.CMS_edit { padding: 5px; border: 5px solid red; }
 .CMS_visible, .jcomponent { display: block !important; visibility: visible !important; }
 .CMS_panel_hidden { display: none !important; }
 
-.CMS_preview .totaljs { background-color: #F0F0F0; background-image: repeating-linear-gradient(45deg, #E0E0E0, #E0E0E0 10px, #F0F0F0 10px, #F0F0F0 20px); text-align: center; padding: 50px 0; font-weight: bold; color: black; margin: 1px; text-align: center; font-size: 11px; text-transform: uppercase; border-radius: 4px; }
+.CMS_preview .totaljs { background-color: #F3F3F3; background-image: repeating-linear-gradient(45deg, #E9E9E9, #E9E9E9 10px, #F5F5F5 10px, #F5F5F5 20px); text-align: center; padding: 30px 0; color: #000; margin: 1px; text-align: center; font-size: 11px; border-radius: var(--radius); }
 .CMS_preview .CMS_input { font-size: 12px; }
 .CMS_preview .CMS_input:after { height: 40px; background-color: #F0F0F0; background-image: repeating-linear-gradient(45deg, #E0E0E0, #E0E0E0 10px, #F0F0F0 10px, #F0F0F0 20px); margin-top: 4px; display: block; content: ' '; border-radius: 4px; }
 .CMS_preview [data-cms-info]:before { position: absolute; content: attr(data-cms-info); color: black; background-color: #ebe36a; padding: 2px 5px 2px 3px; border-radius: 4px; margin: -15px 0 0 0; font-size: 9px; z-index: 100; }

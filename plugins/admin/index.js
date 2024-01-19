@@ -5,11 +5,14 @@ exports.visible = () => !CONF.op_reqtoken || !CONF.op_restoken;
 exports.import = 'extensions.html';
 exports.hidden = true;
 
+var Storage = MEMORIZE('account');
+MAIN.admin = Storage;
+
 exports.install = function() {
-	ROUTE('+API    /admin/    -admin_read    *Admin   --> read');
-	ROUTE('+API    /admin/    +admin_save    *Admin   --> save');
-	ROUTE('+API    /admin/    -logout        *Admin   --> logout');
-	ROUTE('-API    /admin/    +login         *Admin   --> login');
+	ROUTE('+API    /admin/    -admin_read     --> Admin/read');
+	ROUTE('+API    /admin/    +admin_save     --> Admin/save');
+	ROUTE('+API    /admin/    -logout         --> Admin/logout');
+	ROUTE('-API    /admin/    +login          --> Admin/login');
 	ROUTE('-GET    /admin/*', login);
 };
 
@@ -20,10 +23,10 @@ FUNC.authadmin = function($) {
 		return;
 	}
 
-	var user = PREF.user;
+	var user = Storage.user;
 	var token = $.cookie(user.cookie);
 	if (token) {
-		var session = DECRYPTREQ($.req, token, user.salt);
+		var session = DECRYPTREQ($, token, user.salt);
 		if (session && session.id === user.login && session.expire > NOW) {
 			BLOCKED($, null);
 			$.success({ id: user.id, name: user.name, sa: user.sa, permissions: user.permissions });
@@ -34,88 +37,84 @@ FUNC.authadmin = function($) {
 	$.invalid();
 };
 
-NEWSCHEMA('Admin', function(schema) {
-
-	schema.action('read', {
-		name: 'Read admin profile',
-		action: function($) {
-			var user = PREF.user;
-			var model = {};
-			model.name = user.name;
-			model.login = user.login;
-			model.password = '';
-			$.callback(model);
-		}
-	});
-
-	schema.action('save', {
-		name: 'Save admin profile',
-		input: '*name,*login,password',
-		action: function($, model) {
-
-			var user = PREF.user;
-			user.login = model.login;
-
-			if (model.password)
-				user.password = model.password.sha256(user.salt);
-
-			user.name = model.name;
-
-			PREF.set('user', user);
-
-			// Update session
-			var session = {};
-			session.id = user.login;
-			session.expire = NOW.add('1 month');
-			$.cookie(user.cookie, ENCRYPTREQ($.req, session, user.salt), session.expire);
-
-			$.success();
-		}
-	});
-
-	schema.action('login', {
-		name: 'Login',
-		input: '*login,*password',
-		action: function($, model) {
-
-			if (model.login !== PREF.user.login || model.password.sha256(PREF.user.salt) !== PREF.user.password) {
-				$.invalid('@(Invalid credentials)');
-				return;
-			}
-
-			if (PREF.user.raw) {
-				delete PREF.user.raw;
-				PREF.set('user', PREF.user);
-			}
-
-			var session = {};
-			session.id = PREF.user.login;
-			session.expire = NOW.add('1 month');
-			$.cookie(PREF.user.cookie, ENCRYPTREQ($.req, session, PREF.user.salt), session.expire);
-			$.success();
-		}
-	});
-
-	schema.action('logout', {
-		name: 'Logout',
-		action: function($) {
-			$.cookie(PREF.user.cookie, '', '-1 day');
-			$.success();
-		}
-	});
-
+NEWACTION('Admin/read', {
+	name: 'Read admin profile',
+	action: function($) {
+		var user = Storage.user;
+		var model = {};
+		model.name = user.name;
+		model.login = user.login;
+		model.password = '';
+		$.callback(model);
+	}
 });
 
-function login() {
-	this.view('#admin/login');
+NEWACTION('Admin/save', {
+	name: 'Save admin profile',
+	input: '*name,*login,password',
+	action: function($, model) {
+
+		var user = Storage.user;
+		user.login = model.login;
+
+		if (model.password)
+			user.password = model.password.sha256(user.salt);
+
+		user.name = model.name;
+
+		Storage.set('user', user);
+
+		// Update session
+		var session = {};
+		session.id = user.login;
+		session.expire = NOW.add('1 month');
+		$.cookie(user.cookie, ENCRYPTREQ($, session, user.salt), session.expire);
+
+		$.success();
+	}
+});
+
+NEWACTION('Admin/login', {
+	name: 'Login',
+	input: '*login,*password',
+	action: function($, model) {
+
+		if (model.login !== Storage.user.login || model.password.sha256(Storage.user.salt) !== Storage.user.password) {
+			$.invalid('@(Invalid credentials)');
+			return;
+		}
+
+		if (Storage.user.raw) {
+			delete Storage.user.raw;
+			Storage.set('user', Storage.user);
+		}
+
+		var session = {};
+		session.id = Storage.user.login;
+		session.expire = NOW.add('1 month');
+		$.cookie(Storage.user.cookie, ENCRYPTREQ($, session, Storage.user.salt), session.expire);
+		$.success();
+	}
+});
+
+NEWACTION('Admin/logout', {
+	name: 'Logout',
+	action: function($) {
+		$.cookie(Storage.user.cookie, '', '-1 day');
+		$.success();
+	}
+});
+
+function login($) {
+	$.view('#admin/login');
 }
 
-if (!PREF.user) {
+if (!Storage.user) {
 	(function() {
 		var login = U.random_text(10);
 		var password = U.random_text(10);
 		var salt = U.random_text(10);
 		var cookie = U.random_text(5);
-		PREF.set('user', { id: 'admin', name: 'John Connor', login: login, password: password.sha256(salt), raw: password, sa: true, cookie: cookie, salt: salt });
+		Storage.set('user', { id: 'admin', name: 'John Connor', login: login, password: password.sha256(salt), raw: password, sa: true, cookie: cookie, salt: salt });
 	})();
 }

@@ -161,11 +161,11 @@
 			var id = ATTRD(el);
 			exports.tapi('layouts_html/{0} ERROR'.format(id), function(response) {
 				var opt = {};
-				opt.html = response.html;
+				opt.body = response.html;
 				opt.callback = function(value, hide) {
 					var model = {};
 					model.id = id;
-					model.html = value.html;
+					model.html = value;
 					exports.tapi('layouts_save_html', model, function() {
 						if (model.html.indexOf('<widget ') !== -1)
 							EMIT('refresh_widgets');

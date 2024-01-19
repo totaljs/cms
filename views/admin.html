@@ -18,11 +18,12 @@
 
 	<ui-component name="exec"></ui-component>
 	<ui-component name="errorhandler"></ui-component>
-	<ui-component name="locale"></ui-component>
+	<ui-component name="locale" config="requests:1;language:@{language}"></ui-component>
+	<ui-component name="imageviewer" config="unknown:@(Unknown image)"></ui-component>
+	<ui-component name="datepicker" config="today:@(Today);days:@(Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday);clear:@(Clear);months:@(January,February,March,April,May,Juny,July,August,September,October,November,December)"></ui-component>
 
 	<ui-component name="LAZY icons"></ui-component>
-	<ui-component name="LAZY datepicker"></ui-component>
-	<ui-component name="LAZY directory" config="placeholder:@(Search)"></ui-component>
+	<ui-component name="LAZY directory" config="placeholder:@(Search);create:@(Create)"></ui-component>
 	<ui-component name="LAZY menu" config="style:2"></ui-component>
 	<ui-component name="LAZY message"></ui-component>
 	<ui-component name="LAZY colorpicker"></ui-component>
@@ -34,7 +35,9 @@
 	<ui-component name="LAZY features"></ui-component>
 	<ui-component name="LAZY spotlight"></ui-component>
 	<ui-component name="LAZY clipboard"></ui-component>
+	<ui-component name="LAZY prompt" config="cancel:@(Cancel);submit:@(OK)"></ui-component>
 
+	<ui-component name="edit"></ui-component>
 	<ui-component name="shortcuts"></ui-component>
 	<ui-component name="loading" class="hidden"></ui-component>
 	<ui-component name="dropfiles" config="exec:common/dropfiles;check:common/dropcheck" class="hidden">@(Drag &amp; Drop files here)</ui-component>
@@ -87,9 +90,9 @@
 		</main>
 	</ui-component>
 
-	<ui-component name="importer" path="common.form" config="if:formcode;url:/forms/code.html"></ui-component>
-	<ui-component name="importer" path="common.form2" config="if:formfiles;url:/_files/list.html"></ui-component>
+	<ui-component name="importer" path="common.form2" config="if:formcode;url:/forms/code.html"></ui-component>
 	<ui-component name="importer" path="common.form2" config="if:formwidgets;url:/_widgets/form.html"></ui-component>
+	<ui-component name="importer" path="common.form3" config="if:formfiles;url:/_files/list.html"></ui-component>
 
 	@{json(model, 'pluginsdata')}
 
@@ -118,7 +121,7 @@
 		DEF.versionhtml = '@{CONF.version}';
 		DEF.languagehtml = '@{user.language}';
 
-		ENVIRONMENT('pages');
+		ENVIRONMENT('cms');
 
 		// Injects Token to every API request
 		(function() {
@@ -130,12 +133,13 @@
 				common.ready = true;
 			DEF.api = common.api + openplatform;
 			ENV('upload', common.api + 'upload/' + openplatform);
+			common.openplatform = openplatform;
 			$('body').rclass('invisible', 200);
 		})();
 
 		NAV.clientside('.jR');
 
-		if (W.top !== W)
+		if (W.top !== W && common.openplatform)
 			NAV.custom();
 
 		REDIRECT = function(url) {
@@ -148,7 +152,6 @@
 		W.APP_INIT = function() {
 
 			common.ready = true;
-
 			APP.on('init', function() {
 
 				var ready = false;
@@ -209,7 +212,7 @@
 
 			exports.dropcheck = function(e) {
 
-				if (model.form2 === 'formfiles' || model.page === 'pluginfiles')
+				if (model.form3 === 'formfiles' || model.page === 'pluginfiles')
 					return true;
 
 				var plugin = model.form3 || model.form2 || model.form || model.page;
@@ -227,8 +230,6 @@
 			exports.logout = function() {
 				exports.ajax('GET @{#}/admin/logout/ ERROR', () => location.href = '/admin/');
 			};
-
-			exports.refresh();
 
 			ON('service', function(counter) {
 				if (counter % 5 === 0)
@@ -271,7 +272,6 @@
 		CLINIT('nav', function(next) {
 			TAPI('nav_editor', next);
 		}, true);
-
 
 	</script>
 

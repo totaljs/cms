@@ -1,18 +1,16 @@
 exports.install = function() {
 
 	// Misc
-	ROUTE('+API     /admin/             -account            *Account      --> read');
-	ROUTE('+API     /admin/             +chatgpt            *ChatGPT      --> ask', [60000]);
+	ROUTE('+API     /admin/             -account          --> Account/read');
+	ROUTE('+API     /admin/             +chatgpt  <60s    --> ChatGPT/ask');
 
 	// Internal
-	ROUTE('+GET     /admin/backup/',  backup, [1000 * 60]);
-	ROUTE('+POST    /admin/restore/', restore, ['upload', 1000 * 120], 1024 * 100); // Max. 100 MB
-	ROUTE('+GET     /admin/clear/',   clear, [1000 * 30]);
+	ROUTE('+GET     /admin/backup/          <60s', backup);
+	ROUTE('+POST    /admin/restore/ @upload <60s <100MB', restore);
+	ROUTE('+GET     /admin/clear/           <60s', clear);
 };
 
-function backup() {
-
-	var $ = this;
+function backup($) {
 
 	if (UNAUTHORIZED($, 'admin'))
 		return;
@@ -21,27 +19,21 @@ function backup() {
 
 	MAIN.db.fs.backup(PATH.temp(filename), function(err, meta) {
 		if (meta)
-			$.file('~' + meta.filename, filename);
+			$.file(meta.filename, filename);
 		else
 			$.invalid(err);
 	});
 }
 
-function clear() {
-	var $ = this;
-
+function clear($) {
 	if (UNAUTHORIZED($, 'admin'))
 		return;
-
 	FUNC.unload(() => FUNC.load($.done()));
 }
 
-function restore() {
-	var $ = this;
-
+function restore($) {
 	if (UNAUTHORIZED($, 'admin'))
 		return;
-
 	FUNC.unload(function() {
 		MAIN.db.fs.restore($.files[0].path, function(err, meta) {
 			if (meta && meta.files) {

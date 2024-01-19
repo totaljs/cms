@@ -1,14 +1,12 @@
 // Fixed settings
-CONF.allow_custom_titles = true;
+CONF.$customtitles = true;
+
+if (!CONF.cdn)
+	CONF.cdn = 'https://cdn.componentator.com';
+
 CONF.version = '1';
 CONF.op_icon = 'ti ti-rss-square';
 CONF.op_path = '/admin/';
-
-if (!PREF.name)
-	PREF.name = 'CMS';
-
-if (!PREF.cdn)
-	PREF.cdn = '//cdn.componentator.com';
 
 ON('ready', function() {
 
@@ -24,7 +22,7 @@ ON('ready', function() {
 	setTimeout(FUNC.load, 500);
 
 	// UI components
-	COMPONENTATOR('ui', 'exec,locale,aselected,page,fileuploader,viewbox,navlayout,extend,crop,form,importer,input,box,validate,loading,selected,intranetcss,notify,message,errorhandler,empty,menu,autofill,enter,dropfiles,breadcrumb,virtualwire,noscrollbar,preview,miniform,datagrid,filebrowser,approve,shortcuts,searchdata,search,searchinput,display,selection,children,icons,directory,colorpicker,cloudeditor,tangular-filesize,textboxlist,datepicker,cloudeditorsimple,ready,listing,keyvalue,configuration,donutchart,statsbarsimple,stats24,barchart,clipboard', true);
-	COMPONENTATOR('webui', 'exec,errorhandler,locale,uibuilder,uistudio,datepicker,directory,menu,icons,input', true);
+	COMPONENTATOR('ui', 'locale,aselected,fileuploader,exec,page,viewbox,navlayout,extend,crop,form,importer,input,box,validate,loading,selected,intranetcss,prompt,notify,message,errorhandler,empty,menu,autofill,enter,dropfiles,breadcrumb,virtualwire,noscrollbar,preview,miniform,datagrid,filebrowser,approve,shortcuts,searchdata,search,searchinput,display,selection,children,icons,directory,colorpicker,cloudeditor,tangular-filesize,textboxlist,datepicker,cloudeditorsimple,ready,listing,keyvalue,configuration,donutchart,statsbarsimple,stats24,barchart,clipboard,edit,choose,imageviewer', true);
+	COMPONENTATOR('webui', 'exec,errorhandler,locale,uibuilder,uistudio,directory,message,approve,datepicker,menu,icons,input,imageviewer', true);
 
 });

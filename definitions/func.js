@@ -27,6 +27,15 @@ FUNC.recompile = function(item) {
 	if (meta.css)
 		meta.css = meta.css.replace(REG_CLASS, 'w-' + uid);
 
+	if (meta.settings)
+		meta.settings = meta.settings.replace(REG_CLASS, 'w-' + uid);
+
+	if (meta.template)
+		meta.template = meta.template.replace(REG_CLASS, 'w-' + uid);
+
+	if (meta.js)
+		meta.js = meta.js.replace(REG_CLASS, 'w-' + uid);
+
 	if (meta.html)
 		meta.html = meta.html.replace(REG_CLASS, 'w-' + uid);
 
@@ -106,6 +115,9 @@ FUNC.refresh = function() {
 		item = CLONE(item);
 		item.links = [];
 
+		if (!item.children)
+			item.children = [];
+
 		for (var m of item.children) {
 			item.links.push(m);
 			if (m.children.length)
@@ -130,8 +142,10 @@ FUNC.refresh = function() {
 };
 
 FUNC.save = function() {
+
 	var site = MAIN.db;
 	var model = {};
+
 	model.id = site.id;
 	model.dtcreated = site.dtcreated;
 	model.dtupdated = NOW;
@@ -181,12 +195,6 @@ FUNC.reconfigure = function() {
 
 	var config = {};
 
-	for (var key in PREF) {
-		var val = PREF[key];
-		if (key !== 'user' && typeof(val) !== 'function')
-			config[key] = val;
-	}
-
 	for (var key in MAIN.db.config)
 		config[key] = MAIN.db.config[key];
 
@@ -205,7 +213,7 @@ FUNC.load = function(callback) {
 			empty = true;
 		}
 
-		value.config.allow_totalapi = true;
+		value.config.$tapi = true;
 		MAIN.db = value;
 		MAIN.views = {};
 
@@ -261,56 +269,4 @@ FUNC.load = function(callback) {
 		empty && FUNC.save();
 		EMIT('reload', MAIN.db);
 	});
-};
-
-FUNC.importwidget = function(html, rewrite, callback) {
-
-	if (typeof(rewrite) === 'function') {
-		callback = rewrite;
-		rewrite = false;
-	}
-
-	if (!callback)
-		callback = NOOP;
-
-	if (html.indexOf('<') === -1) {
-		// filename?
-		F.Fs.readFile(html, 'utf8', function(err, response) {
-			if (err)
-				callback(err);
-			else
-				FUNC.importwidget(response, rewrite, callback);
-		});
-		return;
-	}
-
-	var widgets = [];
-	var arr = html.match(/<widget.*?>/g);
-	var error = new ErrorBuilder();
-
-	if (arr) {
-		for (var i = 0; i < arr.length; i++) {
-			var item = arr[i];
-			var index = item.indexOf(' data="');
-			if (index !== -1) {
-				try {
-					var widget = decodeURIComponent(Buffer.from(item.substring(index + 7, item.indexOf('"', index + 8)), 'base64')).toString('utf8');
-					widget && widgets.push(widget);
-				} catch (e) {
-					error.push(e);
-				}
-			}
-		}
-	} else {
-		// HTML is a widget
-		widgets.push(html);
-	}
-
-	widgets.wait(function(item, next) {
-		CALL('+Widgets --> save', { html: item, singleton: rewrite !== true }).user({ sa: true }).callback(function(err) {
-			err && error.push(err);
-			next();
-		});
-	}, () => callback(error.length ? error : null));
-
 };

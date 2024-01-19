@@ -40,28 +40,27 @@
 				<div class="b m black"><i class="ti ti-camera mr5"></i>@(Image settings)</div>
 
 				<ui-component name="input" path="?.alt">@(Alternate text)</ui-component>
-				<div class="help m">@(Very important for search engines)</div>
+				<div class="help m">@(Very important for search engines.)</div>
 
-				<div class="row">
-					<div class="col-md-4 m">
-						<ui-component name="input" path="?.datawidth" config="align:center;maxlength:4;placeholder:120">@(Width)</ui-component>
-						<div class="help">@(Pixels or percentage)</div>
-					</div>
-					<div class="col-md-4 m">
-						<ui-component name="input" path="?.dataheight" config="align:center;maxlength:4;placeholder:120">@(Height)</ui-component>
-						<div class="help">@(Pixels or percentage)</div>
-					</div>
-				</div>
-
-				<ui-bind path="?.imgdefined" config="show" class="row hidden">
-					<div class="col-md-4 m">
-						<ui-component name="input" path="?.datasize" config="align:center;maxlength:3;placeholder:0%">@(Downsize in percent)</ui-component>
-						<div class="help">@(It is used in galleries)</div>
-					</div>
-					<div class="col-md-8 m">
-						<div style="font-size:12px;margin-bottom:3px">@(Background color):</div>
-						<ui-component name="input" path="?.databg" config="type:color"></ui-component>
-						<div class="help">@(It will be used if the image does not have a good resolution)</div>
+				<ui-bind path="?.imgdefined" config="show .imgdefined" class="block">
+					<div class="row">
+						<div class="col-md-3 m">
+							<ui-component name="input" path="?.datawidth" config="align:center;maxlength:4;placeholder:120">@(Width)</ui-component>
+							<div class="help">@(Pixels or percentage.)</div>
+						</div>
+						<div class="col-md-3 m">
+							<ui-component name="input" path="?.dataheight" config="align:center;maxlength:4;placeholder:120">@(Height)</ui-component>
+							<div class="help">@(Pixels or percentage.)</div>
+						</div>
+						<div class="col-md-3 m imgdefined hidden">
+							<ui-component name="input" path="?.datasize" config="align:center;maxlength:3;placeholder:0%">@(Downsize in percent)</ui-component>
+							<div class="help">@(In the image gallery, it may be used.)</div>
+						</div>
+						<div class="col-md-3 m imgdefined hidden">
+							<div style="font-size:12px;margin-bottom:3px">@(Background color):</div>
+							<ui-component name="input" path="?.databg" config="type:color"></ui-component>
+							<div class="help">@(It will be used if the image lacks resolution.)</div>
+						</div>
 					</div>
 				</ui-bind>
 
@@ -70,14 +69,23 @@
 		</ui-bind>
 
 		<div class="padding npb">
-			<ui-component name="input" path="?.css" config="icon:brush" class="m">@(Custom styles)</ui-component>
+			<ui-component name="input" path="?.css" config="icon:ti ti-paint-brush-alt" class="m">@(Custom styles)</ui-component>
 			<ui-component name="style" path="?.css"></ui-component>
 		</div>
 
-		<ui-bind path="?.isconfig" config="show" class="hidden padding">
-			<ui-component name="input" path="?.config" config="placeholder:@(keyA)\:@(valueA);@(keyB)\:@(valueB)">@(j-Configuration)</ui-component>
-			<div class="help">@(Be careful with this item.)</div>
+		<ui-bind path="?.isconfig" config="show" class="hidden padding block">
+			<ui-component name="input" path="?.config" config="placeholder:@(keyA)\:@(valueA);@(keyB)\:@(valueB)">@(UI component configuration)</ui-component>
+			<div class="help">@(Be careful with this configuration)</div>
 		</ui-bind>
+
+		<ui-bind data-bind="?.isnone" config="hide" class="hidden block">
+			<hr class="nmt" />
+			<div class="padding npt">
+				<ui-component name="input" path="?.src" config="icon:ti ti-globe">@(Source URL)</ui-component>
+				<div class="mt10 fs12"><span class="link exec" data-exec="?/files"><i class="ti ti-folder mr5"></i>@(Browse files)</span></div>
+			</div>
+		</ui-bind>
+
 	</div>
 
 	<nav>
@@ -129,11 +137,9 @@
 				target.attr('src', model.src.trim());
 
 			model.isimage && target.attr('alt', model.alt ? model.alt.trim() : '');
-			if (model.isconfig) {
-				var jc = target.attrd('---').split('__');
-				jc[2] = model.config.trim();
-				target.attrd('---', jc.join('__'));
-			}
+
+			if (model.isconfig)
+				target.attr('config', model.config);
 
 			if (model.id)
 				target.attr('id', model.id);
@@ -194,6 +200,14 @@
 			instance.change(true);
 			instance.autoresize();
 			hide();
+		};
+
+		exports.files = function() {
+			var model = exports.model;
+			var config = model.instance.config;
+			config.files && model.instance.EXEC(config.files, {}, function(item) {
+				exports.set('src', typeof(item) === 'string' ? item : item.url);
+			});
 		};
 
 	});

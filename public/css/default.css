@@ -6,6 +6,8 @@ h2 { margin: 0 0 15px; padding: 0 0 8px; font-size: 16px; border-bottom: 1px sol
 h2 span { float: right; color: gray; font-weight: normal; font-size: 12px; margin: 5px 0 0; }
 h3 { font-size: 16px; margin-top: 0; }
 
+.ti { transform: none; }
+
 .color { color: var(--color); }
 .bg-smoke { background-color: #F8F8F8; }
 .bg-body { background-color: #FFF; }
@@ -21,6 +23,7 @@ h3 { font-size: 16px; margin-top: 0; }
 .ui-navlayout > main { background-color: #F5F5F5; }
 .nav { background-color: transparent; }
 
+header > .account { padding-right: 10px; }
 .auto { margin: 0 auto; width: 100%; }
 .header { height: 45px; padding: 0 10px 0 0; border-bottom: 1px solid #E0E0E0; text-align: right; }
 .ui-dark .header { border-color: #404040; }
@@ -51,7 +54,7 @@ h3 { font-size: 16px; margin-top: 0; }
 .toolbar .ui-searchinput { float: left; margin-left: 15px; }
 
 .ui-searchinput { border-radius: var(--radius); height: 24px; background-color: #FFF; line-height: 14px; }
-.ui-dark .ui-searchinput { background-color: #333; }
+.ui-searchinput input { color: #000; }
 
 .panel > .ui-searchinput { border-radius: 0; border-top: 0; border-left: 0; border-right: 0; height: 30px; border-bottom-color: #E0E0E0; }
 .panel > .ui-searchinput input { height: 28px; font-size: 11px; }

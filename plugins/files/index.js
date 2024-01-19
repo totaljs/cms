@@ -6,13 +6,14 @@ exports.visible = user => user.sa || user.permissions.includes('files');
 
 exports.install = function() {
 
-	ROUTE('+POST    /admin/upload/                  +files_upload   *Files          --> insert', ['upload'], 1024 * 5);
-	ROUTE('+POST    /admin/upload/base64/           +files_base64   *Files          --> insert', 1024 * 5);
-	ROUTE('FILE     /download/*.*',   files);
+	ROUTE('+POST    /admin/upload/          @upload <10MB    --> Files/insert');
+	ROUTE('+POST    /admin/upload/base64/           <10MB    --> Files/insert');
 
-	ROUTE('+API    /admin/    -files_list           *Files   --> list');
-	ROUTE('+API    /admin/    -files_clear          *Files   --> clear');
-	ROUTE('+API    /admin/    -files_remove/{id}    *Files   --> remove');
+	ROUTE('FILE     /download/*.*', files);
+
+	ROUTE('+API     /admin/    -files_list           --> Files/list');
+	ROUTE('+API     /admin/    -files_clear          --> Files/clear');
+	ROUTE('+API     /admin/    -files_remove/{id}    --> Files/remove');
 
 };
 
@@ -20,8 +21,8 @@ function checkmeta(meta) {
 	return meta.custom && (meta.custom.public === true || meta.custom.public === 1);
 }
 
-function files(req, res) {
-	var id = req.split[1];
+function files($) {
+	var id = $.split[1];
 	id = id.substring(0, id.lastIndexOf('.'));
-	res.filefs(MAIN.id, id, req.url.lastIndexOf('download=1') !== -1, null, null, checkmeta);
+	$.filefs(MAIN.id, id, $.url.lastIndexOf('download=1') !== -1, null, null, checkmeta);
 }

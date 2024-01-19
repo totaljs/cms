@@ -28,7 +28,7 @@
 		};
 
 		exports.files = function(meta, next) {
-			SET('common.form2', 'formfiles');
+			SET('common.form3', 'formfiles');
 			var opt = {};
 			if (meta.isimage) {
 				opt.type = 'images';
@@ -170,11 +170,11 @@
 			exports.tapi('widgets_read/' + widget.config.id, ASETTER('message/response', function(response) {
 				var opt = {};
 				var data = exports.model;
-				opt.html = response.html;
+				opt.body = response.html;
 				opt.callback = function(value, hide) {
 					var model = {};
 					model.id = widget.config.id;
-					model.html = value.html;
+					model.html = value;
 					exports.tapi('widgets_save ERROR', model, function() {
 						exports.tapi('widgets_detail/' + model.id, function(response) {
 							hide();

@@ -1,6 +1,6 @@
 <style>
 	.CLASS .grid { display: grid; gap: 20px; }
-	.CLASS .row1 { grid-template-columns: 2fr 8fr; }
+	.CLASS .row1 { grid-template-columns: 3fr 8fr; }
 	.CLASS .row2 { grid-template-columns: repeat(2, 1fr); }
 	.CLASS .panelbody { position: relative; padding: 20px 20px 5px; background-color: #fff; margin-bottom: 20px; border-radius: var(--radius); border: 1px solid #eaeaea; }
 	.CLASS .panelbody .caption { font-weight: bold; margin-bottom: 10px; }
@@ -18,26 +18,26 @@
 	.CLASS .legend-2 { color: #FD8D3C; }
 
 	.pb20 { padding-bottom: 20px !important; }
-	.dashboard-online-position { position: absolute; width: 100%; margin: 110px 0 0 -20px; }
+	.dashboard-online-position { position: absolute; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center;/* margin: 110px 0 0 -20px; */ }
 	.dashboard-online { font-size: 70px; text-align: center; font-weight: bold; line-height: 70px; }
 	.dashboard-online-date { font-size: 12px; color: gray; text-align: center; margin-bottom: 20px; }
 	.dashboard-devices { background-color: #4781B8; border-radius: var(--radius); margin-top: 5px; }
 	.dashboard-devices > div { height: 17px; border-radius: var(--radius); background-color: #EF914E; color: white; font-size: 11px; overflow: hidden; text-align: right; padding: 1px 5px 0 0; }
 	.browser { float: right; color: gray; font-size: 10px; }
 
-	.ui-dashboardvisitors.panelbody { padding: 0; }
-	.ui-dashboardvisitors .badge-silver { font-family: monospace; }
-	.ui-dashboardvisitors table { border: 0; width: 100%; table-layout: fixed; font-size: 12px; }
-	.ui-dashboardvisitors table i { margin-right: 5px; }
-	.ui-dashboardvisitors table tr td { background-color: white; }
-	.ui-dashboardvisitors table tr:nth-child(even) td { background-color: #F9F9F9; }
-	.ui-dashboardvisitors table td { padding: 3px 10px; border-left: 1px solid #E0E0E0; }
-	.ui-dashboardvisitors table .singline { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
-	.ui-dashboardvisitors table td:first-child { border-left: 0; }
-	.ui-dashboardvisitors table th { padding: 5px 10px; background-color: #F0F0F0; color: black; border-left: 1px solid #E0E0E0; }
-	.ui-dashboardvisitors table th i { margin-right: 5px; }
-	.ui-dashboardvisitors table th:first-child { border-radius: var(--radius) 0 0 0; border-left: 0; }
-	.ui-dashboardvisitors table th:last-child { border-radius: 0 var(--radius) 0 0; }
+	.CLASS .visitors.panelbody { padding: 0; }
+	.CLASS .visitors .badge-silver { font-family: monospace; }
+	.CLASS .visitors table { border: 0; width: 100%; table-layout: fixed; font-size: 12px; }
+	.CLASS .visitors table i { margin-right: 5px; }
+	.CLASS .visitors table tr td { background-color: white; }
+	.CLASS .visitors table tr:nth-child(even) td { background-color: #F9F9F9; }
+	.CLASS .visitors table td { padding: 3px 10px; border-left: 1px solid #E0E0E0; }
+	.CLASS .visitors table .singline { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+	.CLASS .visitors table td:first-child { border-left: 0; }
+	.CLASS .visitors table th { padding: 5px 10px; background-color: #E0E0E0; color: black; border-left: 1px solid #D0D0D0; }
+	.CLASS .visitors table th i { margin-right: 5px; }
+	.CLASS .visitors table th:first-child { border-radius: var(--radius) 0 0 0; border-left: 0; }
+	.CLASS .visitors table th:last-child { border-radius: 0 var(--radius) 0 0; }
 
 	.dashboard-referrer { font-size: 12px; background-color: #F0F0F0; margin: 0 0 5px; padding: 5px 5px 5px 10px; border-radius: var(--radius); }
 	.dashboard-referrer > div:last-child { margin-right: 60px; }
@@ -65,28 +65,30 @@
 </div>
 
 <ui-plugin class="CLASS">
-	<ui-component name="viewbox" path="common.page" config="parent:auto;margin:60;scrollbar:1;visibleY:1" class="invisible">
+	<ui-component name="viewbox" path="common.page" config="parent:auto;margin:60;scrollbar:1;scrollbarshadow:1;visibleY:1" class="invisible">
 		<div class="auto" style="max-width:1400px">
 			<ui-component name="extend" config="name:dashboard"></ui-component>
 			<div class="padding">
 				<div class="grid row1">
 					<div class="panelbody">
-						<div class="dashboard-online-position hidden">
-							<ui-bind path="?.stats.today.online" config="html:value ? value : 0" class="dashboard-online block">0</ui-bind>
-							<div class="dashboard-online-date"><b>@(Last visitor:)</b> <ui-bind path="?.stats.today.last" config="html:value ? Thelpers.time(value) : '...'"></ui-bind></div>
+						<div style="position:relative">
+							<div class="dashboard-online-position hidden">
+								<ui-bind path="?.stats.today.online" config="html:value ? value : 0" class="dashboard-online block">0</ui-bind>
+								<div class="dashboard-online-date"><b>@(Last visitor:)</b> <ui-bind path="?.stats.today.last" config="html:value ? Thelpers.time(value) : '...'"></ui-bind></div>
+							</div>
+							<ui-component name="donutchart" path="?.stats.sources" config="tooltip:false;redraw:?/redrawSources;select:?/selectSource;animate:false"></ui-component>
 						</div>
-						<ui-component name="donutchart" path="?.stats.sources" config="tooltip:false;redraw:?/redrawSources;select:?/selectSource;animate:false"></ui-component>
 						<div class="stats m">
 							<ui-bind path="?.stats.today.robots" config="html:?/count(value)" class="value"></ui-bind>
 							<div class="key">@(Robots / Crawlers)</div>
 						</div>
 						<div class="stats">
 							<ui-bind path="?.stats.today.mobile" config="html:?/count(value)" class="value"></ui-bind>
-							<div class="key"><i class="fa fa-square" style="color:#EF914E"></i>@(Mobile devices)</div>
+							<div class="key"><i class="ti ti-square-alt" style="color:#EF914E"></i>@(Mobile devices)</div>
 						</div>
 						<div class="stats" style="border-bottom:0">
 							<ui-bind path="?.stats.today.desktop" config="html:?/count(value)" class="value"></ui-bind>
-							<div class="key"><i class="fa fa-square" style="color:#4781B8"></i>@(Desktop)</div>
+							<div class="key"><i class="ti ti-square-alt" style="color:#4781B8"></i>@(Desktop)</div>
 						</div>
 						<ui-component name="statsbarsimple" path="?.stats.today.devices" style="margin:7px 0">
 							<script type="text/html">
@@ -97,31 +99,31 @@
 					<div>
 						<div class="grid row2">
 							<div class="panelbody">
-								<div class="caption"><i class="fa fa-globe"></i>@(Sources today)</div>
+								<div class="caption"><i class="ti ti-globe"></i>@(Sources today)</div>
 								<div class="stats" id="dashboard-sources-social">
 									<ui-bind path="?.stats.today.social" config="html:?/count(value)" class="value"></ui-bind>
-									<div class="key"><i class="fa fa-square" style="color:#649BD0"></i>@(From social networks)</div>
+									<div class="key"><i class="ti ti-square-alt" style="color:#649BD0"></i>@(From social networks)</div>
 								</div>
 								<div class="stats" id="dashboard-sources-advert">
 									<ui-bind class="value" path="?.stats.today.advert" config="html:?/count(value)"></ui-bind>
-									<div class="key"><i class="fa fa-square" style="color:#FD8D3C"></i>@(From adverts)</div>
+									<div class="key"><i class="ti ti-square-alt" style="color:#FD8D3C"></i>@(From adverts)</div>
 								</div>
 								<div class="stats" id="dashboard-sources-search">
 									<ui-bind class="value" path="?.stats.today.search" config="html:?/count(value)"></ui-bind>
-									<div class="key"><i class="fa fa-square" style="color:#74C476"></i>@(From organic search)</div>
+									<div class="key"><i class="ti ti-square-alt" style="color:#74C476"></i>@(From organic search)</div>
 								</div>
 								<div class="stats" id="dashboard-sources-direct">
 									<ui-bind class="value" path="?.stats.today.direct" config="html:?/count(value)"></ui-bind>
-									<div class="key"><i class="fa fa-square" style="color:#9E9AC8"></i>@(Direct visitors)</div>
+									<div class="key"><i class="ti ti-square-alt" style="color:#9E9AC8"></i>@(Direct visitors)</div>
 								</div>
 								<div class="stats" id="dashboard-sources-unknown">
 									<ui-bind class="value" path="?.stats.today.unknown" config="html:?/count(value)"></ui-bind>
-									<div class="key"><i class="fa fa-square" style="color:#969696"></i>@(From unknown source)</div>
+									<div class="key"><i class="ti ti-square-alt" style="color:#969696"></i>@(From unknown source)</div>
 								</div>
 							</div>
 
 							<div class="panelbody">
-								<div class="caption"><i class="fa fa-users"></i>@(Today statistics)</div>
+								<div class="caption"><i class="ti ti-users"></i>@(Today statistics)</div>
 								<div class="stats">
 									<ui-bind class="value" path="?.stats.today.hits" config="html:?/count(value)"></ui-bind>
 									<div class="key">@(Hits)</div>
@@ -145,41 +147,33 @@
 							</div>
 						</div>
 
-						<ui-component name="dashboardvisitors" path="?.visitors" class="panelbody">
+						<ui-bind path="?.visitors" config="template:tr" class="block visitors" child="tbody">
 							<table>
 								<thead>
 									<tr>
-										<th style="width:135px"><i class="fa fa-refresh fa-spin"></i>@(Type)</th>
-										<th><i class="fa fa-globe"></i>@(Address)</th>
-										<th style="width:110px" class="hidden-xs"><i class="fa fa-user"></i>@(User)</th>
+										<th style="width:135px"><i class="ti ti-circle-notch ti-spin"></i>@(Type)</th>
+										<th><i class="ti ti-globe"></i>@(Address)</th>
+										<th style="width:110px" class="hidden-xs"><i class="ti ti-user"></i>@(User)</th>
 										<th style="width:110px" class="hidden-xs">@(IP address)</th>
-										<th style="width:70px" class="hidden-xs center"><i class="far fa-clock-o"></i>@(Time)</th>
+										<th style="width:70px" class="hidden-xs center"><i class="far ti-clock-o"></i>@(Time)</th>
 									</tr>
 								</thead>
 								<tbody>
-
 									<script type="text/html">
+										{{ foreach m in value }}
 										<tr>
-											<td><div class="singline">{{ if newbie }}<i class="fa fa-plus-circle green"></i>{{ fi }}{{ type }}</div></td>
-											<td><div class="singline">{{ if browser }}<span class="browser">{{ browser }}</span>{{ fi }}<span class="badge badge-silver badge-small mr5">{{ id }}</span>{{ if unique }}<span class="badge badge-green mr5">@(+new)</span>{{ fi }}{{ if mobile }}<i class="fa fa-mobile"></i>{{ fi }}<a href="{{ url }}" target="_blank">{{ url }}</a></div></td>
-											<td class="hidden-xs"><div class="singline">{{ user }}</div></td>
-											<td class="hidden-xs"><a href="https://tools.keycdn.com/geo?host={{ ip }}" target="_blank">{{ ip }}</a></td>
-											<td class="hidden-xs center">{{ date | format('HH:mm:ss') }}</td>
+											<td><div class="singline">{{ if m.newbie }}<i class="ti ti-plus-circle green"></i>{{ fi }}{{ m.type }}</div></td>
+											<td><div class="singline">{{ if m.browser }}<span class="browser">{{ m.browser }}</span>{{ fi }}<span class="badge badge-silver badge-small mr5">{{ m.id }}</span>{{ if m.unique }}<span class="badge badge-green mr5">@(+new)</span>{{ fi }}{{ if m.mobile }}<i class="ti ti-mobile"></i>{{ fi }}<a href="{{ m.url }}" target="_blank">{{ m.url }}</a></div></td>
+											<td class="hidden-xs"><div class="singline">{{ m.user }}</div></td>
+											<td class="hidden-xs"><a href="https://tools.keycdn.com/geo?host={{ ip }}" target="_blank">{{ m.ip }}</a></td>
+											<td class="hidden-xs center">{{ m.date | format('HH:mm:ss') }}</td>
 										</tr>
-									</script>
-
-									<script type="text/html">
-									<tr>
-										<td>&nbsp;</td>
-										<td></td>
-										<td class="hidden-xs"></td>
-										<td class="hidden-xs"></td>
-										<td class="hidden-xs"></td>
-									</tr>
+										{{ end }}
 									</script>
 								</tbody>
 							</table>
-						</ui-component>
+						</ui-bind>
+
 					</div>
 				</div>
 				<ui-bind path="?.stats.visitors" config="show" class="block hidden">
@@ -187,7 +181,7 @@
 						<ui-bind path="?.stats.history" config="template" style="margin-top:-3px" class="block">
 							<script type="text/html">
 							{{ foreach m in value }}
-								<span class="exec fs12 link" style="margin-right:15px" data-exec="?/history" data-year="{{ m }}"><i class="fa fa-calendar mr5"></i>{{ m }}</span>
+								<span class="exec fs12 link" style="margin-right:15px" data-exec="?/history" data-year="{{ m }}"><i class="ti ti-calendar mr5"></i>{{ m }}</span>
 							{{ end }}
 							</script>
 						</ui-bind>
@@ -197,22 +191,22 @@
 						<div class="grid row2">
 							<div>
 								<div class="legend fs12">
-									<i class="fa fa-square legend-1 mr5"></i><span class="mr10">@(Visitors)</span>
-									<i class="fa fa-square legend-2 mr5"></i><span class="mr10">@(Unique)</span>
+									<i class="ti ti-square-alt legend-1 mr5"></i><span class="mr10">@(Visitors)</span>
+									<i class="ti ti-square-alt legend-2 mr5"></i><span class="mr10">@(Unique)</span>
 								</div>
 								<br />
 								<ui-component name="barchart" path="?.stats.visitors" config="height:250"></ui-component>
 								<ui-bind path="?.stats.visitorssum" config="template" class="mt10">
 									<script type="text/html">
-										<span class="fs11 gray" style="float:right"><b>{{ value.unique | format(0) | def('0') }}</b> {{ value.unique | pluralize(@('uniques', 'unique', 'uniques', 'uniques')) }}</span>
-										<span class="fs11 gray"><b>{{ value.count | format(0) | def('0') }}</b> {{ value.count | pluralize(@('visitors', 'visitor', 'visitors', 'visitors')) }}</span>
+										<span class="fs11 gray" style="float:right"><b>{{ value.unique | format(0) | def('0') }}</b> {{ value.unique | pluralize('@(# uniques,# unique,# uniques,# uniques)') }}</span>
+										<span class="fs11 gray"><b>{{ value.count | format(0) | def('0') }}</b> {{ value.count | pluralize('@(# visitors,# visitor,# visitors,# visitors)') }}</span>
 									</script>
 								</ui-bind>
 							</div>
 							<div>
 								<div class="legend fs12">
-									<i class="fa fa-square legend-1 mr5"></i><span class="mr10">@(Desktop)</span>
-									<i class="fa fa-square legend-2 mr5"></i><span class="mr10">@(Mobile devices)</span>
+									<i class="ti ti-square-alt legend-1 mr5"></i><span class="mr10">@(Desktop)</span>
+									<i class="ti ti-square-alt legend-2 mr5"></i><span class="mr10">@(Mobile devices)</span>
 								</div>
 								<br />
 								<ui-component name="barchart" path="?.stats.devices" config="height:250"></ui-component>
@@ -240,30 +234,30 @@
 				<div class="panelbody">
 					<div class="row">
 						<div class="col-md-4">
-							<div class="caption"><i class="fa fa-user-circle"></i>@(Maximum daily online visitors)</div>
+							<div class="caption"><i class="ti ti-user-circle"></i>@(Maximum daily online visitors)</div>
 						</div>
 						<div class="col-md-4 col-md-offset-4 right hidden-sm hidden-xs">
-							&empty; <ui-bind path="?.stats.today.hoursavg" config="html:(value || 0).pluralize(@('# visitors', '# visitor', '# visitors', '# visitors'))" class="fs11 gray"></ui-bind>
+							&empty; <ui-bind path="?.stats.today.hoursavg" config="html:(value || 0).pluralize('@(# visitors,# visitor,# visitors,# visitors)')" class="fs11 gray"></ui-bind>
 						</div>
 					</div>
 					<ui-component name="stats24" path="?.stats.today.hours" class="m"></ui-component>
 				</div>
 
-				<ui-bind path="?.stats.referrers" config="template" class="block">
+				<ui-bind path="?.stats.referers" config="template" class="block">
 					<script type="text/html">
 						{{ if value && value.length }}
 						<div class="panelbody">
 							<div class="row">
 								<div class="col-md-4">
-									<div class="caption"><i class="fa fa-exchange"></i>@(Top referrers)</div>
+									<div class="caption"><i class="ti ti-exchange"></i>@(Top referers)</div>
 								</div>
 							</div>
 							<div class="row">
 								{{ foreach m in value }}
 								<div class="col-md-3 col-xs-6">
 									<div class="dashboard-referrer">
-										<div>{{ m.count | counter }}</div>
-										<div>{{ m.id }}</div>
+										<div>{{ m.value | counter }}</div>
+										<div>{{ m.name }}</div>
 									</div>
 								</div>
 								{{ end }}
@@ -279,15 +273,15 @@
 						<div class="panelbody">
 							<div class="row">
 								<div class="col-md-4">
-									<div class="caption"><i class="fa fa-desktop"></i>@(Top devices)</div>
+									<div class="caption"><i class="ti ti-desktop"></i>@(Top devices)</div>
 								</div>
 							</div>
 							<div class="row">
 								{{ foreach m in value }}
 								<div class="col-md-3 col-xs-6">
 									<div class="dashboard-referrer">
-										<div>{{ m.count | counter }}</div>
-										<div>{{ m.id }}</div>
+										<div>{{ m.value | counter }}</div>
+										<div>{{ m.name }}</div>
 									</div>
 								</div>
 								{{ end }}
@@ -303,6 +297,7 @@
 </ui-plugin>
 
 <script>
+
 	PLUGIN(function(exports) {
 
 		var interval, historystats, prevsource;
@@ -315,6 +310,8 @@
 
 		exports.refresh = function(el) {
 			el && el.find('i').aclass('ti-spin').rclass('ti-spin', 800);
+
+			interval && clearInterval(interval);
 			interval = setInterval(exports.getOnline, 4000);
 			exports.getOnline();
 
@@ -348,9 +345,6 @@
 						SETTER('barchart .dashboard.stats.devices', 'reconfigure', 'limit:' + (Math.ceil(internalstats.devices / 10000) * 10000));
 					}
 
-					exports.set('visitors', response.visitors || []);
-					delete response.visitors;
-
 					exports.set('stats.history', years);
 					years.length && exports.history(years.last());
 				});
@@ -362,8 +356,56 @@
 		};
 
 		exports.getOnline = function() {
+
+			if (common.page !== exports.name) {
+				clearInterval(interval);
+				interval = null;
+				return;
+			}
+
 			exports.tapi('dashboard_online', function(response) {
+
 				exports.set('stats.sources', [{ name: '@(Social networks)', value: response.social, id: 'social' }, { name: '@(Visitors from advert)', value: response.advert, id: 'advert' }, { name: '@(Organic search)', value: response.search, id: 'search' }, { name: '@(Direct visitors)', value: response.direct, id: 'direct' }, { name: '@(From unknown sources)', value: response.unknown, id: 'unknown' }]);
+
+				if (!response.visitors)
+					response.visitors = [];
+
+				for (var item of response.visitors) {
+					item.date = new Date();
+					if (item.ping) {
+						item.type = '@(Reading)';
+					} else {
+						switch (item.type) {
+							case 'browse':
+							case 'visitor':
+								item.type = '@(Browsing)';
+								break;
+							case 'advert':
+								item.newbie = true;
+								item.type = '@(From advert)';
+								break;
+							case 'search':
+								item.newbie = true;
+								item.type = '@(From search)';
+								break;
+							case 'social':
+								item.newbie = true;
+								item.type = '@(From social)';
+								break;
+							case 'direct':
+								item.newbie = true;
+								item.type = '@(Direct visitor)';
+								break;
+							case 'unknown':
+								item.newbie = true;
+								item.type = item.referer ? item.referer : '@(Referrer)';
+								break;
+						}
+					}
+				}
+
+				exports.set('visitors', response.visitors);
+				delete response.visitors;
 
 				var max = (response.mobile || 0) + (response.desktop || 0);
 				var mobile = 50;
@@ -383,25 +425,9 @@
 			clearInterval(interval);
 		};
 
-		exports.referrers = function(year) {
-			exports.tapi('dashboard_referrers' + (year ? ('?year=' + year) : ''), function(response) {
-
-				var ref = [];
-				var brw = [];
-
-				for (var i = 0; i < response.length; i++) {
-					var item = response[i];
-					item.count = item.sum;
-					if (item.id.charAt(0) === '!') {
-						item.id = item.id.substring(1);
-						brw.push(item);
-					} else
-						ref.push(item);
-				}
-
-				exports.set('stats.referrers', ref);
-				exports.set('stats.browsers', brw);
-			});
+		exports.referers = function(year) {
+			exports.tapi('dashboard_referers' + (year ? ('?year=' + year) : ''), 'stats.referers');
+			exports.tapi('dashboard_browsers' + (year ? ('?year=' + year) : ''), 'stats.browsers');
 		};
 
 		exports.history = function(el) {
@@ -433,7 +459,7 @@
 
 			exports.set('stats.sourcessum', source);
 			exports.set('stats.sourcesarr', sourcearr);
-			exports.referrers(year);
+			exports.referers(year);
 		};
 
 		exports.getStatsSum = function(year, names) {
@@ -481,10 +507,6 @@
 			prevsource.aclass('selected');
 		};
 
-		ON('visitor', function(data) {
-			SETTER('dashboardvisitors/add', data);
-		});
-
 	});
 
 	Thelpers.counter = function(value) {
@@ -528,83 +550,4 @@
 		return @(years + ' ' + Tangular.helpers.pluralize(years, 'years', 'year', 'years', 'years') + ' ago');
 	};
 
-	COMPONENT('dashboardvisitors', 'count:15', function(self, config, cls) {
-
-		var container, counter = 0, Tempty;
-
-		self.singleton();
-		self.nocompile();
-		self.readonly();
-
-		self.make = function() {
-
-			self.aclass(cls);
-			var el = self.find('script');
-
-			el.each(function(index) {
-				if (index)
-					Tempty = this.innerHTML;
-				else
-					self.template = Tangular.compile(this.innerHTML);
-			});
-
-			container = $(el.parent()[0]);
-			el.remove();
-
-			var builder = [];
-
-			for (var i = 0; i < config.count - 1; i++)
-				builder.push(Tempty);
-
-			counter = builder.length;
-			container.append(builder.join(''));
-		};
-
-		self.add = function(item) {
-
-			item.date = new Date();
-
-			if (item.ping)
-				item.type = '@(Reading)';
-			else {
-				switch (item.type) {
-					case 'browse':
-					case 'visitor':
-						item.type = '@(Browsing)';
-						break;
-					case 'advert':
-						item.newbie = true;
-						item.type = '@(From advert)';
-						break;
-					case 'search':
-						item.newbie = true;
-						item.type = '@(From search)';
-						break;
-					case 'social':
-						item.newbie = true;
-						item.type = '@(From social)';
-						break;
-					case 'direct':
-						item.newbie = true;
-						item.type = '@(Direct visitor)';
-						break;
-					case 'unknown':
-						item.newbie = true;
-						item.type = item.referer ? item.referer : '@(Referrer)';
-						break;
-				}
-			}
-
-			counter++;
-			container.prepend(self.template(item));
-			counter >= config.count && container.find('tr:last-child').remove();
-		};
-
-		self.setter = function(value, path) {
-			if (value) {
-				for (var i = 0; i < value.length; i++)
-					self.add(value[i]);
-			}
-		};
-	});
 </script>

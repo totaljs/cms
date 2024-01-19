@@ -1,14 +1,12 @@
-<ui-component name="box" path="common.form2" config="if:~PATH~;icon:ti ti-copy;title:@(Files);width:700;zindex:50" class="hidden ~PATH~" plugin="~PATH~">
+<ui-component name="box" path="common.form3" config="if:~PATH~;icon:ti ti-copy;title:@(List of files);width:780;zindex:50;scrollbar:0" class="hidden ~PATH~" plugin="~PATH~">
 	<nav>
-		<div class="mr10 pull-right">
-			<button class="exec" data-exec="?/upload"><i class="ti ti-cloud-upload"></i>@(Upload)</button>
-		</div>
+		<button class="exec" data-exec="?/upload"><i class="ti ti-cloud-upload"></i>@(Upload)</button>
 	</nav>
 	<div>
-		<ui-component name="datagrid" path="?.items" config="margin:93;noborder:1;click:?/submit;checkbox:0">
+		<ui-component name="datagrid" path="?.items" config="margin:176;height:window;noborder:1;click:?/submit;checkbox:0">
 			<script type="text/plain">
 				[
-					{ name: 'name', text: '@(Name)', width: 350 },
+					{ name: 'name', text: '@(Name)', width: 400, template: '<a href="/download/{{ id }}.{{ ext }}" target="_blank" class="mr5"><i class="ti ti-search"></i></a>{{ name }}' },
 					{ name: 'dimension', text: '@(Dimension)', width: 120, align: 1, monospace: 1, sort: false },
 					{ name: 'size', text: '@(Size)', width: 120, align: 2, alignheader: 2, template: '{{ size | filesize }}', monospace: 1, filter: false, class: 'gray' },
 				]
@@ -55,7 +53,7 @@
 
 		exports.submit = function(row, grid, row_el) {
 			row.url = '/download/' + row.id + '.' + row.ext;
-			meta.callback(row, () => NULL('common.form2'));
+			meta.callback(row, () => NULL('common.form3'));
 		};
 
 		exports.upload = function(e) {

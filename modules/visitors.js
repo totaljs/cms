@@ -23,6 +23,9 @@ W.lastvisit = null;
 W.social = ['plus.url.google', 'plus.google', 'twitter', 'facebook', 'linkedin', 'tumblr', 'flickr', 'instagram', 'vkontakte', 'snapchat', 'skype', 'whatsapp', 'wechat'];
 W.search = ['google', 'bing', 'yahoo', 'duckduckgo', 'yandex', 'seznam'];
 W.visitors = [];
+W.cache = {};
+W.cache.browsers = {};
+W.cache.referers = {};
 
 W.$blacklist = null;
 W.$blacklistlength = 0;
@@ -40,7 +43,7 @@ W.clean = function() {
 
 	if (W.index % 2 === 0) {
 		W.save();
-		W.hostname = getHostname(PREF.url);
+		W.hostname = getHostname(CONF.url);
 	}
 
 	NOW = new Date();
@@ -80,10 +83,32 @@ W.clean = function() {
 	arr[0] = tmp1;
 
 	if (tmp0 !== arr[0] || tmp1 !== arr[1]) {
-		var online = arr[0];
+		let online = arr[0];
 		if (online != W.last)
 			W.last = online;
 	}
+
+	if (W.index % 5 === 0) {
+
+		var date = +NOW.format('yyyyMM');
+		var year = NOW.getFullYear();
+		var month = NOW.getMonth() + 1;
+
+		for (let key in W.cache.browsers) {
+			let id = date + key.makeid();
+			DATA.modify('nosql/browsers', { id: id, name: key, '+count': W.cache.browsers[key], date: date, year: year, month: month }, true).id(id);
+		}
+
+		W.cache.browsers = {};
+
+		for (let key in W.cache.referers) {
+			let id = date + key.makeid();
+			DATA.modify('nosql/referers', { id: id, name: key, '+count': W.cache.referers[key], date: date, year: year, month: month }, true).id(id);
+		}
+
+		W.cache.referers = {};
+	}
+
 };
 
 W.increment = W.inc = function(type) {
@@ -98,9 +123,9 @@ W.checksum = function(value) {
 	return value + ((value + CONF.secret).hash(true) + '').substring(0, 5);
 };
 
-W.counter = function(req) {
+W.counter = function($) {
 
-	var h = req.headers;
+	var h = $.headers;
 	var agent = h['user-agent'];
 
 	if (!agent)
@@ -124,7 +149,7 @@ W.counter = function(req) {
 
 	NOW = new Date();
 
-	var meta = (req.query.id || '');
+	var meta = ($.query.id || '');
 
 	var metats = meta.substring(0, meta.length - 10);
 	var metaid = meta.substring(meta.length - 10, meta.length - 5);
@@ -135,7 +160,7 @@ W.counter = function(req) {
 		metaid = '';
 	}
 
-	req.visitorid = metaid || Math.random().toString(16).substring(2, 7);
+	$.visitorid = metaid || Math.random().toString(16).substring(2, 7);
 	var user = metats ? parseInt(metats, 16) : 0;
 	var ticks = NOW.getTime();
 	var sum = user ? (ticks - user) / 1000 : 1000;
@@ -152,7 +177,7 @@ W.counter = function(req) {
 
 	var exists = sum < 91;
 
-	req.visited = user;
+	$.visited = user;
 
 	if (user)
 		sum = Math.abs(W.current - user) / 1000;
@@ -162,13 +187,13 @@ W.counter = function(req) {
 		W.stats.hits++;
 
 	VISITOR = {};
-	VISITOR.id = req.visitorid;
+	VISITOR.id = $.visitorid;
 	VISITOR.unique = false;
 	VISITOR.ping = h['x-reading'] === '1';
-	VISITOR.browser = req.ua;
+	VISITOR.browser = $.ua;
 
 	if (exists) {
-		W.emitvisitor('browse', req);
+		W.emitvisitor('browse', $);
 		return meta;
 	}
 
@@ -178,8 +203,8 @@ W.counter = function(req) {
 		if (sum < TIMEOUT_VISITORS) {
 			W.arr[1]++;
 			W.lastvisit = NOW;
-			W.emitvisitor('visitor', req);
-			return W.checksum(ticks.toString(16) + req.visitorid);
+			W.emitvisitor('visitor', $);
+			return W.checksum(ticks.toString(16) + $.visitorid);
 		}
 
 		var date = new Date(user);
@@ -195,7 +220,7 @@ W.counter = function(req) {
 
 	if (VISITOR.unique) {
 		W.stats.unique++;
-		if (req.mobile)
+		if ($.mobile)
 			W.stats.mobile++;
 		else
 			W.stats.desktop++;
@@ -216,56 +241,67 @@ W.counter = function(req) {
 	W.stats.count++;
 	W.stats.visitors++;
 
-	if (req.query.utm_medium || req.query.utm_source) {
+	if ($.query.utm_medium || $.query.utm_source) {
 		W.stats.advert++;
-		W.emitvisitor('advert', req);
-		return W.checksum(ticks.toString(16) + req.visitorid);
+		W.emitvisitor('advert', $);
+		return W.checksum(ticks.toString(16) + $.visitorid);
 	}
 
 	VISITOR.referer = getHostname(h['x-referrer'] || h['x-referer'] || h.referer);
 
 	if (!VISITOR.referer || (W.hostname && VISITOR.referer.indexOf(W.hostname) !== -1)) {
 		W.stats.direct++;
-		W.emitvisitor('direct', req);
-		VISITOR.unique && VISITOR.browser && COUNTER(DBNAME).hit('!' + VISITOR.browser);
-		return W.checksum(ticks.toString(16) + req.visitorid);
+		W.emitvisitor('direct', $);
+		if (VISITOR.unique && VISITOR.browser) {
+			if (W.cache.browsers[VISITOR.browser])
+				W.cache.browsers[VISITOR.browser]++;
+			else
+				W.cache.browsers[VISITOR.browser] = 1;
+		}
+		return W.checksum(ticks.toString(16) + $.visitorid);
 	}
 
 	if (VISITOR.referer && VISITOR.unique) {
-		var counter = COUNTER(DBNAME);
-		counter.hit(VISITOR.referer);
-		VISITOR.browser && counter.hit('!' + VISITOR.browser);
+		if (W.cache.referers[VISITOR.referer])
+			W.cache.referers[VISITOR.referer]++;
+		else
+			W.cache.referers[VISITOR.referer] = 1;
+
+		if (W.cache.browsers[VISITOR.browser])
+			W.cache.browsers[VISITOR.browser]++;
+		else
+			W.cache.browsers[VISITOR.browser] = 1;
 	}
 
 	for (var i = 0, length = W.social.length; i < length; i++) {
 		if (VISITOR.referer.indexOf(W.social[i]) !== -1) {
 			W.stats.social++;
-			W.emitvisitor('social', req);
-			return W.checksum(ticks.toString(16) + req.visitorid);
+			W.emitvisitor('social', $);
+			return W.checksum(ticks.toString(16) + $.visitorid);
 		}
 	}
 
 	for (var i = 0, length = W.search.length; i < length; i++) {
 		if (VISITOR.referer.indexOf(W.search[i]) !== -1) {
 			W.stats.search++;
-			W.emitvisitor('search', req);
-			return W.checksum(ticks.toString(16) + req.visitorid);
+			W.emitvisitor('search', $);
+			return W.checksum(ticks.toString(16) + $.visitorid);
 		}
 	}
 
 	W.stats.unknown++;
-	W.emitvisitor('unknown', req);
-	return W.checksum(ticks.toString(16) + req.visitorid);
+	W.emitvisitor('unknown', $);
+	return W.checksum(ticks.toString(16) + $.visitorid);
 };
 
-W.emitvisitor = function(type, req) {
+W.emitvisitor = function(type, $) {
 
-	VISITOR.url = req.headers['x-ping'] || req.url;
-	VISITOR.ip = req.ip;
+	VISITOR.url = $.headers['x-ping'] || $.url;
+	VISITOR.ip = $.ip;
 	VISITOR.type = type;
 	VISITOR.online = W.arr[0] + W.arr[1];
-	VISITOR.mobile = req.mobile;
-	VISITOR.user = req.user ? (req.user.name || req.user.nick || req.user.alias) : req.query.utm_user;
+	VISITOR.mobile = $.mobile;
+	VISITOR.user = $.user ? ($.user.name || $.user.nick || $.user.alias) : $.query.utm_user;
 	VISITOR.dtcreated = NOW = new Date();
 	PUBLISH('visitor', VISITOR);
 
@@ -292,6 +328,7 @@ W.load = function() {
 	var filename = PATH.databases(FILE_CACHE);
 
 	Fs.readFile(filename, function(err, data) {
+
 		if (err)
 			return;
 
@@ -323,10 +360,7 @@ W.append = function() {
 			data[key] = stats[key];
 	}
 
-	if (!Object.keys(stats).length)
-		console.log('ERROR VISITORS --->', data, stats);
-
-	DB().modify('nosql/' + DBNAME, data, true).where('year', stats.year).where('month', stats.month).where('day', stats.day);
+	DATA.modify('nosql/' + DBNAME, data, true).where('year', stats.year).where('month', stats.month).where('day', stats.day);
 };
 
 W.daily = function(callback) {
@@ -467,12 +501,12 @@ exports.instance = W;
 exports.install = function() {
 	setTimeout(refresh_hostname, 10000);
 	ON('service', counter => counter % 120 === 0 && refresh_hostname());
-	ROUTE('/$visitors/', function() {
-		var r = W.counter(this.req, this.res);
+	ROUTE('GET /$visitors/', function($) {
+		var r = W.counter($);
 		if (r)
-			this.plain(r);
+			$.text(r);
 		else
-			this.empty();
+			$.empty();
 	});
 };
 
@@ -484,7 +518,7 @@ function isBlacklist(url) {
 }
 
 function refresh_hostname() {
-	var url = PREF.url || CONF.url || CONF.hostname;
+	var url = CONF.url || CONF.hostname;
 	W.hostname = getHostname(url);
 }
 
@@ -531,5 +565,5 @@ W.interval = setInterval(W.clean, 45000);
 W.load();
 
 ON('ready', function() {
-	W.hostname = getHostname(PREF.url);
+	W.hostname = getHostname(CONF.url);
 });

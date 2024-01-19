@@ -1,6 +1,6 @@
-<ui-component name="box" path="common.form" config="if:~PATH~;title:@(Source-code);icon:ti ti-laptop-code;autofocus:true;reload:?/reload;scrollbar:0;submit:?/submit;width:1600;zindex:30" class="hidden" plugin="~PATH~">
+<ui-component name="box" path="common.form2" config="if:~PATH~;title:@(Source-code);icon:ti ti-laptop-code;autofocus:true;reload:?/reload;scrollbar:0;submit:?/submit;width:1600;zindex:30" class="hidden" plugin="~PATH~">
 	<div>
-		<ui-component name="cloudeditor" path="?.html" config="parent:auto;$id:cloudeditor;contextmenu:?/menu"></ui-component>
+		<ui-component name="cloudeditor" path="?.content" config="parent:auto;$id:cloudeditor;contextmenu:?/menu"></ui-component>
 	</div>
 	<nav>
 		<button name="submit"><i class="ti ti-check-circle"></i>@(SUBMIT)</button>
@@ -15,7 +15,7 @@
 		var meta;
 
 		exports.init = function(opt, callback) {
-			exports.set({ html: { body: opt.html || '', type: 'clientside' }});
+			exports.set({ content: { body: opt.html || opt.code || opt.body || '', type: opt.type || 'clientside' }});
 			meta = opt;
 			if (callback)
 				meta.callback = callback;
@@ -24,7 +24,7 @@
 		exports.submit = function(hide) {
 			SETTER('#cloudeditor/save', function(value) {
 				hide();
-				meta.callback({ html: value }, hide);
+				meta.callback(value, hide);
 			});
 		};
 
@@ -62,7 +62,7 @@
 						SETTER('icons/show', opt);
 						break;
 					case 'upload':
-						SET('common.form2', 'formfiles');
+						SET('common.form3', 'formfiles');
 						EXEC(true, 'formfiles/init', {}, function(item, hide) {
 							SETTER('#cloudeditor/insert', item.url);
 							hide();

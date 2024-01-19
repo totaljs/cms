@@ -31,7 +31,9 @@
 			<button name="underline" title="@(Underline)"><i class="ti ti-underline"></i></button>
 			<button name="link" title="@(Make a link)"><i class="ti ti-link"></i></button>
 			<button name="icon" title="@(Add icon)"><i class="ti ti-icons"></i></button>
-			<button name="expression" title="@(Add expression)"><i class="ti ti-highlighter"></i></button>
+			<button name="span" title="@(Highlight)"><i class="ti ti-highlighter"></i></button>
+			<button name="code" title="@(Monospace)"><i class="ti ti-barcode-alt"></i></button>
+		<!-- <button name="expression" title="@(Add expression)"><i class="ti ti-highlighter"></i></button> -->
 		</nav>
 	</div>
 </script>
@@ -109,6 +111,8 @@
 					case 'italic':
 					case 'underline':
 					case 'expression':
+					case 'span':
+					case 'code':
 					case 'link':
 					case 'icon':
 						self['dom_' + name]();
@@ -257,7 +261,7 @@
 
 					// Not found
 					if (!widget) {
-						WARN('CMS widget not found:', meta.id, el);
+						WARN('Widget "{0}": not found'.format(meta.id), el);
 						el.remove();
 						continue;
 					}
@@ -755,7 +759,7 @@
 				else if (tag) {
 					var id = wrap && wrap.length ? wrap.attrd('cms').split('__')[0] : '';
 					var widget = id ? self.get().widgets.findItem('id', id) : null;
-					info.html(widget ? ('<span>' + widget.name.encode() + '</span>') : '');
+					info.html('<b>' + tag + '</b>' + (widget ? ('<span>' + widget.name.encode() + '</span>') : ''));
 				}
 
 				temporary.wrap = wrap;
@@ -1113,6 +1117,11 @@
 						config.widgetsource && self.EXEC(config.widgetsource, opt);
 						break;
 
+					case 'selectwidget':
+						var t = temporary.wrap || target;
+						t && $(t).trigger('click');
+						break;
+
 					case 'CMS_mh':
 					case 'CMS_mv':
 						var t = temporary.wrap || target;
@@ -1312,13 +1321,7 @@
 						var cattr = {};
 
 						cattr.isimage = tag === 'IMG';
-						cattr.config = targettmp.attrd('---');
-
-						if (cattr.config)
-							cattr.config = cattr.config.split('__')[2] || '';
-						else
-							cattr.config = null;
-
+						cattr.config = targettmp.attr('config') || null;
 						cattr.element = targettmp;
 						cattr.isconfig = cattr.config != null;
 						cattr.isiframe = tag === 'IFRAME';
@@ -1429,7 +1432,7 @@
 								try {
 									instance.compiled.save(config, meta.element);
 								} catch (e) {
-									WARN(instance.name + ': ' + e);
+									WARN('Widget "{0}".save(): {1}'.format(instance.name, e));
 								}
 							}
 							self.widget_config_stringify(meta.element, config);
@@ -1541,7 +1544,7 @@
 							return;
 						}
 
-						if (target.hclass('CMS_expression')) {
+						if (target.hclass('CMS_expression') || target.hclass('CMS_keyword') || target.hclass('CMS_monospace')) {
 							target.replaceWith(target.html());
 							return;
 						}
@@ -1575,7 +1578,7 @@
 							}
 						}
 
-						var repeatable;
+						var repeatable = null;
 
 						if (target.hclass('CMS_repeat'))
 							repeatable = target.parent();
@@ -1585,12 +1588,10 @@
 						temporary.history.push({ node: node, parent: parent, index: index });
 						undobutton.rclass('hidden');
 
-						if (repeatable) {
-							if (!repeatable.find('> .CMS_repeat').length) {
-								var w = repeatable.closest('.CMS_widget');
-								if (w && w.length)
-									w.remove();
-							}
+						if (repeatable && !repeatable[0].children.length) {
+							var w = repeatable.closest('.CMS_widget');
+							if (w && w.length)
+								w.remove();
 						}
 
 						self.iframe_toolbar().hide();
@@ -1642,7 +1643,7 @@
 							item.compiled = {};
 							(new Function('exports', scr)(item.compiled));
 						} catch (e) {
-							WARN(item.name + ': ' + e);
+							WARN('Widget "{0}" compilation: {1}'.format(item.name, e));
 							item.compiled = EMPTYOBJECT;
 						}
 					} else
@@ -1659,7 +1660,7 @@
 						widget.compiled.check(cms.config, el);
 						// self.widget_config_stringify(el, cms.config);
 					} catch (e) {
-						WARN(widget.name + ': ' + e);
+						WARN('Widget "{0}".check(): {1}'.format(widget.name, e));
 					}
 				}
 			});
@@ -1764,6 +1765,20 @@
 			a.replaceWith('<span class="CMS_remove CMS_expression">' + a.html() + '</span>');
 		};
 
+		self.dom_span = function() {
+			var url = '#exp' + Date.now().toString(36);
+			self.iframe_document().execCommand('CreateLink', false, url);
+			var a = target.find('a[href="{0}"]'.format(url));
+			a.replaceWith('<span class="CMS_remove CMS_keyword">' + a.html() + '</span>');
+		};
+
+		self.dom_code = function() {
+			var url = '#exp' + Date.now().toString(36);
+			self.iframe_document().execCommand('CreateLink', false, url);
+			var a = target.find('a[href="{0}"]'.format(url));
+			a.replaceWith('<code class="CMS_remove CMS_monospace">' + a.html() + '</code>');
+		};
+
 		self.dom_link = function() {
 
 			var url = '#link' + Date.now().toString(36);
@@ -1820,6 +1835,10 @@
 		};
 
 		self.backup = function(el) {
+
+			if (!el)
+				return;
+
 			var node = $(el);
 			var clone = el.clone();
 			var rem = 'CMS_selected CMS_operation';
@@ -1867,7 +1886,7 @@
 					var key = '<!-' + '-' + HASH(text).toString(36) + '-' + '->';
 					scripts.push({ id: key, html: text });
 					return key;
-				}).replace('</head>', '<link rel="stylesheet" href="/cmseditor/iframe.css" id="cmscsseditor" />' + (css.length ? ('<sty' + 'le id="cmscss">{0}</sty' + 'le>').format(css.join('')) : '') + '</head>').replace('</body>', '<div id="CMS_panel" class="invisible"><div id="CMS_panel_buttons_move"><span class="ti ti-arrow-up" data-name="up" title="@(Move up)"></span><span class="ti ti-arrow-down" data-name="down" title="@(Move down)"></span></div><div id="CMS_panel_buttons_reposition"><span class="ti ti-chevron-up" data-name="up2" title="@(Move up current repeated element)"></span><span class="ti ti-chevron-down" data-name="down2" title="@(Move down current repeated element)"></span></div><div id="CMS_panel_info"></div><div class="CMS_panel_buttons"><span class="ti ti-pencil" title="@(Edit)" data-name="edit"></span><span class="ti ti-openai" title="@(Generate via AI)" data-name="generate"></span><span class="ti ti-cog-alt" title="@(Widget settings)" data-name="settings"></span><span class="ti ti-link" title="@(Change link)" data-name="link"></span><span class="ti ti-quote-left" title="@(Change attributes)" data-name="attribute"></span><span class="ti ti-copy" title="@(Duplicate)" data-name="repeat"></span></span><span class="ti ti-plus-circle" title="@(Add a widget)" data-name="widgets"></span><span class="ti ti-trash" title="@(Remove)" data-name="remove"></span><span class="ti ti-caret-square-down" title="@(Hide)" data-name="hide"></span></div><div id="CMS_panel_buttons_copy"><span class="ti ti-paste" data-name="paste" title="@(Paste widget)"></span><span class="ti ti-copy" data-name="copy" title="@(Copy widget)"></span></div><div id="CMS_panel_buttons_body"><span class="ti ti-arrows-v" data-name="CMS_mv" title="@(Toggle vertical margin)"></span><span class="ti ti-arrows-h" data-name="CMS_mh" title="@(Toggle horizontal margin)"></span><span class="ti ti-code" data-name="sourcecode" title="@(Source code)"></span></div></div></body>'));
+				}).replace('</head>', '<link rel="stylesheet" href="/cmseditor/iframe.css" id="cmscsseditor" />' + (css.length ? ('<sty' + 'le id="cmscss">{0}</sty' + 'le>').format(css.join('')) : '') + '</head>').replace('</body>', '<div id="CMS_panel" class="invisible"><div id="CMS_panel_buttons_move"><span class="ti ti-arrow-up" data-name="up" title="@(Move up)"></span><span class="ti ti-arrow-down" data-name="down" title="@(Move down)"></span></div><div id="CMS_panel_buttons_reposition"><span class="ti ti-chevron-up" data-name="up2" title="@(Move up current repeated element)"></span><span class="ti ti-chevron-down" data-name="down2" title="@(Move down current repeated element)"></span></div><div id="CMS_panel_info"></div><div class="CMS_panel_buttons"><span class="ti ti-pencil" title="@(Edit)" data-name="edit"></span><span class="ti ti-openai" title="@(Generate via AI)" data-name="generate"></span><span class="ti ti-cog-alt" title="@(Widget settings)" data-name="settings"></span><span class="ti ti-link" title="@(Change link)" data-name="link"></span><span class="ti ti-quote-left" title="@(Change attributes)" data-name="attribute"></span><span class="ti ti-copy" title="@(Duplicate)" data-name="repeat"></span></span><span class="ti ti-plus-circle" title="@(Add a widget)" data-name="widgets"></span><span class="ti ti-trash" title="@(Remove)" data-name="remove"></span><span class="ti ti-caret-square-down" title="@(Hide)" data-name="hide"></span></div><div id="CMS_panel_buttons_copy"><span class="ti ti-paste" data-name="paste" title="@(Paste widget)"></span><span class="ti ti-copy" data-name="copy" title="@(Copy widget)"></span></div><div id="CMS_panel_buttons_body"><span class="ti ti-arrows-v" data-name="CMS_mv" title="@(Toggle vertical margin)"></span><span class="ti ti-arrows-h" data-name="CMS_mh" title="@(Toggle horizontal margin)"></span><span class="ti ti-code" data-name="sourcecode" title="@(Source code)"></span><span class="ti ti-selection" data-name="selectwidget" title="@(Select widget)"></span></div></div></body>'));
 
 				var body = self.iframe_body();
 
