@@ -11,11 +11,16 @@
 	// Optional
 	exports.render = function(opt, next) {
 
-		// opt.config
+		// opt.config {Object}
 		// opt.id {String}            // widget identifier
 		// opt.body {String}          // the whole HTML body
 		// opt.html {String}          // widget HTML body
 		// opt.template {String}      // widget <template> body
+		// opt.vars {Object}          // global variables key {String}:value {String}
+		// opt.ua {Object}            // parsed user-agent { os: 'Mac', browser: 'Chrome', device: 'desktop' }
+		// opt.user {Object}          // a user instance (optional)
+		// opt.mobile {Boolean}       // is it a mobile device?
+		// opt.robot {Boolean}        // is it a robot?
 
 		// next(newcontent, [replace], [cache]);
 		// @newcontent {String} required
