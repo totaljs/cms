@@ -69,7 +69,7 @@ NEWACTION('Widgets/save', {
 
 			if (item.ref.install) {
 				try {
-					item.ref.install.call(cms);
+					item.ref.install.call(cms, cms);
 				} catch (e) {
 					// what next?
 					console.log('install', e);
@@ -107,7 +107,7 @@ NEWACTION('Widgets/save', {
 
 			if (model.ref.install) {
 				try {
-					model.ref.install.call(cms);
+					model.ref.install.call(cms, cms);
 				} catch (e) {
 					// what next?
 					console.log('install', e);
