@@ -23,6 +23,6 @@ ON('ready', function() {
 
 	// UI components
 	COMPONENTATOR('ui', 'locale,aselected,fileuploader,exec,page,viewbox,navlayout,extend,crop,form,importer,input,box,validate,loading,selected,intranetcss,prompt,notify,message,errorhandler,empty,menu,autofill,enter,dropfiles,breadcrumb,virtualwire,noscrollbar,preview,miniform,datagrid,filebrowser,approve,shortcuts,searchdata,search,searchinput,display,selection,children,icons,directory,colorpicker,cloudeditor,tangular-filesize,textboxlist,datepicker,cloudeditorsimple,ready,listing,keyvalue,configuration,donutchart,statsbarsimple,stats24,barchart,clipboard,edit,choose,imageviewer', true);
-	COMPONENTATOR('webui', 'exec,errorhandler,locale,uibuilder,uistudio,directory,message,approve,datepicker,menu,icons,input,imageviewer', true);
+	COMPONENTATOR('webui', 'exec,errorhandler,locale,uibuilder,uistudio,directory,message,approve,datepicker,menu,icons,input,imageviewer,mobilecarousel', true);
 
 });
