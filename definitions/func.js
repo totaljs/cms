@@ -178,7 +178,7 @@ FUNC.unload = function(callback) {
 	for (var item of value.widgets) {
 		if (item.ref.uninstall) {
 			try {
-				item.ref.uninstall.call(value);
+				item.ref.uninstall.call(value, value);
 			} catch (e) {
 				// what next?
 				console.log('uninstall', e);
@@ -245,7 +245,7 @@ FUNC.load = function(callback) {
 		for (var item of value.widgets) {
 			if (item.ref.install) {
 				try {
-					item.ref.install.call(value);
+					item.ref.install.call(value, value);
 				} catch (e) {
 					// what next?
 					console.log('install', e);

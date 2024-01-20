@@ -57,7 +57,7 @@ NEWACTION('Widgets/save', {
 
 			if (item.ref && item.ref.uninstall) {
 				try {
-					item.ref.uninstall.call(cms);
+					item.ref.uninstall.call(cms, cms);
 				} catch (e) {
 					// what next?
 					console.log('uninstall', e);
@@ -126,17 +126,30 @@ NEWACTION('Widgets/remove', {
 	permissions: 'widgets',
 	action: function($) {
 
+		var db = MAIN.db;
 		var id = $.params.id;
-		var index = MAIN.db.widgets.findIndex('id', id);
+		var index = db.widgets.findIndex('id', id);
 		if (index !== -1) {
-			var widget = MAIN.db.widgets[index];
+			var widget = db.widgets[index];
 
-			if (widget.ref && widget.ref.preview && widget.ref.preview.startsWith('/download/')) {
-				var id = widget.ref.preview.substring(10, widget.ref.preview.lastIndexOf('.'));
-				id && MAIN.db.fs.remove(id);
+			if (widget.ref) {
+
+				if (widget.ref.uninstall) {
+					try {
+						widget.ref.uninstall.call(db, db);
+					} catch (e) {
+						// what next?
+						console.log('uninstall', e);
+					}
+				}
+
+				if (widget.ref.preview && widget.ref.preview.startsWith('/download/')) {
+					var id = widget.ref.preview.substring(10, widget.ref.preview.lastIndexOf('.'));
+					id && db.fs.remove(id);
+				}
 			}
 
-			MAIN.db.widgets.splice(index, 1);
+			db.widgets.splice(index, 1);
 			$.success();
 			FUNC.refresh();
 			FUNC.save();
