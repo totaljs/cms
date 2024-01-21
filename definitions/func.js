@@ -24,6 +24,8 @@ FUNC.recompile = function(item) {
 
 	var uid = item.ref.id.slug().replace(/\-/g, '');
 
+	meta.cls = uid;
+
 	if (meta.css)
 		meta.css = meta.css.replace(REG_CLASS, 'w-' + uid);
 
