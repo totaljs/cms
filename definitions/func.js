@@ -12,6 +12,7 @@ FUNC.recompile = function(item) {
 		if (metadata.length) {
 			try {
 				(new Function('exports', metadata.join('\n')))(item.ref);
+				console.log(e + '', metadata.join('\n'));
 			} catch (e) {
 				console.log(e + '', metadata.join('\n'));
 			}
