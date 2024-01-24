@@ -15,14 +15,14 @@ NEWACTION('Files/list', {
 NEWACTION('Files/insert', {
 	name: 'Insert files',
 	query: 'name:String',
-	input: 'data:Base64',
+	input: 'data:DataURI',
 	action: function($, model) {
 		var response = [];
 
 		// Base64
 		if (model.data) {
 
-			var data = model.data.parseDataURI();
+			var data = model.data;
 			var ext;
 
 			switch (data.type) {
@@ -46,8 +46,9 @@ NEWACTION('Files/insert', {
 			meta.type = data.type;
 			meta.ext = ext;
 			meta.name = ($.query.name || (U.random_string(10) + '_base64')).replace(/\.[0-9a-z]+$/i, '').max(40) + '.' + ext;
+			meta.url = '/download/' + meta.id + '.' + meta.ext;
 			response.push(meta);
-			MAIN.db.fs.save(meta.id, meta.name, data.buffer, () => $.callback(response), { public: 1 });
+			MAIN.db.fs.save(meta.id, meta.name, data.buffer, { public: 1 }, () => $.callback(response));
 
 		} else {
 			$.files.wait(function(file, next) {
@@ -57,6 +58,7 @@ NEWACTION('Files/insert', {
 				meta.type = file.type;
 				meta.ext = file.ext;
 				meta.size = file.size;
+				meta.url = '/download/' + meta.id + '.' + meta.ext;
 				response.push(meta);
 				file.fs(MAIN.id, meta.id, { public: 1 }, next);
 			}, () => $.callback(response));

@@ -18,7 +18,7 @@ exports.install = function() {
 };
 
 function checkmeta(meta) {
-	return meta.custom && (meta.custom.public === true || meta.custom.public === 1);
+	return meta.custom && meta.custom.public ? true : false;
 }
 
 function files($) {

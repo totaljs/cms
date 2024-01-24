@@ -133,6 +133,7 @@
 				common.ready = true;
 			DEF.api = common.api + openplatform;
 			ENV('upload', common.api + 'upload/' + openplatform);
+			ENV('uploadbase64', common.api + 'upload/base64/' + openplatform);
 			common.openplatform = openplatform;
 			$('body').rclass('invisible', 200);
 		})();
