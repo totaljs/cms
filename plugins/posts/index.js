@@ -5,13 +5,13 @@ exports.permissions = [{ id: 'posts', name: 'Posts' }];
 exports.visible = user => user.sa || user.permissions.includes('posts');
 
 exports.install = function() {
-	ROUTE('+API    /admin/    -posts                --> Posts/list');
-	ROUTE('+API    /admin/    -posts_read/{id}      --> Posts/read');
-	ROUTE('+API    /admin/    +posts_create         --> Posts/create');
-	ROUTE('+API    /admin/    +posts_update/{id}    --> Posts/update');
-	ROUTE('+API    /admin/    -posts_remove/{id}    --> Posts/remove');
-	ROUTE('+API    /admin/    -posts_clear          --> Posts/clear');
-	ROUTE('+API    /admin/    -posts_categories     --> Posts/categories');
+	ROUTE('+API    ?    -posts                 --> Posts/list');
+	ROUTE('+API    ?    -posts_read/{id}       --> Posts/read');
+	ROUTE('+API    ?    +posts_create          --> Posts/create');
+	ROUTE('+API    ?    +posts_update/{id}     --> Posts/update');
+	ROUTE('+API    ?    -posts_remove/{id}     --> Posts/remove');
+	ROUTE('+API    ?    -posts_clear           --> Posts/clear');
+	ROUTE('+API    ?    -posts_categories      --> Posts/categories');
 };
 
 ON('reload', function() {

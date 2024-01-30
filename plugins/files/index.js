@@ -6,14 +6,14 @@ exports.visible = user => user.sa || user.permissions.includes('files');
 
 exports.install = function() {
 
-	ROUTE('+POST    /admin/upload/          @upload <10MB    --> Files/insert');
-	ROUTE('+POST    /admin/upload/base64/           <10MB    --> Files/insert');
+	ROUTE('+POST    ?/upload/          @upload <10MB    --> Files/insert');
+	ROUTE('+POST    ?/upload/base64/           <10MB    --> Files/insert');
 
 	ROUTE('FILE     /download/*.*', files);
 
-	ROUTE('+API     /admin/    -files_list           --> Files/list');
-	ROUTE('+API     /admin/    -files_clear          --> Files/clear');
-	ROUTE('+API     /admin/    -files_remove/{id}    --> Files/remove');
+	ROUTE('+API     ?    -files_list           --> Files/list');
+	ROUTE('+API     ?    -files_clear          --> Files/clear');
+	ROUTE('+API     ?    -files_remove/{id}    --> Files/remove');
 
 };
 

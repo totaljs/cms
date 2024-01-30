@@ -112,8 +112,7 @@
 		common.name = document.title;
 		common.openplatform = NAV.query.openplatform || '';
 		common.plugins = PARSE('#pluginsdata');
-		common.api = '/admin/';
-		common.root = '/admin/';
+		common.api = common.root = '@{CONF.$api}';
 		common.redirect = REDIRECT;
 
 		ENV('margin', 60);
@@ -229,7 +228,7 @@
 			};
 
 			exports.logout = function() {
-				exports.ajax('GET @{#}/admin/logout/ ERROR', () => location.href = '/admin/');
+				exports.ajax('GET @{#}{0}logout/ ERROR'.format(model.root), () => location.href = model.root);
 			};
 
 			ON('service', function(counter) {

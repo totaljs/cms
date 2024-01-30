@@ -6,12 +6,12 @@ exports.visible = user => user.sa || user.permissions.includes('layouts');
 exports.import = 'routes.html';
 
 exports.install = function() {
-	ROUTE('+API    /admin/    -layouts_read/{id}          --> Layouts/read');
-	ROUTE('+API    /admin/    -layouts_clone/{id}         --> Layouts/clone');
-	ROUTE('+API    /admin/    -layouts_html/{id}          --> Layouts/HTML/read');
-	ROUTE('+API    /admin/    -layouts_remove/{id}        --> Layouts/remove');
-	ROUTE('+API    /admin/    -layouts_list               --> Layouts/list');
-	ROUTE('+API    /admin/    +layouts_import             --> Layouts/import');
-	ROUTE('+API    /admin/    +layouts_save_html    <5MB  --> Layouts/HTML/save');
-	ROUTE('+API    /admin/    +layouts_save               --> Layouts/save');
+	ROUTE('+API    ?    -layouts_read/{id}          --> Layouts/read');
+	ROUTE('+API    ?    -layouts_clone/{id}         --> Layouts/clone');
+	ROUTE('+API    ?    -layouts_html/{id}          --> Layouts/HTML/read');
+	ROUTE('+API    ?    -layouts_remove/{id}        --> Layouts/remove');
+	ROUTE('+API    ?    -layouts_list               --> Layouts/list');
+	ROUTE('+API    ?    +layouts_import             --> Layouts/import');
+	ROUTE('+API    ?    +layouts_save_html    <5MB  --> Layouts/HTML/save');
+	ROUTE('+API    ?    +layouts_save               --> Layouts/save');
 };
