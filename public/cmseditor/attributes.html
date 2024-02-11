@@ -16,9 +16,11 @@
 </style>
 
 <ui-component name="box" path="cmseditor.form" config="if:~PATH~;width:780;autofocus:true;submit:?/submit;icon:quote-left;title:@(Attributes editor)" class="hidden" plugin="~PATH~">
-
+	<nav>
+		<button class="exec" data-exec="?/copy"><i class="ti ti-copy"></i>@(Copy)</button>
+		<button class="exec" data-exec="?/paste"><i class="ti ti-paste"></i>@(Paste)</button>
+	</nav>
 	<div>
-
 		<div class="padding bg-smoke npb">
 			<div class="row">
 				<div class="col-md-4 m">
@@ -85,9 +87,7 @@
 				<div class="mt10 fs12"><span class="link exec" data-exec="?/files"><i class="ti ti-folder mr5"></i>@(Browse files)</span></div>
 			</div>
 		</ui-bind>
-
 	</div>
-
 	<nav>
 		<ui-component name="validate" path="?">
 			<button name="submit"><i class="ti ti-check-circle"></i>@(APPLY)</button>
@@ -101,10 +101,25 @@
 
 	PLUGIN(function(exports) {
 
+		var backup = null;
+
 		exports.id = function() {
 			var model = exports.model;
 			var opt = model;
 			exports.set('id', opt.element.text().slug());
+		};
+
+		exports.copy = function() {
+			var model = exports.model;
+			backup = { config: model.config, css: model.css, cls: model.cls, title: model.title, src: model.src, datawidth: model.datawidth, dataheight: model.dataheight, datasize: model.datasize, databg: model.databg };
+			SETTER('notify/success', '@(Copied)');
+		};
+
+		exports.paste = function() {
+			if (backup) {
+				exports.extend(backup);
+				SETTER('notify/success', '@(Done)');
+			}
 		};
 
 		exports.submit = function(hide) {

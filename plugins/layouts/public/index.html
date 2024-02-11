@@ -37,10 +37,6 @@
 												{{ if m.icon }}<i class="{{ m.icon }} icon mr15"></i>{{ fi }}
 												<b>{{ m.name }}</b>
 											</div>
-											<div class="badges">
-												{{ if m.modified }}<span class="badge modified">@(Modified)</span>{{ fi }}
-												{{ if m.newbie }}<span class="badge newbie">@(Newbie)</span>{{ fi }}
-											</div>
 											<div class="controls">
 												<span class="gray mr15 date">{{ m.dtupdated | empty(m.dtcreated) | format('[ts]') }}</span>
 												<span class="exec mr10" data-exec="?/edit" data-prevent="true"><i class="ti ti-pencil"></i></span>

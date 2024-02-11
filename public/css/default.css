@@ -115,12 +115,12 @@ header > .account { padding-right: 10px; }
 .listing3 figure:last-child section .color-border { border-radius: 0 0 0 var(--radius); }
 
 .listing4 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-.listing4 figure { position: relative; border: 1px solid #eaeaea; background-color: #fff; padding: 20px; border-radius: var(--radius); }
+.listing4 figure { position: relative; border: 1px solid #eaeaea; background-color: #fff; padding: 10px 20px; border-radius: var(--radius); }
 .listing4 figure .icon { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius); background-color: #eaeaea; }
 .listing4 figure .color-border { position: absolute; top: 0; left: 0; height: 4px; width: 100%; border-radius: var(--radius) var(--radius) 0 0; }
-.listing4 figure .listing-header { height: 28px; display: flex; align-items: center; margin-bottom: 20px; }
+.listing4 figure .listing-header { height: 28px; display: flex; align-items: center; margin-bottom: 5px; }
 .listing4 figure .badges { position: absolute; right: 20px; top: 24px; }
-.listing4 figure .controls { color: gray; border-top: 1px solid #eaeaea; padding-top: 12px; display: flex; align-items: center; }
+.listing4 figure .controls { color: #888; border-top: 1px solid #eaeaea; padding-top: 10px; display: flex; align-items: center; }
 .listing4 figure .controls i:hover { color: #333; }
 .listing4 figure .date { font-size: 12px; margin-right: auto; }
 
@@ -159,3 +159,19 @@ header > a { float: left; width: 60px; height: 40px; line-height: 39px; text-ali
 
 .heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
 .heading h3 { margin: 0; }
+
+.ui-miniform-title { padding: 10px 15px 18px 20px; font-size: 18px; user-select: none; color: #000; background-color: #FFF; border-bottom: 1px solid #E0E0E0; height: 58px; border-radius: var(--radius) var(--radius) 0 0; line-height: 14px; }
+.ui-miniform-title .ui-miniform-button-close { float: right; cursor: pointer; font-size: 18px; margin: 10px 0 0; transition: all 0.2s; background: none; border: 0; outline: 0; height: auto; color: red; text-align: right !important; width: 20px; padding: 0; }
+.ui-miniform-title .ui-miniform-button-close:hover { transform: scale(1.1); }
+.ui-miniform-title > i { float: left; margin: 11px 7px 0 0; }
+.ui-miniform-title span { float: left; margin-top: 14px; }
+
+.ui-miniform-title > nav { float: right; margin: 5px 18px 0 0; font-size: 14px; }
+.ui-miniform-title > nav button { border: 0; margin: 0; background-color: #F0F0F0; height: 28px; padding: 0 10px; color: #000; cursor: pointer; font-family: Arial; line-height: 23px; vertical-align: middle; outline: 0; font-size: 12px; text-decoration: none; transition: all 0.3s; float: left; border-left: 1px solid #E0E0E0; }
+.ui-miniform-title > nav button i { width: 12px; text-align: center; margin-right: 5px; }
+.ui-miniform-title > nav button:hover { opacity: 0.8; }
+.ui-miniform-title > nav button:active { background-color: #D0D0D0; }
+.ui-miniform-title > nav button:disabled { background-color: #F5F5F5 !important; border-color: #E0E0E0 !important; color: silver !important; cursor: not-allowed; miniform-shadow: none; }
+.ui-miniform-title > nav button:disabled i { color: silver !important; }
+.ui-miniform-title > nav button:first-child { border-top-left-radius: var(--radius); border-bottom-left-radius: var(--radius); border-left: 0; }
+.ui-miniform-title > nav button:last-child { border-top-right-radius: var(--radius); border-bottom-right-radius: var(--radius); }

@@ -182,6 +182,7 @@ NEWACTION('Pages/HTML/read', {
 				var obj = {};
 				obj.name = item.name;
 				obj.html = buffer ? buffer.toString('utf8') : '';
+				obj.url = item.url;
 				if (item.layoutid) {
 					db.fs.readbuffer(item.layoutid, function(err, buffer) {
 						obj.layout = buffer ? buffer.toString('utf8') : '';

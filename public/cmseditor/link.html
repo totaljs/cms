@@ -1,8 +1,10 @@
 <ui-component name="miniform" path="cmseditor.form" config="if:~PATH~;width:600;autofocus:1;height:450;submit:?/submit;cancel:?/cancel;reload:?/reload;title:@(Link editor);icon:link" class="hidden" plugin="~PATH~">
-	<div >
+	<div>
 		<div class="padding">
-			<ui-component name="input" path="?.href" config="icon:globe;dirsource:%cmseditorlinks;dirvalue:url;dircustom:1;dirplaceholder:@(Search or enter new);required:true">@(URL address)</ui-component>
+			<!-- <ui-component name="input" path="?.href" config="icon:globe;dirsource:%cmseditorlinks;dirvalue:url;dircustom:1;dirplaceholder:@(Search or enter new);required:1">@(URL address)</ui-component> -->
+			<ui-component name="input" path="?.href" config="icon:globe;required:1">@(URL address)</ui-component>
 			<div class="m mt10 fs12">
+				<span class="link exec mr10" data-exec="?/find"><i class="ti ti-search mr5"></i>@(Find page)</span>
 				<span class="link exec mr10" data-exec="?/files" data-type="upload"><i class="ti ti-folder mr5"></i>@(Browse files)</span>
 				<span class="link exec mr10" data-exec="?/type" data-type="email"><i class="ti ti-envelope mr5"></i>@(Email)</span>
 				<span class="link exec" data-exec="?/type" data-type="phone"><i class="ti ti-phone mr5"></i>@(Phone number)</span>
@@ -12,32 +14,64 @@
 			<ui-component name="input" path="?.alllinks" config="type:checkbox">@(Apply on all links in the parent container)</ui-component>
 		</div>
 	</div>
-
 	<nav>
 		<ui-component name="validate" path="?">
 			<button name="submit"><i class="ti ti-check-circle"></i>@(APPLY)</button>
 			<button name="cancel">@(Cancel)</button>
 		</ui-component>
 	</nav>
-
 </ui-component>
 
 <script>
 
 	PLUGIN(function(exports) {
 
+		var isbutton = false;
+		var backup = null;
+
 		exports.watch('href', function(value, path, type) {
-			if (type === 2 && value.length > 12 && (/^(http|https)\:\/\//i).test(value) && exports.model.target !== '_blank')
+			if (type === 2 && value && value.length > 12 && (/^(http|https)\:\/\//i).test(value) && exports.model.target !== '_blank')
 				exports.set('target', '_blank');
 		}, true);
 
-		exports.reload = function() {
+		exports.reload = function(com) {
+
+			if (!isbutton && com) {
+				isbutton = true;
+				com.find('.ui-miniform-title').append('<nav><button class="exec" data-exec="?/copy"><i class="ti ti-copy"></i>@(Copy)</button><button class="exec" data-exec="?/paste"><i class="ti ti-paste"></i>@(Paste)</button></nav>');
+			}
+
 			var model = exports.model;
 			var path = '%cmseditorlinks';
 			var config = model.instance.config;
 			config.links && model.instance.EXEC(config.links, function(response) {
 				SET(path, response);
 			})
+		};
+
+		exports.copy = function() {
+			var model = exports.model;
+			backup = { href: model.href, alllinks: model.alllinks, title: model.title, target: model.target };
+			SETTER('notify/success', '@(Copied)');
+		};
+
+		exports.paste = function() {
+			if (backup) {
+				exports.extend(backup);
+				SETTER('notify/success', '@(Done)');
+			}
+		};
+
+		exports.find = function(el) {
+			var model = exports.model;
+			var opt = {};
+			opt.element = el;
+			opt.offsetWidth = 490;
+			opt.items = GET('%cmseditorlinks');
+			opt.callback = function(selected) {
+				exports.set('href', selected.url);
+			};
+			SETTER('directory/show', opt);
 		};
 
 		exports.files = function() {

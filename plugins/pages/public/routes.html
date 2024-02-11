@@ -3,6 +3,7 @@
 		TAPI('pages_html/' + id + ' ERROR', function(response) {
 
 			var opt = {};
+			opt.url = response.url;
 			opt.name = response.name;
 			opt.html = response.html;
 			opt.layout = response.layout.replace(new RegExp('<scri' + 'pt\\b[^<]*(?:(?!<\\/scr' + 'ipt>)<[^<]*)*<\\/scr' + 'ipt>', 'gi'), '');

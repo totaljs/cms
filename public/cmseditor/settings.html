@@ -11,6 +11,10 @@
 </script>
 
 <ui-component name="box" path="cmseditor.form" config="if:~PATH~;width:800;visibleY:1;icon:ti ti-cog-alt;submit:~PATH~/submit;$id:~PATH~" class="hidden invisible">
+	<nav>
+		<button class="exec" data-exec="~PATH~/copy"><i class="ti ti-copy"></i>@(Copy)</button>
+		<button class="exec" data-exec="~PATH~/paste"><i class="ti ti-paste"></i>@(Paste)</button>
+	</nav>
 	<div id="cmseditor_settings"></div>
 	<nav>
 		<ui-component name="validate" path="settings" config="$id:cmssettingsformvalidation">
@@ -28,13 +32,40 @@
 		var initialized_settings = {};
 		var settings_current;
 		var settings_data;
+		var settings_path;
 		var checksum = {};
+		var backup;
 
 		exports.clear = function(id) {
 			id = 'cmssettings_w' + id;
 			if (initialized_settings[id]) {
 				$('#' + id).remove();
 				delete initialized_settings[id];
+			}
+		};
+
+		exports.copy = function() {
+			var model = GET(settings_path);
+			backup = CLONE(model);
+			SETTER('notify/success', '@(Copied)');
+		};
+
+		exports.paste = function() {
+			if (backup) {
+
+				var model = GET(settings_path);
+				var extend = {};
+				var is = false;
+
+				for (var key in model) {
+					if (backup[key] != null) {
+						extend[key] = backup[key];
+						is = true;
+					}
+				}
+
+				is && EXTEND(settings_path + ' @change', extend);
+				SETTER('notify/success', '@(Done)');
 			}
 		};
 
@@ -77,6 +108,8 @@
 			var config = CLONE(meta.config);
 			var path = 'cmseditor.settings.' + widget.id;
 			var opt = {};
+
+			settings_path = path;
 
 			opt.widget = widget;
 			opt.element = meta.element;

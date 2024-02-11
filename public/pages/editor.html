@@ -1,6 +1,9 @@
 <div class="virtualwire hidden" data-if="CLASS">
-	<button class="exec b" data-exec="CLASS/save"><i class="ti ti-check-circle"></i>@(Save)</button>
-	<button class="exec" data-exec="CLASS/close">@(Cancel)</button>
+	<div class="pull-left mr10" style="line-height:28px"><a href="" target="_blank" id="CLASSpreview"><i class="ti ti-eye mr5"></i>@(Preview)</a></div>
+	<div class="pull-right">
+		<button class="exec b" data-exec="CLASS/save"><i class="ti ti-check-circle"></i>@(Save)</button>
+		<button class="exec" data-exec="CLASS/close">@(Cancel)</button>
+	</div>
 </div>
 
 <ui-plugin>
@@ -137,6 +140,7 @@
 				widgets.quicksort('name');
 				exports.set({ name: opt.name, ready: true, html: { html: opt.html, layout: opt.layout, type: opt.type, widgets: widgets }});
 			});
+			$('#{name}preview'.args(exports)).tclass('hidden', !opt.url).attr('href', opt.url || '');
 		};
 
 		exports.close = function() {
