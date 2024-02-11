@@ -156,7 +156,7 @@
 			{{ end }}
 			</script>
 		</nav>
-		<div>© 2023 Total.js Platform / <a href="https://www.totaljs.com/cms/">Total.js Pages</a></div>
+		<div>&copy;@{year} Total.js Platform / <a href="https://www.totaljs.com/cms/">Total.js Pages</a></div>
 		<div class="mt10"><a href="https://european-union.europa.eu" target="_blank"><img src="https://cdn.componentator.com/eu.png" style="width:70px" alt="Made in Europe" border="0" class="img-rounded"></a></div>
 	</footer>
 
