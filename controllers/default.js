@@ -1,7 +1,7 @@
 const REG_META = /<\/head>/;
 const REG_UI = /@\{ui\}/i;
 const REG_YEAR = /@\{year\}/i;
-const REG_VARS = /$[a-d0-9-_]+/i;
+const REG_VARS = /\$[a-z0-9A-Z]+/g;
 
 exports.install = function() {
 	ROUTE('+GET /admin/*', admin);
