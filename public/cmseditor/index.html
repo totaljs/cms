@@ -475,6 +475,7 @@
 			var content = self.iframe_body().clone(true);
 			content.find('[contenteditable]').rattr('contenteditable');
 			content.find('.CMS_selected').rclass('CMS_selected');
+			content.find('.CMS_operation').rclass('CMS_operation');
 			return (content.find('#CMS').html() || '').trim().replace(/&nbsp;/g, ' ').replace(offsetter, '');
 		};
 
@@ -485,6 +486,7 @@
 			content.find('.CMS_preview').rclass('CMS_preview');
 			content.find('[contenteditable]').rattr('contenteditable');
 			content.find('.CMS_selected').rclass('CMS_selected');
+			content.find('.CMS_operation').rclass('CMS_operation');
 			content.find('.CMS_edit:empty,.CMS_remove:empty,.CMS_widgets:empty').each(function() {
 				var tag = this.nodeName;
 				if (tag !== 'IMG' && tag !== 'IFRAME') {
