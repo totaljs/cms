@@ -1,13 +1,13 @@
 exports.install = function() {
 
 	// Misc
-	ROUTE('+API     /admin/             -account          --> Account/read');
-	ROUTE('+API     /admin/             +chatgpt  <60s    --> ChatGPT/ask');
+	ROUTE('+API     ?     -account          --> Account/read');
+	ROUTE('+API     ?     +chatgpt  <60s    --> ChatGPT/ask');
 
 	// Internal
-	ROUTE('+GET     /admin/backup/          <60s', backup);
-	ROUTE('+POST    /admin/restore/ @upload <60s <100MB', restore);
-	ROUTE('+GET     /admin/clear/           <60s', clear);
+	ROUTE('+GET     ?backup/          <60s', backup);
+	ROUTE('+POST    ?restore/ @upload <60s <100MB', restore);
+	ROUTE('+GET     ?clear/           <60s', clear);
 };
 
 function backup($) {

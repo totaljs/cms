@@ -4,7 +4,7 @@ const REG_YEAR = /@\{year\}/i;
 const REG_VARS = /\$[a-z0-9A-Z]+/g;
 
 exports.install = function() {
-	ROUTE('+GET /admin/*', admin);
+	ROUTE('+GET ?*', admin);
 	ROUTE('GET  /*', render);
 };
 

@@ -30,15 +30,21 @@
 
 		exports.refresh = function() {
 
-			var plugins = common.plugins.slice(0);
+			var plugins = common.plugins;
+			var items = [];
 
-			if (user.sa) {
-				plugins.push({ exec: true, id: 'backup', name: '@(Backup)', icon: 'ti ti-download' });
-				plugins.push({ exec: true, id: 'restore', name: '@(Restore)', icon: 'ti ti-upload' });
-				plugins.push({ exec: true, id: 'clear', name: '@(Clear)', icon: 'ti ti-trash red' });
+			for (var m of plugins) {
+				if (!m.hidden)
+					items.push(m);
 			}
 
-			exports.set('plugins', plugins);
+			if (user.sa) {
+				items.push({ exec: true, id: 'backup', name: '@(Backup)', icon: 'ti ti-download' });
+				items.push({ exec: true, id: 'restore', name: '@(Restore)', icon: 'ti ti-upload' });
+				items.push({ exec: true, id: 'clear', name: '@(Clear)', icon: 'ti ti-trash red' });
+			}
+
+			exports.set('plugins', items);
 
 		};
 
