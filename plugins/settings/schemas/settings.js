@@ -1,7 +1,7 @@
 NEWACTION('Settings/read', {
 	name: 'Read settings',
 	permissions: 'settings',
-	action: async function($) {
+	action: function($) {
 
 		var model = {};
 		var language = $.user.language;
@@ -80,6 +80,8 @@ NEWACTION('Settings/save', {
 		}
 
 		FUNC.reconfigure();
+		FUNC.save();
+
 		$.success();
 	}
 });

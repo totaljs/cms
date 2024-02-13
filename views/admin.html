@@ -114,9 +114,9 @@
 		common.plugins = PARSE('#pluginsdata');
 		common.api = common.root = '@{CONF.$api}';
 		common.redirect = REDIRECT;
-
 		ENV('margin', 60);
 
+		DEF.fallback = '@{#}/cdn/j-{0}.html';
 		DEF.versionhtml = '@{CONF.version}';
 		DEF.languagehtml = '@{user.language}';
 
@@ -131,8 +131,6 @@
 			} else
 				common.ready = true;
 			DEF.api = common.api + openplatform;
-			ENV('upload', common.api + 'upload/' + openplatform);
-			ENV('uploadbase64', common.api + 'upload/base64/' + openplatform);
 			common.openplatform = openplatform;
 			$('body').rclass('invisible', 200);
 		})();
@@ -169,10 +167,6 @@
 					REDIRECT(path);
 			});
 
-		};
-
-		Thelpers.selection = function(id) {
-			return '<span class="selection" data-id="{0}"><i class="ti ti-check"></i></span>'.format(id);
 		};
 
 		PLUGIN('common', function(exports) {
