@@ -1,14 +1,15 @@
-<ui-component name="box" path="common.form3" config="if:~PATH~;icon:ti ti-copy;title:@(List of files);width:780;zindex:50;scrollbar:0" class="hidden ~PATH~" plugin="~PATH~">
+<ui-component name="box" path="common.form3" config="if:~PATH~;icon:ti ti-copy;title:@(List of files);width:880;zindex:50;scrollbar:0" class="hidden ~PATH~" plugin="~PATH~">
 	<nav>
 		<button class="exec" data-exec="?/upload"><i class="ti ti-cloud-upload"></i>@(Upload)</button>
 	</nav>
 	<div>
-		<ui-component name="datagrid" path="?.items" config="margin:176;height:window;noborder:1;click:?/submit;checkbox:0">
+		<ui-component name="datagrid" path="?.items" config="margin:176;height:window;noborder:1;click:?/submit;checkbox:0;button:?/button">
 			<script type="text/plain">
 				[
-					{ name: 'name', text: '@(Name)', width: 400, template: '<a href="/download/{{ id }}.{{ ext }}" target="_blank" class="mr5"><i class="ti ti-search"></i></a>{{ name }}' },
+					{ name: 'name', text: '@(Name)', width: 400, template: '{{ name }}' },
 					{ name: 'dimension', text: '@(Dimension)', width: 120, align: 1, monospace: 1, sort: false },
 					{ name: 'size', text: '@(Size)', width: 120, align: 2, alignheader: 2, template: '{{ size | filesize }}', monospace: 1, filter: false, class: 'gray' },
+					{ name: '@(Options)', filter: false, align: 1, sort: false, width: 120, template: '<a href="/download/{{ id }}.{{ ext }}" class="fs12 mr5" target="_blank">@(Show)</a><div class="inline"><button name="rename" title="@(Rename)"><i class="ti ti-pencil"></i></button></div>' }
 				]
 			</script>
 		</ui-component>
@@ -23,6 +24,7 @@
 	PLUGIN(function(exports) {
 
 		var meta;
+		var noscroll = false;
 
 		exports.refresh = function() {
 			exports.tapi('files_list', function(response) {
@@ -39,8 +41,8 @@
 
 				response.quicksort('date_desc');
 				exports.set('search', '');
-				exports.set('items', response);
-
+				exports.set('items', response, noscroll ? 'noscroll' : undefined);
+				noscroll = false;
 			});
 		};
 
@@ -54,6 +56,21 @@
 		exports.submit = function(row, grid, row_el) {
 			row.url = '/download/' + row.id + '.' + row.ext;
 			meta.callback(row, () => NULL('common.form3'));
+		};
+
+		exports.button = function(name, row) {
+
+			if (name === 'rename') {
+				var opt = {};
+				opt.value = row.name;
+				opt.name = '@(Rename file)';
+				opt.callback = function(val) {
+					noscroll = true;
+					exports.tapi('files_rename ERROR', { id: row.id, name: val }, () => exports.refresh());
+				};
+				SETTER('prompt/show', opt);
+			}
+
 		};
 
 		exports.upload = function(e) {

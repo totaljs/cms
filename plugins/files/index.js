@@ -7,15 +7,18 @@ exports.import = 'extensions.html';
 
 exports.install = function() {
 
+	// Uploading
 	ROUTE('+POST    ?/upload/          @upload <10MB    --> Files/insert');
 	ROUTE('+POST    ?/upload/base64/           <10MB    --> Files/insert');
 
-	ROUTE('FILE     /download/*.*', files);
-
+	// API
 	ROUTE('+API     ?    -files_list           --> Files/list');
+	ROUTE('+API     ?    -files_rename         --> Files/rename');
 	ROUTE('+API     ?    -files_clear          --> Files/clear');
 	ROUTE('+API     ?    -files_remove/{id}    --> Files/remove');
 
+	// Public
+	ROUTE('FILE     /download/*.*', files);
 };
 
 function checkmeta(meta) {

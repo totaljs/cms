@@ -20,7 +20,7 @@
 				{ name: 'dimension', text: '@(Dimension)', width: 120, align: 1, monospace: 1, sort: false },
 				{ name: 'size', text: '@(Size)', width: 120, align: 1, template: '{{ size | filesize }}', monospace: 1, filter: false, class: 'gray' },
 				{ name: 'date', text: '@(Uploaded)', format: '[ts]', type: 'date', align: 1 },
-				{ name: '@(Options)', filter: false, align: 1, sort: false, width: 120, template: '<a href="{{ url }}" class="fs12 mr5" target="_blank">@(download)</a><div class="inline"><button title="@(Remove)" name="remove"><i class="ti ti-trash"></i></button></div>' }
+				{ name: '@(Options)', filter: false, align: 1, sort: false, width: 120, template: '<a href="{{ url }}" class="fs12 mr5" target="_blank">@(Download)</a><div class="inline"><button title="@(Rename)" name="rename"><i class="ti ti-pencil"></i></button><button title="@(Remove)" name="remove"><i class="ti ti-trash"></i></button></div>' }
 			]
 		</script>
 	</ui-component>
@@ -109,6 +109,16 @@
 			var id = ATTRD(el);
 			var data = exports.model.items.findItem('id', id);
 			SETTER('approve/show', '@(Are you sure you want to remove the "{name}" file?)'.arg(data, 'escape'), '"ti ti-trash" @(Remove)', () => exports.tapi('files_remove/' + id, exports.refresh));
+		};
+
+		exports.rename = function(row) {
+			var opt = {};
+			opt.value = row.name;
+			opt.name = '@(Rename file)';
+			opt.callback = function(val) {
+				exports.tapi('files_rename ERROR', { id: row.id, name: val }, () => exports.refresh());
+			};
+			SETTER('prompt/show', opt);
 		};
 
 		exports.buttons = function(btn, row) {
