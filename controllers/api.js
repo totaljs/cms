@@ -1,9 +1,4 @@
 exports.install = function() {
-
-	// Misc
-	ROUTE('+API     ?     -account          --> Account/read');
-	ROUTE('+API     ?     +chatgpt  <60s    --> ChatGPT/ask');
-
 	// Internal
 	ROUTE('+GET     ?backup/          <60s', backup);
 	ROUTE('+POST    ?restore/ @upload <60s <100MB', restore);

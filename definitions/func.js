@@ -157,7 +157,6 @@ FUNC.save = function() {
 	model.layouts = site.layouts || [];
 	model.vars = site.vars;
 	model.config = site.config;
-	model.roles = site.roles;
 	model.widgets = [];
 	model.nav = site.nav;
 	model.storage = site.storage || {};
@@ -212,7 +211,7 @@ FUNC.load = function(callback) {
 		var empty = false;
 
 		if (!value) {
-			value = { id: MAIN.id, widgets: [], pages: [], layouts: [], vars: {}, nav: [], config: {}, roles: [], storage: {} };
+			value = { id: MAIN.id, widgets: [], pages: [], layouts: [], vars: {}, nav: [], config: {}, storage: {} };
 			empty = true;
 		}
 
