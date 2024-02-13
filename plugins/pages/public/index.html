@@ -24,7 +24,7 @@
 				{ name: 'layout', text: '@(Layout)', template: '{{ if layout }}<i class="icon {{ layout.icon | empty(\'ti ti-bull\') }} mr5"{{ if layout.color }} style="color:{{ layout.color }}"{{ fi }}></i>{{ layout.name }}{{ fi }}', width: 150 },
 				{ name: 'language', text: '@(Language)', width: 120, align: 1 },
 				{ name: 'dtupdated', text: '@(Updated)', format: '[ts]', type: 'date', align: 1 },
-				{ name: '@(Options)', filter: false, align: 1, sort: false, width: 130, template: '<a href="{{ url }}" class="fs12 mr5" target="_blank">@(show)</a><div class="inline"><button name="edit" title="@(Edit)"><i class="ti ti-pencil"></i></button><button title="@(Options)" name="options"><i class="ti ti-cog"></i></button><button title="@(Remove)" name="remove"><i class="ti ti-trash"></i></button></div>' }
+				{ name: '@(Options)', filter: false, align: 1, sort: false, width: 130, template: '<a href="{{ url }}" class="fs12 mr5" target="_blank">@(Show)</a><div class="inline"><button name="edit" title="@(Edit)"><i class="ti ti-pencil"></i></button><button title="@(Options)" name="options"><i class="ti ti-cog"></i></button><button title="@(Remove)" name="remove"><i class="ti ti-trash"></i></button></div>' }
 			]
 		</script>
 	</ui-component>
