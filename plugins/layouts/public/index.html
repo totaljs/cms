@@ -20,11 +20,6 @@
 
 			<div class="auto" style="max-width:1400px">
 				<ui-component class="padding" name="selection" path="?.selection" config="datasource:?.items;cancel:?.search">
-
-					<div class="heading">
-						<h3>@(Layouts)</h3>
-					</div>
-
 					<ui-bind path="?.items" config="template" class="block">
 						<script type="text/html">
 							<ui-component name="search" path="?.search" config="selector:figure">
@@ -34,7 +29,7 @@
 										<section>
 											<span class="color-border" style="background-color:{{ m.color }}"></span>
 											<div class="listing-header">
-												{{ if m.icon }}<i class="{{ m.icon }} icon mr15"></i>{{ fi }}
+												<i class="{{ m.icon | empty('ti ti-layout') }} icon mr10"></i>
 												<b>{{ m.name }}</b>
 											</div>
 											<div class="controls">

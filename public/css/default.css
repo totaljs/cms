@@ -115,8 +115,8 @@ header > .account { padding-right: 10px; }
 .listing3 figure:last-child section .color-border { border-radius: 0 0 0 var(--radius); }
 
 .listing4 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-.listing4 figure { position: relative; border: 1px solid #eaeaea; background-color: #fff; padding: 10px 20px; border-radius: var(--radius); }
-.listing4 figure .icon { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius); background-color: #eaeaea; }
+.listing4 figure { position: relative; border: 1px solid #eaeaea; background-color: #fff; padding: 10px 15px; border-radius: var(--radius); }
+.listing4 figure .icon { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius); background-color: #eaeaea; }
 .listing4 figure .color-border { position: absolute; top: 0; left: 0; height: 4px; width: 100%; border-radius: var(--radius) var(--radius) 0 0; }
 .listing4 figure .listing-header { height: 28px; display: flex; align-items: center; margin-bottom: 5px; }
 .listing4 figure .badges { position: absolute; right: 20px; top: 24px; }

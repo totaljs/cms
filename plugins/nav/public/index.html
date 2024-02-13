@@ -19,12 +19,7 @@
 		<ui-component name="viewbox" path="common.page" config="parent:auto;margin:60;scrollbar:1;visibleY:1" class="invisible">
 			<div class="auto" style="max-width:1400px">
 				<ui-component name="selection" path="?.selection" config="datasource:?.items;cancel:?.search" class="padding">
-
-					<div class="heading">
-						<h3>@(Navigation)</h3>
-					</div>
-
-					<ui-bind path="?.items" config="template">
+					<ui-bind path="?.items" config="template" class="block">
 						<script type="text/html">
 							<ui-component name="search" path="?.search" config="selector:figure">
 								<div class="listing4">
@@ -33,7 +28,7 @@
 										<section>
 											<span class="color-border" style="background-color:{{ m.color }}"></span>
 											<div class="listing-header">
-												{{ if m.icon }}<i class="{{ m.icon }} icon mr15"></i>{{ fi }}
+												<i class="{{ m.icon | empty('ti ti-navicon') }} icon mr10"></i>
 												<b>{{ m.name }}</b>
 											</div>
 											<div class="controls">
