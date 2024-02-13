@@ -1,7 +1,13 @@
-<ui-component name="miniform" path="common.form2" config="if:~PATH~;icon:ti ti-link;autofocus:true;reload:?/reload;submit:?/submit;width:400;zindex:40" class="hidden" plugin="~PATH~">
+<ui-component name="miniform" path="common.form2" config="if:~PATH~;icon:ti ti-link;autofocus:true;reload:?/reload;submit:?/submit;width:450;zindex:40" class="hidden" plugin="~PATH~">
 	<div class="padding">
 		<ui-component name="input" path="?.name" config="required:1" class="m">@(Name)</ui-component>
-		<ui-component name="input" path="?.url" config="required:1;dirsource:#links;dirvalue:url;dircustom:true;dirplaceholder:@(Search or add new)" default="''" class="m">@(URL address)</ui-component>
+		<ui-component name="input" path="?.url" config="icon:globe;required:1">@(URL address)</ui-component>
+		<div class="m mt10 fs12">
+			<span class="link exec mr15" data-exec="?/find"><i class="ti ti-search mr5"></i>@(Find page)</span>
+			<span class="link exec mr15" data-exec="?/files" data-type="upload"><i class="ti ti-folder mr5"></i>@(Browse files)</span>
+			<span class="link exec mr15" data-exec="?/type" data-type="email"><i class="ti ti-envelope mr5"></i>@(Email)</span>
+			<span class="link exec" data-exec="?/type" data-type="phone"><i class="ti ti-phone mr5"></i>@(Phone number)</span>
+		</div>
 		<ui-component name="input" path="?.target" config="dirsource:|@(Current tab),_blank|@(New tab)" default="''" class="m">@(Target)</ui-component>
 		<div class="row">
 			<div class="col-md-6 m">
@@ -36,6 +42,40 @@
 			var model = exports.form;
 			model.callback(model);
 			hide();
+		};
+
+		exports.find = function(el) {
+			var model = exports.model;
+			var opt = {};
+			opt.element = el;
+			opt.offsetWidth = 490;
+			opt.items = DEF.cl.links;
+			opt.callback = function(selected) {
+				exports.set('url', selected.url);
+			};
+			SETTER('directory/show', opt);
+		};
+
+		exports.files = function() {
+			SET('common.form3', 'formfiles');
+			var opt = {};
+			EXEC(true, 'formfiles/init', opt, function(item, hide) {
+				exports.set('url', item.url);
+				hide();
+			});
+		};
+
+		exports.type = function(el) {
+			var r = /^(tel|mailto)\:/;
+			var model = exports.model;
+			switch (el.attrd('type')) {
+				case 'email':
+					exports.set('url', 'mailto:' + model.url.replace(r, ''));
+					break;
+				case 'phone':
+					exports.set('url', 'tel:' + model.url.replace(r, ''));
+					break;
+			}
 		};
 
 	});

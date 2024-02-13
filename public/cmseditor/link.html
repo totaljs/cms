@@ -1,12 +1,11 @@
 <ui-component name="miniform" path="cmseditor.form" config="if:~PATH~;width:600;autofocus:1;height:450;submit:?/submit;cancel:?/cancel;reload:?/reload;title:@(Link editor);icon:link" class="hidden" plugin="~PATH~">
 	<div>
 		<div class="padding">
-			<!-- <ui-component name="input" path="?.href" config="icon:globe;dirsource:%cmseditorlinks;dirvalue:url;dircustom:1;dirplaceholder:@(Search or enter new);required:1">@(URL address)</ui-component> -->
 			<ui-component name="input" path="?.href" config="icon:globe;required:1">@(URL address)</ui-component>
 			<div class="m mt10 fs12">
-				<span class="link exec mr10" data-exec="?/find"><i class="ti ti-search mr5"></i>@(Find page)</span>
-				<span class="link exec mr10" data-exec="?/files" data-type="upload"><i class="ti ti-folder mr5"></i>@(Browse files)</span>
-				<span class="link exec mr10" data-exec="?/type" data-type="email"><i class="ti ti-envelope mr5"></i>@(Email)</span>
+				<span class="link exec mr15" data-exec="?/find"><i class="ti ti-search mr5"></i>@(Find page)</span>
+				<span class="link exec mr15" data-exec="?/files" data-type="upload"><i class="ti ti-folder mr5"></i>@(Browse files)</span>
+				<span class="link exec mr15" data-exec="?/type" data-type="email"><i class="ti ti-envelope mr5"></i>@(Email)</span>
 				<span class="link exec" data-exec="?/type" data-type="phone"><i class="ti ti-phone mr5"></i>@(Phone number)</span>
 			</div>
 			<ui-component name="input" path="?.target" config="dirsource:|@(Current tab or Window),_blank|@(New tab or Window);dirplaceholder:@(Search)" class="m">@(Target)</ui-component>
@@ -85,14 +84,13 @@
 
 		exports.type = function(el) {
 			var r = /^(tel|mailto)\:/;
-			var path = '?.href';
 			var model = exports.model;
 			switch (el.attrd('type')) {
 				case 'email':
-					SET(path, 'mailto:' + model.href.replace(r, ''));
+					exports.set('href', 'mailto:' + model.href.replace(r, ''));
 					break;
 				case 'phone':
-					SET(path, 'tel:' + model.href.replace(r, ''));
+					exports.set('href', 'tel:' + model.href.replace(r, ''));
 					break;
 			}
 		};
