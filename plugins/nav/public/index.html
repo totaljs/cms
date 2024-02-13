@@ -1,4 +1,8 @@
-<div class="virtualwire hidden" data-if="~PATH~">
+<style>
+	.CLASS .listing2 figure { margin-bottom: 10px; }
+</style>
+
+<div class="virtualwire hidden" data-if="CLASS">
 	<ui-plugin>
 		<ui-component name="searchinput" path="?.search" config="placeholder:@(Search)" class="pull-right"></ui-component>
 		<div class="pull-right">
@@ -8,42 +12,44 @@
 	</ui-plugin>
 </div>
 
-<ui-plugin>
+<ui-plugin class="CLASS bg-white">
 
 	<ui-component name="empty" path="?.items" config="parent:auto" class="invisible">
 
 		<script type="text/html">
-			@(No data found)
+			<div>@(The database doesn't contain any navigation)</div>
+			<div class="mt5">
+				<span class="link exec" data-exec="?/create"><i class="ti ti-plus-circle green mr5"></i>@(Create navigation)</span>
+			</div>
 		</script>
 
 		<ui-component name="viewbox" path="common.page" config="parent:auto;margin:60;scrollbar:1;visibleY:1" class="invisible">
 			<div class="auto" style="max-width:1400px">
-				<ui-component name="selection" path="?.selection" config="datasource:?.items;cancel:?.search" class="padding">
-					<ui-bind path="?.items" config="template" class="block">
-						<script type="text/html">
-							<ui-component name="search" path="?.search" config="selector:figure">
-								<div class="listing4">
+				<div class="padding">
+					<h2>@(Navigation)</h2>
+					<ui-component name="search" path="?.search" config="selector:figure">
+						<ui-bind path="?.items" config="template" class="block">
+							<script type="text/html">
+								<div class="listing2">
 									{{ foreach m in value }}
 									<figure class="exec" data-exec="?/open" data-id="{{ m.id }}" data-search="{{ m.name }}">
 										<section>
-											<span class="color-border" style="background-color:{{ m.color }}"></span>
-											<div class="listing-header">
-												<i class="{{ m.icon | empty('ti ti-navicon') }} icon mr10"></i>
-												<b>{{ m.name }}</b>
-											</div>
 											<div class="controls">
-												<span class="gray mr15 date">{{ m.dtupdated | empty(m.dtcreated) | format('[ts]') }}</span>
-												<span class="exec mr10" data-exec="?/edit" data-prevent="true"><i class="ti ti-pencil"></i></span>
-												<span class="exec" data-exec="?/options" data-prevent="true"><i class="ti ti-cog"></i></span>
+												<span class="exec" data-exec="?/edit" data-prevent="true" title="@(Edit)"><i class="ti ti-pencil"></i></span>
+												<span class="exec" data-exec="?/options" data-prevent="true" title="@(options)"><i class="ti ti-cog"></i></span>
+											</div>
+											<div>
+												<i class="{{ m.icon | empty('ti ti-navicon') }} icon mr10"></i>
+												{{ m.name }}
 											</div>
 										</section>
 									</figure>
 									{{ end }}
 								</div>
-							</ui-component>
-						</script>
-					</ui-bind>
-				</ui-component>
+							</script>
+						</ui-bind>
+					</ui-component>
+				</div>
 			</div>
 		</ui-component>
 

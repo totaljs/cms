@@ -19,7 +19,8 @@ iframe.CMS_edit { padding: 5px; border: 5px solid red; }
 #CMS_panel_buttons_reposition { float: right; }
 #CMS_panel_buttons_reposition span { font-size: 12px; color: #FFF; background-color: rgba(246,187,66,0.8); position: relative; display: inline-block; padding: 3px 0; border-radius: 4px; margin: 3px 0 0 3px; cursor: pointer; vertical-align: top; width: 18px; text-align: center; }
 #CMS_panel_buttons_copy { float: right; }
-#CMS_panel_buttons_copy span { font-size: 11px; color: #FFF; background-color: rgba(66,133,244,0.8); position: relative; display: inline-block; padding: 3px 0; border-radius: 4px; margin: 3px 0 0 3px; cursor: pointer; vertical-align: top; width: 17px; text-align: center; transform: scale(1); }
+#CMS_panel_buttons_copy span { font-size: 11px; color: #FFF; background-color: rgba(255,122,0,0.8); position: relative; display: inline-block; padding: 3px 0; border-radius: 4px; margin: 3px 0 0 3px; cursor: pointer; vertical-align: top; width: 17px; text-align: center; transform: scale(1); }
+#CMS_panel_buttons_copy span:last-child { background-color: rgba(66,133,244,0.8); }
 #CMS_panel_buttons_body { float: left; }
 #CMS_panel_buttons_body span { font-size: 11px; color: #FFF; background-color: rgba(246,187,66,0.8); position: relative; display: inline-block; padding: 3px 0; border-radius: 4px; margin: 3px 3px 0 0; cursor: pointer; vertical-align: top; width: 17px; text-align: center; transform: scale(1); }
 
