@@ -136,7 +136,7 @@
 			el && el.find('i').aclass('ti-spin').rclass('ti-spin', 800);
 			exports.tapi('layouts_list', function(response) {
 				response.quicksort('name_asc');
-				exports.set('items @diff', response);
+				exports.set('items', response);
 			});
 		};
 
