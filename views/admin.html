@@ -114,6 +114,8 @@
 		common.plugins = PARSE('#pluginsdata');
 		common.api = common.root = '@{CONF.$api}';
 		common.redirect = REDIRECT;
+
+		ENV('indentation', 201);
 		ENV('margin', 60);
 
 		DEF.fallback = '@{#}/cdn/j-{0}.html';
