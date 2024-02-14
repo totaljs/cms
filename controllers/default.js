@@ -117,10 +117,17 @@ function render($) {
 		return;
 	}
 
+	for (let item of db.redirects) {
+		if (!item.disabled && item.url === url) {
+			$.redirect(item.target, item.permanent == true);
+			return;
+		}
+	}
+
 	// Try to find pages for authorized users
 	if ($.user) {
-		for (var item of db.pages) {
-			if (item.url === url && !item.disabled && item.auth) {
+		for (let item of db.pages) {
+			if (!item.disabled && item.auth && item.url === url) {
 				page = item;
 				break;
 			}
@@ -128,8 +135,8 @@ function render($) {
 	}
 
 	if (!page) {
-		for (var item of db.pages) {
-			if (item.url === url && !item.disabled && !item.auth) {
+		for (let item of db.pages) {
+			if (!item.disabled && !item.auth && item.url === url) {
 				page = item;
 				break;
 			}

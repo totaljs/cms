@@ -1,0 +1,122 @@
+<style>
+	.CLASS .listing2 figure { margin-bottom: 10px; }
+	.CLASS .listing2 .permanent { background-color: #F6E7EA; }
+</style>
+
+<div class="virtualwire hidden" data-if="CLASS">
+	<ui-plugin>
+		<ui-component name="searchinput" path="?.search" config="placeholder:@(Search in redirects)" class="pull-right"></ui-component>
+		<div class="pull-right">
+			<button class="exec" data-exec="?/create"><i class="ti ti-plus-circle"></i>@(Create)</button>
+			<button class="exec" data-exec="?/refresh"><i class="ti ti-refresh"></i>@(Refresh)</button>
+		</div>
+	</ui-plugin>
+</div>
+
+<ui-plugin class="CLASS bg-white">
+
+	<ui-component name="empty" path="?.items" config="parent:auto" class="invisible">
+
+		<script type="text/html">
+			<div>@(The database doesn't contain any redirects)</div>
+			<div class="mt5">
+				<span class="link exec" data-exec="?/create"><i class="ti ti-plus-circle green mr5"></i>@(Create redirect)</span>
+			</div>
+		</script>
+
+		<ui-component name="viewbox" path="common.page" config="parent:auto;margin:60;scrollbar:1;visibleY:1" class="invisible">
+			<div class="auto" style="max-width:1400px">
+				<div class="padding">
+					<h2>@(Redirects)</h2>
+					<ui-bind path="?.items" config="template" class="block">
+						<script type="text/html">
+							<ui-component name="search" path="?.search" config="selector:figure">
+								<div class="listing2">
+									{{ foreach m in value }}
+									<figure class="exec{{ if m.permanent }} permanent{{ fi }}" data-exec="?/edit" data-id="{{ m.id }}" data-search="{{ m.url }} {{ m.target }}">
+										<section>
+											<div class="controls">
+												<span class="exec" data-exec="?/options" data-prevent="true" title="@(Options)"><i class="ti ti-cog"></i></span>
+											</div>
+											<div>
+												<i class="ti ti-exchange icon mr10"></i>
+												<code class="b">{{ m.url }}</code> to <code class="b">{{ m.target }}</code>
+											</div>
+										</section>
+									</figure>
+									{{ end }}
+								</div>
+							</ui-component>
+						</script>
+					</ui-bind>
+				</div>
+			</div>
+		</ui-component>
+
+	</ui-component>
+
+</ui-plugin>
+
+<ui-component name="importer" path="common.form" config="if:formredirect;url:/~ID~/form.html"></ui-component>
+
+<script>
+
+	PLUGIN(function(exports) {
+
+		exports.reload = function() {
+			BREADCRUMB.add('@(Layouts)', NAV.url);
+			exports.refresh();
+		};
+
+		exports.refresh = function(el) {
+			el && el.find('i').aclass('ti-spin').rclass('ti-spin', 800);
+			exports.tapi('redirects_list', function(response) {
+				response.quicksort('name_asc');
+				exports.set('items', response);
+			});
+		};
+
+		exports.edit = function(el) {
+			var id = ATTRD(el);
+			exports.tapi('redirects_read ERROR', { id: id }, function(response) {
+				SET('formredirect @reset', response);
+				SET('*form', 'formredirect');
+			});
+		};
+
+		exports.options = function(el) {
+			var items = exports.model.items;
+			var id = el.attrd2('id');
+			var data = items.findItem('id', id);
+			var opt = {};
+			opt.element = el;
+			opt.align = 'right';
+			opt.items = [];
+			opt.items.push({ id: 'edit', name: '@(Edit)', icon: 'ti ti-pencil' });
+			opt.items.push('-');
+			opt.items.push({ id: 'remove', name: '@(Remove)', icon: 'ti ti-trash red' });
+			opt.callback = function(item) {
+
+				if (item.id === 'edit') {
+					exports.edit(id);
+					return;
+				}
+
+				if (item.id === 'remove') {
+					SETTER('approve/show', '@(Are you sure you want to remove selected redirect?)', ':ti ti-trash: @(Remove)', function() {
+						exports.tapi('redirects_remove/ ERROR', { id: id }, () => exports.refresh());
+					});
+				}
+
+			};
+			SETTER('menu/show', opt);
+		};
+
+		exports.create = function() {
+			SET('formredirect @default', {});
+			SET('*form', 'formredirect');
+		};
+
+	});
+
+</script>

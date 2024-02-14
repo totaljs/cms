@@ -155,6 +155,7 @@ FUNC.save = function() {
 	model.name = site.name;
 	model.pages = site.pages;
 	model.layouts = site.layouts || [];
+	model.redirects = site.redirects || [];
 	model.vars = site.vars;
 	model.config = site.config;
 	model.widgets = [];
@@ -218,6 +219,9 @@ FUNC.load = function(callback) {
 		value.config.$tapi = true;
 		MAIN.db = value;
 		MAIN.views = {};
+
+		if (!value.redirects)
+			value.redirects = [];
 
 		if (!value.storage)
 			value.storage = {};
