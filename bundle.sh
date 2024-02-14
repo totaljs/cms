@@ -25,6 +25,7 @@ Total.backup(path + '/app.bundle', PATH.root(), function() {
 				case 'layouts':
 				case 'nav':
 				case 'pages':
+				case 'redirects':
 				case 'settings':
 				case 'variables':
 				case 'widgets':
