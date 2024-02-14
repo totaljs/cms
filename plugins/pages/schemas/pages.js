@@ -21,7 +21,6 @@ NEWACTION('Pages/read', {
 	params: '*id:String',
 	permissions: 'pages',
 	action: function($) {
-
 		var item = MAIN.db.pages.findItem('id', $.params.id);
 		if (item)
 			$.callback(item);
@@ -92,7 +91,6 @@ NEWACTION('Pages/save', {
 			item.color = model.color;
 			item.auth = model.auth;
 			delete MAIN.views[item.id];
-
 		} else {
 			model.id = UID();
 			model.dtcreated = NOW;
@@ -201,7 +199,6 @@ NEWACTION('Pages/HTML/save', {
 	permissions: 'pages',
 	input: '*id,html',
 	action: function($, model) {
-
 		var db = MAIN.db;
 		if (db.pages.findItem('id', model.id)) {
 			db.fs.save(model.id, model.id + '.html', Buffer.from(model.html, 'utf8'), $.done());

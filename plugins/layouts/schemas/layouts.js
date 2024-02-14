@@ -1,5 +1,5 @@
 NEWACTION('Layouts/list', {
-	name: 'Layouts List',
+	name: 'List of layouts',
 	permissions: 'layouts',
 	action: function($) {
 
@@ -12,7 +12,7 @@ NEWACTION('Layouts/list', {
 });
 
 NEWACTION('Layouts/read', {
-	name: 'Read layouts',
+	name: 'Read layout',
 	params: '*id:String',
 	permissions: 'layouts',
 	action: function($) {
@@ -71,7 +71,7 @@ NEWACTION('Layouts/save', {
 });
 
 NEWACTION('Layouts/import', {
-	name: 'Import layouts',
+	name: 'Import layout',
 	permissions: 'layouts',
 	action: function($, model) {
 
@@ -111,7 +111,7 @@ NEWACTION('Layouts/import', {
 });
 
 NEWACTION('Layouts/remove', {
-	name: 'Remove layouts',
+	name: 'Remove layout',
 	params: '*id:String',
 	permissions: 'layouts',
 	action: function($) {
@@ -130,7 +130,7 @@ NEWACTION('Layouts/remove', {
 });
 
 NEWACTION('Layouts/clone', {
-	name: 'Clone layouts',
+	name: 'Clone layout',
 	params: '*id:String',
 	permissions: 'layouts',
 	action: function($) {
@@ -158,7 +158,7 @@ NEWACTION('Layouts/clone', {
 });
 
 NEWACTION('Layouts/HTML/read', {
-	name: 'Read layouts/HTML',
+	name: 'Read layout/HTML',
 	params: '*id:String',
 	action: function($) {
 		var db = MAIN.db;
@@ -176,7 +176,7 @@ NEWACTION('Layouts/HTML/read', {
 });
 
 NEWACTION('Layouts/HTML/save', {
-	name: 'Save layouts/HTML',
+	name: 'Save layout/HTML',
 	input: '*id,html',
 	permissions: 'layouts',
 	action: function($, model) {
