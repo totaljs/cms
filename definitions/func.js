@@ -89,7 +89,7 @@ function children(links, parent) {
 	for (let item of parent.children) {
 		item.parent = parent;
 		links.push(item);
-		if (!item.ishidden)
+		if (!item.hidden)
 			cleaned.push(item);
 		if (item.children.length)
 			children(links, item);
@@ -130,7 +130,7 @@ FUNC.refresh = function() {
 		for (let m of item.children) {
 			item.links.push(m);
 
-			if (!m.ishidden)
+			if (!m.hidden)
 				cleaned.push(m);
 
 			if (m.children.length)

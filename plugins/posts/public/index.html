@@ -13,7 +13,7 @@
 		<script type="text/plain">
 			[
 				{ name: 'category', text: '@(Category)', width: 150, colorize: 1 },
-				{ name: 'name', text: '@(Name)', width: 400, template: '{{ name }}{{ if ishidden }}<span class="badge badge-red badge-small ml5">@(hidden)</span>{{ fi }}' },
+				{ name: 'name', text: '@(Name)', width: 400, template: '{{ name }}{{ if hidden }}<span class="badge badge-red badge-small ml5">@(hidden)</span>{{ fi }}' },
 				{ name: 'date', text: '@(From)', format: '[date]', type: 'date', align: 1, width: 130 },
 				{ name: 'dtupdated', text: '@(Updated)', format: '[ts]', type: 'date', align: 1 },
 				{ name: '@(Options)', filter: false, align: 1, sort: false, width: 120, template: '<div class="inline"><button title="@(Remove)" name="remove"><i class="ti ti-trash"></i></button></div>' }

@@ -1,10 +1,10 @@
-NEWSCHEMA('Posts', '*name,category,picture,reference,summary,body,icon:Icon,color:Color,ishidden:Boolean,date:Date');
+NEWSCHEMA('Posts', '*name,category,picture,reference,summary,body,icon:Icon,color:Color,hidden:Boolean,date:Date');
 
 NEWACTION('Posts/list', {
 	name: 'List of posts',
 	permissions: 'posts',
 	action: function($) {
-		DATA.list(PLUGINS.posts.db).autoquery($.query, 'id,picture,summary,reference,category,icon,color,name,ishidden,dtupdated,date', 'date_desc', 100).callback($);
+		DATA.list(PLUGINS.posts.db).autoquery($.query, 'id,picture,summary,reference,category,icon,color,name,hidden,dtupdated,date', 'date_desc', 100).callback($);
 	}
 });
 
