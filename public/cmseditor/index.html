@@ -1472,7 +1472,8 @@
 							return;
 						}
 
-						if (target.attr('contenteditable')) {
+						var ceval = target.attr('contenteditable');
+						if (ceval && ceval !== 'false') {
 							self.close();
 							self.iframe_toolbar().hide();
 							target.rattr('contenteditable');

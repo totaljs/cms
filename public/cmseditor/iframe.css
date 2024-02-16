@@ -60,4 +60,4 @@ iframe.CMS_edit { padding: 5px; border: 5px solid red; }
 
 .CMS_preview a[data-cms-track] { outline: 2px dashed blue; }
 .CMS_remove { min-height: 10px; }
-*[contentEditable] { cursor: text; outline: 2px solid var(--color); }
+*[contentEditable="true"], *[contentEditable="on"] { cursor: text; outline: 2px solid var(--color); }
