@@ -171,7 +171,7 @@
 		};
 
 		exports.widgetsource = function(widget) {
-			exports.tapi('widgets_read/' + widget.config.id, ASETTER('message/response', function(response) {
+			exports.tapi('widgets_read', { id: widget.config.id }, ASETTER('message/response', function(response) {
 				var opt = {};
 				var data = exports.model;
 				opt.body = response.html;
@@ -180,7 +180,7 @@
 					model.id = widget.config.id;
 					model.html = value;
 					exports.tapi('widgets_save ERROR', model, function() {
-						exports.tapi('widgets_detail/' + model.id, function(response) {
+						exports.tapi('widgets_detail ERROR', { id: model.id }, function(response) {
 							hide();
 							exports.scope();
 							var index = data.html.widgets.findIndex('id', model.id);
