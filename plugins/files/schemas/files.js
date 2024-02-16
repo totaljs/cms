@@ -85,9 +85,9 @@ NEWACTION('Files/clear', {
 
 NEWACTION('Files/remove', {
 	name: 'Remove files',
-	params: '*id:String',
+	input: '*id:String',
 	permissions: 'files',
-	action: function($) {
-		MAIN.db.fs.remove($.params.id, $.done());
+	action: function($, model) {
+		MAIN.db.fs.remove(model.id, $.done());
 	}
 });

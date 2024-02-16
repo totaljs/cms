@@ -15,11 +15,10 @@ NEWACTION('Nav/list', {
 
 NEWACTION('Nav/read', {
 	name: 'Read nav',
-	params: '*id:String',
+	input: '*id:String',
 	permissions: 'navigation',
-	action: function($) {
-
-		var id = $.params.id;
+	action: function($, model) {
+		var id = model.id;
 		var item = MAIN.db.nav.findItem('id', id);
 		if (item)
 			$.callback(item);
@@ -32,7 +31,6 @@ NEWACTION('Nav/save', {
 	name: 'Save nav',
 	permissions: 'navigation',
 	input: 'id,*name,title,icon:Icon,color:Color,children:[@Nav/Link]',
-
 	action: function($, model) {
 
 		var db = MAIN.db;
@@ -80,10 +78,10 @@ NEWACTION('Nav/editor', {
 
 NEWACTION('Nav/remove', {
 	name: 'Remove nav',
-	params: '*id:String',
+	input: '*id:String',
 	permissions: 'navigation',
-	action: function($) {
-		var id = $.params.id;
+	action: function($, model) {
+		var id = model.id;
 		var index = MAIN.db.nav.findIndex('id', id);
 		if (index !== -1) {
 			MAIN.db.nav.splice(index, 1);

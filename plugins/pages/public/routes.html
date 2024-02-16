@@ -1,6 +1,6 @@
 <script>
 	ROUTE('/admin/pages/{id}/', function(id) {
-		TAPI('pages_html/' + id + ' ERROR', function(response) {
+		TAPI('pages_html ERROR', { id: id }, function(response) {
 
 			var opt = {};
 			opt.url = response.url;

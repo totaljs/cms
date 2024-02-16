@@ -18,10 +18,10 @@ NEWACTION('Pages/links', {
 
 NEWACTION('Pages/read', {
 	name: 'Read pages',
-	params: '*id:String',
+	input: '*id:String',
 	permissions: 'pages',
-	action: function($) {
-		var item = MAIN.db.pages.findItem('id', $.params.id);
+	action: function($, model) {
+		var item = MAIN.db.pages.findItem('id', model.id);
 		if (item)
 			$.callback(item);
 		else
@@ -107,11 +107,11 @@ NEWACTION('Pages/save', {
 
 NEWACTION('Pages/remove', {
 	name: 'Remove pages',
-	params: '*id:String',
+	input: '*id:String',
 	permissions: 'pages',
-	action: function($) {
+	action: function($, model) {
 
-		var id = $.params.id;
+		var id = model.id;
 		var index = MAIN.db.pages.findIndex('id', id);
 		if (index !== -1) {
 
@@ -140,11 +140,11 @@ NEWACTION('Pages/remove', {
 
 NEWACTION('Pages/clone', {
 	name: 'Clone pages',
-	params: '*id:String',
+	input: '*id:String',
 	permissions: 'pages',
-	action: function($) {
+	action: function($, model) {
 
-		var id = $.params.id;
+		var id = model.id;
 		var db = MAIN.db;
 		var model = db.pages.findItem('id', id);
 		if (model) {
@@ -171,10 +171,10 @@ NEWACTION('Pages/clone', {
 
 NEWACTION('Pages/HTML/read', {
 	name: 'Read Pages/HTML',
-	params: '*id:String',
-	action: function($) {
+	input: '*id:String',
+	action: function($, model) {
 		var db = MAIN.db;
-		var item = db.pages.findItem('id', $.params.id);
+		var item = db.pages.findItem('id', model.id);
 		if (item) {
 			db.fs.readbuffer(item.id, function(err, buffer) {
 				var obj = {};
@@ -211,12 +211,12 @@ NEWACTION('Pages/HTML/save', {
 
 NEWACTION('Pages/HTML/copy', {
 	name: 'Copy Pages/HTML',
-	params: 'from:String,to:String',
+	input: 'from:String,to:String',
 	permissions: 'pages',
-	action: function($) {
+	action: function($, model) {
 
-		var fromid = $.params.from;
-		var toid = $.params.to;
+		var fromid = model.from;
+		var toid = model.to;
 		var db = MAIN.db;
 
 		db.fs.readbuffer(fromid, function(err, buffer) {

@@ -77,7 +77,7 @@
 					EXEC('-approve/show', '@(Are you sure you want to remove selected ({0}x) posts?)'.format(model.checked.length), '"ti ti-trash" @(Clear)', function() {
 						SETTER('loading/show');
 						model.checked.wait(function(item, next) {
-							exports.tapi('posts_remove/' + item.id, next);
+							exports.tapi('posts_remove', { id: item.id }, next);
 						}, exports.refresh);
 					});
 					return;
@@ -96,7 +96,7 @@
 			var id = ATTRD(el);
 			exports.tapi('posts_read/{0} @showloading ERROR'.format(id), function(response) {
 				SET('formpost @reset @hideloading', response);
-				SET('common.form', 'formpost');
+				SET('*form', 'formpost');
 			});
 		};
 
@@ -105,7 +105,7 @@
 			var data = exports.model.items.items.findItem('id', id);
 			SETTER('approve/show', '@(Are you sure you want to remove the "{name}" post?)'.arg(data, 'escape'), '"ti ti-trash" @(Remove)', function() {
 				exports.scope();
-				exports.tapi('posts_remove/' + id, exports.refresh);
+				exports.tapi('posts_remove ERROR', { id: id }, exports.refresh);
 			});
 		};
 
@@ -115,7 +115,7 @@
 
 		exports.create = function() {
 			SET('formpost @default', { body: '' });
-			SET('common.form', 'formpost');
+			SET('*form', 'formpost');
 		};
 
 	});

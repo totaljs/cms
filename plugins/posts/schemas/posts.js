@@ -1,4 +1,4 @@
-NEWSCHEMA('Posts', '*name,category,picture,reference,summary,body,icon:Icon,color:Color,hidden:Boolean,date:Date');
+NEWSCHEMA('Posts', 'id,*name,category,picture,reference,summary,body,icon:Icon,color:Color,hidden:Boolean,date:Date');
 
 NEWACTION('Posts/list', {
 	name: 'List of posts',
@@ -10,10 +10,10 @@ NEWACTION('Posts/list', {
 
 NEWACTION('Posts/read', {
 	name: 'Read post',
-	params: '*id:String',
+	input: '*id:String',
 	permissions: 'posts',
-	action: function($) {
-		DATA.read(PLUGINS.posts.db).id($.params.id).error('@(Post not found)').callback($);
+	action: function($, model) {
+		DATA.read(PLUGINS.posts.db).id(model.id).error(404).callback($);
 	}
 });
 
@@ -49,10 +49,14 @@ NEWACTION('Posts/create', {
 
 NEWACTION('Posts/update', {
 	name: 'Update post',
-	params: '*id:String',
 	input: '@Posts',
 	permissions: 'posts',
 	action: function($, model) {
+
+		if (!model.id) {
+			$.invalid(404);
+			return;
+		}
 
 		model.dtupdated = NOW;
 		model.search = model.name.toSearch();
@@ -61,7 +65,7 @@ NEWACTION('Posts/update', {
 		if (!model.date)
 			model.date = NOW;
 
-		DATA.modify(PLUGINS.posts.db, model).id($.params.id).error('@(Post not found)').callback($.done($.params.id));
+		DATA.modify(PLUGINS.posts.db, model).id(model.id).error(404).callback($.done(model.id));
 	}
 });
 
@@ -75,9 +79,9 @@ NEWACTION('Posts/clear', {
 
 NEWACTION('Posts/remove', {
 	name: 'Remove post',
-	params: '*id:String',
+	input: '*id',
 	permissions: 'posts',
-	action: function($) {
-		DATA.remove(PLUGINS.posts.db).id($.params.id).error('@(Post not found)').callback($.done());
+	action: function($, model) {
+		DATA.remove(PLUGINS.posts.db).id(model.id).error(404).callback($.done(model.id));
 	}
 });

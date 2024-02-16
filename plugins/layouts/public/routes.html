@@ -1,6 +1,6 @@
 <script>
 	ROUTE('/admin/layouts/{id}/', function(id) {
-		TAPI('layouts_html/{0} ERROR'.format(id), function(response) {
+		TAPI('layouts_html ERROR', { id: id }, function(response) {
 
 			var reg = new RegExp('<scri' + 'pt\\b[^<]*(?:(?!<\\/scr' + 'ipt>)<[^<]*)*<\\/scr' + 'ipt>', 'gi');
 			var arr = [];

@@ -117,17 +117,11 @@
 			opt.items.push({ id: 'remove', name: '@(Remove selected ({0}x))'.format(model.checked.length), icon: 'ti ti-trash red' });
 
 			opt.callback = function(item) {
-
-				if (item.id === 'selectall' || item.id === 'selectnone') {
-					exports.element.SETTER('selection/' + item.id);
-					return;
-				}
-
 				if (item.id === 'remove') {
 					SETTER('approve/show', '@(Are you sure you want to remove selected ({0}x) pages?)'.format(model.checked.length), '"ti ti-trash" @(Clear)', function() {
 						SETTER('loading/show');
 						model.checked.wait(function(item, next) {
-							exports.tapi('pages_remove/' + item.id, next);
+							exports.tapi('pages_remove', { id: item.id }, next);
 						}, function() {
 							SETTER('loading/hide');
 							exports.refresh();
@@ -157,23 +151,21 @@
 			var id = ATTRD(el);
 			var data = items.findItem('id', id);
 			SETTER('approve/show', '@(Are you sure you want to remove the "{name}" page?)'.arg(data, 'escape'), '"ti ti-trash" @(Remove)', function() {
-				exports.tapi('pages_remove/' + id + ' ERROR', function() {
-					exports.refresh();
-				});
+				exports.tapi('pages_remove ERROR', { id: id }, () => exports.refresh());
 			});
 		};
 
 		exports.edit = function(el) {
 			var id = ATTRD(el);
-			exports.tapi('pages_read/{0} @showloading ERROR'.format(id), function(response) {
+			exports.tapi('pages_read @showloading ERROR', { id: id }, function(response) {
 				SET('formpage @reset @hideloading', response);
-				SET('common.form', 'formpage');
+				SET('*form', 'formpage');
 			});
 		};
 
 		exports.code = function(el) {
 			var id = ATTRD(el);
-			exports.tapi('pages_html/{0} ERROR'.format(id), function(response) {
+			exports.tapi('pages_html ERROR', { id: id }, function(response) {
 				var opt = {};
 				opt.body = response.html;
 				opt.callback = function(value, hide) {
@@ -243,7 +235,7 @@
 
 					opt.callback = function(item) {
 						SETTER('approve/show', '@(Are you sure you want to copy the content to the "{name}" page?)'.arg(item, 'escape'), '"ti ti-copy" @(Copy)', function() {
-							exports.tapi('pages_copy/' + id + '/' + item.id, ASETTER('notify/response', '@(Done, the content has been copied successfully.)'));
+							exports.tapi('pages_copy', { from: id, to: item.id }, ASETTER('notify/response', '@(Done, the content has been copied successfully.)'));
 						});
 					};
 
@@ -251,7 +243,7 @@
 				}
 
 				if (item.id === 'clone') {
-					exports.tapi('pages_clone/' + id, ASETTER('notify/response', '@(The page has been cloned successfully)', function(response) {
+					exports.tapi('pages_clone', { id: id }, ASETTER('notify/response', '@(The page has been cloned successfully)', function(response) {
 						exports.refresh();
 						exports.edit(response.value);
 					}));
@@ -269,7 +261,7 @@
 
 		exports.create = function() {
 			SET('formpage @default', {});
-			SET('common.form', 'formpage');
+			SET('*form', 'formpage');
 		};
 
 	});

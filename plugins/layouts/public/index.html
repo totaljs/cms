@@ -95,43 +95,6 @@
 			el.html(html.join(''));
 		};
 
-		exports.menu = function(el) {
-
-			var model = exports.model;
-			var opt = {};
-			opt.element = el;
-			opt.align = 'right';
-			opt.items = [];
-
-			opt.items.push({ id: 'create', name: '@(Create)', icon: 'ti ti-plus-circle green' });
-			opt.items.push('-');
-			opt.items.push({ id: 'selectall', name: '@(Select all)', icon: 'ti ti-check-square' });
-			opt.items.push({ id: 'selectnone', name: '@(Select none)', icon: 'ti ti-square' });
-
-			if (model.selection && model.selection.length)
-				opt.items.push({ id: 'remove', name: '@(Remove selected ({0}x))'.format(model.selection.length), icon: 'ti ti-trash red' });
-
-			opt.callback = function(item) {
-
-				if (item.id === 'selectall' || item.id === 'selectnone') {
-					exports.element.SETTER('selection/' + item.id);
-					return;
-				}
-
-				if (item.id === 'remove') {
-					SETTER('approve/show', '@(Are you sure you want to remove selected ({0}x) layouts?)'.format(model.selection.length), '"ti ti-trash" @(Clear)', function() {
-						exports.scope();
-						model.selection.wait(function(id, next) {
-							exports.tapi('layouts_remove/' + id, next);
-						}, () => exports.refresh());
-					});
-					return;
-				}
-
-			};
-			SETTER('menu/show', opt);
-		};
-
 		exports.refresh = function(el) {
 			el && el.find('i').aclass('ti-spin').rclass('ti-spin', 800);
 			exports.tapi('layouts_list', function(response) {
@@ -147,15 +110,15 @@
 
 		exports.edit = function(el) {
 			var id = ATTRD(el);
-			exports.tapi('layouts_read/{0} ERROR'.format(id), function(response) {
+			exports.tapi('layouts_read ERROR', { id: id }, function(response) {
 				SET('formlayout @reset', response);
-				SET('common.form', 'formlayout');
+				SET('*form', 'formlayout');
 			});
 		};
 
 		exports.code = function(el) {
 			var id = ATTRD(el);
-			exports.tapi('layouts_html/{0} ERROR'.format(id), function(response) {
+			exports.tapi('layouts_html ERROR', { id: id }, function(response) {
 				var opt = {};
 				opt.body = response.html;
 				opt.callback = function(value, hide) {
@@ -205,7 +168,7 @@
 				}
 
 				if (item.id === 'clone') {
-					exports.tapi('layouts_clone/' + id, ASETTER('notifybar/response', '@(The layout has been cloned successfully)', function(response) {
+					exports.tapi('layouts_clone', { id: id }, ASETTER('notify/response', '@(The layout has been cloned successfully)', function(response) {
 						exports.refresh();
 						exports.edit(response.value);
 					}));
@@ -214,9 +177,7 @@
 
 				if (item.id === 'remove') {
 					SETTER('approve/show', '@(Are you sure you want to remove the "{name}" layout?)'.arg(data, 'escape'), '"ti ti-trash" @(Remove)', function() {
-						exports.tapi('layouts_remove/' + id + ' ERROR', function() {
-							exports.refresh(el);
-						});
+						exports.tapi('layouts_remove ERROR', { id: id }, () => exports.refresh(el));
 					});
 				}
 
@@ -226,7 +187,7 @@
 
 		exports.create = function() {
 			SET('formlayout @default', {});
-			SET('common.form', 'formlayout');
+			SET('*form', 'formlayout');
 		};
 
 	});

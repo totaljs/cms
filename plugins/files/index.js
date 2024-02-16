@@ -15,7 +15,7 @@ exports.install = function() {
 	ROUTE('+API     ?    -files_list           --> Files/list');
 	ROUTE('+API     ?    -files_rename         --> Files/rename');
 	ROUTE('+API     ?    -files_clear          --> Files/clear');
-	ROUTE('+API     ?    -files_remove/{id}    --> Files/remove');
+	ROUTE('+API     ?    +files_remove         --> Files/remove');
 
 	// Public
 	ROUTE('FILE     /download/*.*', files);

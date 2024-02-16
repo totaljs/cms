@@ -75,7 +75,7 @@
 			opt.callback = function(selected) {
 				switch (selected.id) {
 					case 'upload':
-						SET('common.form2', 'filesform');
+						SET('*form2', 'filesform');
 						EXEC(true, 'filesform/init', {}, function(item, hide) {
 							SETTER('#cloudeditorpost/insert', item.url);
 							hide();
@@ -93,7 +93,7 @@
 			// Due to synchronization with the CloudEditorSimple
 			setTimeout(function() {
 				var model = exports.form;
-				exports.tapi((model.id ? 'posts_update/{id}' : 'posts_create').arg(model) + ' ERROR', model, function(response) {
+				exports.tapi((model.id ? 'posts_update' : 'posts_create') + ' ERROR', model, function(response) {
 
 					if (model.category) {
 						var cl = DEF.cl.postscategories ? DEF.cl.postscategories.findItem('id', model.category) : null;

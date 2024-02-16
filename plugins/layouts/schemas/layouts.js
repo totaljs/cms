@@ -13,11 +13,10 @@ NEWACTION('Layouts/list', {
 
 NEWACTION('Layouts/read', {
 	name: 'Read layout',
-	params: '*id:String',
+	input: '*id',
 	permissions: 'layouts',
-	action: function($) {
-
-		var item = MAIN.db.layouts.findItem('id', $.params.id);
+	action: function($, model) {
+		var item = MAIN.db.layouts.findItem('id', model.id);
 		if (item)
 			$.callback(item);
 		else
@@ -112,10 +111,10 @@ NEWACTION('Layouts/import', {
 
 NEWACTION('Layouts/remove', {
 	name: 'Remove layout',
-	params: '*id:String',
+	input: '*id:String',
 	permissions: 'layouts',
-	action: function($) {
-		var id = $.params.id;
+	action: function($, model) {
+		var id = model.id;
 		var index = MAIN.db.layouts.findIndex('id', id);
 		if (index !== -1) {
 			MAIN.db.layouts.splice(index, 1);
@@ -131,11 +130,11 @@ NEWACTION('Layouts/remove', {
 
 NEWACTION('Layouts/clone', {
 	name: 'Clone layout',
-	params: '*id:String',
+	input: '*id:String',
 	permissions: 'layouts',
-	action: function($) {
+	action: function($, model) {
 
-		var id = $.params.id;
+		var id = model.id;
 		var db = MAIN.db;
 		var model = db.layouts.findItem('id', id);
 		if (model) {
@@ -143,6 +142,7 @@ NEWACTION('Layouts/clone', {
 			model = CLONE(model);
 			model.id = UID();
 			model.dtcreated = NOW;
+			model.name += ' (CLONED)';
 			delete model.dtupdated;
 			db.layouts.push(model);
 
@@ -159,10 +159,10 @@ NEWACTION('Layouts/clone', {
 
 NEWACTION('Layouts/HTML/read', {
 	name: 'Read layout/HTML',
-	params: '*id:String',
-	action: function($) {
+	input: '*id:String',
+	action: function($, model) {
 		var db = MAIN.db;
-		var item = db.layouts.findItem('id', $.params.id);
+		var item = db.layouts.findItem('id', model.id);
 		if (item) {
 			db.fs.readbuffer(item.id, function(err, buffer) {
 				var obj = {};

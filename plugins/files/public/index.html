@@ -88,7 +88,7 @@
 						exports.scope();
 						SETTER('loading/show');
 						model.checked.wait(function(item, next) {
-							exports.tapi('files_remove/' + item.id, next);
+							exports.tapi('files_remove', { id: item.id }, next);
 						}, function() {
 							exports.refresh();
 						});
@@ -108,7 +108,7 @@
 		exports.remove = function(el) {
 			var id = ATTRD(el);
 			var data = exports.model.items.findItem('id', id);
-			SETTER('approve/show', '@(Are you sure you want to remove the "{name}" file?)'.arg(data, 'escape'), '"ti ti-trash" @(Remove)', () => exports.tapi('files_remove/' + id, exports.refresh));
+			SETTER('approve/show', '@(Are you sure you want to remove the "{name}" file?)'.arg(data, 'escape'), '"ti ti-trash" @(Remove)', () => exports.tapi('files_remove', { id: id }, exports.refresh));
 		};
 
 		exports.rename = function(row) {

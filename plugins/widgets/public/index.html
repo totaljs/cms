@@ -84,7 +84,7 @@
 		};
 
 		exports.import = function() {
-			SET('common.form2', 'formwidgets');
+			SET('*form2', 'formwidgets');
 		};
 
 		exports.refresh = function(el) {
@@ -104,7 +104,7 @@
 
 		exports.edit = function(el) {
 			var id = ATTRD(el);
-			exports.tapi('widgets_read/{0} @showloading ERROR'.format(id), function(response) {
+			exports.tapi('widgets_read @showloading ERROR', { id: id }, function(response) {
 				var opt = {};
 				opt.body = response.html;
 				opt.callback = function(value, hide) {
@@ -169,7 +169,7 @@
 						exports.scope();
 						SETTER('loading/show');
 						model.selection.wait(function(id, next) {
-							exports.tapi('widgets_remove/' + id, next);
+							exports.tapi('widgets_remove', { id: id }, next);
 						}, function() {
 							exports.scope();
 							exports.refresh();
@@ -202,7 +202,7 @@
 
 				if (item.id === 'remove') {
 					SETTER('approve/show', '@(Are you sure you want to remove the "{name}" widget?)'.arg(data, 'escape'), '"ti ti-trash" @(Remove)', function() {
-						exports.tapi('widgets_remove/' + id, function() {
+						exports.tapi('widgets_remove', { id: id }, function() {
 							exports.scope();
 							exports.refresh();
 						});

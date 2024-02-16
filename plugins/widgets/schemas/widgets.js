@@ -19,9 +19,9 @@ NEWACTION('Widgets/list', {
 
 NEWACTION('Widgets/read', {
 	name: 'Read widgets',
-	params: '*id:String',
-	action: function($) {
-		var item = MAIN.db.widgets.findItem('id', $.params.id);
+	input: '*id:String',
+	action: function($, model) {
+		var item = MAIN.db.widgets.findItem('id', model.id);
 		if (item) {
 			var data = {};
 			data.id = item.id;
@@ -38,7 +38,7 @@ NEWACTION('Widgets/save', {
 	name: 'Save widgets',
 	input: 'id,*html,singleton:Boolean',
 	permissions: 'widgets',
-	action: async function($, model) {
+	action: async function resave($, model) {
 
 		var cms = MAIN.db;
 		var item = model.id ? cms.widgets.findItem('id', model.id) : null;
@@ -90,7 +90,6 @@ NEWACTION('Widgets/save', {
 			}
 
 			model.id = model.ref.id;
-
 			item = cms.widgets.findItem('id', model.id);
 
 			// Widget is already imported
@@ -101,7 +100,7 @@ NEWACTION('Widgets/save', {
 
 			if (item) {
 				// Recursive call
-				save($, model);
+				resave($, model);
 				return;
 			}
 
@@ -122,12 +121,12 @@ NEWACTION('Widgets/save', {
 
 NEWACTION('Widgets/remove', {
 	name: 'Remove widgets',
-	params: '*id:String',
+	input: '*id:String',
 	permissions: 'widgets',
-	action: function($) {
+	action: function($, model) {
 
 		var db = MAIN.db;
-		var id = $.params.id;
+		var id = model.id;
 		var index = db.widgets.findIndex('id', id);
 		if (index !== -1) {
 			var widget = db.widgets[index];
@@ -160,9 +159,9 @@ NEWACTION('Widgets/remove', {
 
 NEWACTION('Widgets/detail', {
 	name: 'Widgets detail',
-	params: '*id:String',
-	action: function($) {
-		var item = MAIN.db.widgets.findItem('id', $.params.id);
+	input: '*id:String',
+	action: function($, model) {
+		var item = MAIN.db.widgets.findItem('id', model.id);
 		if (item) {
 			var meta = item.ref;
 			$.callback({ id: item.id, name: meta.name, preview: meta.preview, author: meta.author, version: meta.version, config: meta.config, css: meta.ui.css, html: meta.ui.html, settings: meta.ui.settings });

@@ -6,10 +6,10 @@ exports.visible = user => user.sa || user.permissions.includes('posts');
 
 exports.install = function() {
 	ROUTE('+API    ?    -posts                 --> Posts/list');
-	ROUTE('+API    ?    -posts_read/{id}       --> Posts/read');
+	ROUTE('+API    ?    +posts_read            --> Posts/read');
 	ROUTE('+API    ?    +posts_create          --> Posts/create');
-	ROUTE('+API    ?    +posts_update/{id}     --> Posts/update');
-	ROUTE('+API    ?    -posts_remove/{id}     --> Posts/remove');
+	ROUTE('+API    ?    +posts_update          --> Posts/update');
+	ROUTE('+API    ?    +posts_remove          --> Posts/remove');
 	ROUTE('+API    ?    -posts_clear           --> Posts/clear');
 	ROUTE('+API    ?    -posts_categories      --> Posts/categories');
 };
