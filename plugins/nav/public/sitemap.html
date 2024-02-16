@@ -1,5 +1,7 @@
 <style>
 	.CLASS .item { background-color: #F5F5F5; border-radius: var(--radius); }
+	.CLASS .item > .item-hidden { background-color: #FFE8E8; }
+	.CLASS .item > .item-highlight { background-color: #F9F8DE; }
 	.CLASS .item > div { background: #ECECEC; padding: 8px; margin-bottom: 2px; border-radius: var(--radius); }
 	.CLASS .item > div > div { margin-right: 20px; }
 	.CLASS .item .exec { cursor: pointer; }
@@ -22,7 +24,7 @@
 				<ui-component name="children" path="?.children">
 					<script type="text/html">
 						<div class="item">
-							<div{{ if level }} style="margin-left:{{ level * 30 }}px"{{ fi }}>
+							<div{{ if level }} style="margin-left:{{ level * 30 }}px"{{ fi }}{{ if value.hidden }} class="item-hidden"{{ else if value.highlight }} class="item-highlight"{{ fi }}>
 								<span class="exec pull-right" data-exec="?/options"><i class="ti ti-cog"></i></span>
 								<span class="exec pull-right mr10" data-exec="?/edit" data-prevent="true"><i class="ti ti-pencil"></i></span>
 								<span class="exec pull-right mr10" data-exec="?/addsub" data-prevent="true"><i class="ti ti-plus-circle green"></i></span>
@@ -119,8 +121,9 @@
 				child.url = model.url;
 				child.icon = model.icon;
 				child.color = model.color;
-				child.ishighlight = model.ishighlight;
-				child.isexternal = model.isexternal;
+				child.arg = model.arg;
+				child.highlight = model.highlight;
+				child.hidden = model.hidden;
 				data.callback = undefined;
 				exports.scope();
 				exports.upd('children');

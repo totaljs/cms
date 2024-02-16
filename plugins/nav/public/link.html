@@ -8,17 +8,26 @@
 			<span class="link exec mr15" data-exec="?/type" data-type="email"><i class="ti ti-envelope mr5"></i>@(Email)</span>
 			<span class="link exec" data-exec="?/type" data-type="phone"><i class="ti ti-phone mr5"></i>@(Phone number)</span>
 		</div>
-		<ui-component name="input" path="?.target" config="dirsource:|@(Current tab),_blank|@(New tab)" default="''" class="m">@(Target)</ui-component>
-		<div class="row">
-			<div class="col-md-6 m">
+		<hr />
+		<div class="grid-2">
+			<div class="m">
+				<ui-component name="input" path="?.target" config="dirsource:|@(Current tab),_blank|@(New tab)" default="''">@(Target)</ui-component>
+			</div>
+			<div class="m">
+				<ui-component name="input" path="?.arg">@(Custom argument)</ui-component>
+			</div>
+		</div>
+		<div class="grid-2">
+			<div class="m">
 				<ui-component name="input" path="?.icon" config="type:icon">@(Icon)</ui-component>
 			</div>
-			<div class="col-md-6 m">
+			<div class="m">
 				<ui-component name="input" path="?.color" config="type:color">@(Color)</ui-component>
 			</div>
 		</div>
-		<ui-component name="input" path="?.ishighlight" config="type:checkbox">@(Highlight in navigation)</ui-component>
-		<ui-component name="input" path="?.isexternal" config="type:checkbox">@(External link)</ui-component>
+		<hr style="margin-top:10px" />
+		<ui-component name="input" path="?.highlight" config="type:checkbox">@(Highlight in navigation)</ui-component>
+		<ui-component name="input" path="?.hidden" config="type:checkbox">@(Hidden in navigation)</ui-component>
 	</div>
 	<nav>
 		<ui-component name="validate" path="?" config="changes:1">

@@ -85,12 +85,16 @@ FUNC.breadcrumb = function(url) {
 };
 
 function children(links, parent) {
-	for (var item of parent.children) {
+	var cleaned = [];
+	for (let item of parent.children) {
 		item.parent = parent;
 		links.push(item);
+		if (!item.ishidden)
+			cleaned.push(item);
 		if (item.children.length)
 			children(links, item);
 	}
+	parent.children = cleaned;
 }
 
 FUNC.refresh = function() {
@@ -106,14 +110,14 @@ FUNC.refresh = function() {
 	db.widgets.quicksort('dtcreated_desc');
 	cache.widgets = [];
 
-	for (var item of db.widgets) {
+	for (let item of db.widgets) {
 		if (item.ref)
 			cache.widgets.push(item.ref);
 	}
 
 	cache.nav = {};
 
-	for (var item of db.nav) {
+	for (let item of db.nav) {
 
 		item = CLONE(item);
 		item.links = [];
@@ -121,16 +125,24 @@ FUNC.refresh = function() {
 		if (!item.children)
 			item.children = [];
 
-		for (var m of item.children) {
+		let cleaned = [];
+
+		for (let m of item.children) {
 			item.links.push(m);
+
+			if (!m.ishidden)
+				cleaned.push(m);
+
 			if (m.children.length)
 				children(item.links, m);
 		}
 
-		for (var m of item.links) {
+		item.children = cleaned;
 
-			var level = 0;
-			var parent = m.parent;
+		for (let m of item.links) {
+
+			let level = 0;
+			let parent = m.parent;
 
 			while (parent) {
 				level++;

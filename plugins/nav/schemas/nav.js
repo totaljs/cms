@@ -1,4 +1,4 @@
-NEWSCHEMA('Nav/Link', 'id,icon:Icon,color:Color,*name,title,*url,target,istop:Boolean,ishighlight:Boolean,action,isexternal:Boolean,children:[@Nav/Link]');
+NEWSCHEMA('Nav/Link', 'id,icon:Icon,color:Color,*name,title,*url,arg,target,hidden:Boolean,highlight:Boolean,children:[@Nav/Link]');
 
 NEWACTION('Nav/list', {
 	name: 'Nav List',
@@ -51,12 +51,12 @@ NEWACTION('Nav/save', {
 			item.name = model.name;
 			item.icon = model.icon;
 			item.color = model.color;
-			item.ishighlight = model.ishighlight;
-			item.istop = model.istop;
+			item.highlight = model.highlight;
+			item.arg = model.arg;
+			item.hidden = model.hidden;
 			item.action = model.action;
 			item.title = model.title;
 			item.children = model.children;
-			item.isexternal =  model.isexternal;
 			item.dtupdated = NOW;
 
 		} else {
