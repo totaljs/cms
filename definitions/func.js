@@ -288,3 +288,8 @@ FUNC.load = function(callback) {
 		EMIT('reload', MAIN.db);
 	});
 };
+
+ON('service', function(counter) {
+	if (counter % 2 === 0)
+		MAIN.views = {};
+});
