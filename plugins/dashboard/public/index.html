@@ -198,10 +198,11 @@
 								<ui-component name="barchart" path="?.stats.visitors" config="height:250"></ui-component>
 								<ui-bind path="?.stats.visitorssum" config="template" class="mt10">
 									<script type="text/html">
-										<span class="fs11 gray" style="float:right"><b>{{ value.unique | format(0) | def('0') }}</b> {{ value.unique | pluralize('@(# uniques,# unique,# uniques,# uniques)') }}</span>
-										<span class="fs11 gray"><b>{{ value.count | format(0) | def('0') }}</b> {{ value.count | pluralize('@(# visitors,# visitor,# visitors,# visitors)') }}</span>
+										<span class="fs11 gray pull-right"><b>{{ value.unique | format(0) | def('0') }}</b> {{ value.unique | pluralize('@(uniques,unique,uniques,uniques)') }}</span>
+										<span class="fs11 gray pull-left"><b>{{ value.count | format(0) | def('0') }}</b> {{ value.count | pluralize('@(visitors,visitor,visitors,visitors)') }}</span>
 									</script>
 								</ui-bind>
+								<div class="clearfix"></div>
 							</div>
 							<div>
 								<div class="legend fs12">
@@ -212,10 +213,11 @@
 								<ui-component name="barchart" path="?.stats.devices" config="height:250"></ui-component>
 								<ui-bind path="?.stats.devicessum" config="template" class="mt10">
 									<script type="text/html">
-										<span class="fs11 gray" style="float:right">@(Total mobile:) <b>{{ value.mobile | format(0) | def('0') }}</b></span>
-										<span class="fs11 gray">@(Total desktop:) <b>{{ value.desktop | format(0) | def('0') }}</b></span>
+										<span class="fs11 gray pull-right">@(Total mobile:) <b>{{ value.mobile | format(0) | def('0') }}</b></span>
+										<span class="fs11 gray pull-left">@(Total desktop:) <b>{{ value.desktop | format(0) | def('0') }}</b></span>
 									</script>
 								</ui-bind>
+								<div class="clearfix"></div>
 							</div>
 						</div>
 
