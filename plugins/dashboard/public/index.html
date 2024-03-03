@@ -293,6 +293,30 @@
 					</script>
 				</ui-bind>
 
+				<ui-bind path="?.stats.pages" config="template" class="block">
+					<script type="text/html">
+						{{ if value && value.length }}
+						<div class="panelbody">
+							<div class="row">
+								<div class="col-md-4">
+									<div class="caption"><i class="ti ti-invoice"></i>@(Top pages)</div>
+								</div>
+							</div>
+							<div class="row">
+								{{ foreach m in value }}
+								<div class="col-md-3 col-xs-6">
+									<div class="dashboard-referrer">
+										<div>{{ m.value | counter }}</div>
+										<div>{{ m.name }}</div>
+									</div>
+								</div>
+								{{ end }}
+							</div>
+						</div>
+						{{ fi }}
+					</script>
+				</ui-bind>
+
 			</div>
 		</div>
 	</ui-component>
@@ -428,8 +452,13 @@
 		};
 
 		exports.referers = function(year) {
-			exports.tapi('dashboard_referers' + (year ? ('?year=' + year) : ''), 'stats.referers');
-			exports.tapi('dashboard_browsers' + (year ? ('?year=' + year) : ''), 'stats.browsers');
+			exports.tapi('dashboard_referers' + (year ? ('?year=' + year) : ''), function(response) {
+				exports.set('stats.referers', response);
+				exports.tapi('dashboard_browsers' + (year ? ('?year=' + year) : ''), function(response) {
+					exports.set('stats.browsers', response);
+					exports.tapi('dashboard_pages' + (year ? ('?year=' + year) : ''), 'stats.pages');
+				});
+			});
 		};
 
 		exports.history = function(el) {

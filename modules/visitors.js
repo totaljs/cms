@@ -26,6 +26,7 @@ W.visitors = [];
 W.cache = {};
 W.cache.browsers = {};
 W.cache.referers = {};
+W.cache.pages = {};
 
 W.$blacklist = null;
 W.$blacklistlength = 0;
@@ -107,6 +108,13 @@ W.clean = function() {
 		}
 
 		W.cache.referers = {};
+
+		for (let key in W.cache.pages) {
+			let id = date + key.makeid();
+			DATA.modify('nosql/pages', { id: id, name: key, '+count': W.cache.pages[key], date: date, year: year, month: month }, true).id(id);
+		}
+
+		W.cache.pages = {};
 	}
 
 };
@@ -191,6 +199,7 @@ W.counter = function($) {
 	VISITOR.unique = false;
 	VISITOR.ping = h['x-reading'] === '1';
 	VISITOR.browser = $.ua;
+	VISITOR.url = url;
 
 	if (exists) {
 		W.emitvisitor('browse', $);
@@ -249,6 +258,11 @@ W.counter = function($) {
 
 	VISITOR.referer = getHostname(h['x-referrer'] || h['x-referer'] || h.referer);
 
+	if (W.cache.pages[VISITOR.url])
+		W.cache.pages[VISITOR.url]++;
+	else
+		W.cache.pages[VISITOR.url] = 1;
+
 	if (!VISITOR.referer || (W.hostname && VISITOR.referer.indexOf(W.hostname) !== -1)) {
 		W.stats.direct++;
 		W.emitvisitor('direct', $);
@@ -266,23 +280,22 @@ W.counter = function($) {
 			W.cache.referers[VISITOR.referer]++;
 		else
 			W.cache.referers[VISITOR.referer] = 1;
-
 		if (W.cache.browsers[VISITOR.browser])
 			W.cache.browsers[VISITOR.browser]++;
 		else
 			W.cache.browsers[VISITOR.browser] = 1;
 	}
 
-	for (var i = 0, length = W.social.length; i < length; i++) {
-		if (VISITOR.referer.indexOf(W.social[i]) !== -1) {
+	for (let m of W.social) {
+		if (VISITOR.referer.includes(m)) {
 			W.stats.social++;
 			W.emitvisitor('social', $);
 			return W.checksum(ticks.toString(16) + $.visitorid);
 		}
 	}
 
-	for (var i = 0, length = W.search.length; i < length; i++) {
-		if (VISITOR.referer.indexOf(W.search[i]) !== -1) {
+	for (let m of W.search) {
+		if (VISITOR.referer.includes(m)) {
 			W.stats.search++;
 			W.emitvisitor('search', $);
 			return W.checksum(ticks.toString(16) + $.visitorid);

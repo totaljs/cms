@@ -7,5 +7,6 @@ exports.install = function() {
 	ROUTE('+API    ?    -dashboard_online       --> Dashboard/online');
 	ROUTE('+API    ?    -dashboard_referers     --> Dashboard/referers');
 	ROUTE('+API    ?    -dashboard_browsers     --> Dashboard/browsers');
+	ROUTE('+API    ?    -dashboard_pages        --> Dashboard/pages');
 	ROUTE('+API    ?    -dashboard_stats        --> Dashboard/stats');
 };

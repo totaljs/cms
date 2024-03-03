@@ -11,10 +11,13 @@ NEWACTION('Dashboard/online', {
 
 NEWACTION('Dashboard/referers', {
 	name: 'Top referers',
-	query: 'year:Number',
+	query: 'year:Number,month:Number',
 	action: function($) {
 		var year = $.query.year || NOW.getFullYear();
-		DATA.scalar('nosql/referers', 'group', 'name', 'count').where('year', year).callback(function(err, response) {
+		var month = $.query.month;
+		var builder = DATA.scalar('nosql/referers', 'group', 'name', 'count').where('year', year);
+		month && builder.where('month', month);
+		builder.callback(function(err, response) {
 			response.quicksort('count', true);
 			$.callback(response.take(24));
 		});
@@ -23,10 +26,28 @@ NEWACTION('Dashboard/referers', {
 
 NEWACTION('Dashboard/browsers', {
 	name: 'Top browsers',
-	query: 'year:Number',
+	query: 'year:Number,month:Number',
 	action: function($) {
 		var year = $.query.year || NOW.getFullYear();
-		DATA.scalar('nosql/browsers', 'group', 'name', 'count').where('year', year).callback(function(err, response) {
+		var month = $.query.month;
+		var builder = DATA.scalar('nosql/browsers', 'group', 'name', 'count').where('year', year);
+		month && builder.where('month', month);
+		builder.callback(function(err, response) {
+			response.quicksort('count', true);
+			$.callback(response.take(24));
+		});
+	}
+});
+
+NEWACTION('Dashboard/pages', {
+	name: 'Top pages',
+	query: 'year:Number,month:Number',
+	action: function($) {
+		var year = $.query.year || NOW.getFullYear();
+		var month = $.query.month;
+		var builder = DATA.scalar('nosql/pages', 'group', 'name', 'count').where('year', year);
+		month && builder.where('month', month);
+		builder.callback(function(err, response) {
 			response.quicksort('count', true);
 			$.callback(response.take(24));
 		});
