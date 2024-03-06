@@ -165,7 +165,7 @@
 											<td><div class="singline">{{ if m.newbie }}<i class="ti ti-plus-circle green"></i>{{ fi }}{{ m.type }}</div></td>
 											<td><div class="singline">{{ if m.browser }}<span class="browser">{{ m.browser }}</span>{{ fi }}<span class="badge badge-silver badge-small mr5">{{ m.id }}</span>{{ if m.unique }}<span class="badge badge-green mr5">@(+new)</span>{{ fi }}{{ if m.mobile }}<i class="ti ti-mobile"></i>{{ fi }}<a href="{{ m.url }}" target="_blank">{{ m.url }}</a></div></td>
 											<td class="hidden-xs"><div class="singline">{{ m.user }}</div></td>
-											<td class="hidden-xs"><a href="https://tools.keycdn.com/geo?host={{ ip }}" target="_blank">{{ m.ip }}</a></td>
+											<td class="hidden-xs"><a href="https://tools.keycdn.com/geo?host={{ m.ip }}" target="_blank">{{ m.ip }}</a></td>
 											<td class="hidden-xs center">{{ m.date | format('HH:mm:ss') }}</td>
 										</tr>
 										{{ end }}
