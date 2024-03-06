@@ -18,7 +18,7 @@ NEWACTION('Dashboard/referers', {
 		var builder = DATA.scalar('nosql/referers', 'group', 'name', 'count').where('year', year);
 		month && builder.where('month', month);
 		builder.callback(function(err, response) {
-			response.quicksort('count', true);
+			response.quicksort('value', true);
 			$.callback(response.take(24));
 		});
 	}
@@ -33,7 +33,7 @@ NEWACTION('Dashboard/browsers', {
 		var builder = DATA.scalar('nosql/browsers', 'group', 'name', 'count').where('year', year);
 		month && builder.where('month', month);
 		builder.callback(function(err, response) {
-			response.quicksort('count', true);
+			response.quicksort('value', true);
 			$.callback(response.take(24));
 		});
 	}
@@ -48,7 +48,7 @@ NEWACTION('Dashboard/pages', {
 		var builder = DATA.scalar('nosql/pages', 'group', 'name', 'count').where('year', year);
 		month && builder.where('month', month);
 		builder.callback(function(err, response) {
-			response.quicksort('count', true);
+			response.quicksort('value', true);
 			$.callback(response.take(24));
 		});
 	}
