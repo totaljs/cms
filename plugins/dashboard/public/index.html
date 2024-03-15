@@ -397,7 +397,7 @@
 					response.visitors = [];
 
 				for (var item of response.visitors) {
-					item.date = new Date();
+					item.date = item.dtcreated;
 					if (item.ping) {
 						item.type = '@(Reading)';
 					} else {
