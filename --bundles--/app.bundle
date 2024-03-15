@@ -13,14 +13,12 @@
 /plugins/settings/                                                                                  : #
 /plugins/variables/                                                                                 : #
 /plugins/widgets/                                                                                   : #
-/public/cdn/                                                                                        : #
 /public/cmseditor/                                                                                  : #
 /public/css/                                                                                        : #
 /public/forms/                                                                                      : #
 /public/img/                                                                                        : #
 /public/js/                                                                                         : #
 /public/pages/                                                                                      : #
-/public/parts/                                                                                      : #
 /plugins/dashboard/public/                                                                          : #
 /plugins/dashboard/schemas/                                                                         : #
 /plugins/files/public/                                                                              : #
