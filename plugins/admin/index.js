@@ -106,9 +106,9 @@ NEWACTION('Admin/logout', {
 });
 
 function login($) {
-	if (CONF.op_reqtoken && CONF.op_restoken) {
-		$.text('The admin interface is accessible via OpenPlatform.');
-	} else
+	if (CONF.op_reqtoken && CONF.op_restoken)
+		$.fallback(401);
+	else
 		$.view('#admin/login');
 }
 
