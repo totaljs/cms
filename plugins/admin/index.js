@@ -120,5 +120,6 @@ if (!Storage.user) {
 		var cookie = U.random_text(5);
 		Storage.set('user', { id: 'admin', name: 'John Connor', login: login, password: password.sha256(salt), raw: password, sa: true, cookie: cookie, salt: salt });
 	})();
-} else
-	CONF.op_cookie = Storage.user.cookie;
+}
+
+CONF.op_cookie = Storage.user.cookie;
