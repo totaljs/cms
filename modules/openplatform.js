@@ -1,10 +1,17 @@
 const EXPIRE = '2 minutes';
+const COOKIE = 'op';
 
 var Data = {};
 
 // A temporary object for storing of sessions
 Data.sessions = {};
 Data.permissions = [];
+
+ROUTE('GET /openplatform/', function($) {
+	var token = $.query.openplatform;
+	token && $.cookie(COOKIE, token, NOW.add('12 hours'));
+	$.redirect('/');
+});
 
 // Meta file
 ROUTE('FILE /openplatform.json', function($) {
@@ -32,7 +39,7 @@ Data.auth = function($) {
 	}
 
 	var q = $.query;
-	var a = q.openplatform || '';
+	var a = q.openplatform || $.cookie(COOKIE);
 
 	if (!a) {
 		$.invalid();
