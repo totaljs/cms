@@ -132,6 +132,7 @@ function Json() {
 				break;
 		}
 	}
+	obj.openplatform = true;
 	return obj;
 }
 
