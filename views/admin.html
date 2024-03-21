@@ -128,8 +128,8 @@
 			if (openplatform) {
 				var hostname = openplatform.substring(0, openplatform.indexOf('/', 10));
 				openplatform = '?openplatform=' + encodeURIComponent(openplatform);
-			} else
-				common.ready = true;
+			}
+			common.ready = true;
 			DEF.api = common.api + openplatform;
 			common.openplatform = openplatform;
 			$('body').rclass('invisible', 200);
@@ -144,29 +144,6 @@
 			if (url.charAt(0) !== '.' && url.substring(0, common.root.length) !== common.root)
 				url = common.root + url.substring(1);
 			common.redirect(url);
-		};
-
-		// A simple integration for navigation
-		W.APP_INIT = function() {
-
-			common.ready = true;
-			APP.on('init', function() {
-
-				var ready = false;
-
-				ON('location', function(url) {
-					if (url === '/' && !ready)
-						ready = true;
-					else
-						APP.path(url);
-				});
-			});
-
-			APP.on('path', function(path) {
-				if (NAV.url !== path)
-					REDIRECT(path);
-			});
-
 		};
 
 		PLUGIN('common', function(exports) {

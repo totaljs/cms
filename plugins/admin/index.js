@@ -1,7 +1,7 @@
 exports.icon = 'ti ti-key';
 exports.name = '@(Admin)';
 exports.position = 100;
-exports.visible = () => !CONF.op_reqtoken || !CONF.op_restoken;
+// exports.visible = () => !CONF.op_reqtoken || !CONF.op_restoken;
 exports.import = 'extensions.html';
 exports.hidden = true;
 
@@ -106,7 +106,10 @@ NEWACTION('Admin/logout', {
 });
 
 function login($) {
-	$.view('#admin/login');
+	if (CONF.op_reqtoken && CONF.op_restoken) {
+		$.text('The admin interface is accessible via OpenPlatform.');
+	} else
+		$.view('#admin/login');
 }
 
 if (!Storage.user) {
@@ -117,4 +120,5 @@ if (!Storage.user) {
 		var cookie = U.random_text(5);
 		Storage.set('user', { id: 'admin', name: 'John Connor', login: login, password: password.sha256(salt), raw: password, sa: true, cookie: cookie, salt: salt });
 	})();
-}
+} else
+	CONF.op_cookie = Storage.user.cookie;

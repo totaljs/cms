@@ -14,8 +14,13 @@
 		opt.element = el;
 		opt.items = [];
 		opt.items.push(Thelpers.encode(user.name));
-		opt.items.push({ id: 'account', name: '@(Change credentials)', icon: 'ti ti-key' });
-		opt.items.push({ id: 'logout', name: '@(Logout)', icon: 'ti ti-power-off red' });
+
+		if (!user.openplatform)
+			opt.items.push({ id: 'account', name: '@(Change credentials)', icon: 'ti ti-key' });
+
+		if (!user.iframe)
+			opt.items.push({ id: 'logout', name: '@(Logout)', icon: 'ti ti-power-off red' });
+
 		opt.align = 'right';
 		opt.callback = function(selected) {
 
@@ -27,12 +32,19 @@
 					});
 					break;
 				case 'logout':
-					TAPI('logout @showloading', () => location.href = '/admin/');
+					TAPI('logout @showloading', function() {
+						if (user.openplatform)
+							W.close();
+						else
+							location.href = '/admin/';
+					});
 					break;
 			}
 
 		};
-		SETTER('menu/show', opt);
+
+		if (opt.items.length > 1)
+			SETTER('menu/show', opt);
 	}
 
 </script>

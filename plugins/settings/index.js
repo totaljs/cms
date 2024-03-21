@@ -20,6 +20,8 @@ NEWACTION('Account/read', {
 		obj.id = user.id;
 		obj.name = user.name;
 		obj.sa = user.sa;
+		obj.openplatform = !!user.openplatform;
+		obj.iframe = !!user.iframe;
 		obj.permissions = user.permissions;
 		$.callback(obj);
 	}

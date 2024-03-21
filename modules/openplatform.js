@@ -1,17 +1,12 @@
 const EXPIRE = '2 minutes';
-const COOKIE = 'op';
-
 var Data = {};
+
+if (!CONF.op_cookie)
+	CONF.op_cookie = 'op';
 
 // A temporary object for storing of sessions
 Data.sessions = {};
 Data.permissions = [];
-
-ROUTE('GET /openplatform/', function($) {
-	var token = $.query.openplatform;
-	token && $.cookie(COOKIE, token, NOW.add('12 hours'));
-	$.redirect('/');
-});
 
 // Meta file
 ROUTE('FILE /openplatform.json', function($) {
@@ -39,7 +34,7 @@ Data.auth = function($) {
 	}
 
 	var q = $.query;
-	var a = q.openplatform || $.cookie(COOKIE);
+	var a = q.openplatform || (CONF.op_cookie ? $.cookie(CONF.op_cookie) : '');
 
 	if (!a) {
 		$.invalid();
@@ -64,7 +59,7 @@ Data.auth = function($) {
 		return;
 	}
 
-	var checksum = q.openplatform.replace('~' + sign, '').md5(CONF.op_reqtoken);
+	var checksum = a.replace('~' + sign, '').md5(CONF.op_reqtoken);
 
 	if (checksum !== sign) {
 		$.invalid();
@@ -73,7 +68,7 @@ Data.auth = function($) {
 
 	var opt = {};
 
-	opt.url = q.openplatform;
+	opt.url = a;
 	opt.method = 'GET';
 	opt.headers = { 'x-token': sign.md5(CONF.op_restoken) };
 	opt.keepalive = true;
@@ -97,7 +92,7 @@ Data.auth = function($) {
 			session.json = Json;
 			session.notification = Notification;
 			var hostname = opt.url.substring(0, opt.url.indexOf('/', 10));
-			session.iframe = hostname + '/iframe.js';
+			session.iframe = session.iframe === false ? null : (hostname + '/iframe.js');
 			Data.sessions[token] = session;
 			Data.oncreate && Data.oncreate(session);
 			$.success(session);
