@@ -10,14 +10,13 @@ exports.install = function() {
 
 function admin($) {
 
-	var plugins = [];
-
 	if ($.user.openplatform && !$.user.iframe && $.query.openplatform) {
 		$.cookie(CONF.op_cookie, $.query.openplatform, NOW.add('12 hours'));
 		$.redirect($.url);
 		return;
 	}
 
+	var plugins = [];
 	var hostname = $.hostname();
 
 	if (CONF.url !== hostname)
