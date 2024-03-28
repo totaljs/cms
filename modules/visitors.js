@@ -5,12 +5,13 @@ const CONCAT = [];
 const DBNAME = 'visitors';
 const REG_ROBOT = /search|agent|bot|crawler/i;
 const TIMEOUT_VISITORS = 1200; // 20 MINUTES
-const Fs = require('fs');
 const REGIP = /\d+\.\d+\.\d+|localhost/i;
 
 var FILE_CACHE = 'visitors.cache';
-var W = {};
 var VISITOR;
+var W = {};
+
+NEWPUBLISH('visitor', 'id,url,ip,browser,referer,unique:Boolean,ping:Boolean,type,online:Number,mobile,user,dtcreated:Date');
 
 W.stats = { pages: 0, day: 0, month: 0, year: 0, hits: 0, unique: 0, uniquemonth: 0, count: 0, search: 0, direct: 0, social: 0, unknown: 0, advert: 0, mobile: 0, desktop: 0, visitors: 0, robots: 0, hours: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] };
 W.online = 0;
@@ -158,7 +159,6 @@ W.counter = function($) {
 	NOW = new Date();
 
 	var meta = ($.query.id || '');
-
 	var metats = meta.substring(0, meta.length - 10);
 	var metaid = meta.substring(meta.length - 10, meta.length - 5);
 
@@ -169,6 +169,7 @@ W.counter = function($) {
 	}
 
 	$.visitorid = metaid || Math.random().toString(16).substring(2, 7);
+
 	var user = metats ? parseInt(metats, 16) : 0;
 	var ticks = NOW.getTime();
 	var sum = user ? (ticks - user) / 1000 : 1000;
@@ -330,7 +331,7 @@ W.save = function() {
 	var filename = PATH.databases(FILE_CACHE);
 	var stats = U.copy(W.stats);
 	stats.pages = stats.hits && stats.count ? (stats.hits / stats.count).floor(2) : 0;
-	Fs.writeFile(filename, JSON.stringify(stats), NOOP);
+	Total.Fs.writeFile(filename, JSON.stringify(stats), NOOP);
 };
 
 W.load = function() {
@@ -340,7 +341,7 @@ W.load = function() {
 
 	var filename = PATH.databases(FILE_CACHE);
 
-	Fs.readFile(filename, function(err, data) {
+	Total.Fs.readFile(filename, function(err, data) {
 
 		if (err)
 			return;
@@ -459,7 +460,7 @@ W.yearly = function(callback) {
 
 W.statistics = function(callback) {
 	var filename = PATH.databases(DBNAME + '.nosql');
-	var stream = Fs.createReadStream(filename);
+	var stream = Total.Fs.createReadStream(filename);
 	var data = Buffer.alloc(0);
 	stream.on('error', () => callback(EMPTYARRAY));
 	stream.on('data', function(chunk) {

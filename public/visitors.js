@@ -87,6 +87,6 @@ if (window.DEF)
 		}
 	}, 30000);
 
-	fetch('/$visitors/', options).then(callback).catch(callback_error);
+	fetch(url + '?id=' + ticks + (un ? ('&utm_user=' + encodeURIComponent(un)) : ''), options).then(callback).catch(callback_error);
 
 })();
