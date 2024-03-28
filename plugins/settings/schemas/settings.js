@@ -39,6 +39,8 @@ NEWACTION('Settings/read', {
 			}
 
 		}
+		if (!model.smtp)
+			model.smtp = JSON.stringify({ server: 'yourserver.com', from: 'info@totaljs.com', user: '', password: '', port: 22 });
 
 		$.callback(model);
 	}
@@ -46,7 +48,7 @@ NEWACTION('Settings/read', {
 
 NEWACTION('Settings/save', {
 	name: 'Save settings',
-	input: 'name:String, url:URL, mail_smtp:String, mail_smtp_options:JSON, mail_from:Email, icon:String, allow_tms:Boolean, secret_tms:String, op_reqtoken:String, op_restoken:String, totalapi:String, items:[*id:String, value:Object]',
+	input: 'name:String, url:URL, smtp:String, icon:String, $tms:Boolean, secret_tms:String, op_reqtoken:String, op_restoken:String, totalapi:String, items:[*id:String, value:Object]',
 	permissions: 'settings',
 	action: function($, model) {
 
@@ -88,10 +90,10 @@ NEWACTION('Settings/save', {
 
 NEWACTION('Settings/test', {
 	name: 'Test SMTP settings',
-	input: 'mail_smtp:String, mail_smtp_options:JSON, mail_from:Email',
+	input: '*smtp:JSON',
 	permissions: 'settings',
 	action: async function($, model) {
-		var options = (model.mail_smtp_options || '').parseJSON();
-		Mail.try(model.mail_smtp, options, $.done(true));
+		var options = model.smtp.parseJSON();
+		Mail.try(options, $.done(true));
 	}
 });

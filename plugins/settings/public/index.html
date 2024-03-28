@@ -18,8 +18,8 @@
 						</div>
 						<p>@(The Total.js Message Service (TMS) allows you to publish data, subscribe to events, and call remote procedures to this app.)</p>
 
-						<ui-component name="input" path="?.allow_tms" config="type:checkbox">@(Enable TMS)</ui-component>
-						<ui-bind path="?.allow_tms" config="show" class="hidden block" style="margin-top:15px">
+						<ui-component name="input" path="?.$tms" config="type:checkbox">@(Enable TMS)</ui-component>
+						<ui-bind path="?.$tms" config="show" class="hidden block" style="margin-top:15px">
 
 							<p class="m"><i class="ti ti-globe blue mr5"></i>@(URL address:) <ui-bind path="location.origin" config="html:value + '/$tms/'" class="b"></ui-bind></p>
 
@@ -78,19 +78,10 @@
 						<label><i class="ti ti-envelope"></i>@(SMTP settings)</label>
 					</div>
 
-					<div class="grid-2">
-						<div class="m">
-							<ui-component name="input" path="?.mail_from" config="type:email;forcevalidation:0" default="''">@(Sender @ mail address)</ui-component>
-						</div>
-						<div class="m">
-							<ui-component name="input" path="?.mail_smtp" config="camouflage:1;placeholder:smtp.yourserver.com">@(SMTP server)</ui-component>
-						</div>
-					</div>
-
 					<div class="m">
-						<ui-component name="input" path="?.mail_smtp_options" config="camouflage:1" default="'{}'">@(SMTP options)</ui-component>
-						<div class="help"><i class="ti ti-lightbulb"></i>@(SMTP options have to be in valid JSON format, according to the Total.js documentation). <a href="https://docs.totaljs.com/total4/4047d003kk51c/#6ce08001ug51c" target="_blank">@(Documentation)</a></div>
+						<ui-component name="input" path="?.smtp" config="camouflage:1;monospace:1">@(SMTP server)</ui-component>
 					</div>
+					<div class="help m"><i class="ti ti-lightbulb"></i>@(SMTP options have to be in valid JSON format, according to the Total.js documentation). <a href="https://docs.totaljs.com/total4/4047d003kk51c/#6ce08001ug51c" target="_blank">@(Documentation)</a></div>
 
 					<ui-bind path="?.mail_check" config="template" class="block m">
 						<script type="text/html">
@@ -177,9 +168,11 @@
 
 		exports.test = function() {
 			var model = exports.model;
-			if (model.mail_smtp)
-				exports.tapi('settings_test @showloading', model, 'mail_check @hideloading');
-			else
+			if (model.smtp) {
+				exports.tapi('settings_test @showloading', model, function(response, error) {
+					exports.set('mail_check @hideloading', response || error);
+				});
+			} else
 				exports.nul('mail_check');
 		};
 
