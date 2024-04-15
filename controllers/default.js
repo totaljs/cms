@@ -6,9 +6,12 @@ const REG_VARS = /\$[a-z0-9A-Z]+/g;
 exports.install = function() {
 	ROUTE('+GET ?*', admin);
 	ROUTE('GET  /*', render);
+	ROUTE('FILE /sitemap.xml', sitemap);
 };
 
 function admin($) {
+
+	var plugins = [];
 
 	if ($.user.openplatform && !$.user.iframe && $.query.openplatform) {
 		$.cookie(CONF.op_cookie, $.query.openplatform, NOW.add('12 hours'));
@@ -16,7 +19,6 @@ function admin($) {
 		return;
 	}
 
-	var plugins = [];
 	var hostname = $.hostname();
 
 	if (CONF.url !== hostname)
@@ -296,4 +298,19 @@ function render($) {
 			});
 		});
 	}
+}
+
+function sitemap($) {
+
+	let builder = [];
+	let hostname = $.hostname();
+
+	if (MAIN.db.pages) {
+		for (let item of MAIN.db.pages) {
+			if (!item.disabled || item.url[0] !== '/')
+				builder.push('<url><loc>{0}{1}</loc><lastmod>{2}</lastmod></url>'.format(hostname, item.url, (item.dtcreated || item.dtupdated).format('yyyy-MM-dd')));
+		}
+	}
+
+	$.xml('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{0}</urlset>'.format(builder.join('')));
 }
