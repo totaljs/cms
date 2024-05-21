@@ -2,7 +2,9 @@ const PARSER = { settings: '<settings>', css: '<style>', total: '<script total>'
 const REG_CLASS = /CLASS/g;
 
 FUNC.recompile = function(item) {
+
 	var meta = item.html.parseComponent(PARSER);
+
 	item.ref = {};
 	try {
 		(new Function('exports', meta.total))(item.ref);
@@ -41,6 +43,25 @@ FUNC.recompile = function(item) {
 
 	if (meta.html)
 		meta.html = meta.html.replace(REG_CLASS, 'w-' + uid);
+
+	if (item.ref.dependencies) {
+
+		if (typeof(item.ref.dependencies) === 'string')
+			item.ref.dependencies = item.ref.dependencies.split(/,|;/).trim();
+
+		var arr = [];
+		for (let i = 0; i < item.ref.dependencies.length; i++) {
+			let m = item.ref.dependencies[i];
+			if (m.includes('<'))
+				arr.push(m);
+			else if (m.endsWith('.js'))
+				arr.push('<script src="{0}"></script>'.format(m));
+			else if (m.endsWith('.css'))
+				arr.push('<link rel="stylesheet" href="{0}">'.format(m));
+		}
+
+		item.ref.dependencies = arr.join('');
+	}
 
 	item.ref.ui = meta;
 
@@ -109,10 +130,14 @@ FUNC.refresh = function() {
 
 	db.widgets.quicksort('dtcreated_desc');
 	cache.widgets = [];
+	cache.dependencies = '';
 
 	for (let item of db.widgets) {
-		if (item.ref)
+		if (item.ref) {
 			cache.widgets.push(item.ref);
+			if (item.ref.dependencies && item.ref.dependencies.length)
+				cache.dependencies += item.ref.dependencies;
+		}
 	}
 
 	cache.nav = {};

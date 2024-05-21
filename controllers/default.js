@@ -216,7 +216,7 @@ function render($) {
 	if (page.keywords)
 		meta += '<meta name="keywords" content="' + page.keywords.safehtml() + '" />';
 
-	meta += '<scri' + 'pt src="/visitors.js"></scr' + 'ipt>';
+	meta += '<scri' + 'pt src="/visitors.js"></scr' + 'ipt>' + MAIN.cache.dependencies;
 
 	var cmspage = MAIN.views[page.id];
 	var cmslayout = page.layoutid ? MAIN.views[page.layoutid] : 1;
