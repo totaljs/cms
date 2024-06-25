@@ -85,6 +85,10 @@
 			return canvas.toDataURL('image/png');
 		};
 
+		self.destroy = function() {
+			delete W[myid];
+		};
+
 		self.make = function() {
 
 			emptyimage = self.makeimage();
@@ -205,7 +209,7 @@
 				return;
 			}
 
-			W[myid] =  self.iframe_events;
+			W[myid] = self.iframe_events;
 			doc.write(content.replace('</b' + 'ody>', offsetter + '</b' + 'ody>'));
 			doc.close();
 			frm.$cmseditor = true;
