@@ -26,7 +26,29 @@ function checkmeta(meta) {
 }
 
 function files($) {
+
 	var id = $.split[1];
+	var opt = {};
+
 	id = id.substring(0, id.lastIndexOf('.'));
-	$.filefs(MAIN.id, id, $.url.lastIndexOf('download=1') !== -1, null, null, checkmeta);
+
+	opt.id = id;
+	opt.download = $.url.lastIndexOf('download=1') !== -1;
+	opt.check = checkmeta;
+
+	if ($.query.s) {
+		var size = +$.query.s;
+		if (size > 0 && size > 10 && size < 80) {
+			opt.cache = id + 'X' + size;
+			opt.image = function(img) {
+				img.resize(size + '%');
+				img.quality(80);
+				img.background('white');
+				img.filter('Hamming');
+				img.output('jpg');
+			};
+		}
+	}
+
+	Total.filestorage(MAIN.id).http($, opt);
 }
