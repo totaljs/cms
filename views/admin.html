@@ -245,6 +245,19 @@
 			TAPI('nav_editor', next);
 		}, true);
 
+		// Prevent browsing through the arrows
+		$(W).on('keydown', function(e) {
+			if (e.metaKey || e.ctrlKey) {
+				switch (e.keyCode) {
+					case 37:
+					case 39:
+						e.stopPropagation();
+						e.preventDefault();
+						break;
+				}
+			}
+		});
+
 	</script>
 
 </body>

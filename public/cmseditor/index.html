@@ -55,7 +55,7 @@
 		var scripts = [];
 		var cls2 = '.' + cls;
 		var target, iframe, container, width = 0, height = 0;
-		var offsetter = '<span id="cmseditorheight"></span><scr' + 'ipt>var autoresize=window.parent.' + myid + ';autoresize()</sc' + 'ript>';
+		var offsetter = '<span id="cmseditorheight"></span><scr' + 'ipt>var autoresize=window.parent.' + myid + ';autoresize();window.addEventListener(\'keydown\',function(e){if((e.metaKey||e.ctrlKey)&&(e.keyCode==37||e.keyCode==39)){e.stopPropagation();e.preventDefault()}});</sc' + 'ript>';
 		var locked = false;
 		var temporary = {};
 		var emptyimage;
