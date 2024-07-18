@@ -22,8 +22,10 @@ NEWACTION('Posts/categories', {
 	action: async function($) {
 		var items = await DATA.scalar(PLUGINS.posts.db, 'group', 'category').promise($);
 		var output = [];
-		for (var item of items)
-			output.push({ id: item.category, name: item.category });
+		for (var item of items) {
+			if (item.category)
+				output.push({ id: item.category, name: item.category });
+		}
 		$.callback(output);
 	}
 });

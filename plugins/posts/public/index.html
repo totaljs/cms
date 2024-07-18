@@ -1,11 +1,11 @@
 <style>
-	.~PATH~ .dg-colorize { display: block; padding: 0 5px; }
+	.CLASS .dg-colorize { display: block; padding: 0 5px; }
 </style>
 
-<div class="virtualwire hidden" data-if="~PATH~">
-	<button class="exec" data-exec="~PATH~/create"><i class="ti ti-plus-circle"></i>@(Create)</button>
-	<button class="exec" data-exec="~PATH~/refresh"><i class="ti ti-refresh"></i>@(Refresh)</button>
-	<button class="exec" data-exec="~PATH~/menu"><i class="ti ti-cog"></i>@(Options)</button>
+<div class="virtualwire hidden" data-if="CLASS">
+	<button class="exec" data-exec="CLASS/create"><i class="ti ti-plus-circle"></i>@(Create)</button>
+	<button class="exec" data-exec="CLASS/refresh"><i class="ti ti-refresh"></i>@(Refresh)</button>
+	<button class="exec" data-exec="CLASS/menu"><i class="ti ti-cog"></i>@(Options)</button>
 </div>
 
 <ui-plugin config="aclass:1">
@@ -35,7 +35,8 @@
 		};
 
 		exports.refresh = function(el) {
-			el && el.find('i').aclass('ti-spin').rclass('ti-spin', 800);
+			if (el instanceof jQuery)
+				el.find('i').aclass('ti-spin').rclass('ti-spin', 800);
 			exports.tapi('posts @showloading ERROR', 'items @hideloading');
 		};
 
@@ -68,8 +69,7 @@
 			if (model.checked && model.checked.length)
 				opt.items.push({ id: 'remove', name: '@(Remove selected ({0}x))'.format(model.checked.length), icon: 'ti ti-trash red' });
 
-			if (model.items.items.length)
-				opt.items.push({ id: 'clear', name: '@(Clear all posts)', icon: 'ti ti-trash red' });
+			opt.items.push({ id: 'clear', name: '@(Clear all posts)', icon: 'ti ti-trash red', disabled: model.items.items.length == 0 });
 
 			opt.callback = function(item) {
 
@@ -94,7 +94,7 @@
 
 		exports.edit = function(el) {
 			var id = ATTRD(el);
-			exports.tapi('posts_read/{0} @showloading ERROR'.format(id), function(response) {
+			exports.tapi('posts_read @showloading ERROR', { id: id }, function(response) {
 				SET('formpost @reset @hideloading', response);
 				SET('*form', 'formpost');
 			});
