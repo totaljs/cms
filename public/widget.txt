@@ -28,6 +28,8 @@
 		// opt.id {String}            // widget identifier
 		// opt.body {String}          // the whole HTML body
 		// opt.html {String}          // widget HTML body
+		// opt.url {String}           // URL address
+		// opt.controller {Object}    // A controller instance
 		// opt.template {String}      // widget <template> body
 		// opt.vars {Object}          // global variables key {String}:value {String}
 		// opt.ua {Object}            // parsed user-agent { os: 'Mac', browser: 'Chrome', device: 'desktop' }
