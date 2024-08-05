@@ -185,6 +185,28 @@
 			SETTER('menu/show', opt);
 		};
 
+		exports.dropcheck = function(e) {
+			return true;
+		};
+
+		exports.dropfiles = function(e) {
+			var opt = {};
+			opt.accept = 'text/html';
+			opt.files = e;
+			opt.callback = function(file) {
+				var model = {};
+				model.name = file.filename.replace(/\.(html|txt|htm)$/i, '');
+				model.html = file.body;
+				model.icon = 'ti ti-html5';
+				model.color = '#EC8632';
+				exports.tapi('layouts_save ERROR @showloading', model, function(response) {
+					exports.refresh();
+					exports.edit(response.value);
+				});
+			};
+			SETTER('filereader/open', opt);
+		};
+
 		exports.create = function() {
 			SET('formlayout @default', {});
 			SET('*form', 'formlayout');

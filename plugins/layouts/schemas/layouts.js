@@ -61,7 +61,7 @@ NEWACTION('Layouts/save', {
 			importnavigation(model, html, function() {
 				FUNC.save();
 				FUNC.refresh();
-				$.success();
+				$.success(model.id);
 				delete MAIN.views[model.id];
 			});
 
