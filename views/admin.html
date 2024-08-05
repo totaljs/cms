@@ -32,6 +32,7 @@
 	<ui-component name="LAZY approve"></ui-component>
 	<ui-component name="LAZY floatingbox"></ui-component>
 	<ui-component name="LAZY filebrowser"></ui-component>
+	<ui-component name="LAZY filereader"></ui-component>
 	<ui-component name="LAZY fileuploader"></ui-component>
 	<ui-component name="LAZY features"></ui-component>
 	<ui-component name="LAZY spotlight"></ui-component>
@@ -156,7 +157,10 @@
 				model.plugins.forEach(function(plugin) {
 					plugin.url = model.root + plugin.id + '/';
 					if (!plugin.hidden) {
-						ROUTE(plugin.url, () => exports.set('page', 'plugin' + plugin.id), 'init');
+						ROUTE(plugin.url, function() {
+							plugin.loaded = true;
+							exports.set('page', 'plugin' + plugin.id);
+						}, 'init');
 						plugin.routes && plugin.routes.forEach(item => ROUTE('@{#}' + item.url, () => exports.set('page', 'plugin' + plugin.id + item.html), 'init'));
 					}
 					plugin.import && $(document.body).append('<ui-import config="url:{0};id:_{1}"></ui-import>'.format('@{#}/_' + plugin.id + '/' + plugin.import, plugin.id));
@@ -221,8 +225,13 @@
 		}, 'init');
 
 		ROUTE(common.root, function() {
-			BREADCRUMB.add();
-			SET('common.page', 'welcome');
+			var dashboard = common.plugins.findItem('id', 'dashboard');
+			if (dashboard && !dashboard.loaded) {
+				REDIRECT(dashboard.url);
+			} else {
+				BREADCRUMB.add();
+				SET('common.page', 'welcome');
+			}
 		}, 'init');
 
 		ON('@flag diff', function(path, value) {
