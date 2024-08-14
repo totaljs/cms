@@ -68,7 +68,7 @@
 			opt.offsetWidth = 490;
 			opt.items = GET('%cmseditorlinks');
 			opt.callback = function(selected) {
-				exports.set('href', selected.url);
+				exports.set('href @change', selected.url);
 			};
 			SETTER('directory/show', opt);
 		};
@@ -87,10 +87,10 @@
 			var model = exports.model;
 			switch (el.attrd('type')) {
 				case 'email':
-					exports.set('href', 'mailto:' + model.href.replace(r, ''));
+					exports.set('href @change', 'mailto:' + model.href.replace(r, ''));
 					break;
 				case 'phone':
-					exports.set('href', 'tel:' + model.href.replace(r, ''));
+					exports.set('href @change', 'tel:' + model.href.replace(r, ''));
 					break;
 			}
 		};
