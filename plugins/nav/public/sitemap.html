@@ -60,7 +60,7 @@
 		};
 
 		exports.clear = function() {
-			exports.set('children', []);
+			exports.set('children @change', []);
 		};
 
 		exports.options = function(el) {
@@ -91,7 +91,7 @@
 					case 'clear':
 						child.children = [];
 						exports.scope();
-						exports.upd('children');
+						exports.upd('children @change');
 						break;
 					case 'remove':
 						exports.scope();
@@ -102,7 +102,7 @@
 							var arr = exports.model.children;
 							arr.splice(arr.indexOf(child), 1);
 						}
-						exports.upd('children');
+						exports.upd('children @change');
 						break;
 				}
 			};
@@ -126,10 +126,10 @@
 				child.hidden = model.hidden;
 				data.callback = undefined;
 				exports.scope();
-				exports.upd('children');
+				exports.upd('children @change');
 			};
 			SET('formlink @default', model);
-			SET('common.form2', 'formlink');
+			SET('*form2', 'formlink');
 		};
 
 		exports.addsub = function(el) {
@@ -143,10 +143,10 @@
 				data.callback = undefined;
 				child.children.push(data);
 				exports.scope();
-				exports.upd('children');
+				exports.upd('children @change');
 			};
 			SET('formlink @default', model);
-			SET('common.form2', 'formlink');
+			SET('*form2', 'formlink');
 		};
 
 		exports.add = function(el) {
@@ -159,7 +159,7 @@
 				PUSH('?.children', data);
 			};
 			SET('formlink @default', model);
-			SET('common.form2', 'formlink');
+			SET('*form2', 'formlink');
 		};
 
 	});

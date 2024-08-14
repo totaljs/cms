@@ -60,7 +60,7 @@
 			opt.offsetWidth = 490;
 			opt.items = DEF.cl.links;
 			opt.callback = function(selected) {
-				exports.set('url', selected.url);
+				exports.set('url @change', selected.url);
 			};
 			SETTER('directory/show', opt);
 		};
@@ -69,7 +69,7 @@
 			SET('common.form3', 'formfiles');
 			var opt = {};
 			EXEC(true, 'formfiles/init', opt, function(item, hide) {
-				exports.set('url', item.url);
+				exports.set('url @change', item.url);
 				hide();
 			});
 		};
