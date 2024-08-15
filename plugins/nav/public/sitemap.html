@@ -35,9 +35,10 @@
 				</ui-component>
 			</div>
 		</ui-component>
+		<ui-component name="changer" path="?.children"></ui-component>
 	</div>
 	<nav>
-		<ui-component name="validate" path="?" config="changes:1;track:children">
+		<ui-component name="validate" path="?" config="track:children">
 			<button name="submit"><i class="ti ti-check-circle"></i>@(SUBMIT)</button>
 			<button name="cancel">@(Cancel)</button>
 		</ui-component>
@@ -83,7 +84,7 @@
 			opt.callback = function(item) {
 				switch (item.id) {
 					case 'add':
-						exports.addsub(id);
+						exports.addsub(el);
 						break;
 					case 'edit':
 						exports.edit(el);
@@ -156,7 +157,7 @@
 				data.children = [];
 				data.callback = undefined;
 				exports.scope();
-				PUSH('?.children', data);
+				exports.push('children @change', data);
 			};
 			SET('formlink @default', model);
 			SET('*form2', 'formlink');
