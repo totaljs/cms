@@ -10,7 +10,7 @@
 ### Locally
 
 - install [Node.js platform](https://nodejs.org/en/)
-- download Flow source code
+- download CMS source code
 - open terminal/command-line:
 	- `cd cms`
 	- `npm install`
