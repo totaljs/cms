@@ -7,7 +7,7 @@
 			var opt = {};
 			opt.name = response.name;
 			opt.layout = response.html.replace(reg, function(text) {
-				return '<!-' + '-#' + arr.push(text) + '#-' + '->';
+				return text.includes('CMS_script') || text.includes('CMS_editor') ? text : ('<!-' + '-#' + arr.push(text) + '#-' + '->');
 			});
 
 			opt.html = '';

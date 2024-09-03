@@ -6,7 +6,10 @@
 			opt.url = response.url;
 			opt.name = response.name;
 			opt.html = response.html;
-			opt.layout = response.layout.replace(new RegExp('<scri' + 'pt\\b[^<]*(?:(?!<\\/scr' + 'ipt>)<[^<]*)*<\\/scr' + 'ipt>', 'gi'), '');
+			opt.layout = response.layout.replace(new RegExp('<scri' + 'pt\\b[^<]*(?:(?!<\\/scr' + 'ipt>)<[^<]*)*<\\/scr' + 'ipt>', 'gi'), function(text) {
+				return text.includes('CMS_script') || text.includes('CMS_editor') ? text : '';
+			});
+
 			opt.type = 'html';
 			opt.callback = function(value, hide) {
 				var model = {};
