@@ -8,6 +8,7 @@
 	<meta name="robots" content="all,follow" />
 	<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Sans+Pro:400,200,700" />
 	<link rel="stylesheet" href="https://cdn.componentator.com/spa.min@19.css" />
+	<!-- ICONS ONLY <link rel="stylesheet" href="https://cdn.componentator.com/icons.min.css" /> -->
 	<link rel="icon" href="/favicon.ico" type="image/x-icon" />
 	<script src="https://cdn.componentator.com/spa.min@19.js"></script>
 	<script src="@{ui}"></script>
