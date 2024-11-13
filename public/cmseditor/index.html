@@ -1692,10 +1692,12 @@
 			var contents = self.iframe_body();
 			var elheight = contents.find('#cmseditorheight');
 			if (elheight.length) {
-				var h = navigator.userAgent.indexOf('Safari') === -1 ? $(contents).find('body')[0].scrollHeight : elheight.offset().top + 80;
+				var body = contents.find('body');
+				var h = navigator.userAgent.indexOf('Safari') === -1 ? body[0].scrollHeight : elheight.offset().top + 80;
 				iframe.css('height', h);
 				width = contents.width();
 				height = h;
+				body.rclass2('jc-').aclass('jc-' + WIDTH(contents));
 			}
 		};
 
