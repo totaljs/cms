@@ -1571,7 +1571,7 @@
 							return;
 						}
 
-						if (target[0].tagName === 'A' && target.hclass('CMS_edit')) {
+						if (target[0].tagName === 'A' && target.hclass('CMS_edit') && !target.hclass('CMS_remove') && !target.hclass('CMS_repeat')) {
 							target.replaceWith(target.html());
 							self.iframe_toolbar().hide();
 							return;
