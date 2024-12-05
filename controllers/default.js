@@ -138,7 +138,7 @@ function render($) {
 	// Try to find pages for authorized users
 	if ($.user) {
 		for (let item of db.pages) {
-			if (!item.disabled && item.auth && item.url === url) {
+			if (!item.disabled && item.auth && item.url === url && (!item.language || item.language === $.language)) {
 				page = item;
 				break;
 			}
@@ -147,7 +147,7 @@ function render($) {
 
 	if (!page) {
 		for (let item of db.pages) {
-			if (!item.disabled && !item.auth && item.url === url) {
+			if (!item.disabled && !item.auth && item.url === url && (!item.language || item.language === $.language)) {
 				page = item;
 				break;
 			}
