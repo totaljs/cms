@@ -2,7 +2,7 @@ NEWSCHEMA('Nav/Link', 'id,icon:Icon,color:Color,*name,title,*url,arg,target,hidd
 
 NEWACTION('Nav/list', {
 	name: 'Nav List',
-	permissions: 'navigation',
+	permissions: 'navigation,admin',
 	action: function($) {
 
 		var arr = [];
@@ -16,7 +16,7 @@ NEWACTION('Nav/list', {
 NEWACTION('Nav/read', {
 	name: 'Read nav',
 	input: '*id:String',
-	permissions: 'navigation',
+	permissions: 'navigation,admin',
 	action: function($, model) {
 		var id = model.id;
 		var item = MAIN.db.nav.findItem('id', id);
@@ -29,7 +29,7 @@ NEWACTION('Nav/read', {
 
 NEWACTION('Nav/save', {
 	name: 'Save nav',
-	permissions: 'navigation',
+	permissions: 'navigation,admin',
 	input: 'id,*name,title,icon:Icon,color:Color,children:[@Nav/Link]',
 	action: function($, model) {
 
@@ -79,7 +79,7 @@ NEWACTION('Nav/editor', {
 NEWACTION('Nav/remove', {
 	name: 'Remove nav',
 	input: '*id:String',
-	permissions: 'navigation',
+	permissions: 'navigation,admin',
 	action: function($, model) {
 		var id = model.id;
 		var index = MAIN.db.nav.findIndex('id', id);

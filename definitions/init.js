@@ -16,7 +16,7 @@ ON('ready', function() {
 			OpenPlatform.permissions.push.apply(OpenPlatform.permissions, item.permissions);
 	}
 
-	OpenPlatform.permissions.push({ id: 'settings', name: 'Settings' });
+	OpenPlatform.permissions.push({ id: 'admin', name: 'Admin' });
 
 	// Load CMS db
 	setTimeout(FUNC.load, 500);

@@ -2,7 +2,7 @@ exports.icon = 'ti ti-copy';
 exports.name = '@(Files)';
 exports.position = 5;
 exports.permissions = [{ id: 'files', name: 'Files' }];
-exports.visible = user => user.sa || user.permissions.includes('files');
+exports.visible = user => user.sa || user.permissions.includes('files') || user.permissions.includes('admin');
 exports.import = 'extensions.html';
 
 exports.install = function() {

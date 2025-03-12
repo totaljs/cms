@@ -1,6 +1,6 @@
 NEWACTION('Redirects/list', {
 	name: 'List of redirects',
-	permissions: 'redirects',
+	permissions: 'redirects,admin',
 	action: function($) {
 
 		var arr = [];
@@ -14,7 +14,7 @@ NEWACTION('Redirects/list', {
 NEWACTION('Redirects/read', {
 	name: 'Read redirect',
 	input: '*id',
-	permissions: 'redirects',
+	permissions: 'redirects,admin',
 	action: function($, model) {
 		var item = MAIN.db.redirects.findItem('id', model.id);
 		if (item)
@@ -27,7 +27,7 @@ NEWACTION('Redirects/read', {
 NEWACTION('Redirects/save', {
 	name: 'Save redirect',
 	input: 'id,*url,*target,permanent:Boolean',
-	permissions: 'redirects',
+	permissions: 'redirects,admin',
 	action: function($, model) {
 
 		var db = MAIN.db;
@@ -65,7 +65,7 @@ NEWACTION('Redirects/save', {
 NEWACTION('Redirects/remove', {
 	name: 'Remove redirect',
 	input: '*id',
-	permissions: 'redirects',
+	permissions: 'redirects,admin',
 	action: function($, model) {
 		var id = model.id;
 		var index = MAIN.db.redirects.findIndex('id', id);

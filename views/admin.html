@@ -12,6 +12,9 @@
 	<link href="@{'%cdn'}/spa.min@19.css" rel="stylesheet" />
 	<script src="@{'%cdn'}/spa.min@19.js"></script>
 	<script src="@{REPO.ui}"></script>
+	@{if user.color}
+	<style>:root{--color:@{user.color};}</style>
+	@{fi}
 	@{import('meta', 'head', 'default.js + func.js', 'default.css', 'favicon.ico')}
 </head>
 <body class="invisible">
@@ -45,7 +48,11 @@
 	<ui-component name="dropfiles" config="exec:common/dropfiles;check:common/dropcheck" class="hidden">@(Drag &amp; Drop files here)</ui-component>
 
 	<header>
-		<a href="/" title="@(Website)" target="_blank"><i class="ti ti-globe"></i></a>
+		@{if user.openplatform}
+		<a href="@{user.openplatform}" title="@(Browse modules)" class="openplatform"><i class="ti ti-menu"></i></a><label>@{CONF.name}</label>
+		@{else}
+		<a href="/" title="@(Website)" class="openplatform"><i class="ti ti-globe"></i></a><label>@{CONF.name}</label>
+		@{fi}
 		<ui-component name="breadcrumb" path="common.breadcrumb" config="$assign:BREADCRUMB;style:2;root:@(Home);icon:ti ti-home;rooturl:/admin/;title:@{'%name'}" class="invisible">
 			<ui-component name="virtualwire" path="common.page" class="toolbar" style="float:right"></ui-component>
 		</ui-component>

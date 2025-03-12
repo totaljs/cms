@@ -1,6 +1,6 @@
 NEWACTION('Settings/read', {
 	name: 'Read settings',
-	permissions: 'settings',
+	permissions: 'settings,admin',
 	action: function($) {
 
 		var model = {};
@@ -49,7 +49,7 @@ NEWACTION('Settings/read', {
 NEWACTION('Settings/save', {
 	name: 'Save settings',
 	input: 'name:String, url:URL, smtp:String, icon:String, $tms:Boolean, secret_tms:String, op_reqtoken:String, op_restoken:String, totalapi:String, items:[*id:String, value:Object]',
-	permissions: 'settings',
+	permissions: 'settings,admin',
 	action: function($, model) {
 
 		for (var key in model) {
@@ -91,7 +91,7 @@ NEWACTION('Settings/save', {
 NEWACTION('Settings/test', {
 	name: 'Test SMTP settings',
 	input: '*smtp:JSON',
-	permissions: 'settings',
+	permissions: 'settings,admin',
 	action: async function($, model) {
 		var options = model.smtp.parseJSON();
 		Mail.try(options, $.done(true));

@@ -1,6 +1,6 @@
 NEWACTION('Layouts/list', {
 	name: 'List of layouts',
-	permissions: 'layouts',
+	permissions: 'layouts,admin',
 	action: function($) {
 
 		var arr = [];
@@ -14,7 +14,7 @@ NEWACTION('Layouts/list', {
 NEWACTION('Layouts/read', {
 	name: 'Read layout',
 	input: '*id',
-	permissions: 'layouts',
+	permissions: 'layouts,admin',
 	action: function($, model) {
 		var item = MAIN.db.layouts.findItem('id', model.id);
 		if (item)
@@ -27,7 +27,7 @@ NEWACTION('Layouts/read', {
 NEWACTION('Layouts/save', {
 	name: 'Save layouts',
 	input: 'id,*name,icon:Icon,color:Color,html,scripts:[string]',
-	permissions: 'layouts',
+	permissions: 'layouts,admin',
 	action: function($, model) {
 		importwidgets(model, function() {
 
@@ -71,7 +71,7 @@ NEWACTION('Layouts/save', {
 
 NEWACTION('Layouts/import', {
 	name: 'Import layout',
-	permissions: 'layouts',
+	permissions: 'layouts,admin',
 	action: function($, model) {
 
 		var db = MAIN.db;
@@ -112,7 +112,7 @@ NEWACTION('Layouts/import', {
 NEWACTION('Layouts/remove', {
 	name: 'Remove layout',
 	input: '*id:String',
-	permissions: 'layouts',
+	permissions: 'layouts,admin',
 	action: function($, model) {
 		var id = model.id;
 		var index = MAIN.db.layouts.findIndex('id', id);
@@ -131,7 +131,7 @@ NEWACTION('Layouts/remove', {
 NEWACTION('Layouts/clone', {
 	name: 'Clone layout',
 	input: '*id:String',
-	permissions: 'layouts',
+	permissions: 'layouts,admin',
 	action: function($, model) {
 
 		var id = model.id;
@@ -178,7 +178,7 @@ NEWACTION('Layouts/HTML/read', {
 NEWACTION('Layouts/HTML/save', {
 	name: 'Save layout/HTML',
 	input: '*id,html',
-	permissions: 'layouts',
+	permissions: 'layouts,admin',
 	action: function($, model) {
 
 		var db = MAIN.db;

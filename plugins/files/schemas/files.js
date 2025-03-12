@@ -69,7 +69,7 @@ NEWACTION('Files/insert', {
 NEWACTION('Files/rename', {
 	name: 'Rename file',
 	input: '*id,*name',
-	permissions: 'files',
+	permissions: 'files,admin',
 	action: function($, model) {
 		MAIN.db.fs.rename(model.id, model.name, $.done(model.id));
 	}
@@ -77,7 +77,7 @@ NEWACTION('Files/rename', {
 
 NEWACTION('Files/clear', {
 	name: 'Clear files',
-	permissions: 'files',
+	permissions: 'files,admin',
 	action: function($) {
 		MAIN.db.fs.clear($.done());
 	}
@@ -86,7 +86,7 @@ NEWACTION('Files/clear', {
 NEWACTION('Files/remove', {
 	name: 'Remove files',
 	input: '*id:String',
-	permissions: 'files',
+	permissions: 'files,admin',
 	action: function($, model) {
 		MAIN.db.fs.remove(model.id, $.done());
 	}

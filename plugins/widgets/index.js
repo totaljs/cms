@@ -2,7 +2,7 @@ exports.icon = 'ti ti-plug';
 exports.name = '@(Widgets)';
 exports.position = 4;
 exports.permissions = [{ id: 'widgets', name: 'Widgets' }];
-exports.visible = user => user.sa || user.permissions.includes('widgets');
+exports.visible = user => user.sa || user.permissions.includes('widgets') || user.permissions.includes('admin');
 
 exports.install = function() {
 

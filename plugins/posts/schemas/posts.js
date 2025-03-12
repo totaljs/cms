@@ -2,7 +2,7 @@ NEWSCHEMA('Posts', 'id,*name,category,picture,reference,summary,body,icon:Icon,c
 
 NEWACTION('Posts/list', {
 	name: 'List of posts',
-	permissions: 'posts',
+	permissions: 'posts,admin',
 	action: function($) {
 		DATA.list(PLUGINS.posts.db).autoquery($.query, 'id,picture,summary,reference,category,icon,color,name,hidden,dtupdated,date', 'date_desc', 100).callback($);
 	}
@@ -11,7 +11,7 @@ NEWACTION('Posts/list', {
 NEWACTION('Posts/read', {
 	name: 'Read post',
 	input: '*id:String',
-	permissions: 'posts',
+	permissions: 'posts,admin',
 	action: function($, model) {
 		DATA.read(PLUGINS.posts.db).id(model.id).error(404).callback($);
 	}
@@ -33,7 +33,7 @@ NEWACTION('Posts/categories', {
 NEWACTION('Posts/create', {
 	name: 'Create post',
 	input: '@Posts',
-	permissions: 'posts',
+	permissions: 'posts,admin',
 	action: function($, model) {
 
 		model.id = UID();
@@ -52,7 +52,7 @@ NEWACTION('Posts/create', {
 NEWACTION('Posts/update', {
 	name: 'Update post',
 	input: '@Posts',
-	permissions: 'posts',
+	permissions: 'posts,admin',
 	action: function($, model) {
 
 		if (!model.id) {
@@ -73,7 +73,7 @@ NEWACTION('Posts/update', {
 
 NEWACTION('Posts/clear', {
 	name: 'Clear all posts',
-	permissions: 'posts',
+	permissions: 'posts,admin',
 	action: function($) {
 		DATA.remove(PLUGINS.posts.db).callback($.done());
 	}
@@ -82,7 +82,7 @@ NEWACTION('Posts/clear', {
 NEWACTION('Posts/remove', {
 	name: 'Remove post',
 	input: '*id',
-	permissions: 'posts',
+	permissions: 'posts,admin',
 	action: function($, model) {
 		DATA.remove(PLUGINS.posts.db).id(model.id).error(404).callback($.done(model.id));
 	}

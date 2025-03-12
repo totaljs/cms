@@ -2,7 +2,7 @@ exports.icon = 'ti ti-book-open';
 exports.name = '@(Posts)';
 exports.position = 4;
 exports.permissions = [{ id: 'posts', name: 'Posts' }];
-exports.visible = user => user.sa || user.permissions.includes('posts');
+exports.visible = user => user.sa || user.permissions.includes('posts') || user.permissions.includes('admin');
 
 exports.install = function() {
 	ROUTE('+API    ?    -posts                 --> Posts/list');

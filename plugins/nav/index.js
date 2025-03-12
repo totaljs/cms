@@ -2,7 +2,7 @@ exports.icon = 'ti ti-align-justify';
 exports.name = '@(Navigation)';
 exports.position = 3;
 exports.permissions = [{ id: 'navigation', name: 'Navigation' }];
-exports.visible = user => user.sa || user.permissions.includes('navigation');
+exports.visible = user => user.sa || user.permissions.includes('navigation') || user.permissions.includes('admin');
 
 exports.install = function() {
 	ROUTE('+API    ?    -nav_list          --> Nav/list');

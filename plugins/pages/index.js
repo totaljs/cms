@@ -3,7 +3,7 @@ exports.name = '@(Pages)';
 exports.position = 2;
 exports.import = 'routes.html';
 exports.permissions = [{ id: 'pages', name: 'Pages' }];
-exports.visible = user => user.sa || user.permissions.includes('pages');
+exports.visible = user => user.sa || user.permissions.includes('pages') || user.permissions.includes('admin');
 
 exports.install = function() {
 	ROUTE('+API    ?    -pages_list                --> Pages/list');

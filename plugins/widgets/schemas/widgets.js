@@ -37,7 +37,7 @@ NEWACTION('Widgets/read', {
 NEWACTION('Widgets/save', {
 	name: 'Save widgets',
 	input: 'id,*html,singleton:Boolean',
-	permissions: 'widgets',
+	permissions: 'widgets,admin',
 	action: async function resave($, model) {
 
 		var cms = MAIN.db;
@@ -122,7 +122,7 @@ NEWACTION('Widgets/save', {
 NEWACTION('Widgets/remove', {
 	name: 'Remove widgets',
 	input: '*id:String',
-	permissions: 'widgets',
+	permissions: 'widgets,admin',
 	action: function($, model) {
 
 		var db = MAIN.db;

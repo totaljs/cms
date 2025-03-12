@@ -1,6 +1,6 @@
 NEWACTION('Pages/list', {
 	name: 'Pages List',
-	permissions: 'pages',
+	permissions: 'pages,admin',
 	action: function($) {
 		$.callback(MAIN.db.pages);
 	}
@@ -19,7 +19,7 @@ NEWACTION('Pages/links', {
 NEWACTION('Pages/read', {
 	name: 'Read pages',
 	input: '*id:String',
-	permissions: 'pages',
+	permissions: 'pages,admin',
 	action: function($, model) {
 		var item = MAIN.db.pages.findItem('id', model.id);
 		if (item)
@@ -31,7 +31,7 @@ NEWACTION('Pages/read', {
 
 NEWACTION('Pages/save', {
 	name: 'Save pages',
-	permissions: 'pages',
+	permissions: 'pages,admin',
 	input: 'id,parentid,*layoutid,language,title,description,keywords,color,icon,url,*name,nocache:Boolean,disabled:Boolean,pinned:Boolean,auth:Boolean,permissions:[string]',
 	action: function($, model) {
 
@@ -108,7 +108,7 @@ NEWACTION('Pages/save', {
 NEWACTION('Pages/remove', {
 	name: 'Remove pages',
 	input: '*id:String',
-	permissions: 'pages',
+	permissions: 'pages,admin',
 	action: function($, model) {
 
 		var id = model.id;
@@ -141,7 +141,7 @@ NEWACTION('Pages/remove', {
 NEWACTION('Pages/clone', {
 	name: 'Clone pages',
 	input: '*id:String',
-	permissions: 'pages',
+	permissions: 'pages,admin',
 	action: function($, model) {
 
 		var id = model.id;
@@ -196,7 +196,7 @@ NEWACTION('Pages/HTML/read', {
 
 NEWACTION('Pages/HTML/save', {
 	name: 'Save Pages/HTML',
-	permissions: 'pages',
+	permissions: 'pages,admin',
 	input: '*id,html',
 	action: function($, model) {
 		var db = MAIN.db;
@@ -212,7 +212,7 @@ NEWACTION('Pages/HTML/save', {
 NEWACTION('Pages/HTML/copy', {
 	name: 'Copy Pages/HTML',
 	input: 'from:String,to:String',
-	permissions: 'pages',
+	permissions: 'pages,admin',
 	action: function($, model) {
 
 		var fromid = model.from;

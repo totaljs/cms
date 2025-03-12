@@ -8,6 +8,10 @@ html,body { overflow: hidden; margin: 0; padding: 0; color: #303030; }
 h1, h2, h3 { margin-top: 0; padding: 0; }
 h1 i, h2 i, h3 i { margin-right: 7px; }
 
+:root {
+	--radius: 5px;
+}
+
 .bg-smoke { background-color: #F8F8F8; }
 .bg-white { background-color: #FFF; }
 .radius { border-radius: var(--radius); }
@@ -48,9 +52,11 @@ header > .account { padding-right: 10px; }
 .listing .controls > span:first-child, .listing2 .controls > span:first-child { margin-left: 0; }
 .listing .controls span:hover, .listing2 .controls span:hover { color: #888	; }
 
-header > a { float: left; width: 60px; height: 40px; line-height: 39px; text-align: center; font-size: 20px; color: var(--color); border-right: 1px solid #E0E0E0; margin: 9px 10px 0 0; }
+header > a { float: left; background-color: var(--color); color: #FFF; border: 0; width: 32px; height: 32px; font-size: 18px; line-height: 32px; border-radius: var(--radius); margin: 14px 10px 0 15px; text-align: center; }
+header > a i { transform: scale(1); }
+header label { float: left; font-size: 16px; font-weight: bold; margin: 19px 15px 0 0; }
 .toolbar button { height: 28px; }
-.ui-breadcrumb-style2 > nav { padding: 8px 0 0 3px; }
+.ui-breadcrumb-style2 > nav { padding: 10px 0 0 3px; }
 .ui-breadcrumb-style2 .ui-searchinput { height: 28px; }
 .ui-breadcrumb-style2 .ui-searchinput > span { line-height: 27px; height: 28px; }
 .ui-breadcrumb-style2 .ui-searchinput > input { height: 25px; }

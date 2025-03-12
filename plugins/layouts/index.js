@@ -2,7 +2,7 @@ exports.icon = 'ti ti-layer-group';
 exports.name = '@(Layouts)';
 exports.position = 3;
 exports.permissions = [{ id: 'layouts', name: 'Layouts' }];
-exports.visible = user => user.sa || user.permissions.includes('layouts');
+exports.visible = user => user.sa || user.permissions.includes('layouts') || user.permissions.includes('admin');
 exports.import = 'routes.html';
 
 exports.install = function() {

@@ -2,7 +2,7 @@ exports.icon = 'ti ti-cog';
 exports.name = '@(Settings)';
 exports.position = 100;
 exports.permissions = [{ id: 'settings', name: 'Settings' }];
-exports.visible = user => user.sa || user.permissions.includes('settings');
+exports.visible = user => user.sa || user.permissions.includes('settings') || user.permissions.includes('admin');
 
 exports.install = function() {
 	ROUTE('+API    ?    -account          --> Account/read');
