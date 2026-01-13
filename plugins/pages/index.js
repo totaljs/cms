@@ -44,20 +44,14 @@ NEWACTION('Pages|read', {
 });
 
 NEWACTION('Pages|save', {
-	input: 'id,*layoutid,parentid:String2,*name,*url:Lower,icon,color,language,title,description,keywords,nocache:Boolean,disabled:Boolean,pinned:Boolean,auth:Boolean',
+	input: 'id,layoutid,parentid:String2,*name,*url:Lower,icon,color,language,title,description,keywords,nocache:Boolean,disabled:Boolean,pinned:Boolean,auth:Boolean',
 	route: '+API ?',
 	user: true,
 	permissions: 'pages,admin',
 	action: function($, model) {
 
 		let db = MAIN.cms.db;
-		let template = db.layouts.findItem('id', model.layoutid);
 		let urlchange = false;
-
-		if (!template) {
-			$.invalid('@(Layout not found)');
-			return;
-		}
 
 		// Generate URL
 		if (!model.url) {
@@ -71,6 +65,9 @@ NEWACTION('Pages|save', {
 					model.parentid = null;
 			}
 		}
+
+		if (model.url[0] !== '/')
+			model.url = '/' + model.url;
 
 		if (model.id) {
 
