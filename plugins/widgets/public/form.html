@@ -1,20 +1,20 @@
 <style>
-	.~PATH~ figure { cursor: pointer; position: relative; margin-bottom: var(--gap); }
-	.~PATH~ figure > div { border-radius: var(--radius); border: 1px solid #E0E0E0; }
-	.~PATH~ figure .preview { padding: 10px; }
-	.~PATH~ figure img { border-radius: var(--radius); }
-	.~PATH~ figure .meta { border-top: 1px solid #E0E0E0; padding: 10px; font-size: 12px; }
-	.~PATH~ figure .meta .name { font-size: 13px; font-weight: bold; }
-	.~PATH~ figure .is { position: absolute; font-size: 30px; right: 5px; margin: -10px 0 0 0; color: #68B25B; display: none; background-color: #FFF; width: 40px; height: 40px; border-radius: 100px; text-align: center; line-height: 40px; box-shadow: 1px 1px 3px rgba(0,0,0,0.1); }
-	.~PATH~ figure.installed > div { background-color: #F0F0F0; }
-	.~PATH~ figure.installed .is { display: block; }
-	.~PATH~ .ui-listing-fixed .ui-listing-paginate { padding-left: 15px; }
-	.~PATH~ .items { padding: 5px; }
-	.jc-sm .~PATH~ figure { width: 33.33%; }
-	.jc-xs .~PATH~ figure { width: 50%; }
+	.CLASS figure { cursor: pointer; position: relative; margin-bottom: var(--gap); }
+	.CLASS figure > div { border-radius: var(--radius); border: 1px solid #E0E0E0; }
+	.CLASS figure .preview { padding: 10px; }
+	.CLASS figure img { border-radius: var(--radius); }
+	.CLASS figure .meta { border-top: 1px solid #E0E0E0; padding: 10px; font-size: 12px; }
+	.CLASS figure .meta .name { font-size: 13px; font-weight: bold; }
+	.CLASS figure .is { position: absolute; font-size: 30px; right: 5px; margin: -10px 0 0 0; color: #68B25B; display: none; background-color: #FFF; width: 40px; height: 40px; border-radius: 100px; text-align: center; line-height: 40px; box-shadow: 1px 1px 3px rgba(0,0,0,0.1); }
+	.CLASS figure.installed > div { background-color: #f6f5db; }
+	.CLASS figure.installed .is { display: block; }
+	.CLASS .ui-listing-fixed .ui-listing-paginate { padding-left: 15px; }
+	.CLASS .items { padding: 5px; }
+	.jc-sm .CLASS figure { width: 33.33%; }
+	.jc-xs .CLASS figure { width: 50%; }
 </style>
 
-<ui-component name="box" path="common.form2" config="if:~PATH~;title:@(Import widgets);icon:ti ti-plug;autofocus:true;reload:?/reload;scrollbarshadow:1;submit:?/submit;width:1400;zindex:30" class="hidden ~PATH~" plugin="~PATH~">
+<ui-component name="box" path="*form2" config="if:CLASS;title:@(Import widgets);icon:ti ti-plug;autofocus:true;reload:?/reload;scrollbarshadow:1;submit:?/submit;width:1400;zindex:30" class="hidden CLASS" plugin="CLASS">
 	<nav>
 		<ui-component name="searchinput" path="?.search" config="placeholder:@(Search widgets)"></ui-component>
 	</nav>
@@ -53,7 +53,7 @@
 		exports.refresh = function() {
 			exports.ajax('GET https://cdn.totaljs.com/cms/db.json', function(response) {
 				var items = PARSE(response);
-				exports.tapi('widgets_list?list=1', function(response) {
+				exports.tapi('Widgets?list=1', function(response) {
 					for (var item of items) {
 						item.html = '<img src="{0}" style="width:30px" class="mr10" />{1}'.format(item.preview, item.name.encode());
 						item.search = item.name.toSearch();
@@ -70,9 +70,9 @@
 			var item = exports.data.items.findItem('id', id);
 			SETTER('approve/show', '@(Are you sure you want to install the "{0}" widget?)'.format(item.name.encode()), '"ti ti-cloud-download" @(Install)', function() {
 				exports.ajax('GET {0}'.format(item.url), function(response) {
-					exports.tapi('widgets_save @showloading', { id: id, html: response }, function(response) {
+					exports.tapi('Widgets|save @showloading', { id: id, html: response }, function(response) {
 						el.aclass('installed');
-						EMIT('refresh_widgets @hideloading');
+						EMIT('Widgets/refresh @hideloading');
 					});
 				});
 			});

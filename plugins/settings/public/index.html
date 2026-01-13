@@ -1,111 +1,43 @@
 <ui-plugin>
-	<ui-component name="viewbox" path="common.page" config="parent:window;margin:50;scrollbarshadow:1">
-
+	<ui-component name="viewbox" path="*page" config="parent:window;margin:[margin];scrollbarshadow:1">
 		<br />
 		<div style="margin:0 auto;max-width:720px;text-align:left;padding:var(--gap)">
 			<div class="panel">
 				<label><i class="ti ti-cog"></i>@(Configuration)</label>
-				<div style="padding:var(--gap)">
-					<div>
-						<div class="m">
-							<ui-component name="input" path="?.name" config="required:1">@(Website name)</ui-component>
-						</div>
-					</div>
-
-					<div class="m">
-						<div class="caption m">
-							<label><i class="ti ti-totaljs"></i>@(TMS)</label>
-						</div>
-						<p>@(The Total.js Message Service (TMS) allows you to publish data, subscribe to events, and call remote procedures to this app.)</p>
-
-						<ui-component name="input" path="?.$tms" config="type:checkbox">@(Enable TMS)</ui-component>
-						<ui-bind path="?.$tms" config="show" class="hidden block" style="margin-top:15px">
-
-							<p class="m"><i class="ti ti-globe blue mr5"></i>@(URL address:) <ui-bind path="location.origin" config="html:value + '/$tms/'" class="b"></ui-bind></p>
-
-							<ui-component name="input" path="?.secret_tms" config="camouflage:1">@(Security token)</ui-component>
-							<div class="help">
-								<i class="ti ti-warning red"></i>@(<b>Recommended</b>. You can secure TMS communication with your own custom security token.) <span class="exec link ml5" data-exec="?/generate"><i class="ti ti-dice"></i>@(Generate)</span>
-							</div>
-
-						</ui-bind>
-					</div>
-
-					<div class="caption m">
-						<label><i class="ti ti-totaljs"></i>@(Total.js API)</label>
-					</div>
-					<p>@(With the Total.js API service, you can create text or images with artificial intelligence (AI), send SMS messages easily, etc.)</p>
-					<ui-component name="input" path="?.totalapi" config="camouflage:1;placeholder:@(Total.js API token)">@(Access token)</ui-component>
-					<div class="help">@(You can obtain access token here:) <a href="https://platform.totaljs.com/?open=services" target="_blank">Total.js Platform</a>.</div>
-				</div>
-				<hr class="nmt nmb" />
-				<div style="padding:var(--gap)">
-
-					<div class="caption m">
-						<label><i class="ti ti-totaljs green"></i>Total.js OpenPlatform</label>
-					</div>
-
-					<p>@(The application is designed to work with the Total.js OpenPlatform. First, you must obtain tokens from the application registration form in the OpenPlatform instance.)</p>
-
-					<div class="m">
-						<p>@(You can easily import this app into the OpenPlatform. Copy the link below and paste it into the Importing form in the OpenPlatform.)</p>
-						<ui-bind path="location.origin" config="text span" class="block fs12">
-							<a href="/openplatform.json" target="_blank"><i class="ti ti-globe mr5"></i><span></span>/openplatform.json</a>
-						</ui-bind>
-					</div>
-
-					<div class="grid-2">
-						<div class="m">
-							<ui-component name="input" path="?.op_reqtoken" config="camouflage:1;placeholder:@(Enter a token)">@(Request token)</ui-component>
-						</div>
-						<div class="m">
-							<ui-component name="input" path="?.op_restoken" config="camouflage:1;placeholder:@(Enter a token)">@(Response token)</ui-component>
-						</div>
-					</div>
-					<div class="message message-alert">
-						<div class="b"><i class="ti ti-warning mr5"></i>@(Warning)</div>
-						@(You will be automatically logged out if you enter tokens for the OpenPlatform.)
-					</div>
-				</div>
-
-				<hr class="nmt nmb" />
 				<div style="padding:var(--gap)" class="bg-smoke">
-
-					<div class="caption m">
-						<div class="toolbar">
-							<button class="exec" data-exec="?/test"><i class="ti ti-bong"></i>@(Test)</button>
-						</div>
-						<label><i class="ti ti-envelope"></i>@(SMTP settings)</label>
-					</div>
-
 					<div class="m">
-						<ui-component name="input" path="?.smtp" config="camouflage:1;monospace:1">@(SMTP server)</ui-component>
+						<ui-component name="input" path="?.name" config="required:1">@(App name)</ui-component>
 					</div>
-					<div class="help m"><i class="ti ti-lightbulb"></i>@(SMTP options have to be in valid JSON format, according to the Total.js documentation). <a href="https://docs.totaljs.com/total4/4047d003kk51c/#6ce08001ug51c" target="_blank">@(Documentation)</a></div>
-
-					<ui-bind path="?.mail_check" config="template" class="block m">
-						<script type="text/html">
-							{{ if value == null }}
-							<div class="message message-info"><i class="ti ti-lightbulb mr5"></i>@(SMTP server is not configured yet.)</div>
-							{{ else if value.success === true }}
-							<div class="message message-success"><i class="ti ti-check-circle mr5"></i>@(SMTP server is configured correctly.)</div>
-							{{ else }}
-							<div class="message message-error">
-								<div class="b">@(SMTP response:)</div>
-								<i class="ti ti-bug mr5"></i>{{ value[0].error }}</div>
-							</div>
-							{{ fi }}
-						</script>
+				</div>
+				<div style="padding:var(--gap)">
+					<div class="m">
+						<ui-component name="input" path="?.op" config="type:checkbox">@(Enable OpenPlatform integration)</ui-component>
+					</div>
+					<ui-bind path="?.op" config="show" class="block">
+						<div class="padding radius bg-highlight">
+							<p>@(This application is designed to work with the Total.js OpenPlatform. Copy the link below and register it on the OpenPlatform.)</p>
+							<ui-bind path="?" config="track:op;template" class="block fs12 radius bg-white padding">
+								<script type="text/html">
+									<div class="b">@(Link for the OpenPlatform:)</div>
+									<a href="/openplatform.json?reqtoken={{ value.op_reqtoken }}&restoken={{ value.op_restoken }}" target="_blank" class="block hellip monospace mt5 b"><i class="ti ti-globe mr5"></i><span></span>{{ value.origin }}/openplatform.json?reqtoken={{ value.op_reqtoken }}&restoken={{ value.op_restoken }}</a>
+									<div class="help" style="margin-top:2px"><span class="exec link gray" data-exec="?/opcopy"><i class="ti ti-copy mr5"></i>@(Copy link)</span></div>
+								</script>
+							</ui-bind>
+							<div class="help right"><span class="exec link gray" data-exec="?/optoken"><i class="ti ti-key mr5"></i>@(Re-generate tokens)</span></div>
+						</div>
 					</ui-bind>
 				</div>
+
 				<ui-bind path="?.items" config="show:value&&value.length" class="block hidden">
 					<hr class="nmt nmb" />
 					<div style="padding:var(--gap)">
 						<ui-component name="configuration" path="?.data" config="style:1;$assign:?|configuration"></ui-component>
 					</div>
 				</ui-bind>
+
 				<hr class="nmt nmb" />
-				<div style="padding:var(--gap)">
+
+				<div class="padding">
 					<ui-component name="validate" path="?">
 						<button name="submit" class="button exec" data-exec="?/submit" disabled><i class="ti ti-check-circle"></i>@(SUBMIT)</button>
 					</ui-component>
@@ -123,9 +55,14 @@
 	PLUGIN(function(exports) {
 
 		exports.reload = function() {
+
 			BREADCRUMB.add('@(Settings)', NAV.url);
-			exports.tapi('settings_read ERROR @showloading', function(response) {
-				exports.configuration.rebind(response.items);
+
+			exports.tapi('Settings|read ERROR @showloading', function(response) {
+
+				WAIT(() => exports.configuration, function() {
+					exports.configuration.rebind(response.items);
+				});
 
 				var data = {};
 
@@ -135,45 +72,44 @@
 				}
 
 				response.data = data;
-				exports.set('@reset @hideloading', response);
+				response.origin = location.origin;
 
-				if (response.mail_smtp)
-					exports.test();
+				if (!response.op_reqtoken)
+					response.op_reqtoken = GUID(40);
+
+				if (!response.op_restoken)
+					response.op_restoken = GUID(40);
+
+				exports.set('@reset @hideloading', response);
 
 			});
 		};
 
+		exports.optoken = function() {
+			exports.set('op_reqtoken', GUID(40));
+			exports.set('op_restoken', GUID(40));
+			exports.upd('op');
+			SETTER('notify/success', '@(Tokens have been regenerated. <b>Submit settings</b>.)');
+		};
+
+		exports.opcopy = function(el) {
+			let url = el.closest('ui-bind').find('a').text();
+			SETTER('clipboard/copy @copied', url);
+		};
+
 		exports.submit = function() {
-			var form = CLONE(exports.form);
-			var items = [];
-			for (var key in form.data)
+
+			let form = CLONE(exports.form);
+			let items = [];
+
+			for (let key in form.data)
 				items.push({ id: key, value: form.data[key] });
 
 			delete form.data;
 			form.items = items;
+			form.url = location.origin;
 
-			exports.tapi('settings_save ERROR @showloading', form, function() {
-				EXEC('-notify/success @hideloading', '@(Settings have been saved successfully).');
-			});
-		};
-
-		exports.copy = function(el) {
-			EXEC('-clipboard/copy', el.text());
-			EXEC('-notify/success', '@(URL address has been copied)');
-		};
-
-		exports.generate = function() {
-			exports.set('secret_tms @type:show', GUID(35));
-		};
-
-		exports.test = function() {
-			var model = exports.model;
-			if (model.smtp) {
-				exports.tapi('settings_test @showloading', model, function(response, error) {
-					exports.set('mail_check @hideloading', response || error);
-				});
-			} else
-				exports.nul('mail_check');
+			exports.tapi('Settings|save ERROR @showloading', form, () => FLAGS('@saved @hideloading'));
 		};
 
 	});

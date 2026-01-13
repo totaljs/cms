@@ -12,8 +12,7 @@
 					<h2><i class="ti ti-variables"></i>@(Variables)</h2>
 
 					<div class="message message-alert">
-						<i class="ti ti-warning"></i><b>@(IMPORTANT)</b>:<br />
-						@(Variables are saved automatically with each change. The system replaces all <b>$key</b> with a value on all rendered pages.)
+						@(Variables are automatically saved with each change. The system replaces all instances of <b>$key</b> with a value on all rendered pages.)
 					</div>
 					<br />
 
@@ -35,7 +34,7 @@
 		};
 
 		exports.refresh = function() {
-			exports.tapi('variables_read', function(response) {
+			exports.tapi('Variables|read', function(response) {
 
 				if (typeof(response) !== 'object' || response == null)
 					response = {};
@@ -44,9 +43,9 @@
 			});
 		};
 
-		exports.watch('variables', function(value, path, type) {
-			if (type !== 'read')
-				exports.tapi('variables_save ERROR', { vars: value }, ASETTER('notify/success', '@(Variables have been updated successfully)'));
+		exports.watch('variables', function(value, flags) {
+			if (flags.modified)
+				exports.tapi('Variables|save ERROR', { vars: value }, ASETTER('notify/success', '@(Variables have been updated successfully)'));
 		});
 
 	});

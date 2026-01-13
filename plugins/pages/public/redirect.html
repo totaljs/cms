@@ -1,0 +1,45 @@
+<ui-component name="miniform" path="*form2" config="if:CLASS;icon:ti ti-exchange;autofocus:true;reload:?/reload;scrollbar:1;submit:?/submit;width:400;zindex:20" class="hidden" plugin="CLASS">
+	<div class="padding">
+		<div class="m">
+			<ui-component name="input" path="?.url" config="required:1;placeholder:@(Relative URL address)">@(URL)</ui-component>
+		</div>
+		<div class="m">
+			<ui-component name="input" path="?.target" config="required:1">@(Target URL)</ui-component>
+		</div>
+		<ui-component name="input" path="?.ispermanent" config="type:checkbox">@(Permanent redirect)</ui-component>
+	</div>
+	<nav>
+		<ui-component name="validate" path="?">
+			<button name="submit" disabled><i class="ti ti-check-circle"></i>@(SUBMIT)</button>
+			<button name="cancel">@(Cancel)</button>
+		</ui-component>
+	</nav>
+</ui-component>
+
+<script>
+
+	PLUGIN(function(exports) {
+
+		var caller;
+
+		exports.reload = function(com) {
+
+			if (!caller)
+				caller = exports.caller;
+
+			let model = exports.model;
+			let id = model ? model.id : null;
+			com.reconfigure({ title: id ? '@(Update redirect)' : '@(Create redirect)' });
+		};
+
+		exports.submit = function(hide) {
+			let model = exports.form;
+			exports.tapi('Redirects|save ERROR', model, function() {
+				hide();
+				caller.exec('refresh @saved');
+			});
+		};
+
+	});
+
+</script>

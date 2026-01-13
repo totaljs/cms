@@ -1,187 +1,282 @@
-<style>
-	.CLASS .listing .url { font-size: 10px; padding: 1px 3px; }
-	.CLASS .listing .preview { float: right; font-size: 11px; color: #777; margin-right: 10px; }
-	.CLASS .listing .language { padding: 2px 4px; font-family: Menlo,Consolas,monospace; margin-right: 5px; font-size: 11px; }
-	.CLASS .listing .disabled { color: #999; }
-</style>
-
-<div class="virtualwire hidden" data-if="CLASS">
-	<ui-plugin>
-		<ui-bind path="?.checked" config="enable .D:value && value.length">
-			<button class="exec" data-exec="?/create"><i class="ti ti-plus-circle"></i>@(Create)</button>
-			<button class="exec" data-exec="?/refresh"><i class="ti ti-refresh"></i>@(Refresh)</button>
-			<button class="exec D" data-exec="?/menu"><i class="ti ti-cog"></i>@(Options)</button>
-		</ui-bind>
-	</ui-plugin>
-</div>
-
 <ui-plugin class="CLASS">
-	<ui-component name="datagrid" path="?.items" config="margin:0;parent:auto;noborder:1;button:?/options;click:?/editor;checked:?.checked">
+
+	<ui-bind class="toolbar pin" path="?.toolbar" config="template:button">
+		<script type="text/html">
+			{{ foreach m in value }}
+				<button class="exec" data-exec="?/{{ m.id }}"><i class="{{ m.icon }}"></i>{{ m.name }}</button>
+			{{ end }}
+		</script>
+	</ui-bind>
+	<div style="height:54px;border-bottom:1px solid #E0E0E0">
+		<div class="padding npb">
+			<ui-bind path="?.toolbar2" config="template:button" class="toolbar2">
+				<script type="text/html">
+					{{ foreach m in value }}
+						<button class="exec{{ if m.highlight }} highlight{{ fi }}" data-exec="?/{{ m.id }}"><i class="{{ m.icon }} mr5"></i>{{ m.name }}</button>
+					{{ end }}
+				</script>
+			</ui-bind>
+		</div>
+	</div>
+	<ui-component name="datagrid" path="?.items" config="margin:140;height:window;noborder:1;click:?/edit;checkbox:true;checked:?.checked;button:?/contextmenu">
 		<script type="text/plain">
 			[
-				{ name: 'search', text: '@(Name)', template: '{{ language | colorize }}{{ if pinned }}<i class="ti ti-pin-alt orange mr5"></i>{{ fi }}{{ if icon }}<i class="{{ icon }} mr5"></i>{{ fi }}{{ breadcrumb | raw }}{{ if disabled }}<span class="badge badge-red ml5 badge-small">@(disabled)</span>{{ fi }}{{ if auth }}<span class="badge badge-orange ml5 badge-small">@(authorized)</span>{{ fi }}', width: 350 },
+				{ name: 'name', text: '@(Name)', template: '{{ language | badge }}{{ if pinned }}<i class="ti ti-pin-alt orange mr5"></i>{{ fi }}{{ if icon }}<i class="{{ icon }} mr5"></i>{{ fi }}{{ breadcrumb | raw }}{{ if disabled }}<span class="badge badge-red ml5 badge-small">@(banned)</span>{{ fi }}{{ if auth }}<span class="badge badge-orange ml5 badge-small">@(authorized)</span>{{ fi }}', width: 350 },
 				{ name: 'url', text: '@(URL address)', width: 250 },
-				{ name: 'layout', text: '@(Layout)', template: '{{ if layout }}<i class="icon {{ layout.icon | empty(\'ti ti-bull\') }} mr5"{{ if layout.color }} style="color:{{ layout.color }}"{{ fi }}></i>{{ layout.name }}{{ fi }}', width: 150 },
-				{ name: 'language', text: '@(Language)', width: 120, align: 1 },
-				{ name: 'dtupdated', text: '@(Updated)', format: '[ts]', type: 'date', align: 1 },
+				{ name: 'layout', text: '@(Layout)', template: '{{ if layout }}<div{{ if layout.color }} class="badge badge-medium" style="background:{{ layout.color }};width:100%"{{ fi }}><i class="icon {{ layout.icon | empty(\'ti ti-bull\') }} mr5"></i>{{ layout.name }}</div>{{ fi }}', width: 150 },
+				{ name: 'language', text: '@(Language)', width: 120, align: 1, template: '{{ language | badge }}' },
+				{ name: 'updatedby', text: '@(Updated by)' },
+				{ name: 'dtupdated', text: '@(Last change)', format: '[ts]', type: 'date', align: 1 },
 				{ name: '@(Options)', filter: false, align: 1, sort: false, width: 130, template: '<a href="{{ url }}" class="fs12 mr5" target="_blank">@(Show)</a><div class="inline"><button name="edit" title="@(Edit)"><i class="ti ti-pencil"></i></button><button title="@(Options)" name="options"><i class="ti ti-cog"></i></button><button title="@(Remove)" name="remove"><i class="ti ti-trash"></i></button></div>' }
 			]
 		</script>
 	</ui-component>
+
 </ui-plugin>
 
-<ui-component name="importer" path="common.form" config="if:formpage;url:/~ID~/form.html"></ui-component>
+<ui-component name="importer" path="*form" config="if:formCLASS;url:/~ID~/form.html"></ui-component>
+<ui-component name="importer" path="*form" config="if:formhtmlCLASS;url:/~ID~/html.html"></ui-component>
+<ui-component name="importer" path="*form" config="if:formlayoutsCLASS;url:/~ID~/layouts.html"></ui-component>
+<ui-component name="importer" path="*form2" config="if:formlayoutCLASS;url:/~ID~/layout.html"></ui-component>
+<ui-component name="importer" path="*form" config="if:formnavCLASS;url:/~ID~/nav.html"></ui-component>
+<ui-component name="importer" path="*form2" config="if:formnavformCLASS;url:/~ID~/nav-form.html"></ui-component>
+<ui-component name="importer" path="*form2" config="if:formsitemapCLASS;url:/~ID~/nav-sitemap.html"></ui-component>
+<ui-component name="importer" path="*form4" config="if:formlinkCLASS;url:/~ID~/nav-link.html"></ui-component>
+<ui-component name="importer" path="*form" config="if:formredirectsCLASS;url:/~ID~/redirects.html"></ui-component>
+<ui-component name="importer" path="*form2" config="if:formredirectCLASS;url:/~ID~/redirect.html"></ui-component>
 
 <script>
-
 	PLUGIN(function(exports) {
 
+		exports.hashtag = true;
+
 		exports.reload = function() {
+
 			BREADCRUMB.add('@(Pages)', NAV.url);
-			exports.refresh();
+
+			let toolbar = [];
+
+			toolbar.push({ id: 'create', icon: 'ti ti-plus-circle green', name: '@(Create)' });
+			toolbar.push({ id: 'options', icon: 'ti ti-cog', name: '@(Options)' });
+			toolbar.push({ id: 'refresh', icon: 'ti ti-refresh', name: '@(Refresh)' });
+
+			exports.set('toolbar', toolbar);
+
+			toolbar = [];
+
+			if (user.permitted('nav'))
+				toolbar.push({ id: 'opennav', icon: 'ti ti-stream', name: '@(Navigation)', highlight: true });
+
+			if (user.permitted('redirects'))
+				toolbar.push({ id: 'openredirects', icon: 'ti ti-exchange', name: '@(Redirects)' });
+
+			if (user.permitted('layouts'))
+				toolbar.push({ id: 'openlayouts', icon: 'ti ti-layer-group', name: '@(Layouts)' });
+
+			exports.set('toolbar2', toolbar);
+
+			exports.tapi('Pages|layouts', function(response) {
+				exports.set('|layouts', response);
+				exports.refresh();
+			});
 		};
 
-		exports.refresh = function(el) {
-			el && el.find('i').aclass('ti-spin').rclass('ti-spin', 800);
-			exports.tapi('layouts_list ERROR', function(layouts) {
-				exports.set('layouts', layouts);
-				exports.tapi('pages_list ERROR', function(response) {
+		exports.refresh = function() {
+			exports.tapi('Pages @showloading ERROR', function(response) {
 
-					var arr = [];
+				let arr = [];
 
-					for (var item of response) {
+				for (let item of response) {
 
-						if (item.parentid === item.id)
+					if (item.parentid === item.id)
+						item.parentid = '';
+
+					item.breadcrumb = item.name.encode();
+					item.search = item.name;
+					item.layout = exports.layouts.findItem('id', item.layoutid);
+
+					if (!item.pinned)
+						item.pinned = false;
+
+					if (!item.dtupdated)
+						item.dtupdated = item.dtcreated;
+
+					if (item.parentid) {
+
+						let parent = response.findItem('id', item.parentid);
+						if (parent) {
+							if (parent.children)
+								parent.children.push(item);
+							else
+								parent.children = [item];
+						} else
 							item.parentid = '';
 
-						item.breadcrumb = item.name.encode();
-						item.search = item.name;
-						item.layout = layouts.findItem('id', item.layoutid);
-
-						if (!item.pinned)
-							item.pinned = false;
-
-						if (!item.dtupdated)
-							item.dtupdated = item.dtcreated;
-
-						if (item.parentid) {
-
-							var parent = response.findItem('id', item.parentid);
+						parent = item;
+						while (true) {
+							parent = response.findItem('id', parent.parentid);
 							if (parent) {
-								if (parent.children)
-									parent.children.push(item);
-								else
-									parent.children = [item];
-							} else
-								item.parentid = '';
-
-							parent = item;
-							while (true) {
-								parent = response.findItem('id', parent.parentid);
-								if (parent) {
-									if (parent.parentid) {
-										item.breadcrumb = '<span class="silver">' + parent.name.encode() + '</span> / ' + item.breadcrumb;
-										item.search = parent.name + ' / ' + item.search;
-									} else
-										break;
+								if (parent.parentid) {
+									item.breadcrumb = '<span class="silver">' + parent.name.encode() + '</span> / ' + item.breadcrumb;
+									item.search = parent.name + ' / ' + item.search;
 								} else
 									break;
-							}
+							} else
+								break;
 						}
 					}
+				}
 
-					exports.set('sitemap', FUNC.sitemap(response));
+				exports.set('sitemap', exports.makesitemap(response));
 
-					for (var item of response) {
-						if (!item.parentid)
-							arr.push(item);
-					}
+				for (let item of response) {
+					console.log(item.breadcrumb);
+					if (!item.parentid)
+						arr.push(item);
+				}
 
-					response.quicksort('pinned_desc, dtcreated_desc');
-					exports.set('items', response, 'noscroll');
-					exports.set('sitemap', FUNC.sitemap(response));
-					exports.set('items2', arr);
-				});
+				let sitemap = exports.makesitemap(response);
+
+				response.quicksort('pinned_desc, dtcreated_desc');
+				exports.set('items', response, 'noscroll');
+				exports.set('sitemap', sitemap);
+				exports.set('items2', arr);
+				exports.set('items @hideloading', response);
+				exports.sitemap = sitemap;
 			});
-
 		};
 
-		exports.menu = function(el) {
+		exports.create = function() {
+			var path = exports.format('form');
+			SET(path + ' @default', {});
+			SET('*form', path);
+		};
+
+		exports.edit = function(el) {
+			exports.tapi('Pages|read|html @showloading ERROR', { id: ATTRD(el) }, function(response) {
+				var path = exports.format('formhtml');
+				SET(path + ' @reset @hideloading', response);
+				SET('*form', path);
+			});
+		};
+
+		exports.editmeta = function(el) {
+			exports.tapi('Pages|read @showloading ERROR', { id: ATTRD(el) }, function(response) {
+				var path = exports.format('form');
+				SET(path + ' @reset @hideloading', response);
+				SET('*form', path);
+			});
+		};
+
+		exports.code = function(el) {
+			let id = ATTRD(el);
+			exports.tapi('Pages|read|html @showloading ERROR', { id: id }, function(response) {
+
+				let opt = {};
+				opt.body = response.html;
+				opt.toolbar = [];
+
+				opt.toolbar.push({ id: 'preview', name: '@(Save and Preview)', icon: 'ti ti-eye', callback: function(html) {
+					var model = {};
+					model.id = id;
+					model.html = html;
+					exports.tapi('Pages|save|html ERROR', model, function() {
+						W.open(response.url);
+					});
+				}});
+
+				opt.name = 'HTML: ' + response.name;
+
+				opt.callback = function(value, hide) {
+					var model = {};
+					model.id = id;
+					model.html = value;
+					exports.tapi('Pages|save|html', model, hide);
+				};
+
+				FUNC.code(opt);
+			});
+		};
+
+		exports.options = function(el) {
 
 			var model = exports.model;
+			var checked = model.checked || [];
+
 			var opt = {};
 			opt.element = el;
 			opt.align = 'right';
 			opt.items = [];
 
-			opt.items.push({ id: 'remove', name: '@(Remove selected ({0}x))'.format(model.checked.length), icon: 'ti ti-trash red' });
+			if (user.permitted('nav'))
+				opt.items.push({ id: 'opennav', name: '@(Navigation)', class: 'b', icon: 'ti ti-navicon' });
 
+			if (user.permitted('redirects'))
+				opt.items.push({ id: 'openredirects', name: '@(Redirects)', class: 'b', icon: 'ti ti-exchange' });
+
+			if (user.permitted('layouts'))
+				opt.items.push({ id: 'openlayouts', name: '@(Layouts)', class: 'b', icon: 'ti ti-layer-group' });
+
+			if (opt.items.length)
+				opt.items.push('-');
+
+			opt.items.push({ id: 'remove', name: '@(Remove ({0}x))'.format(checked.length), icon: 'ti ti-trash red', disabled: !(checked && checked.length) });
 			opt.callback = function(item) {
-				if (item.id === 'remove') {
-					SETTER('approve/show', '@(Are you sure you want to remove selected ({0}x) pages?)'.format(model.checked.length), '"ti ti-trash" @(Clear)', function() {
-						SETTER('loading/show');
-						model.checked.wait(function(item, next) {
-							exports.tapi('pages_remove', { id: item.id }, next);
-						}, function() {
-							SETTER('loading/hide');
-							exports.refresh();
+				switch (item.id) {
+					case 'remove':
+						SETTER('approve/show', '@(Are you sure you want to remove selected pages?)', ':remove: @(Remove)', function() {
+							checked.wait(function(item, next) {
+								exports.tapi('Pages|remove @showloading', { id: ATTRD(item) }, next);
+							}, function() {
+								FLAGS('@removed');
+								exports.refresh();
+							});
 						});
-					});
-					return;
+						break;
+					default:
+						exports[item.id]();
+						break;
 				}
-
 			};
+
 			SETTER('menu/show', opt);
 		};
 
-		exports.editor = function(el, e) {
+		exports.makesitemap = function(items, skip) {
+			let arr = [];
 
-			if (!el)
-				return;
+			for (let i = 0; i < items.length; i++) {
+				let item = items[i];
+				let builder = [item.name];
+				let tmp = item;
+				while (true) {
+					if (tmp.parentid) {
+						let parent = items.findItem('id', tmp.parentid);
+						if (parent) {
+							builder.push(parent.name);
+							tmp = parent;
+						} else
+							break;
+					} else
+						break;
+				}
 
-			if (e && e.target && e.target.tagName === 'A')
-				return;
+				builder.reverse();
 
-			var id = ATTRD(el);
-			REDIRECT('/admin/pages/{0}/'.format(id));
+				if (skip && builder.length > 1)
+					builder.splice(0, skip);
+
+				arr.push({ id: item.id, parentid: item.parentid, url: item.url, name: builder.join(' / ') });
+			}
+
+			arr.quicksort('name');
+			return arr;
 		};
 
-		exports.remove = function(el) {
-			var items = exports.data.items;
-			var id = ATTRD(el);
-			var data = items.findItem('id', id);
-			SETTER('approve/show', '@(Are you sure you want to remove the "{name}" page?)'.arg(data, 'escape'), '"ti ti-trash" @(Remove)', function() {
-				exports.tapi('pages_remove ERROR', { id: id }, () => exports.refresh());
-			});
-		};
-
-		exports.edit = function(el) {
-			var id = ATTRD(el);
-			exports.tapi('pages_read @showloading ERROR', { id: id }, function(response) {
-				SET('formpage @reset @hideloading', response);
-				SET('*form', 'formpage');
-			});
-		};
-
-		exports.code = function(el) {
-			var id = ATTRD(el);
-			exports.tapi('pages_html ERROR', { id: id }, function(response) {
-				var opt = {};
-				opt.body = response.html;
-				opt.callback = function(value, hide) {
-					var model = {};
-					model.id = id;
-					model.html = value;
-					exports.tapi('pages_save_html', model, hide);
-				};
-				FUNC.code(opt);
-			});
-		};
-
-		exports.options = function(name, row, el) {
+		exports.contextmenu = function(name, row, el) {
 
 			if (name === 'edit') {
-				exports.edit(row);
+				exports.editmeta(row);
 				return;
 			}
 
@@ -198,9 +293,9 @@
 			opt.element = el;
 			opt.align = 'right';
 			opt.items = [];
-			opt.items.push({ id: 'editor', name: '@(Open editor)', classname: 'b', icon: 'ti ti-object-group' });
-			opt.items.push({ id: 'code', name: '@(Source-code)', icon: 'ti ti-laptop-code' });
-			opt.items.push({ id: 'edit', name: '@(Edit)', icon: 'ti ti-pencil' });
+			opt.items.push({ id: 'edit', name: '@(Open editor)', classname: 'b', icon: 'ti ti-object-group' });
+			opt.items.push({ id: 'editmeta', name: '@(Edit)', icon: 'ti ti-pencil' });
+			opt.items.push({ id: 'code', name: '@(HTML source-code)', icon: 'ti ti-code' });
 			opt.items.push({ id: 'clone', name: '@(Clone)', icon: 'ti ti-clone' });
 			opt.items.push({ id: 'copy', name: '@(Copy content to)', icon: 'ti ti-copy' });
 			opt.items.push('-');
@@ -209,6 +304,11 @@
 
 				if (item.id === 'editor') {
 					exports.editor(id);
+					return;
+				}
+
+				if (item.id === 'editmeta') {
+					exports.editmeta(id);
 					return;
 				}
 
@@ -232,10 +332,9 @@
 					for (var item of opt.items)
 						item.icon = 'ti ti-copy';
 
-
 					opt.callback = function(item) {
-						SETTER('approve/show', '@(Are you sure you want to copy the content to the "{name}" page?)'.arg(item, 'escape'), '"ti ti-copy" @(Copy)', function() {
-							exports.tapi('pages_copy', { from: id, to: item.id }, ASETTER('notify/response', '@(Done, the content has been copied successfully.)'));
+						SETTER('approve/show', '@(Are you sure you want to copy the content to the "{name}" page?)'.args(item, 'escape'), ':copy: @(Copy)', function() {
+							exports.tapi('Pages|copy ERROR', { from: id, to: item.id }, () => FLAGS('@done'));
 						});
 					};
 
@@ -243,10 +342,11 @@
 				}
 
 				if (item.id === 'clone') {
-					exports.tapi('pages_clone', { id: id }, ASETTER('notify/response', '@(The page has been cloned successfully)', function(response) {
+					exports.tapi('Pages|clone ERROR', { id: id }, function(response) {
+						FLAGS('@done');
 						exports.refresh();
-						exports.edit(response.value);
-					}));
+						exports.editmeta(response.value);
+					});
 					return;
 				}
 
@@ -259,9 +359,30 @@
 			SETTER('menu/show', opt);
 		};
 
-		exports.create = function() {
-			SET('formpage @default', {});
-			SET('*form', 'formpage');
+		exports.remove = function(el) {
+			let model = exports.model;
+			let id = ATTRD(el);
+			SETTER('approve/show', '@(Are you sure you want to remove selected page?)', ':remove: @(Remove)', function() {
+				exports.tapi('Pages|remove ERROR', { id: id }, function() {
+					FLAGS('@removed');
+					exports.refresh();
+				});
+			});
+		};
+
+		exports.openlayouts = function() {
+			let path = exports.format('formlayouts');
+			SET('*form', path);
+		};
+
+		exports.opennav = function() {
+			let path = exports.format('formnav');
+			SET('*form', path);
+		};
+
+		exports.openredirects = function() {
+			let path = exports.format('formredirects');
+			SET('*form', path);
 		};
 
 	});

@@ -3,15 +3,15 @@
 	.ui-dark .CLASS .size { color: #777; }
 </style>
 
-<div class="virtualwire hidden" data-if="CLASS">
-	<ui-plugin>
+
+<ui-plugin class="CLASS">
+
+	<div class="toolbar pin" data-if="CLASS">
 		<button class="exec" data-exec="?/upload"><i class="ti ti-cloud-upload"></i>@(Upload)</button>
 		<button class="exec" data-exec="?/refresh"><i class="ti ti-refresh"></i>@(Refresh)</button>
 		<button class="exec" data-exec="?/menu"><i class="ti ti-cog"></i>@(Options)</button>
-	</ui-plugin>
-</div>
+	</div>
 
-<ui-plugin class="CLASS">
 	<ui-component name="datagrid" path="?.items" config="margin:0;parent:auto;noborder:1;button:?/buttons;checked:?.checked">
 		<script type="text/plain">
 			[
@@ -36,8 +36,7 @@
 		};
 
 		exports.refresh = function(el) {
-			el && el.find('i').aclass('ti-spin').rclass('ti-spin', 800);
-			exports.tapi('files_list', function(response) {
+			exports.tapi('Files', function(response) {
 
 				var images = { jpg: 1, png: 1, gif: 1, svg: 1, jpeg: 1 };
 
@@ -85,10 +84,9 @@
 
 				if (item.id === 'remove') {
 					SETTER('approve/show', '@(Are you sure you want to remove selected ({0}x) files?)'.format(model.checked.length), '"ti ti-trash" @(Clear)', function() {
-						exports.scope();
 						SETTER('loading/show');
 						model.checked.wait(function(item, next) {
-							exports.tapi('files_remove', { id: item.id }, next);
+							exports.tapi('Files|remove', { id: item.id }, next);
 						}, function() {
 							exports.refresh();
 						});
@@ -97,7 +95,7 @@
 				}
 
 				if (item.id === 'clear') {
-					SETTER('approve/show', '@(Are you sure you want to clear all files?)', '"ti ti-trash" @(Clear)', () => exports.tapi('files_clear @showloading', exports.refresh));
+					SETTER('approve/show', '@(Are you sure you want to clear all files?)', '"ti ti-trash" @(Clear)', () => exports.tapi('Files|clear @showloading', exports.refresh));
 					return;
 				}
 
@@ -108,7 +106,7 @@
 		exports.remove = function(el) {
 			var id = ATTRD(el);
 			var data = exports.model.items.findItem('id', id);
-			SETTER('approve/show', '@(Are you sure you want to remove the "{name}" file?)'.arg(data, 'escape'), '"ti ti-trash" @(Remove)', () => exports.tapi('files_remove', { id: id }, exports.refresh));
+			SETTER('approve/show', '@(Are you sure you want to remove the "{name}" file?)'.args(data, 'escape'), '"ti ti-trash" @(Remove)', () => exports.tapi('Files|remove', { id: id }, exports.refresh));
 		};
 
 		exports.rename = function(row) {
@@ -116,7 +114,7 @@
 			opt.value = row.name;
 			opt.name = '@(Rename file)';
 			opt.callback = function(val) {
-				exports.tapi('files_rename ERROR', { id: row.id, name: val }, () => exports.refresh());
+				exports.tapi('Files|rename ERROR', { id: row.id, name: val }, () => exports.refresh());
 			};
 			SETTER('prompt/show', opt);
 		};
@@ -132,7 +130,7 @@
 			if (e && !(e instanceof jQuery))
 				opt.files = e;
 
-			opt.url = ENV('upload');
+			opt.url = 'POST ' + ENV('upload');
 			opt.multiple = true;
 
 			opt.callback = function(response, err) {

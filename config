@@ -1,3 +1,20 @@
-salt      (generate)  : 10
-$api                  : /admin/
-cdn                   : //cdn.componentator.com
+name                : Total.js CMS
+app                 : cms
+icon                : ti ti-totaljs
+cdn                 : https://cdn.componentator.com
+fullmenu            : true
+breadcrumb          : true
+color               : #4285F4
+
+$api                : /admin/
+$insecure           : true
+
+// Important settings
+// sync                : https://hostname.com/sync/?token=8mDtLyZy2hOzNbFTdVcW9NiU2B5Y1P
+// sso                 : https://my.openplatform.cloud
+
+// SMTP
+smtp      (Object)  : {"server":"hostname","port":587,"secure":false,"user":"user","password":"password","tls":{"ciphers":"SSLv3"},"from":"robot@totaljs.com"}
+
+// External API
+pipetoken           : YOUR_PIPE_TOKEN

@@ -1,0 +1,164 @@
+<style>
+	.CLASS .item { background-color: #F5F5F5; border-radius: var(--radius); }
+	.CLASS .item > .item-hidden { background-color: #FFE8E8; }
+	.CLASS .item > .item-highlight { background-color: #F9F8DE; }
+	.CLASS .item > div { background: #ECECEC; padding: 8px; margin-bottom: 2px; border-radius: var(--radius); }
+	.CLASS .item > div > div { margin-right: 20px; }
+	.CLASS .item .exec { cursor: pointer; }
+	.CLASS .item .url { font-size: 11px; color: #999; margin-left: 5px; }
+</style>
+
+<ui-component name="box" path="*form2" config="if:CLASS;icon:ti ti-align-justify;title:@(Update navigation);autofocus:true;reload:?/reload;scrollbar:1;submit:?/submit;width:880" class="hidden" plugin="CLASS">
+	<nav>
+		<button class="exec" data-exec="?/add" ><i class="ti ti-plus-circle green"></i>@(Add link)</button>
+		<ui-bind path="?.children" config="enabled .D:value && value.length">
+			<button class="exec D" data-exec="?/clear" disabled style="border-top-left-radius:0;border-bottom-left-radius:0;border-left:1px solid #E0E0E0;"><i class="ti ti-trash red"></i>@(Clear links)</button>
+		</ui-bind>
+	</nav>
+	<div>
+		<ui-component name="empty" path="?.children" config="parent:auto">
+
+			<script type="text/html">
+				<div>@(No records found.)</div>
+			</script>
+
+			<div class="padding CLASS">
+				<ui-component name="children" path="?.children">
+					<script type="text/html">
+						<div class="item">
+							<div{{ if level }} style="margin-left:{{ level * 30 }}px"{{ fi }}{{ if value.hidden }} class="item-hidden"{{ else if value.highlight }} class="item-highlight"{{ fi }}{{ if value.color }} style="background:{{ value.color | rgba(0.2) }}"{{ fi }}>
+								<span class="exec pull-right" data-exec="?/options"><i class="ti ti-cog"></i></span>
+								<span class="exec pull-right mr10" data-exec="?/edit" data-prevent="true"><i class="ti ti-pencil"></i></span>
+								<span class="exec pull-right mr10" data-exec="?/addsub" data-prevent="true"><i class="ti ti-plus-circle green"></i></span>
+								<div class="hellip">{{ if value.icon }}<i class="{{ value.icon }} mr5"></i>{{ fi }}{{ value.name }}<span class="url">{{ value.url }}</span></div>
+							</div>
+						</div>
+					</script>
+				</ui-component>
+			</div>
+		</ui-component>
+		<ui-component name="changer" path="?.children"></ui-component>
+	</div>
+	<nav>
+		<ui-component name="validate" path="?" config="track:children">
+			<button name="submit"><i class="ti ti-check-circle"></i>@(SUBMIT)</button>
+			<button name="cancel">@(Cancel)</button>
+		</ui-component>
+	</nav>
+</ui-component>
+
+<script>
+
+	PLUGIN(function(exports) {
+
+		let Form = 'formlinkpluginpages';
+
+		exports.reload = function(com) {
+		};
+
+		exports.submit = function(hide) {
+			var model = exports.form;
+			exports.tapi('Nav|save ERROR', model, hide);
+		};
+
+		exports.clear = function() {
+			exports.set('children @change', []);
+		};
+
+		exports.options = function(el) {
+			var model = exports.model;
+			var children = el.component();
+			var id = ATTRD(el);
+			var child = children.items[id];
+			var opt = {};
+			opt.align = 'right';
+			opt.element = el;
+			opt.items = [];
+			opt.items.push({ id: 'add', name: '@(Add link)', icon: 'ti ti-link green' });
+			opt.items.push('-');
+			opt.items.push({ id: 'edit', name: '@(Edit)', icon: 'ti ti-pencil' });
+
+			if (child.children.length)
+				opt.items.push({ id: 'clear', name: '@(Clear)', icon: 'ti ti-clean red' });
+
+			opt.items.push({ id: 'remove', name: '@(Remove)', icon: 'ti ti-trash red' });
+			opt.callback = function(item) {
+				switch (item.id) {
+					case 'add':
+						exports.addsub(el);
+						break;
+					case 'edit':
+						exports.edit(el);
+						break;
+					case 'clear':
+						child.children = [];
+						exports.upd('children @change');
+						break;
+					case 'remove':
+						var parent = children.parents[child.id];
+						if (parent)
+							parent.children.splice(parent.children.indexOf(child), 1);
+						else {
+							var arr = exports.model.children;
+							arr.splice(arr.indexOf(child), 1);
+						}
+						exports.upd('children @change');
+						break;
+				}
+			};
+			SETTER('menu/show', opt);
+		};
+
+		exports.edit = function(el) {
+			var children = el.component();
+			var id = ATTRD(el);
+			var child = children.items[id];
+			var model = CLONE(child);
+			model.callback = function(data) {
+				child.name = model.name;
+				child.target = model.target;
+				child.title = model.title;
+				child.url = model.url;
+				child.icon = model.icon;
+				child.color = model.color;
+				child.arg = model.arg;
+				child.highlight = model.highlight;
+				child.hidden = model.hidden;
+				data.callback = undefined;
+				exports.upd('children @change');
+			};
+			SET(Form + ' @default', model);
+			SET('*form4', Form);
+		};
+
+		exports.addsub = function(el) {
+			var id = ATTRD(el);
+			var children = el.component();
+			var child = children.items[id];
+			var model = {};
+			model.callback = function(data) {
+				data.id = 'l' + Date.now().toString(36);
+				data.children = [];
+				data.callback = undefined;
+				child.children.push(data);
+				exports.upd('children @change');
+			};
+			SET(Form + ' @default', model);
+			SET('*form4', Form);
+		};
+
+		exports.add = function(el) {
+			var model = {};
+			model.callback = function(data) {
+				data.id = 'l' + Date.now().toString(36);
+				data.children = [];
+				data.callback = undefined;
+				exports.push('children @change', data);
+			};
+			SET(Form + ' @default', model);
+			SET('*form4', Form);
+		};
+
+	});
+
+</script>

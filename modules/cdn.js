@@ -1,6 +1,6 @@
-// CDN downloader
+// CDN auto-downloader
 // The MIT License
-// Copyright 2022 (c) Peter Širka <petersirka@gmail.com>
+// Copyright 2022 (c) Peter Širka <petersirka@gmail.com> | Total.js
 
 var Cache = {};
 var Directory;

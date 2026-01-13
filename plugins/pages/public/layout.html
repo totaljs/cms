@@ -1,0 +1,70 @@
+<ui-component name="box" path="*form2" config="if:CLASS;icon:ti ti-layer-group;autofocus:true;reload:?/reload;scrollbar:1;submit:?/submit;hide:?/hide;width:2500" class="hidden" plugin="CLASS">
+	<nav>
+		<button class="exec highlight" data-exec="?/preview"><i class="ti ti-eye"></i><b>@(Save and Preview)</b></button>
+	</nav>
+	<div>
+		<div class="padding bg-smoke">
+			<div style="max-width:900px;width:100%">
+				<div class="row">
+					<div class="col-md-8 m">
+						<ui-component name="input" path="?.name" config="required:1">@(Name)</ui-component>
+					</div>
+					<div class="col-md-2 m">
+						<ui-component name="input" path="?.color" config="type:color">@(Color)</ui-component>
+					</div>
+					<div class="col-md-2 m">
+						<ui-component name="input" path="?.icon" config="type:icon">@(Icon)</ui-component>
+					</div>
+				</div>
+			</div>
+		</div>
+		<ui-component name="code" path="?.html" config="type:htmlmixed;margin:112" style="border-top:1px solid #E0E0E0"></ui-component>
+	</div>
+	<nav>
+		<ui-component name="validate" path="?">
+			<button name="submit" disabled><i class="ti ti-check-circle"></i>@(SUBMIT)</button>
+			<button name="cancel">@(Cancel)</button>
+		</ui-component>
+	</nav>
+</ui-component>
+
+<script>
+
+	PLUGIN(function(exports) {
+
+		let caller;
+
+		exports.reload = function(com) {
+
+			if (!caller)
+				caller = exports.caller;
+
+			let model = exports.model;
+			let id = model ? model.id : null;
+			com.reconfigure({ title: id ? '@(Update layout)' : '@(Create layout)' });
+		};
+
+		exports.preview = function() {
+			let model = exports.form;
+			exports.tapi('Layouts|save ERROR', model, function(response) {
+				if (!model.id)
+					model.id = response.value;
+				W.open(common.root + 'layouts/preview/?id=' + response.value);
+			});
+		};
+
+		exports.hide = function() {
+			location.hash = '';
+		};
+
+		exports.submit = function(hide) {
+			let model = exports.form;
+			exports.tapi('Layouts|save ERROR', model, function() {
+				hide();
+				caller.exec('refresh');
+			});
+		};
+
+	});
+
+</script>

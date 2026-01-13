@@ -1,0 +1,3081 @@
+--ATTRIBUTES=cmsattributesform--
+--IMAGES=cmsimageform--
+--LINK=cmslinkform--
+--SETTINGS=cmssettingsform--
+--WIDGETS=cmswidgetsform--
+
+<style>
+	.ui-style input { width: 100%; border: 0; outline: 0; background-color: white; display: block; font-weight: bold; font-size: 12px; height: 20px; }
+	.ui-style-numeric { margin-bottom: 15px; }
+	.ui-style-numeric span { display: block; font-size: 10px; border-top: 1px solid #E0E0E0; margin-top: 5px; color: #A0A0A0; padding: 2px 0; background-color: #F8F8F8; border-radius: 0 0 var(--radius) var(--radius); }
+	.ui-style-numeric-control { position: relative; display: inline-block; width: 25%; text-align: center; }
+	.ui-style-numeric-control input { text-align: center; }
+	.ui-style-numeric-control div { border: 1px solid #D0D0D0; border-radius: 3px; margin-right: 10px; padding: 2px 0 0; background-color: white; }
+	.ui-style-label { margin-bottom: 5px; font-size: 12px; }
+	.ui-style-color { margin-bottom: 15px; }
+	.ui-style-color ul { margin: 0 -2px; padding: 0; list-style-type: none; }
+	.ui-style-color li { margin: 0; padding: 0; width: 8.333%; position: relative; display: inline-block; vertical-align: top; }
+	.ui-style-color li div { height: 16px; margin: 2px; text-align: center; padding: 3px 0 0; color: white; cursor: pointer; border-radius: var(--radius); }
+	.ui-style-color .ti { display: none; }
+	.ui-style-color li:nth-child(3) div { border: 1px solid #E0E0E0; color: black; }
+	.ui-style-color .selected .ti { display: block; font-size: 9px; }
+	.ui-cmseditor .fs10 { font-size: 10px; }
+	.ui-cmseditor { line-height: 0; }
+	.ui-cmseditor iframe { width: 100%; min-height: 300px; border: 0; margin: 0; padding: 0; background-color: #F0F0F0 }
+	.ui-cmseditor-bg { background-color: #F0F0F0; }
+	.ui-cmseditor-resized .ui-cmseditor-bg { padding: 25px; }
+	.ui-cmseditor-resized .ui-cmseditor-container { box-shadow: 0 0 30px rgba(0,0,0,0.15); }
+	.cmseditor-widget { border-bottom: 1px solid #F0F0F0; padding: 4px 5px; cursor: pointer }
+	.cmseditor-widget:hover { background-color: #F0F0F0; }
+	.cmseditor-help { font-size: 11px; color: #909090; line-height: 13px; padding: 0; height: 22px; border-bottom: 1px solid #E0E0E0; }
+	.cmseditor-help nav { padding: 0; margin: 0; text-align: center; }
+	.cmseditor-help button { min-width: 21px; height: 21px; border: 0; background-color: transparent; margin-right: 5px; font-size: 10px; border-radius: 0; color: #000 }
+	.cmseditor-help button span { font-size: 11px; margin-left: 5px; }
+	.cmseditor-help button:hover { background-color: #F0F0F0; }
+	.ui-dark .ui-cmseditor iframe { background-color: #151515; }
+	.ui-dark .ui-cmseditor-bg { background-color: #151515; }
+	.ui-dark .cmseditor-widget { border-bottom-color: #151515; }
+	.ui-dark .cmseditor-widget:hover { background-color: #151515; }
+	.ui-dark .cmseditor-help { color: #909090; border-bottom-color: #404040; }
+	.ui-dark .cmseditor-help button { background-color: transparent; color: #FFF; }
+	.ui-dark .cmseditor-help button:hover { background-color: #333; }
+	.--WIDGETS-- figure { float: left; width: 16.66%; cursor: pointer; }
+	.--WIDGETS-- figure > div { border-radius: var(--radius); border: 1px solid #E0E0E0; margin: 10px; }
+	.--WIDGETS-- figure .preview { padding: 10px; }
+	.--WIDGETS-- figure .meta { border-top: 1px solid #E0E0E0; padding: 10px; font-size: 12px; }
+	.--WIDGETS-- figure .meta .name { font-size: 14px; font-weight: bold; }
+</style>
+
+<ui-component name="importer" path="cmseditor.form" config="if:--ATTRIBUTES--">
+	<script type="text/html">
+		<ui-component name="box" path="cmseditor.form" config="if:--ATTRIBUTES--;width:780;autofocus:true;submit:?/submit;icon:quote-left;title:@(Attributes editor);zindex:30" class="hidden" plugin="--ATTRIBUTES--">
+			<nav>
+				<button class="exec" data-exec="?/copy"><i class="ti ti-copy"></i>@(Copy)</button>
+				<button class="exec" data-exec="?/paste"><i class="ti ti-paste"></i>@(Paste)</button>
+			</nav>
+			<div>
+				<div class="padding bg-smoke npb">
+					<div class="grid-3">
+						<div class="m">
+							<ui-component name="input" path="?.cls">@(Class names)</ui-component>
+							<div class="help">@(Type custom classes)</div>
+						</div>
+						<div class="m">
+							<ui-component name="input" path="?.id">@(Element ID)</ui-component>
+							<div class="help"><span class="link exec" data-exec="?/id">@(Generate from the content)</span></div>
+						</div>
+						<div class="m">
+							<ui-component name="input" path="?.title">@(Tooltip)</ui-component>
+						</div>
+					</div>
+				</div>
+				<ui-bind path="?.isimage" config="show" class="hidden block">
+					<div class="padding npb">
+						<div class="b m black"><i class="ti ti-camera mr5"></i>@(Image settings)</div>
+						<ui-component name="input" path="?.alt">@(Alternate text)</ui-component>
+						<div class="help m">@(Very important for search engines.)</div>
+						<ui-bind path="?.imgdefined" config="show .imgdefined" class="block">
+							<div class="grid-4">
+								<div class="m">
+									<ui-component name="input" path="?.datawidth" config="align:center;maxlength:4;placeholder:120">@(Width)</ui-component>
+									<div class="help">@(Pixels or percentage.)</div>
+								</div>
+								<div class="m">
+									<ui-component name="input" path="?.dataheight" config="align:center;maxlength:4;placeholder:120">@(Height)</ui-component>
+									<div class="help">@(Pixels or percentage.)</div>
+								</div>
+								<div class="m imgdefined hidden">
+									<ui-component name="input" path="?.datasize" config="align:center;maxlength:3;placeholder:0%">@(Downsize in percent)</ui-component>
+									<div class="help">@(In the image gallery, it may be used.)</div>
+								</div>
+								<div class="m imgdefined hidden">
+									<div style="font-size:12px;margin-bottom:3px">@(Background color):</div>
+									<ui-component name="input" path="?.databg" config="type:color"></ui-component>
+									<div class="help">@(It will be used if the image lacks resolution.)</div>
+								</div>
+							</div>
+						</ui-bind>
+					</div>
+					<hr class="nmt nmb npt" />
+				</ui-bind>
+
+				<div class="padding npb">
+					<ui-component name="input" path="?.css" config="icon:ti ti-paint-brush-alt" class="m">@(Custom styles)</ui-component>
+					<ui-component name="style" path="?.css"></ui-component>
+				</div>
+
+				<ui-bind path="?.isconfig" config="show" class="hidden padding block">
+					<ui-component name="input" path="?.config" config="placeholder:@(keyA)\:@(valueA);@(keyB)\:@(valueB)">@(UI component configuration)</ui-component>
+					<div class="help">@(Be careful with this configuration)</div>
+				</ui-bind>
+
+				<ui-bind data-bind="?.isnone" config="hide" class="hidden block">
+					<hr class="nmt" />
+					<div class="padding npt">
+						<ui-component name="input" path="?.src" config="icon:ti ti-globe">@(Source URL)</ui-component>
+						<div class="mt10 fs12"><span class="link exec" data-exec="?/files"><i class="ti ti-folder mr5"></i>@(Browse files)</span></div>
+					</div>
+				</ui-bind>
+			</div>
+			<nav>
+				<ui-component name="validate" path="?">
+					<button name="submit"><i class="ti ti-check-circle"></i>@(APPLY)</button>
+					<button name="cancel">@(Cancel)</button>
+				</ui-component>
+			</nav>
+		</ui-component>
+	</script>
+</ui-component>
+
+<ui-component name="importer" path="cmseditor.form" config="if:--IMAGES--">
+	<script type="text/html">
+		<ui-component name="form" path="cmseditor.form" config="if:--IMAGES--;width:900;reload:?/reload;submit:?/submit;scrollbar:true;$id:--IMAGES--;title:@(Image editor);icon:camera;zindex:30" class="hidden" plugin="--IMAGES--">
+			<div>
+				<br />
+				<ui-component name="crop" path="?.url" config="width:200;height:100;$id:cmsimagecrop;browse:?/browse"></ui-component>
+				<hr class="nmt nmb" />
+				<div class="padding">
+					<ui-component name="input" path="?.alt" config="placeholder:@(Describe the picture)">@(Alternate text)</ui-component>
+				</div>
+			</div>
+			<nav>
+				<ui-component name="validate" path="?">
+					<button name="submit"><i class="ti ti-check-circle"></i>@(APPLY)</button>
+					<button name="cancel">@(Cancel)</button>
+				</ui-component>
+			</nav>
+		</ui-component>
+	</script>
+</ui-component>
+
+<ui-component name="importer" path="cmseditor.form" config="if:--LINK--">
+	<script type="text/html">
+		<ui-component name="miniform" path="cmseditor.form" config="if:--LINK--;width:600;autofocus:1;height:450;submit:?/submit;cancel:?/cancel;reload:?/reload;title:@(Link editor);icon:link;zindex:30" class="hidden" plugin="--LINK--">
+			<div>
+				<div class="padding">
+					<ui-component name="input" path="?.href" config="icon:globe;required:1">@(URL address)</ui-component>
+					<div class="m mt10 fs12">
+						<ui-bind path="%cmseditorlinks" config="show:value && value.length" class="link exec mr15" data-exec="?/find"><i class="ti ti-search mr5"></i>@(Find page)</ui-bind>
+						<span class="link exec mr15" data-exec="?/files" data-type="upload"><i class="ti ti-folder mr5"></i>@(Browse files)</span>
+						<span class="link exec mr15" data-exec="?/type" data-type="email"><i class="ti ti-envelope mr5"></i>@(Email)</span>
+						<span class="link exec" data-exec="?/type" data-type="phone"><i class="ti ti-phone mr5"></i>@(Phone number)</span>
+					</div>
+					<ui-component name="input" path="?.target" config="dirsource:|@(Current tab or Window),_blank|@(New tab or Window);dirplaceholder:@(Search)" class="m">@(Target)</ui-component>
+					<ui-component name="input" path="?.title" config="icon:info-circle" class="m">@(Tooltip)</ui-component>
+					<ui-component name="input" path="?.alllinks" config="type:checkbox">@(Apply on all links in the parent container)</ui-component>
+				</div>
+			</div>
+			<nav>
+				<ui-component name="validate" path="?">
+					<button name="submit"><i class="ti ti-check-circle"></i>@(APPLY)</button>
+					<button name="cancel">@(Cancel)</button>
+				</ui-component>
+			</nav>
+		</ui-component>
+	</script>
+</ui-component>
+
+<script id="template_cmssettingsform" type="text/html">
+	<ui-plugin path="cmseditor.settings.@NAME@" id="cmssettings_w@NAME@">
+		@BODY@
+		<div class="bg-smoke padding">
+			<ui-component name="input" path="?.hiddenlg" config="type:checkbox">@(Hide for large display)</ui-component>
+			<ui-component name="input" path="?.hiddenmd" config="type:checkbox">@(Hide for medium display)</ui-component>
+			<ui-component name="input" path="?.hiddensm" config="type:checkbox">@(Hide for small display)</ui-component>
+			<ui-component name="input" path="?.hiddenxs" config="type:checkbox">@(Hide for extra small display)</ui-component>
+		</div>
+	</ui-plugin>
+</script>
+
+<ui-component name="importer" path="cmseditor.form" config="if:--SETTINGS--">
+	<script type="text/html">
+		<ui-component name="box" path="cmseditor.form" config="if:--SETTINGS--;width:800;visibleY:1;icon:ti ti-cog-alt;submit:--SETTINGS--/submit;$id:--SETTINGS--;zindex:30" class="hidden invisible" plugin="--SETTINGS--">
+			<nav>
+				<button class="exec" data-exec="--SETTINGS--/copy"><i class="ti ti-copy"></i>@(Copy)</button>
+				<button class="exec" data-exec="--SETTINGS--/paste"><i class="ti ti-paste"></i>@(Paste)</button>
+			</nav>
+			<div id="cmseditor_settings"></div>
+			<nav>
+				<ui-component name="validate" path="settings" config="$id:cmssettingsformvalidation">
+					<button name="submit"><i class="ti ti-check-circle"></i>@(APPLY)</button>
+					<button name="cancel">@(Cancel)</button>
+				</ui-component>
+			</nav>
+		</ui-component>
+	</script>
+</ui-component>
+
+<div id="cmseditor_repo" class="hidden"></div>
+
+<ui-component name="importer" path="cmseditor.form" config="if:--WIDGETS--">
+	<script type="text/html">
+		<ui-component name="box" path="cmseditor.form" config="if:--WIDGETS--;title:@(Widgets);icon:ti ti-plug;autofocus:true;reload:?/reload;scrollbar:1;scrollbarshadow:1;submit:?/submit;width:1300;zindex:30" class="hidden" plugin="--WIDGETS--">
+			<nav>
+				<button class="exec" data-exec="?/import" style="margin-right:10px!important;border-radius:var(--radius)"><i class="ti ti-arrow-circle-down"></i>@(Import widgets)</button>
+				<ui-component name="searchinput" path="?.search" config="placeholder:@(Search widgets)"></ui-component>
+			</nav>
+			<div class="padding">
+				<ui-component name="search" path="?.search" config="selector:.search">
+					<ui-bind path="?.items" config="template" class="--WIDGETS-- block">
+						<SCR type="text/plain">
+							{{ if !value.length }}
+							<div class="center" style="padding-top:80px">
+								<div class="gray">@(The app doesn't contain any widgets)</div>
+								<div class="fs12 link exec mt5" data-exec="?/import"><i class="ti ti-plus-circle green mr5"></i>@(Import widgets)</div>
+							</div>
+							{{ fi }}
+							{{ foreach m in value }}
+								<figure data-id="{{ m.id }}" class="exec search" data-exec="?/install" data-search="{{ m.name }}">
+									<div>
+										<div class="preview"><img src="{{ m.preview }}" class="img-responsive" onerror="onImageError(this)" data-empty="/_widgets/empty.png"  /></div>
+										<div class="meta">
+											<div class="name">{{ m.name }}</div>
+										</div>
+									</div>
+								</figure>
+							{{ end }}
+						</SCR>
+					</ui-bind>
+					<div class="clearfix"></div>
+				</ui-component>
+			</div>
+			<nav>
+				<button name="cancel" style="width:100%">@(Cancel)</button>
+			</nav>
+		</ui-component>
+	</script>
+</ui-component>
+
+<script type="text/html" id="cmseditortoolbar">
+	<div class="cmseditor-help">
+		<nav>
+			<button name="undo" class="red hidden"><i class="ti ti-undo"></i><span>@(Undo change)</span></button>
+			<button name="device"><i class="ti ti-desktop"></i><span>@(Full width)</span></button>
+			<button name="bold" title="@(Bold)"><i class="ti ti-bold"></i></button>
+			<button name="italic" title="@(Italic)"><i class="ti ti-italic"></i></button>
+			<button name="underline" title="@(Underline)"><i class="ti ti-underline"></i></button>
+			<button name="link" title="@(Make a link)"><i class="ti ti-link"></i></button>
+			<button name="icon" title="@(Add icon)"><i class="ti ti-icons"></i></button>
+			<button name="span" title="@(Highlight)"><i class="ti ti-highlighter"></i></button>
+			<button name="code" title="@(Monospace)"><i class="ti ti-barcode-alt"></i></button>
+		<!-- <button name="expression" title="@(Add expression)"><i class="ti ti-highlighter"></i></button> -->
+		</nav>
+	</div>
+</script>
+
+<script type="text/html" id="cmseditorcss">
+
+	h1.CMS_selected,h2.CMS_selected,h3.CMS_selected,h4.CMS_selected,h5.CMS_selected,img.CMS_selected,p.CMS_selected,span.CMS_selected,div.CMS_selected, section.CMS_selected, i.CMS_selected { outline: 1px solid #4285F4; background-color: rgb(66 133 244 / 5%) }
+	iframe.CMS_edit { padding: 5px; border: 5px solid red; }
+	.ti { transform: none; }
+
+	/*
+	.CMS_mv { margin-bottom: 20px; }
+	.CMS_mh { margin-left: 20px; margin-right: 20px; }*/
+
+	#CMS { padding: 0; min-height: 30px; }
+	#CMS_panel { position: absolute; z-index: 102; display: none; line-height: 16px; box-sizing: content-box; font-family: Arial; font-size: 12px; font-weight: normal; }
+	#CMS_panel * { user-select: none; box-sizing: content-box; transform: scale(1); }
+	#CMS_panel_info { height: 25px; pointer-events: none; }
+	#CMS_panel_info b, #CMS_panel_info span { margin: 5px 0 5px; position: relative; display: inline-block; border-radius: 4px; padding: 0 3px; font-size: 10px; color: #FFF; background-color: #E9573F; height: 14px; line-height: 14px; }
+	#CMS_panel_info b { background-color: #4285F4; margin-right: 5px; font-family: Menlo, Consolas, monospace; }
+	#CMS_panel_buttons_move { float: right; }
+	#CMS_panel_buttons_move span { font-size: 12px; color: #FFF; background-color: rgba(0,0,0,0.5); position: relative; display: inline-block; padding: 3px 0; border-radius: 4px; margin: 3px 0 0 3px; cursor: pointer; vertical-align: top; width: 18px; text-align: center; }
+	#CMS_panel_buttons_reposition { float: right; }
+	#CMS_panel_buttons_reposition span { font-size: 12px; color: #FFF; background-color: rgba(246,187,66,0.8); position: relative; display: inline-block; padding: 3px 0; border-radius: 4px; margin: 3px 0 0 3px; cursor: pointer; vertical-align: top; width: 18px; text-align: center; }
+	#CMS_panel_buttons_copy { float: right; }
+	#CMS_panel_buttons_copy span { font-size: 11px; color: #FFF; background-color: rgba(255,122,0,0.8); position: relative; display: inline-block; padding: 3px 0; border-radius: 4px; margin: 3px 0 0 3px; cursor: pointer; vertical-align: top; width: 17px; text-align: center; transform: scale(1); }
+	#CMS_panel_buttons_copy span:last-child { background-color: rgba(66,133,244,0.8); }
+	#CMS_panel_buttons_body { float: left; }
+	#CMS_panel_buttons_body span { font-size: 11px; color: #FFF; background-color: rgba(246,187,66,0.8); position: relative; display: inline-block; padding: 3px 0; border-radius: 4px; margin: 3px 3px 0 0; cursor: pointer; vertical-align: top; width: 17px; text-align: center; transform: scale(1); }
+	#CMS_panel_buttons_body span.CMS_is { background-color: rgba(102,211,66,0.8); }
+
+	.CMS_expression { background-color: #FFFE7E66; padding: 1px 5px; border-radius: 4px; }
+	.CMS_keyword { background-color: #FFFE7E66; }
+	.CMS_panel_buttons { background-color: #FFF; padding: 6px; border-radius: 4px; box-shadow: 0 0 10px rgb(0 0 0 / 20%); }
+	.CMS_panel_buttons span { position: relative; display: inline-block; background-color: #FFF; font-size: 15px; cursor: pointer; padding: 3px 0; margin: 1px 2px; width: 20px; text-align: center; border-radius: 4px; color: #000; transform: scale(1); transition: transform .1s; }
+	.CMS_panel_buttons span:last-child { color: #DF452D; }
+	.CMS_panel_buttons span:last-child:hover { color: #DF452D !important; }
+	.CMS_panel_buttons span:not(.CMS_panel_disabled):hover { color: var(--color); }
+	.CMS_panel_buttons .ti-plus-circle { color: #68B25B; }
+	.CMS_panel_buttons .ti-plus-circle:hover { color: #68B25B !important; }
+	.CMS_panel_buttons .ti-cog { background-color: #3275BB; color: #FFF; }
+	.CMS_panel_disabled { color: #d0d0d0 !important; cursor: not-allowed !important; }
+	.CMS_selected_template { background-color: rgba(225,29,0,0.05) !important; border-color: #D42C1A !important; }
+	.CMS_operation { opacity: 0.35; outline: 3px solid red; }
+	.CMS_edit { cursor: crosshair; }
+	.CMS_widgets { border-top: 6px solid rgba(100,100,100,0.5); cursor: crosshair; padding-top: 5px; }
+	.CMS_widgets:nth-child(1) { border-top-color: #D0D0D0; }
+	.CMS_widgets:nth-child(2) { border-top-color: #C0C0C0; }
+	.CMS_widgets:nth-child(3) { border-top-color: #B0B0B0; }
+	.CMS_widgets:nth-child(4) { border-top-color: #A0A0A0; }
+	.CMS_widgets:nth-child(4) { border-top-color: #909090; }
+	.CMS_hidden { display: none !important; }
+	.CMS_visible, .jcomponent { display: block !important; visibility: visible !important; }
+	.CMS_panel_hidden { display: none !important; }
+
+	.CMS_preview .totaljs { background-color: #F3F3F3; background-image: repeating-linear-gradient(45deg, #E9E9E9, #E9E9E9 10px, #F5F5F5 10px, #F5F5F5 20px); text-align: center; padding: 30px 0; color: #000; margin: 1px; text-align: center; font-size: 11px; border-radius: var(--radius); }
+	.CMS_preview .CMS_input { font-size: 12px; }
+	.CMS_preview .CMS_input:after { height: 40px; background-color: #F0F0F0; background-image: repeating-linear-gradient(45deg, #E0E0E0, #E0E0E0 10px, #F0F0F0 10px, #F0F0F0 20px); margin-top: 4px; display: block; content: ' '; border-radius: 4px; }
+	.CMS_preview [data-cms-info]:before { position: absolute; content: attr(data-cms-info); color: black; background-color: #ebe36a; padding: 2px 5px 2px 3px; border-radius: 4px; margin: -15px 0 0 0; font-size: 9px; z-index: 100; }
+	.CMS_preview .CMS_part:before { position: absolute; content: attr(data-cms-part); color: #FFF; background-color: #67C23A; padding: 2px 5px 2px 3px; border-radius: 4px; margin: -15px 0 0 -5px; font-size: 9px; border-left: 3px solid #5EB436; z-index: 100; }
+	.CMS_preview .CMS_widget.hidden-xs:before,.CMS_preview .CMS_widget.hidden-sm:before,.CMS_preview .CMS_widget.hidden-md:before,.CMS_preview .CMS_widget.hidden-lg:before { position: absolute; content: '•'; color: black; background-color: #efe02b; width: 12px; height: 12px; border-radius: 100px; margin: -15px 0 0 0; font-size: 12px; z-index: 100; text-align: center; line-height: 12px; }
+
+	#CMS .animation { visibility: visible !important; }
+
+	.CMS_preview a[data-cms-track] { outline: 2px dashed blue; }
+	.CMS_remove { min-height: 10px; }
+	*[contentEditable="true"], *[contentEditable="on"] { cursor: text; outline: 2px solid var(--color); }
+</script>
+
+<script>
+
+	PLUGIN('--ATTRIBUTES--', function(exports) {
+
+		var backup = null;
+
+		exports.id = function() {
+			var model = exports.model;
+			var opt = model;
+			exports.set('id @modified', opt.element.text().slug());
+		};
+
+		exports.copy = function() {
+			var model = exports.model;
+			backup = { config: model.config, css: model.css, cls: model.cls, title: model.title, src: model.src, datawidth: model.datawidth, dataheight: model.dataheight, datasize: model.datasize, databg: model.databg };
+			SETTER('notify/success', '@(Copied)');
+		};
+
+		exports.paste = function() {
+			if (backup) {
+				for (let key in backup) {
+					let val = backup[key];
+					if (val)
+						exports.set(key + ' @modified', val);
+				}
+				SETTER('notify/success', '@(Done)');
+			}
+		};
+
+		exports.submit = function(hide) {
+
+			var model = exports.model;
+			var instance = model.instance;
+			var target = model.element;
+			var attr = model;
+
+			instance.backup(target);
+
+			if (target.hclass('CMS_unwrap'))
+				target = target.parent();
+
+			if (model.title)
+				target.attr('title', model.title.trim());
+			else
+				target.rattr('title');
+
+			if (model.isiframe) {
+				// Is YouTube or Vimeo?
+				var video = model.src.trim().replace('/watch?v=', '/embed/').replace('/vimeo.com/', '/player.vimeo.com/video/');
+				if (video.indexOf('?') === -1) {
+					var index = video.indexOf('&');
+					if (index !== -1)
+						video = video.substring(0, index);
+				}
+				target.attr('src', video);
+			} else if (model.isiframe || model.isimage)
+				target.attr('src', model.src.trim());
+
+			model.isimage && target.attr('alt', model.alt ? model.alt.trim() : '');
+
+			if (model.isconfig)
+				target.attr('config', model.config);
+
+			if (model.id)
+				target.attr('id', model.id);
+			else
+				target.rattr('id');
+
+			var arr = (target.attr('class') || '').split(' ');
+			var cls = [];
+
+			for (var i = 0; i < arr.length; i++)
+				arr[i].substring(0, 4) === 'CMS_' && cls.push(arr[i]);
+
+			if (model.isimage) {
+				if (model.imgdefined) {
+
+					if (model.datawidth)
+						target.attrd('cms-width', model.datawidth);
+					else
+						target.rattrd('cms-width');
+
+					if (model.dataheight)
+						target.attrd('cms-height', model.dataheight);
+					else
+						target.rattrd('cms-width');
+
+					if (model.datasize)
+						target.attrd('cms-size', model.datasize.replace('%', ''));
+					else
+						target.rattrd('cms-size');
+
+					if (model.databg)
+						target.attrd('cms-bg', model.databg);
+					else
+						target.rattrd('cms-bg');
+
+				} else {
+					if (model.datawidth)
+						target.attr('width', model.datawidth);
+					else
+						target.rattr('width');
+					if (model.dataheight)
+						target.attr('height', model.dataheight);
+					else
+						target.rattr('height');
+				}
+			}
+
+			if (model.css)
+				target.attr('style', model.css);
+			else
+				target.rattr('style');
+
+			model.cls && cls.push(model.cls.replace(/\,(\s)+|\s{2,}/g, ' ').trim());
+
+			var clsnames = cls.join(' ');
+
+			target.attr('class', clsnames);
+			instance.bind('@touched @modified @notify');
+			instance.autoresize();
+			hide();
+		};
+
+		exports.files = function() {
+			var model = exports.model;
+			var config = model.instance.config;
+			config.files && model.instance.EXEC(config.files, {}, function(item) {
+				exports.set('src @modified', typeof(item) === 'string' ? item : item.url);
+			});
+		};
+
+	});
+
+	COMPONENT('style', 'margin:@(Margin);padding:@(Padding);radius:@(Border radius);color:@(Text color);background:@(Background color);border:@(Border color);font:@(Font settings)', function(self, config, cls) {
+
+		var others;
+		var skip = false;
+		var cls2 = '.' + cls;
+
+		self.nocompile();
+
+		self.make = function() {
+
+			var numeric = '<div class="@-numeric" data-name="{1}"><div class="@-label">@</div><div class="@-numeric-controls"><div class="@-numeric-control"><div><input type="text" maxlength="5" placeholder="px" name="top" /><span>top</span></div></div><div class="@-numeric-control"><div><input type="text" maxlength="5" placeholder="px" name="right" /><span>right</span></div></div><div class="@-numeric-control"><div><input type="text" maxlength="5" placeholder="px" name="bottom" /><span>bottom</span></div></div><div class="{0}-numeric-control"><div><input type="text" maxlength="5" placeholder="px" name="left" /><span>left</span></div></div></div></div>'.replace(/@/g, cls);
+			self.aclass(cls);
+			self.append('<div class="row"><div class="col-sm-4"></div><div class="col-sm-4"></div><div class="col-sm-4"></div></div>');
+
+			var panels = self.find('.col-sm-4');
+			var a = panels.eq(0);
+			var b = panels.eq(1);
+			var c = panels.eq(2);
+
+			a.append(numeric.format(config.margin, 'margin'));
+			b.append(numeric.format(config.padding, 'padding'));
+			c.append(numeric.format(config.radius, 'border-radius'));
+			// a.append('<div class="ui-style-numeric" data-name="font"><div class="ui-style-label">{0}</div><div class="ui-style-numeric-controls"><div class="ui-style-numeric-control"><div><input type="text" maxlength="3" placeholder="px" name="size" /><span>size</span></div></div><div class="ui-style-numeric-control"><div><input type="text" maxlength="3" placeholder="px" name="line" /><span>line h.</span></div></div></div>'.format(config.font));
+
+			var colors = '4D4D4D,999999,FFFFFF,F44E3B,FE9200,FCDC00,DBDF00,A4DD00,68CCCA,73D8FF,AEA1FF,FDA1FF,333333,808080,CCCCCC,D33115,E27300,FCC400,B0BC00,68BC00,16A5A5,009CE0,7B64FF,FA28FF,000000,666666,B3B3B3,9F0500,C45100,FB9E00,808900,194D33,0C797D,0062B1,653294,AB149E,F6CECD,FAE6CF,FFFED1,EBFED1,D7FDD0,D7FDE7,D8FEFE,D1E5FD,CCCDFB,E1CEFB,F6CFFC,F6CEE4'.split(',');
+			var output = [];
+
+			for (var i = 0; i < colors.length; i++)
+				output.push('<li><div class="{1}-color-hex" data-color="{0}" style="background-color:#{0}"><i class="ti ti-circle-alt"></i></div></li>'.format(colors[i], cls));
+
+			a.append('<div class="{2}-color" data-name="color"><div class="{2}-label">{0}</div><ul>{1}</ul></div>'.format(config.color, output.join(''), cls));
+			b.append('<div class="{2}-color" data-name="background-color"><div class="{2}-label">{0}</div><ul>{1}</ul></div>'.format(config.background, output.join(''), cls));
+			c.append('<div class="{2}-color" data-name="border-color"><div class="{2}-label">{0}</div><ul>{1}</ul></div>'.format(config.border, output.join(''), cls));
+
+			self.event('input', 'input', function() {
+				setTimeout2(self._id, self.create, 500);
+			});
+
+			self.event('click', cls2 + '-color-hex', function() {
+				var el = $(this);
+				var main = el.closest(cls2 + '-color');
+				self.selectcolor(main.attrd('name'), el.attrd('color'));
+			});
+		};
+
+		self.selectcolor = function(type, color, reset) {
+
+			self.find(cls2 + '-color[data-name="{0}"]'.format(type)).find(cls2 + '-color-hex').each(function() {
+				var el = $(this);
+				var col = el.attrd('color');
+				var sel = el.hclass('selected');
+				if (col === color) {
+					el.tclass('selected', !sel || reset == true);
+				} else if (sel)
+					el.rclass('selected');
+			});
+
+			setTimeout2(self._id, self.create, 500);
+		};
+
+		self.create = function() {
+
+			if (skip) {
+				skip = false;
+				return;
+			}
+
+			var style = [];
+
+			self.find(cls2 + '-numeric').each(function() {
+				var el = $(this);
+				var type = el.attrd('name');
+				var tmp = el.find('input');
+				var a;
+
+				if (type === 'font') {
+					a = tmp.eq(0).val().parseInt();
+					a && style.push('font-size:{0}px'.format(a));
+					a = tmp.eq(1).val().parseInt();
+					a && style.push('line-height:{0}px'.format(a));
+					return;
+				}
+
+				a = tmp.eq(0).val().parseInt();
+				var b = tmp.eq(1).val().parseInt();
+				var c = tmp.eq(2).val().parseInt();
+				var d = tmp.eq(3).val().parseInt();
+
+				if (a && b && c && d) {
+					if (a === b && b === c && c === d)
+						style.push(type + ':{0}px'.format(a));
+					else if (a === c && b === d)
+						style.push(type + ':{0}px {1}px'.format(a, b));
+					else
+						style.push(type + ':{0}px {1}px {2}px {3}px'.format(a, b, c, d));
+				} else {
+					if (type === 'border-radius') {
+						a && style.push('border-top-left-radius:{0}px'.format(a));
+						b && style.push('border-top-right-radius:{0}px'.format(b));
+						c && style.push('border-bottom-right-radius:{0}px'.format(c));
+						d && style.push('border-bottom-left-radius:{0}px'.format(d));
+					} else {
+						a && style.push(type + '-top:{0}px'.format(a));
+						b && style.push(type + '-right:{0}px'.format(b));
+						c && style.push(type + '-bottom:{0}px'.format(c));
+						d && style.push(type + '-left:{0}px'.format(d));
+					}
+				}
+			});
+
+			self.find(cls2 + '-color').each(function() {
+				var el = $(this);
+				var type = el.attrd('name');
+				var tmp = el.find('.selected');
+				tmp.length && style.push(type + ':#' + tmp.attrd('color'));
+			});
+
+			others && style.push(others);
+			self.bind('@touched @modified', style.join(';'));
+		};
+
+		self.parse = function() {
+
+			var arr = (self.get() || '').split(';').trim();
+			var obj = {};
+
+			obj.padding = ['', '', '', ''];
+			obj.margin = ['', '', '', ''];
+			obj.radius = ['', '', '', ''];
+			obj.fontsize = '';
+			obj.lineheight = '';
+			obj.color = '';
+			obj.background = '';
+			obj.border = '';
+			obj.others = [];
+
+			arr.forEach(function(prop) {
+				var a = prop.split(':').trim();
+
+				if (!a[1])
+					return;
+
+				var val = a[1].replace(/px|%|em/g, '');
+				var n = a[0].substring(0, 1) === 'm' ? 'margin' : 'padding';
+
+				if (!a[0])
+					return;
+
+				switch (a[0]) {
+					/*
+					case 'font-size':
+						obj.fontsize = val;
+						break;
+					case 'line-height':
+						obj.lineheight = val;
+						break;
+					*/
+					case 'color':
+						obj.color = val.replace('#', '');
+						break;
+					case 'background-color':
+						obj.background = val.replace('#', '');
+						break;
+					case 'border-color':
+						obj.border = val.replace('#', '');
+						break;
+					case 'padding':
+					case 'margin':
+					case 'border-radius':
+						if (a[0] === 'border-radius')
+							a[0] = 'radius';
+						obj[a[0]] = self.parseNumeric(val.split(' '));
+						break;
+					case 'padding-top':
+					case 'margin-top':
+						obj[n][0] = val;
+						break;
+					case 'padding-right':
+					case 'margin-right':
+						obj[n][1] = val;
+						break;
+					case 'padding-bottom':
+					case 'margin-bottom':
+						obj[n][2] = val;
+						break;
+					case 'padding-left':
+					case 'margin-left':
+						obj[n][3] = val;
+						break;
+					case 'border-top-left-radius':
+						obj[a[0]][0] = val;
+						break;
+					case 'border-top-right-radius':
+						obj[a[0]][1] = val;
+						break;
+					case 'border-bottom-right-radius':
+						obj[a[0]][2] = val;
+						break;
+					case 'border-bottom-left-radius':
+						obj[a[0]][3] = val;
+						break;
+					default:
+						obj.others.push(a[0] + ':' + a[1]);
+						break;
+				}
+			});
+
+			self.find(cls2 + '-numeric').each(function() {
+				var el = $(this);
+				var type = el.attrd('name');
+				var tmp = el.find('input');
+
+				if (type === 'font') {
+					tmp.eq(0).val(obj.fontsize);
+					tmp.eq(1).val(obj.lineheight);
+					return;
+				}
+
+				var name = type;
+				if (name === 'border-radius')
+					name = 'radius';
+
+				tmp.eq(0).val(obj[name][0]);
+				tmp.eq(1).val(obj[name][1]);
+				tmp.eq(2).val(obj[name][2]);
+				tmp.eq(3).val(obj[name][3]);
+			});
+
+			self.selectcolor('color', obj.color, true);
+			self.selectcolor('background-color', obj.background, true);
+			others = obj.others.join(';');
+		};
+
+		self.parseNumeric = function(arr) {
+			switch (arr.length) {
+				case 1:
+					return [arr[0], arr[0], arr[0], arr[0]];
+				case 2:
+					return [arr[0], arr[1], arr[0], arr[1]];
+				case 3:
+					return [arr[0], arr[1], arr[2], arr[1]];
+				case 3:
+					return [arr[0], arr[1], arr[2], arr[3]];
+			}
+			return ['', '', '', ''];
+		};
+
+		self.setter = function(value, path, type) {
+			if (skip)
+				return;
+			skip = true;
+			self.parse();
+			setTimeout(() => skip = false, 500);
+		};
+
+	});
+
+	PLUGIN('--IMAGES--', function(exports) {
+
+		exports.reload = function() {
+			var model = exports.model;
+			if (model.files && model.files[0] && model.files[0].type.substring(0, 6) === 'image/')
+				setTimeout(ASETTER(true, '#cmsimagecrop/load', model.files[0]), 1500);
+		};
+
+		exports.browse = function(set) {
+			var model = exports.model;
+			var config = model.instance.config;
+			config.files && model.instance.EXEC(config.files, { isimage: true, width: model.width, height: model.height }, function(response) {
+				set(typeof(response) === 'string' ? response : response.url);
+			});
+		};
+
+		function dataURLtoFile(dataurl, filename) {
+			var arr = dataurl.split(',');
+			var mime = arr[0].match(/:(.*?);/)[1];
+			var bstr = atob(arr[arr.length - 1]);
+			var n = bstr.length;
+			var u8arr = new Uint8Array(n);
+			while (n--)
+				u8arr[n] = bstr.charCodeAt(n);
+			return new File([u8arr], filename, {type:mime});
+		}
+
+		exports.submit = function(hide) {
+
+			var model = exports.model;
+			var target = model.element;
+			var cropper = FIND('#cmsimagecrop');
+
+			model.instance.backup(target);
+			target.attr('alt', model.alt);
+			// model.href && target.parent('a').attr('href', model.href);
+
+			// Is the picture changed?
+			if (cropper.config.touched || cropper.config.modified) {
+				model.instance.bind('@touched @modified @notify');
+				hide();
+				return;
+			}
+
+			var url = cropper.samesize;
+			if (url) {
+				var size = target.attrd('cms-size');
+				if (size) {
+					target.attrd('cms-src', url);
+					target.attr('src', url + '?s=' + size.replace('%', ''));
+				} else
+					target.attr('src', url);
+				model.instance.autoresize();
+				model.instance.bind('@touched @modified @notify');
+				hide();
+				return;
+			}
+
+			var data = cropper.output(true);
+			var config = model.instance.config;
+
+			config.image && model.instance.EXEC(config.image, { files: [dataURLtoFile(data.data, data.filename)] }, function(response) {
+				var url = typeof(response) === 'string' ? response : response.url;
+				var size = target.attrd('cms-size');
+				if (size) {
+					target.attrd('cms-src', url);
+					target.attr('src', url + (url.indexOf('?') === -1 ? '?' : '&') + 's=' + size.replace('%', ''));
+				} else
+					target.attr('src', url);
+				model.instance.autoresize();
+				model.instance.bind('@touched @modified @notify');
+				hide();
+			});
+		};
+	});
+
+	PLUGIN('--LINK--', function(exports) {
+
+		var isbutton = false;
+		var backup = null;
+
+		exports.watch('href', function(value, flags) {
+			if (flags.skip && value && value.length > 12 && (/^(http|https)\:\/\//i).test(value) && exports.model.target !== '_blank')
+				exports.set('target', '_blank');
+		}, true);
+
+		exports.reload = function(com) {
+
+			if (!isbutton && com) {
+				isbutton = true;
+				com.find('.ui-miniform-title').append('<nav><button class="exec" data-exec="?/copy"><i class="ti ti-copy"></i>@(Copy)</button><button class="exec" data-exec="?/paste"><i class="ti ti-paste"></i>@(Paste)</button></nav>');
+			}
+
+			var model = exports.model;
+			var path = '%cmseditorlinks';
+			var config = model.instance.config;
+			config.links && model.instance.EXEC(config.links, function(response) {
+				SET(path, response);
+			})
+		};
+
+		exports.copy = function() {
+			var model = exports.model;
+			backup = { href: model.href, alllinks: model.alllinks, title: model.title, target: model.target };
+			SETTER('notify/success', '@(Copied)');
+		};
+
+		exports.paste = function() {
+			if (backup) {
+
+				for (let key in backup) {
+					let val = backup[key];
+					if (val)
+						exports.set(key + ' @modified', val);
+				}
+
+				SETTER('notify/success', '@(Done)');
+			}
+		};
+
+		exports.find = function(el) {
+			var model = exports.model;
+			var opt = {};
+			opt.element = el;
+			opt.offsetWidth = 490;
+			opt.items = GET('%cmseditorlinks');
+			opt.callback = function(selected) {
+				exports.set('href @modified', selected.url);
+			};
+			SETTER('directory/show', opt);
+		};
+
+		exports.files = function() {
+			var model = exports.model;
+			var config = model.instance.config;
+			config.files && model.instance.EXEC(config.files, {}, function(item) {
+				exports.set('href @modified', typeof(item) === 'string' ? item : item.url);
+			});
+		};
+
+		exports.type = function(el) {
+			var r = /^(tel|mailto)\:/;
+			var model = exports.model;
+			switch (el.attrd('type')) {
+				case 'email':
+					exports.set('href @modified', 'mailto:' + model.href.replace(r, ''));
+					break;
+				case 'phone':
+					exports.set('href @modified', 'tel:' + model.href.replace(r, ''));
+					break;
+			}
+		};
+
+		exports.submit = function(hide) {
+
+			var model = exports.model;
+			var target = model.element;
+			var link;
+
+			model.instance.backup(target);
+
+			if (target.prop('tagName') === 'A')
+				link = target;
+			else
+				link = model.instance.dom_parent('A');
+
+			var href = model.href;
+
+			if (href.isEmail()) {
+				if (href.substring(0, 7) !== 'mailto:')
+					href = 'mailto:' + href;
+			} else if (href.substring(0, 1) === '+')
+				href = 'tel:' + href;
+
+			link[0].$cmsskipupdate = 1;
+			link.attr('href', href);
+
+			if (model.title)
+				link.attr('title', model.title.trim());
+			else
+				link.rattr('title');
+
+			if (!model.target || model.target === '_self')
+				link.rattr('target');
+			else
+				link.attr('target', model.target);
+
+			if (model.alllinks) {
+				var parent = model.instance.dom_parent_class('CMS_repeat', 8);
+				parent == null && (parent = model.instance.dom_parent_class('CMS_remove', 5));
+				parent && parent.find('a').each(function() {
+					var link = $(this);
+
+					link.attr('href', model.href);
+
+					if (model.title)
+						link.attr('title', model.title.trim());
+					else
+						link.rattr('title');
+
+					if (!model.target || model.target === '_self')
+						link.rattr('target');
+					else
+						link.attr('target', model.target);
+				});
+			}
+
+			target.data('temporary') && target.removeData('temporary');
+			model.instance.bind('@touched @modified @notify');
+			hide();
+		};
+
+		exports.cancel = function(hide) {
+
+			var model = exports.model;
+			var target = model.element;
+
+			if (target.data('temporary')) {
+				target.removeData('temporary');
+				target.replaceWith(target.html());
+			}
+
+			hide();
+		};
+
+	});
+
+	PLUGIN('--SETTINGS--', function(exports) {
+
+		var initialized_settings = {};
+		var settings_current;
+		var settings_data;
+		var settings_path;
+		var checksum = {};
+		var backup;
+
+		exports.clear = function(id) {
+			id = 'cmssettings_w' + id;
+			if (initialized_settings[id]) {
+				$('#' + id).remove();
+				delete initialized_settings[id];
+			}
+		};
+
+		exports.copy = function() {
+			var model = GET(settings_path);
+			backup = CLONE(model);
+			SETTER('notify/success', '@(Copied)');
+		};
+
+		exports.paste = function() {
+			if (backup) {
+
+				var model = GET(settings_path);
+				var extend = {};
+				var is = false;
+
+				for (var key in model) {
+					if (backup[key] != null) {
+						extend[key] = backup[key];
+						is = true;
+					}
+				}
+
+				is && EXTEND(settings_path + ' @change', extend);
+				SETTER('notify/success', '@(Done)');
+			}
+		};
+
+		exports.refresh = function(meta, e) {
+
+			if (e && e.target && (e.target.tagName === 'BUTTON' || e.target.tagName === 'A'))
+				return;
+
+			var widget = meta.widget;
+
+			if (!widget.settings)
+				widget.settings = '';
+
+			var stamp = widget.settings ? HASH(widget.settings).toString(36) : '0';
+
+			if (!widget.settings2)
+				widget.settings2 = widget.settings;
+
+			if (checksum[widget.id] && checksum[widget.id] !== stamp) {
+				exports.clear(widget.id);
+				widget.settings2 = widget.settings;
+			}
+
+			checksum[widget.id] = stamp;
+
+			var id = 'cmssettings_w' + widget.id;
+			var dom = $('#cmseditor_settings')[0];
+			var domrepo = $('#cmseditor_repo')[0];
+			var domsettings = $('#' + id)[0];
+			var move = false;
+
+			if (!domsettings && initialized_settings[id])
+				delete initialized_settings[id];
+
+			if (dom.children[0] && dom.children[0] !== domsettings) {
+				domrepo.appendChild(dom.children[0]);
+				move = true;
+			}
+
+			var config = CLONE(meta.config);
+			var path = 'cmseditor.settings.' + widget.id;
+			var opt = {};
+
+			settings_path = path;
+
+			opt.widget = widget;
+			opt.element = meta.element;
+			opt.config = config;
+			opt.path = path;
+
+			if (widget.settings2) {
+				var beg = widget.settings2.indexOf('<scr' + 'ipt>');
+				if (beg !== -1) {
+					var end = widget.settings2.indexOf('</scr' + 'ipt>', beg + 10);
+					var scr = widget.settings2.substring(beg + 8, end);
+					widget.settings2 = widget.settings2.substring(0, beg) + widget.settings2.substring(end + 9);
+					new Function('exports', scr)(opt);
+				}
+			}
+
+			SETTER('#cmssettingsform/reconfigure', { title: '@(Configuration): ' + widget.name });
+
+			if (initialized_settings[id]) {
+				move && dom.appendChild(domsettings);
+			} else {
+				initialized_settings[id] = 1;
+				$(dom).aclass('invisible').append($('#template_cmssettingsform').html().replace(/@NAME@/g, widget.id).replace(/@BODY@/g, widget.settings2));
+			}
+
+			var el = meta.element;
+
+			config.hiddenlg = el.hclass('hidden-lg');
+			config.hiddenmd = el.hclass('hidden-md');
+			config.hiddensm = el.hclass('hidden-sm');
+			config.hiddenxs = el.hclass('hidden-xs');
+
+			settings_data = meta;
+			settings_current = widget;
+			setTimeout(() => $('#cmseditor_settings').rclass('invisible'), 500);
+			SETTER('#cmssettingsformvalidation/setPath @important', path);
+			SET('cmseditor.settings.{0} @reset'.format(widget.id), config);
+			SET('cmseditor.form', 'cmssettingsform');
+		};
+
+		exports.submit = function(hide) {
+			var widget = settings_current;
+			var model = GET('cmseditor.settings.{0} @reset'.format(widget.id));
+
+			var el = settings_data.element;
+
+			el.tclass('hidden-lg', model.hiddenlg === true);
+			el.tclass('hidden-md', model.hiddenmd === true);
+			el.tclass('hidden-sm', model.hiddensm === true);
+			el.tclass('hidden-xs', model.hiddenxs === true);
+
+			delete model.hiddenlg;
+			delete model.hiddenmd;
+			delete model.hiddensm;
+			delete model.hiddenxs;
+
+			settings_data.save(model);
+			hide();
+		};
+
+	});
+
+	PLUGIN('--WIDGETS--', function(exports) {
+
+		exports.reload = function(com) {
+			exports.set('search', '');
+		};
+
+		exports.install = function(el) {
+			var id = ATTRD(el);
+			var model = exports.data;
+			var item = model.items.findItem('id', id);
+			if (item)
+				model.next(item);
+			NUL('cmseditor.form');
+		};
+
+		exports.import = function() {
+			SET('*form2', 'formwidgets');
+		};
+
+		exports.search = function() {
+			var model = exports.model;
+			var opt = {};
+			opt.id = 'cmswidgetimport';
+			opt.search = function(q, next) {
+				q = q.toSearch();
+				var arr = [];
+				for (var m of model.items) {
+					if (!m.search)
+						m.search = m.name.toSearch();
+					if (m.search.indexOf(q) !== -1)
+						arr.push({ id: m.id, name: m.name, html: '<img src="{0}" style="width:30px" class="mr10" onerror="onImageError(this)" data-empty="/_widgets/empty.png" />{1}'.format(m.preview, m.name.encode()) });
+				}
+				next(arr.take(30));
+			};
+			opt.callback = function(item) {
+				exports.install(item);
+			};
+			SETTER('spotlight/show', opt);
+		};
+
+	});
+
+	W.cmseditor = {};
+
+	COMPONENT('cmseditor', 'parent:auto;margin:52;marginiframe:0;offset:0;CMS_mh:true', function(self, config, cls) {
+
+		var myid = self.name + self.ID;
+		var scripts = [];
+		var cls2 = '.' + cls;
+		var target, iframe, container, width = 0, height = 0;
+		var offsetter = '<span id="cmseditorheight"></span><scr' + 'ipt>var autoresize=window.parent.' + myid + ';autoresize();window.addEventListener(\'keydown\',function(e){if((e.metaKey||e.ctrlKey)&&(e.keyCode==37||e.keyCode==39)){e.stopPropagation();e.preventDefault()}});</sc' + 'ript>';
+		var locked = false;
+		var temporary = {};
+		var emptyimage;
+		var backup = document.createElement('DIV');
+		var undobutton;
+		var instances = {};
+		var init = 0;
+
+		self.makeimage = function(width, height) {
+
+			var canvas = document.createElement('CANVAS');
+
+			canvas.width = width;
+			canvas.height = height;
+
+			var fs = ((canvas.width / 100) * 8) >> 0;
+			var ctx = canvas.getContext('2d');
+			ctx.fillStyle = '#D91500';
+			ctx.fillRect(0, 0, canvas.width, canvas.height);
+			ctx.font = 'bold ' + fs + 'px Arial';
+			ctx.fillStyle = '#FFF';
+			ctx.textAlign = 'center';
+			ctx.textBaseline = 'middle';
+			ctx.fillText('PHOTO', (canvas.width / 2), (canvas.height / 2 >> 0) + 5);
+			return canvas.toDataURL('image/png');
+		};
+
+		self.destroy = function() {
+			delete W[myid];
+		};
+
+		self.make = function() {
+
+			emptyimage = self.makeimage();
+
+			var el = $('#cmseditortoolbar');
+			var toolbar = el.html();
+
+			self.aclass(cls);
+
+			if ((/win/i).test(navigator.platform))
+				toolbar = toolbar.replace(/\&\#8984/g, 'CTRL');
+
+			self.html((toolbar + (config.parent ? '<ui-component name="viewbox" config="scrollbar:1;visibleY:1;scrollbarshadow:1;parent:{1};margin:{2}">' : '') + '<div class="{0}-bg"><div class="{0}-container" style="margin:0 auto"><iframe frameborder="0" scrolling="no" allowtransparency="true" allow="geolocation *; microphone *; camera *; midi *; encrypted-media *"></iframe></div></div></div>' + (config.parent ? '</ui-component>' : '')).format(cls, config.parent, config.margin + 22));
+			iframe = self.find('iframe');
+			container = self.find(cls2 + '-container');
+
+			toolbar = self.find('.cmseditor-help');
+			undobutton = toolbar.find('button[name="undo"]');
+			toolbar.on('click', 'button', function() {
+				var el = $(this);
+				var name = this.name;
+				switch (name) {
+					case 'bold':
+					case 'italic':
+					case 'underline':
+					case 'expression':
+					case 'span':
+					case 'code':
+					case 'link':
+					case 'icon':
+						self['dom_' + name]();
+						break;
+					case 'undo':
+						self.undo();
+						break;
+					case 'device':
+						var opt = {};
+						opt.element = el;
+						opt.items = [];
+						opt.items.push({ id: 'auto', name: '@(Full width)', icon: 'ti ti-arrows-h' });
+						opt.items.push({ id: 'lg', name: '@(Desktop computer)', icon: 'ti ti-desktop' });
+						opt.items.push({ id: 'md', name: '@(Laptop)', icon: 'ti ti-laptop' });
+						opt.items.push({ id: 'sm', name: '@(Tablet)', icon: 'ti ti-tablet' });
+						opt.items.push({ id: 'xs', name: '@(Mobile phone)', icon: 'ti ti-tablet fs10' });
+						opt.callback = function(item) {
+							switch (item.id) {
+								case 'auto':
+									container.css('width', '');
+									break;
+								case 'lg':
+									container.css('width', '1600px');
+									break;
+								case 'md':
+									container.css('width', '1120px');
+									break;
+								case 'sm':
+									container.css('width', '960px');
+									break;
+								case 'xs':
+									container.css('width', '400px');
+									break;
+							}
+							self.tclass(cls + '-resized', item.id !== 'auto');
+							el.find('span').text(item.name);
+							self.autoresize();
+						};
+						SETTER('menu/show', opt);
+						break;
+				}
+			});
+		};
+
+		self.autoresize = function() {
+			setTimeout(self.resize, 500, true);
+			setTimeout(self.resize, 1500, false);
+		};
+
+		self.iframe_css = function(value) {
+			var doc = self.iframe_document();
+			var style = doc.getElementById('cmscss');
+			style && style.parentNode.removeChild(style);
+			style = doc.createElement('style');
+			style.id = 'cmscss';
+			style.type = 'text/css';
+			if (style.styleSheet)
+				style.styleSheet.cssText = value;
+			else
+				style.appendChild(document.createTextNode(value));
+			var el = (doc.head || doc.getElementsByTagName('head')[0]);
+			el.appendChild(style);
+		};
+
+		self.configure = function(key, value, init, prev) {
+			switch (key) {
+				case 'device':
+					if (value !== prev) {
+						container.css({ width: value === 'md' ? '1140px' : value === 'sm' ? '960px' : value === 'xs' ? '400px' : 'auto' });
+						init && self.resize();
+					}
+					break;
+			}
+		};
+
+		self.write = function(content) {
+
+			var frm = iframe[0].contentWindow;
+			if (!frm)
+				return;
+
+			var doc = frm.document;
+
+			doc.open('text/html', 'replace');
+
+			if (!content) {
+				doc.write(('<ht' + 'ml><hea' + 'd></he' + 'ad><bo' + 'dy style="color:gray;text-align:center;padding:140px 0 0;margin:0;font-family:Arial;font-size:11px;color:#ADADAD;line-height:16px">{0}</bo' + 'dy></ht' + 'ml>').format(config.empty || DEF.empty));
+				doc.close();
+				iframe.css({ height: 'auto' });
+				return;
+			}
+
+			W[myid] = self.iframe_events;
+			doc.write(content.replace('</b' + 'ody>', offsetter + '</b' + 'ody>'));
+			doc.close();
+			frm.$cmseditor = true;
+			iframe.css({ height: 'auto' });
+			setTimeout(self.resize, 500, 10);
+			setTimeout(self.resize, 3000);
+			setTimeout(self.resize, 6000);
+			setTimeout(self.resize, 10000);
+		};
+
+		self.iframe_toolbar = function() {
+			return self.iframe_find('#CMS_panel');
+		};
+
+		self.iframe_body = function() {
+			return iframe.contents();
+		};
+
+		self.iframe_find = function(selector) {
+			return iframe.contents().find(selector);
+		};
+
+		self.iframe_document = function() {
+			return self.iframe_window().document;
+		};
+
+		self.iframe_window = function() {
+			return iframe[0].contentWindow;
+		};
+
+		self.iframe_container = function(max) {
+			if (target.hclass('CMS_widget') || target.hclass('CMS_widgets'))
+				return target;
+			var parent = target.parent();
+			for (var i = 0; i < max; i++) {
+				if (parent.hclass('CMS_widget') || parent.hclass('CMS_widgets'))
+					return parent;
+				parent = parent.parent();
+			}
+			return null;
+		};
+
+		self.iframe_refresh = function() {
+			var elements = self.iframe_find('#CMS').find('.CMS_widget');
+			var model = self.get();
+			for (var i = 0; i < elements.length; i++) {
+				var el = elements[i];
+				if (!el.$widget) {
+					el = $(el);
+
+					var meta = self.widget_config_parse(el);
+					var widget = model.widgets.findItem('id', meta.id);
+
+					// Not found
+					if (!widget) {
+						WARN('Widget "{0}": not found'.format(meta.id), el);
+						el.remove();
+						continue;
+					}
+
+					var instance = {};
+					el.$widget = meta;
+					instance.events = {};
+					instance.id = el.attrd('cms-id');
+					instance.el = instance.element = el;
+					instance.widget = instance;
+					instance.config = meta.config;
+					instance.on = function(name, fn) {
+						if (instance.events[name])
+							instance.events[name].push(fn);
+						else
+							instance.events[name] = [fn];
+					};
+					instance.emit = function(name, a, b, c, d) {
+						var arr = instance.events[name] || EMPTYARRAY;
+						for (var item of arr)
+							item.call(instance, a, b, c, d);
+					};
+					widget.js && widget.js(instance);
+				}
+			}
+		};
+
+		self.iframe_replace = function(html) {
+
+			self.iframe_toolbar().hide();
+
+			if (target) {
+				self.close();
+				target.rattr('contenteditable');
+				target.rclass('CMS_selected');
+				target = null;
+			}
+
+			self.iframe_find('#CMS').html(html);
+			self.bind('@modified @notify @touched');
+			self.autoresize();
+		};
+
+		self.iframe_keywords = function() {
+			var text = [];
+			var arr = self.iframe_find('.CMS_search,.CMS_edit');
+			for (var i = 0; i < arr.length; i++)
+				text.push(arr[i].innerText);
+			return find_keywords(text.join(' '));
+		};
+
+		self.dom_parent = function(name) {
+			if (target[0].nodeName === name)
+				return target;
+			var parent = target.parent();
+			for (var i = 0; i < 20; i++) {
+				var el = parent[0];
+				if (!el)
+					break;
+				if (el.nodeName === name)
+					return parent;
+				parent = parent.parent();
+			}
+			return null;
+		};
+
+		self.dom_parent_class = function(cls, max) {
+
+			if (!target)
+				return null;
+
+			if (target.hclass(cls))
+				return target;
+
+			var parent = target.parent();
+			if (!max)
+				max = 20;
+
+			for (var i = 0; i < max; i++) {
+				if (parent.hclass(cls))
+					return parent;
+				parent = parent.parent();
+			}
+
+			return null;
+		};
+
+		self.state = function(type, who) {
+			if (who === 2) {
+				if (type === 1)
+					config.change && self.EXEC(config.change, self);
+				self.resize();
+			}
+		};
+
+		self.close = function() {
+
+			if (!target || !target.length)
+				return;
+
+			var node = target[0];
+			var tag = target[0].tagName;
+			var a = node;
+			var is = false;
+
+			for (var i = 0; i < 4; i++) {
+				if (a.tagName === 'A') {
+					is = true;
+					break;
+				} else {
+					a = a.parentNode;
+					if (!a)
+						return;
+				}
+			}
+
+			if (!is || (a && a.$cmsskipupdate))
+				return;
+
+			a = $(a);
+
+			var content = target.text().replace(/\s/g, '');
+			var href = a.attr('href');
+			var ismail = /[#|@|\:]/;
+			if (content.indexOf('@') !== -1) {
+				if (!href || ismail.test(href))
+					a.attr('href', 'mailto:' + content);
+			} else if (!(/[a-z]/i).test(content) && content.length > 5)
+				a.attr('href', 'tel:' + content);
+		};
+
+		self.iframe_toolbar_move = function(el) {
+			var sel = $(self.iframe_document()).find('.CMS_selected');
+			if (sel.length) {
+				if (target) {
+					self.close();
+					target.rclass('CMS_selected');
+					target.rattr('contenteditable');
+					target = null;
+				}
+				sel.trigger('click');
+			}
+		};
+
+		function find_keywords(content, alternative, count, max, min) {
+
+			min = min || 2;
+			count = count || 200;
+			max = max || 20;
+
+			var words = content.toLowerCase().match(/[a-zá-žа-я]+/gi);
+
+			if (words === null)
+				words = EMPTYARRAY;
+
+			var length = words.length;
+			var dic = {};
+			var counter = 0;
+
+			for (var i = 0; i < length; i++) {
+				var word = words[i].trim();
+
+				if (word.length < min || counter >= count)
+					continue;
+
+				if (alternative)
+					word = word.substring(0, (word.length / 100) * 80);
+
+				if (word.length < min || word.length > max)
+					continue;
+
+				if (dic[word])
+					dic[word]++;
+				else
+					dic[word] = 1;
+
+				counter++;
+			}
+
+			var keys = Object.keys(dic);
+
+			keys.sort(function(a, b) {
+
+				var countA = dic[a];
+				var countB = dic[b];
+
+				if (countA > countB)
+					return -1;
+
+				if (countA < countB)
+					return 1;
+
+				return 0;
+			});
+
+			return keys.join(' ');
+		}
+
+		self.iframe_images = function() {
+			var images = [];
+			self.iframe_find('img.CMS_edit').each(function() {
+				var url = this.getAttribute('src') || '';
+				if (url.substring(0, 5).toLowerCase() !== 'data:' && images.indexOf(url) === -1 && images.length < 5)
+					images.push(url);
+			});
+			return images;
+		};
+
+		self.iframe_source = function() {
+			target && self.close();
+			var content = self.iframe_body().clone(true);
+			content.find('[contenteditable]').rattr('contenteditable');
+			content.find('.CMS_selected').rclass('CMS_selected');
+			content.find('.CMS_operation').rclass('CMS_operation');
+			return (content.find('#CMS').html() || '').trim().replace(/&nbsp;/g, ' ').replace(offsetter, '');
+		};
+
+		self.iframe_html = function() {
+			target && self.close();
+			var body = self.iframe_body();
+			var content = body.find('#CMS').clone(true);
+			content.find('.CMS_preview').rclass('CMS_preview');
+			content.find('[contenteditable]').rattr('contenteditable');
+			content.find('.CMS_selected').rclass('CMS_selected');
+			content.find('.CMS_operation').rclass('CMS_operation');
+			content.find('.CMS_edit:empty,.CMS_remove:empty,.CMS_widgets:empty').each(function() {
+				var tag = this.nodeName;
+				if (tag !== 'IMG' && tag !== 'IFRAME') {
+					var cls = this.getAttribute('class');
+					if (cls.indexOf('CMS_widget') === -1 && cls.indexOf('ti') === -1)
+						$(this).detach().remove();
+				}
+			});
+			content.find('#CMS_panel').remove();
+			content.find('#cmscss,#cmscsseditor').remove();
+
+			var html = (content.html() || '').trim().replace(offsetter, '');
+			for (var scr of scripts)
+				html = html.replace(scr.id, scr.html);
+
+			return html;
+		};
+
+		self.iframe_layout = function() {
+			target && self.close();
+			var body = self.iframe_body();
+			var content = $(body[0].documentElement).clone(true);
+			content.find('.CMS_preview').rclass('CMS_preview');
+			content.find('[contenteditable]').rattr('contenteditable');
+			content.find('.CMS_selected').rclass('CMS_selected');
+			content.find('.CMS_edit:empty,.CMS_remove:empty,.CMS_widgets:empty').each(function() {
+				var tag = this.nodeName;
+				if (tag !== 'IMG' && tag !== 'IFRAME') {
+					var cls = this.getAttribute('class');
+					if (cls.indexOf('CMS_widget') === -1 && cls.indexOf('ti') === -1)
+						$(this).detach().remove();
+				}
+			});
+			content.find('#cmscss,#cmscsseditor').remove();
+			content.find('#CMS_panel').remove();
+			var html = '<!DOCTYPE html>\n<html>\n' + (content.html() || '').trim().replace(offsetter, '') + '\n</html>';
+
+			for (var scr of scripts)
+				html = html.replace(scr.id, scr.html);
+
+			return html;
+		};
+
+		self.check = function(el) {
+			// var type = el[0].tagName;
+			// if (type === 'DIV' || type === 'P' || type === 'B' || type.substring(0, 1) === 'H')
+			// 	!el.html() && el.html('&nbsp;');
+		};
+
+		self.widget_config_clone = function(parent) {
+
+			// Regenerates widget IDs + copies settings
+
+			var oldid = parent.attrd('cms-id');
+			var newid;
+
+			if (oldid) {
+				newid = Date.now().toString(36);
+				parent.attrd('cms-id', newid);
+			}
+
+			parent.find('[data-cms-id]').each(function() {
+				this.setAttribute('data-cms-id', GUID(10));
+			});
+
+			var cls = 'CMS_selected CMS_operation';
+			parent.find('.CMS_selected,.CMS_operation').rclass(cls);
+			parent.find('[contenteditable="true"]').rattr('contenteditable');
+			parent.rclass(cls);
+			return parent;
+		};
+
+		self.iframe_toolbar_copypaste = function() {
+			var elements = self.iframe_toolbar().find('#CMS_panel_buttons_copy span,#CMS_panel_buttons_body span[data-name="sourcecode"]');
+			for (var node of elements) {
+
+				var el = $(node);
+
+				switch (el.attrd('name')) {
+
+					case 'copy':
+					case 'sourcecode':
+						el.toggle(!!temporary.wrap);
+						break;
+
+					case 'paste':
+
+						var cur = target;
+						if (!cur.hclass('CMS_widgets'))
+							cur = null;
+
+						temporary.copypasteparent = cur ? cur : temporary.wrap_widgets ? temporary.wrap_widgets : temporary.wrap ? temporary.wrap.closest('.CMS_widgets') : null;
+						var can = !!(temporary.copypaste && (temporary.copypasteparent && temporary.copypasteparent.length));
+						el.toggle(can);
+						break;
+				}
+			}
+		};
+
+		self.response = function() {
+			var model = self.get();
+			return model.type === 'layout' ? self.iframe_layout() : self.iframe_html();
+		};
+
+		// Removes non-exist widgets
+		self.clean = function() {
+			var content = self.iframe_body();
+			var model = self.get();
+			content.find('.CMS_widget').each(function() {
+				var el = $(this);
+				var meta = self.widget_config_parse(el);
+				var is = model.widgets.findItem('id', meta.id);
+				if (!is)
+					el.remove();
+			});
+			self.reconfig();
+		};
+
+		self.undo = function() {
+
+			var item = temporary.history.pop();
+
+			if (!item)
+				return;
+
+			undobutton.tclass('hidden', temporary.history.length === 0);
+			self.iframe_toolbar().hide();
+
+			if (item.clone != null) {
+
+				for (var i = 0; i < temporary.history.length; i++) {
+					var history = temporary.history[i];
+					if (history.node === item.node)
+						history.node = item.clone[0];
+				}
+
+				$(item.node).replaceWith(item.clone);
+				self.autoresize();
+				return;
+			}
+
+			if (target) {
+				self.close();
+				target.rattr('contenteditable');
+				target.rclass('CMS_selected');
+				target = null;
+			}
+
+			if (!item.parent.children.length) {
+				item.parent.appendChild(item.node);
+				self.autoresize();
+				return;
+			}
+
+			var sibling = item.parent.children[item.index];
+			if (sibling)
+				item.parent.insertBefore(item.node, sibling);
+			else
+				item.parent.appendChild(item.node);
+
+			self.autoresize();
+		};
+
+		self.iframe_events = function() {
+
+			if (init !== 2) {
+				init = 2;
+				setTimeout(() => self.refresh(), 100);
+				return;
+			}
+
+			var body = self.iframe_body();
+			var touch = { time: 0, target: null };
+
+			body.off('click touchstart touchmove touchend dblclick keydown');
+
+			$(self.iframe_window()).on('keydown', function(e) {
+				if (e.which === 27 && target) {
+					self.close();
+					self.check(target);
+					target.rclass('CMS_selected');
+					target.rattr('contenteditable');
+					self.iframe_toolbar().hide();
+					target = null;
+				}
+			});
+
+			body.on('dblclick', '.CMS_edit', function(e) {
+
+				if (locked)
+					return;
+
+				e.preventDefault();
+				e.stopPropagation();
+
+				if (!this.getAttribute('contenteditable')) {
+					var btn = body.find('.CMS_panel_buttons').find('span[data-name="edit"]');
+					if (!btn.hclass('CMS_panel_disabled'))
+						btn.trigger('click');
+				}
+
+			});
+
+			body.on('dblclick', '.CMS_widgets', function(e) {
+
+				if (locked)
+					return;
+
+				e.preventDefault();
+				e.stopPropagation();
+
+				var btn = body.find('.CMS_panel_buttons').find('span[data-name="settings"]');
+				if (!btn.hclass('CMS_panel_disabled'))
+					btn.trigger('click');
+			});
+
+			body.on('click touchstart touchmove touchend', '.CMS_edit,.CMS_repeat,.CMS_remove,.CMS_widgets,.CMS_attribute', function(e) {
+
+				var t = this;
+
+				if (e.type === 'touchstart') {
+					touch.time = Date.now();
+					touch.target = t;
+					return;
+				} else if (e.type === 'touchmove' || e.type === 'touchend') {
+					if (Date.now() - touch.time < 300)
+						return;
+					touch.time = 0;
+				}
+
+				if (locked)
+					return;
+
+				SETTER('!icons/hide', true);
+				SETTER('!colorpicker/hide', true);
+				SETTER('!datepicker/hide', true);
+				SETTER('!directory/hide', true);
+
+				e.preventDefault();
+				e.stopPropagation();
+
+				var el = $(t);
+
+				if (target && t !== target[0]) {
+					self.close();
+					self.check(target);
+					target.rclass('CMS_selected');
+					target.rattr('contenteditable');
+					target = null;
+				}
+
+				var off = el.offset();
+				var panel = self.iframe_toolbar();
+				var left = off.left;
+
+				if ((left + 270) > width)
+					left = width - 270;
+
+				// Firefox
+				setTimeout(() => panel.show(), 100);
+
+				var arr = el.attr('class').split(/\s+/);
+				var tag = t.nodeName;
+				var info = body.find('#CMS_panel_info');
+
+				target = el;
+
+				var wrap = self.dom_parent_class('CMS_widget');
+				var reposition = !!self.dom_parent_class('CMS_repeat', 5);
+
+				if (tag === 'IMG')
+					info.html('<span>{0}x{1}</span>'.format(t.getAttribute('data-cms-width') || t.width, t.getAttribute('data-cms-height') || t.height));
+				else if (tag) {
+					var id = wrap && wrap.length ? wrap.attrd('cms').split('__')[0] : '';
+					var widget = id ? self.get().widgets.findItem('id', id) : null;
+					info.html('<b>' + tag + '</b>' + (widget ? ('<span>' + widget.name.encode() + '</span>') : ''));
+				}
+
+				temporary.wrap = wrap;
+				temporary.wrapremove = self.dom_parent_class('CMS_remove');
+
+				panel.find('#CMS_panel_buttons_move').toggle(!!(wrap && wrap.length));
+
+				panel.find('#CMS_panel_buttons_body > span').each(function() {
+					var el = $(this);
+					var name = el.attrd('name');
+					if (name === 'CMS_mv' || name === 'CMS_mh')
+						el.tclass('CMS_is', wrap ? wrap.hclass(name) : false);
+				});
+
+				panel.find('#CMS_panel_buttons_reposition').toggle(reposition);
+				panel.find('.CMS_panel_buttons span').each(function() {
+
+					var el = $(this);
+					var name = el.attrd('name');
+					if (name === 'hide')
+						return;
+
+					var disabled = name === 'settings' ? true : arr.indexOf('CMS_' + name) === -1;
+
+					if (disabled && name === 'attribute')
+						disabled = arr.indexOf('CMS_edit') === -1;
+
+					if (name === 'link')
+						disabled = self.dom_parent('A') === null;
+
+					// Are some widgets?
+					if (name === 'widgets' && !disabled) {
+						var model = self.get();
+						disabled = !model.widgets || model.widgets.length === 0;
+					}
+
+					if ((name === 'settings' || name === 'part') && disabled)
+						disabled = self.dom_parent_class('CMS_widget') === null;
+
+					if (disabled && name === 'repeat')
+						disabled = self.dom_parent_class('CMS_repeat') === null;
+
+					if (disabled && name === 'remove') {
+						disabled = temporary.wrapremove === null;
+						if (disabled) {
+							// is link created manually?
+							if (t.tagName === 'A' && target.hclass('CMS_edit')) {
+								var parent = target.parent().closest('.CMS_edit');
+								disabled = parent.length === 0;
+							}
+						}
+					}
+
+					if (disabled && name === 'widgets') {
+						temporary.wrap_widgets = self.dom_parent_class('CMS_widgets', 10);
+						disabled = temporary.wrap_widgets == null;
+					}
+
+					if (name === 'edit' && tag === 'IFRAME')
+						disabled = true;
+
+					if (name === 'generate') {
+
+						if (tag !== 'IMG' && disabled)
+							disabled = false;
+
+						if (name === 'generate' && tag === 'I')
+							disabled = true;
+					}
+
+					if (name === 'settings' || name === 'partial' || name === 'generate')
+						el.tclass('CMS_panel_disabled CMS_panel_hidden', disabled);
+					else
+						el.tclass('CMS_panel_disabled', disabled);
+
+				});
+
+				panel.find('#CMS_panel_buttons_body').toggle(!!wrap || arr.indexOf('CMS_widgets') !== -1);
+				panel.find('#CMS_panel_buttons_copy').toggle((wrap ? (!!wrap.length) : false) || (!!temporary.wrap_widgets));
+				panel.css({ left: left, top: off.top - panel.innerHeight() - 5 });
+				panel.rclass('invisible');
+				target.aclass('CMS_selected');
+				self.iframe_toolbar_copypaste();
+			});
+
+			body.off('paste');
+			body.on('paste', function(e) {
+
+				e.preventDefault();
+				e.stopPropagation();
+
+				if (locked)
+					return;
+
+				var text = e.originalEvent.clipboardData.getData('text/plain');
+				if (target) {
+					if (!target.hclass('CMS_multiline'))
+						text = text.replace(/\n\r|\n|\r/g, ' ');
+					self.iframe_document().execCommand('insertText', false, text.trim().replace(/\s{2,}/g, ' ').replace(/\&nbsp;/g, ' '));
+				}
+			});
+
+			body.on('dragenter dragover dragexit drop dragleave', function (e) {
+
+				e.stopPropagation();
+				e.preventDefault();
+
+				if (locked)
+					return;
+
+				switch (e.type) {
+					case 'drop':
+						break;
+					case 'dragenter':
+					case 'dragover':
+						return;
+					case 'dragexit':
+					case 'dragleave':
+					default:
+						return;
+				}
+
+				var el = $(e.target);
+
+				if (e.target.nodeName !== 'IMG')
+					return;
+
+				var files = e.originalEvent.dataTransfer.files;
+
+				if (!files[0])
+					return;
+
+				var w, h;
+
+				if (el.hclass('CMS_edit') && (el.attrd('cms-width') || el.attrd('cms-height'))) {
+					w = el.attrd('cms-width');
+					h = el.attrd('cms-height');
+					if (w)
+						w = w.parseFloat();
+					if (h)
+						h = h.parseFloat();
+				}
+
+				var opt = {};
+
+				opt.files = files;
+				opt.alt = el.attr('alt');
+				opt.href = '';
+				opt.element = el;
+				opt.isimage = true;
+				opt.url = el.attrd('cms-src') || el.attr('src');
+				opt.bg = el.attrd('cms-bg');
+				opt.width = w;
+				opt.height = h;
+				opt.instance = self;
+
+				var parent = el.parent('a');
+				if (parent.length)
+					opt.href = parent.attr('href');
+
+				opt.ishref = !!opt.href;
+
+				if (w && h) {
+					// show crop editor
+					FIND('#cmsimagecrop', com => com.reconfigure('width:{0};height:{1};background:{2}'.format(opt.width, opt.height, opt.bg)));
+					SET('cmsimageform @default', opt);
+					SET('cmseditor.form', 'cmsimageform');
+				} else if (config.image) {
+					self.EXEC(config.image, opt, function(response) {
+						opt.element.attr('src', typeof(response) === 'string' ? response : response.url);
+						self.autoresize();
+					});
+				}
+			});
+
+			body.unbind('keydown').on('keydown', function(e) {
+
+				// save
+				if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+					config.save && self.EXEC(config.save, true);
+					e.preventDefault();
+					e.stopPropagation();
+					return;
+				}
+
+				if (!target || locked)
+					return;
+
+				if (e.keyCode === 13 && !target.hclass('CMS_multiline')) {
+					self.close();
+					target.rattr('contenteditable');
+					target.rclass('CMS_selected');
+					target = null;
+					self.iframe_toolbar().hide();
+					e.preventDefault();
+					e.stopPropagation();
+					return;
+				}
+
+				if (e.keyCode === 13) {
+					// "div" prevention
+					var tmp = target.html();
+					self.iframe_document().execCommand('insertHTML', false, '<br>');
+					var end = target.html().trim();
+					if (end.substring(end.length - 3) !== tmp.substring(tmp.length - 3))
+						self.iframe_document().execCommand('insertHTML', false, '<br><br>');
+					e.preventDefault();
+					e.stopPropagation();
+					self.autoresize();
+					return;
+				}
+
+				if (!e.metaKey && !e.ctrlKey)
+					return;
+
+				if (e.keyCode === 77) {
+					self.dom_expression();
+					e.preventDefault();
+					e.stopPropagation();
+					return;
+				}
+
+				if (e.keyCode === 80) {
+					self.dom_icon();
+					e.preventDefault();
+					e.stopPropagation();
+					return;
+				}
+
+				if (e.keyCode === 66) {
+					// bold
+					self.dom_bold();
+					e.preventDefault();
+					e.stopPropagation();
+					return;
+				}
+
+				if (e.keyCode === 76) {
+					// link
+					e.preventDefault();
+					e.stopPropagation();
+					self.dom_link();
+					return;
+				}
+
+				if (e.keyCode === 73) {
+					// italic
+					self.dom_italic();
+					e.preventDefault();
+					e.stopPropagation();
+					return;
+				}
+
+				if (e.keyCode === 85) {
+					// underline
+					self.dom_underline();
+					e.preventDefault();
+					e.stopPropagation();
+					return;
+				}
+
+				if (e.keyCode === 32) {
+					self.iframe_document().execCommand('insertHTML', false, '&nbsp;');
+					e.preventDefault();
+					e.stopPropagation();
+					return;
+				}
+
+			});
+
+			body.on('click', function(e) {
+				SETTER('!datepicker/hide');
+				SETTER('!faicons/hide');
+				SETTER('!directory/hide');
+			});
+
+			body.on('click', 'a', function(e) {
+				e.preventDefault();
+			});
+
+			body.find('#CMS_panel').on('mouseenter mouseleave', '.ti-arrow-up,.ti-arrow-down', function(e) {
+				if (!locked && temporary.wrap && temporary.wrap.length)
+					temporary.wrap.tclass('CMS_selected_template', e.type === 'mouseenter');
+			});
+
+			body.find('#CMS_panel').on('mouseenter mouseleave', '.ti-plug', function(e) {
+				if (!locked && temporary.wrap_widgets && temporary.wrap_widgets.length)
+					temporary.wrap_widgets.tclass('CMS_selected_template', e.type === 'mouseenter');
+			});
+
+			body.find('#CMS_panel').on('mouseenter mouseleave', '.ti-trash,.ti-object-ungroup,.ti-copy', function(e) {
+				if (!locked && this.classList.value.indexOf('_disabled') === -1 && temporary.wrapremove)
+					temporary.wrapremove.tclass('CMS_operation', e.type === 'mouseenter');
+			});
+
+			body.find('#CMS_panel').on('click', 'span', function(e) {
+
+				e.preventDefault();
+				e.stopPropagation();
+
+				var el = $(this);
+
+				if (el.hclass('CMS_panel_disabled') || locked)
+					return;
+
+				var hide = function() {
+					body.find('#CMS_panel').find('[data-name="hide"]').trigger('click');
+				};
+
+				var name = el.attrd('name');
+				var tmp;
+
+				SETTER('!colorpicker/hide', true);
+				SETTER('!icons/hide', true);
+				SETTER('!datepicker/hide', true);
+				SETTER('!directory/hide', true);
+
+				switch (name) {
+
+					case 'generate':
+
+						var toolbar = self.iframe_toolbar();
+						var t = temporary.wrap || target;
+						var opt = {};
+						var offset = toolbar.position();
+						var editor = self.element.offset();
+						var viewbox = self.find('ui-component[name="viewbox"]').component();
+
+						opt.x = (editor.left + offset.left) - viewbox.scrollbar.scrollLeft();
+						opt.y = (editor.top + offset.top + 46) - viewbox.scrollbar.scrollTop();
+						opt.element = t;
+						opt.config = self.widget_config_parse(t);
+
+						opt.isimage = t[0].tagName === 'IMG';
+						opt.instance = self;
+						opt.text = $(t).text();
+
+						if (opt.isimage) {
+
+							var tw = t.attrd('cms-width');
+							var th = t.attrd('cms-height');
+
+							opt.imgdefined = tw != null || th != null;
+
+							if (!opt.imgdefined) {
+								tw = t.attr('width');
+								th = t.attr('height');
+							}
+
+							opt.width = t[0].width;
+							opt.height = t[0].height;
+							opt.datawidth = tw;
+							opt.dataheight = th;
+							opt.datasize = t.attrd('cms-size');
+						}
+
+						config.generate && self.EXEC(config.generate, opt);
+						break;
+
+					case 'sourcecode':
+						var t = temporary.wrap || target;
+						var opt = {};
+						opt.element = t;
+						opt.config = self.widget_config_parse(t);
+						config.widgetsource && self.EXEC(config.widgetsource, opt);
+						break;
+
+					case 'selectwidget':
+						var t = temporary.wrap || target;
+						t && $(t).trigger('click');
+						break;
+
+					case 'CMS_mh':
+					case 'CMS_mv':
+						var t = temporary.wrap || target;
+						if (t.length) {
+							t.tclass(name);
+							el.tclass('CMS_is', t.hclass(name));
+							self.bind('@modified @notify @touched');
+						}
+						break;
+
+					case 'paste':
+
+						target && self.close();
+
+						var clone = temporary.copypaste.clone();
+						clone = self.widget_config_clone(clone).rattr('contenteditable').rclass('CMS_selected').aclass('CMS_remove');
+
+						var parent = target.closest('.CMS_widget');
+						if (parent.parent()[0] === temporary.copypasteparent[0])
+							parent.after(clone);
+						else
+							temporary.copypasteparent.append(clone);
+
+						self.autoresize();
+						self.bind('@modified @notify');
+						break;
+
+					case 'copy':
+						temporary.copypaste = temporary.wrap.clone();
+						temporary.copypaste.rclass('CMS_operation CMS_selected');
+						self.iframe_toolbar_copypaste();
+						break;
+
+					case 'up2':
+
+						if (!target) {
+							self.iframe_toolbar().hide();
+							return;
+						}
+
+						if (!target.hclass('CMS_repeat'))
+							target = self.dom_parent_class('CMS_repeat');
+						if (!target.length)
+							return hide();
+						var prev = target.prev();
+						if (!prev.length || !prev.hclass('CMS_repeat'))
+							return hide();
+						tmp = prev.clone();
+						var n = target.clone();
+						prev.replaceWith(n);
+						target.replaceWith(tmp);
+						self.bind('@modified @notify @touched');
+						self.iframe_toolbar_move();
+						self.autoresize();
+						break;
+
+					case 'down2':
+
+						if (!target) {
+							self.iframe_toolbar().hide();
+							return;
+						}
+
+						if (!target.hclass('CMS_repeat'))
+							target = self.dom_parent_class('CMS_repeat');
+						if (!target.length)
+							return hide();
+						var next = target.next();
+						if (!next.length || !next.hclass('CMS_repeat'))
+							return hide();
+						tmp = next.clone();
+						var n = target.clone();
+						next.replaceWith(n);
+						target.replaceWith(tmp);
+						self.bind('@modified @notify @touched');
+						self.iframe_toolbar_move();
+						self.autoresize();
+						break;
+
+					case 'up':
+
+						tmp = temporary.wrap.prev();
+						if (tmp.length) {
+							tmp.before(temporary.wrap);
+							self.iframe_toolbar_move();
+						} else
+							hide();
+
+						self.bind('@modified @notify @touched');
+						break;
+
+					case 'down':
+
+						tmp = temporary.wrap.next();
+						if (tmp.length) {
+							tmp.after(temporary.wrap);
+							self.iframe_toolbar_move();
+						} else
+							hide();
+
+						self.bind('@modified @notify @touched');
+						break;
+
+					case 'hide':
+
+						if (!target) {
+							self.iframe_toolbar().hide();
+							return;
+						}
+
+						self.iframe_toolbar().hide();
+						self.close();
+						self.check(target);
+						target.rattr('contenteditable');
+						body.find('.CMS_selected').rclass('CMS_selected');
+						body.find('.CMS_selected_template').rclass('CMS_selected_template');
+						target = null;
+						return;
+
+					case 'widgets':
+
+						var arr = [];
+						var tmp = self.dom_parent_class('CMS_widgets', 10);
+						var after = target.hclass('CMS_widgets') ? null : self.dom_parent_class('CMS_widget', 10);
+
+						if (after && after[0].contains(tmp[0]))
+							after = null;
+
+						var container = tmp;
+
+						if (!container.hclass('CMS_widgets')) {
+							container = self.iframe_container(10);
+							if (!container)
+								return;
+						}
+
+						var opt = {};
+						opt.element = container;
+						opt.items = self.get().widgets;
+						opt.target = target;
+						opt.next = function(widget) {
+
+							// widget.id
+							// widget.config
+							// widget.html || widget.body
+
+							self.backup(target);
+
+							var parentwidget = self.dom_parent_class('CMS_widget', 15);
+							var cls = 'w-' + (widget.id || widget.name).slug().replace(/\-/g, '');
+							var content = '<div class="CMS_widget CMS_remove {0} CMS_mv{5}" data-cms="{2}__{3}" data-cms-id="{1}">\n{4}</div>'.format(cls, Date.now().toString(36), widget.id, encodeURIComponent(STRINGIFY(widget.config || {})), widget.html || widget.body, parentwidget && !parentwidget.hclass('CMS_mh') ? '' : (config.CMS_mh ? ' CMS_mh' : ''));
+
+							if (after && after.length)
+								after.after(content);
+							else
+								container.append(content);
+
+							var arr = container[0].querySelectorAll('img');
+
+							for (var t of arr) {
+								if (!t.src) {
+									var w = t.getAttribute('data-cms-width');
+									var h = t.getAttribute('data-cms-height');
+									t.src = w && h ? self.makeimage(+w, +h) : emptyimage;
+								}
+							}
+
+							self.autoresize();
+							self.bind('@modified @notify @touched');
+						};
+
+						if (config.widgets) {
+							self.EXEC(self.widgets, opt);
+						} else {
+							SET('cmswidgetsform @default', opt);
+							SET('cmseditor.form', 'cmswidgetsform');
+						}
+
+						return;
+
+					case 'attribute':
+
+						if (!target) {
+							self.iframe_toolbar().hide();
+							return;
+						}
+
+						var targettmp = target.hclass('CMS_unwrap') ? target.parent() : target;
+						var classes = (targettmp.attr('class') || '').split(' ');
+						var arr = [];
+
+						for (var i = 0; i < classes.length; i++) {
+							if (classes[i].substring(0, 4) !== 'CMS_')
+								arr.push(classes[i]);
+						}
+
+						var tag = targettmp[0].nodeName;
+						var cattr = {};
+
+						cattr.isimage = tag === 'IMG';
+						cattr.config = targettmp.attr('config') || null;
+						cattr.element = targettmp;
+						cattr.isconfig = cattr.config != null;
+						cattr.isiframe = tag === 'IFRAME';
+						cattr.isnone = !cattr.isimage && !cattr.isiframe;
+						cattr.id = targettmp.attr('id') || '';
+						cattr.cls = arr.join(' ');
+						cattr.css = targettmp.attr('style') || '';
+						cattr.title = targettmp.attr('title') || '';
+						cattr.src = targettmp.attr('src') || '';
+						cattr.instance = self;
+
+						if (cattr.isimage) {
+
+							var tw = targettmp.attrd('cms-width');
+							var th = targettmp.attrd('cms-height');
+
+							cattr.imgdefined = tw != null || th != null;
+
+							if (!cattr.imgdefined) {
+								tw = targettmp.attr('width');
+								th = targettmp.attr('height');
+							}
+
+							cattr.datawidth = tw;
+							cattr.dataheight = th;
+							cattr.datasize = targettmp.attrd('cms-size');
+
+							if (cattr.datasize)
+								cattr.datasize += '%';
+
+							cattr.alt = targettmp.attr('alt') || '';
+							cattr.databg = targettmp.attrd('cms-bg') || '';
+						}
+
+						if (config.attributes) {
+							self.EXEC(config.attributes, cattr);
+						} else {
+							SET('cmsattributesform @default', cattr);
+							SET('cmseditor.form', 'cmsattributesform');
+						}
+						return;
+
+					case 'link':
+
+						if (!target) {
+							self.iframe_toolbar().hide();
+							return;
+						}
+
+						self.backup(target);
+
+						var href = '';
+						var targ = '';
+						var title = '';
+
+						if (target.prop('tagName') === 'A') {
+							href = target.attr('href');
+							title = target.attr('title');
+							targ = target.attr('target') || '';
+						} else {
+							var tmp = self.dom_parent('A');
+							href = tmp.attr('href');
+							title = tmp.attr('title');
+							targ = tmp.attr('target') || '';
+						}
+
+						var link = {};
+						link.element = target;
+						link.href = href;
+						link.target = targ;
+						link.title = (title || '').trim();
+						link.instance = self;
+
+						if (config.link) {
+							self.EXEC(config.link, link);
+						} else {
+							SET('cmslinkform @default', link);
+							SET('cmseditor.form', 'cmslinkform');
+						}
+						return;
+
+					case 'settings':
+
+						if (!target) {
+							self.iframe_toolbar().hide();
+							return;
+						}
+
+						var model = self.get();
+						var widget = target.hclass('CMS_widget') ? target : self.dom_parent_class('CMS_widget');
+						var meta = self.widget_config_parse(widget);
+						var instance = model.widgets ? model.widgets.findItem('id', meta.id) : null;
+
+						if (!instance)
+							return;
+
+						meta.element = widget;
+						meta.hiddenxs = widget.hclass('hidden-xs');
+						meta.hiddensm = widget.hclass('hidden-sm');
+						meta.hiddenmd = widget.hclass('hidden-md');
+						meta.hiddenlg = widget.hclass('hidden-lg');
+						meta.widget = instance;
+						meta.editor = self;
+
+						instance.compiled && instance.compiled.load && instance.compiled.load.call(self, meta.config, meta.element);
+
+						meta.save = function(config) {
+							if (instance.compiled && instance.compiled.save) {
+								try {
+									instance.compiled.save.call(self, config, meta.element);
+								} catch (e) {
+									WARN('Widget "{0}".save(): {1}'.format(instance.name, e));
+								}
+							}
+							self.widget_config_stringify(meta.element, config);
+							self.bind('@modified @notify @touched');
+							self.iframe_toolbar_move();
+							self.autoresize();
+						};
+
+						if (config.config) {
+							self.EXEC(config.config, meta);
+						} else {
+							SET('cmseditor.editor', self);
+							SET('cmseditor.settings.{0} @default'.format(meta.id), meta.config);
+							SET('cmseditor.form', 'cmssettingsform');
+							EXEC('cmssettingsform/refresh @important', meta, e);
+						}
+						return;
+
+					case 'edit':
+
+						if (!target) {
+							self.iframe_toolbar().hide();
+							return;
+						}
+
+						var ceval = target.attr('contenteditable');
+						if (ceval && ceval !== 'false') {
+							self.close();
+							self.iframe_toolbar().hide();
+							target.rattr('contenteditable');
+							target.rclass('CMS_selected');
+							target = null;
+							return;
+						}
+
+						if (target.hclass('ti')) {
+
+							var ti = target.attr('class').match(/ti-[a-z0-9\-]+/i);
+							ti = ti ? ti.toString() : '';
+
+							var opt = {};
+							var off = target.offset();
+							var mainoffset = self.element.offset();
+							opt.y = (e.touches && e.touches[0] ? e.touches[0].pageY : e.pageY) + iframe.offset().top + 45;
+							opt.x = off.left + mainoffset.left;
+							opt.scrolltop = 0;
+							opt.callback = function(icon) {
+								target.rclass('ti').rclass2('ti-').aclass(icon);
+								self.bind('@modified @notify @touched');
+							};
+
+							SETTER('icons/show', opt);
+							return;
+						}
+
+						if (target.prop('tagName') === 'IMG') {
+
+							var w = (target.attrd('cms-width') || '').parseFloat();
+							var h = (target.attrd('cms-height') || '').parseFloat();
+
+							var opt = {};
+							opt.accept = (/^image\/*/);
+							opt.element = target;
+							opt.isimage = true;
+							opt.size = target.attrd('cms-size');
+							opt.url = target.attrd('cms-src') || target.attr('src');
+							opt.alt = target.attr('alt');
+							opt.bg = target.attrd('cms-bg');
+							opt.instance = self;
+
+							if (w)
+								opt.width = w;
+
+							if (h)
+								opt.height = h;
+
+							var parent = target.parent('a');
+							if (parent.length)
+								opt.href = parent.attr('href');
+
+							opt.ishref = !!opt.href;
+
+							if (opt.width && opt.height) {
+								FIND('#cmsimagecrop', com => com.reconfigure('width:{0};height:{1};background:{2}'.format(opt.width, opt.height, opt.bg)));
+								SET('cmsimageform @default', opt);
+								SET('cmseditor.form', 'cmsimageform');
+							} else {
+								// Load files
+								config.files && self.EXEC(config.files, opt, function(item) {
+									var url = typeof(item) === 'string' ? item : item.url;
+									if (opt.size) {
+										opt.element.attrd('cms-src', url);
+										opt.element.attr('src', url + '?s=' + opt.size.replace('%', ''));
+									} else
+										opt.element.attr('src', url);
+									self.autoresize();
+									self.bind('@modified @notify @touched');
+								});
+							}
+							return;
+						}
+
+						target.attr('contenteditable', true).focus();
+						self.bind('@modified @notify @touched');
+						break;
+
+					case 'remove':
+
+						if (!target) {
+							self.iframe_toolbar().hide();
+							return;
+						}
+
+						if (target.hclass('CMS_expression') || target.hclass('CMS_keyword') || target.hclass('CMS_monospace')) {
+							target.replaceWith(target.html());
+							return;
+						}
+
+						if (target[0].tagName === 'A' && target.hclass('CMS_edit') && !target.hclass('CMS_remove') && !target.hclass('CMS_repeat')) {
+							target.replaceWith(target.html());
+							self.iframe_toolbar().hide();
+							return;
+						}
+
+						if (!target.hclass('CMS_remove')) {
+							target = self.dom_parent_class('CMS_remove');
+							if (!target) {
+								self.iframe_toolbar().hide();
+								return;
+							}
+						}
+
+						tmp = target.next();
+						if (!tmp.length)
+							tmp = target.prev();
+
+						var parent = target[0].parentNode;
+						var node = target[0];
+						var index = 0;
+
+						for (var i = 0; i < parent.children.length; i++) {
+							if (parent.children[i] == node) {
+								index = i;
+								break;
+							}
+						}
+
+						var repeatable = null;
+
+						if (target.hclass('CMS_repeat'))
+							repeatable = target.parent();
+
+						$(parent).find('.CMS_selected,.CMS_operation').rclass('CMS_selected CMS_operation');
+						backup.appendChild(node);
+						temporary.history.push({ node: node, parent: parent, index: index });
+						undobutton.rclass('hidden');
+
+						if (repeatable && !repeatable[0].children.length) {
+							var w = repeatable.closest('.CMS_widget');
+							if (w && w.length)
+								w.remove();
+						}
+
+						self.iframe_toolbar().hide();
+						self.bind('@modified @notify @touched');
+
+						if (tmp.length && (tmp.hclass('CMS_edit') || tmp.hclass('CMS_remove')))
+							tmp.trigger('click');
+
+						self.autoresize();
+						break;
+
+					case 'repeat':
+
+						if (!target) {
+							self.iframe_toolbar().hide();
+							return;
+						}
+
+						if (target.hclass('CMS_repeat')) {
+							self.close();
+							target.after(self.widget_config_clone(target.clone()).rattr('contenteditable').rclass('CMS_selected').aclass('CMS_remove'));
+						} else {
+							var parent = self.dom_parent_class('CMS_repeat');
+							if (parent) {
+								self.close();
+								target.rclass('CMS_selected');
+								parent.after(self.widget_config_clone(parent.clone()).rattr('contenteditable').rclass('CMS_selected').aclass('CMS_remove'));
+							}
+						}
+
+						self.autoresize();
+						self.bind('@modified @notify @touched');
+						break;
+				}
+			});
+
+			self.resize(10);
+		};
+
+		self.reconfig = function() {
+			var model = self.get();
+			for (var i = 0; i < model.widgets.length; i++) {
+				var item = model.widgets[i];
+				if (!item.compiled) {
+					var index = (item.settings || '').indexOf('<scr' + 'ipt>');
+					if (index !== -1) {
+						var scr = item.settings.substring(index + 8, item.settings.indexOf('</scr' + 'ipt>', index + 8));
+						try {
+							item.compiled = {};
+							(new Function('exports', scr)(item.compiled));
+						} catch (e) {
+							WARN('Widget "{0}" compilation: {1}'.format(item.name, e));
+							item.compiled = EMPTYOBJECT;
+						}
+					} else
+						item.compiled = EMPTYOBJECT;
+				}
+			}
+
+			self.iframe_body().find('.CMS_widget').each(function() {
+				var el = $(this);
+				var cms = self.widget_config_parse(el);
+				var widget = model.widgets.findItem('id', cms.id);
+				if (widget && widget.compiled && widget.compiled.check) {
+					try {
+						widget.compiled.check(cms.config, el);
+						// self.widget_config_stringify(el, cms.config);
+					} catch (e) {
+						WARN('Widget "{0}".check(): {1}'.format(widget.name, e));
+					}
+				}
+			});
+		};
+
+		self.resizeforce = function() {
+			var contents = self.iframe_body();
+			var elheight = contents.find('#cmseditorheight');
+			if (elheight.length) {
+				var body = contents.find('body');
+				var h = navigator.userAgent.indexOf('Safari') === -1 ? body[0].scrollHeight : elheight.offset().top + 80;
+				iframe.css('height', h - config.marginiframe);
+				width = contents.width();
+				height = h;
+				body.rclass2('jc-').aclass('jc-' + WIDTH(contents));
+			}
+		};
+
+		self.widget_config_parse = function(el) {
+			var data = el.attrd('cms');
+			try {
+				var index = data.indexOf('__');
+				var id = data.substring(0, index).trim();
+				var config = PARSE(decodeURIComponent(data.substring(index + 2)));
+				return { id: id, config: config };
+			} catch(e) {
+				return null;
+			}
+		};
+
+		self.widget_config_stringify = function(el, config) {
+			var data = el.attrd('cms');
+			var index = data.indexOf('__');
+			var id = data.substring(0, index).trim();
+			el.attrd('cms', id + '__' + encodeURIComponent(STRINGIFY(config)));
+		};
+
+		self.resize = function(force) {
+			setTimeout2(self.ID, self.resizeforce, force ? 10 : 500);
+		};
+
+		self.refresh_widgets = function() {
+
+			var model = self.get();
+			var css = [];
+			if (model.widgets) {
+				if (model.widgets instanceof Array) {
+					for (var w of model.widgets)
+						css.push(w.css);
+				} else {
+					for (var key in model.widgets)
+						css.push(model.widgets[key].css);
+				}
+			}
+
+			self.iframe_css(css.join(''));
+			self.reconfig();
+
+			if (cmseditor.form === 'cmswidgetsform')
+				SET('cmswidgetsform.items', model.widgets);
+
+			self.autoresize();
+		};
+
+		self.dom_icon = function() {
+
+			if (!target)
+				return;
+
+			self.backup(target);
+
+			// Font-Awesome icon
+			let tmp = target;
+			let tag = tmp[0].nodeName.toLowerCase();
+			let icon = '<i class="ti ti-flag-alt CMS_edit CMS_remove" contenteditable="false"></i>';
+
+			self.backup(target);
+
+			switch (tag) {
+				case 'span':
+					tmp.parent().prepend(icon);
+					break;
+				default:
+					self.iframe_document().execCommand('insertHTML', false, icon);
+					break;
+			}
+		};
+
+		self.dom_bold = function() {
+			if (target) {
+				self.backup(target);
+				self.iframe_document().execCommand('Bold', false, null);
+			}
+		};
+
+		self.dom_italic = function() {
+			if (target) {
+				self.backup(target);
+				self.iframe_document().execCommand('Italic', false, null);
+			}
+		};
+
+		self.dom_underline = function() {
+			if (target) {
+				self.backup(target);
+				self.iframe_document().execCommand('Underline', false, null);
+			}
+		};
+
+		self.dom_expression = function() {
+			if (target) {
+				let url = '#exp' + Date.now().toString(36);
+				self.iframe_document().execCommand('CreateLink', false, url);
+				let a = target.find('a[href="{0}"]'.format(url));
+				a.replaceWith('<span class="CMS_remove CMS_expression">' + a.html() + '</span>');
+			}
+		};
+
+		self.dom_span = function() {
+			if (target) {
+				let url = '#exp' + Date.now().toString(36);
+				self.iframe_document().execCommand('CreateLink', false, url);
+				let a = target.find('a[href="{0}"]'.format(url));
+				a.replaceWith('<span class="CMS_remove CMS_keyword">' + a.html() + '</span>');
+			}
+		};
+
+		self.dom_code = function() {
+			if (target) {
+				let url = '#exp' + Date.now().toString(36);
+				self.iframe_document().execCommand('CreateLink', false, url);
+				let a = target.find('a[href="{0}"]'.format(url));
+				a.replaceWith('<code class="CMS_remove CMS_monospace">' + a.html() + '</code>');
+			}
+		};
+
+		self.dom_link = function() {
+
+			if (target) {
+				let url = '#link' + Date.now().toString(36);
+				let mt = target;
+				let mtd = mt[0];
+
+				for (let i = 0; i < 5; i++) {
+					if (mtd.tagName === 'A')
+						return;
+					mtd = mtd.parentNode;
+					if (!mtd)
+						break;
+				}
+
+				self.iframe_document().execCommand('CreateLink', false, url);
+
+				let tmp = mt.find('a[href="' + url + '"]');
+				if (!tmp.length)
+					return;
+
+				tmp.attr('class', 'CMS_edit');
+				self.close();
+				target.rattr('contenteditable');
+				target.rclass('CMS_selected');
+
+				let content = tmp.text();
+				target = tmp;
+				target.data('temporary', true);
+
+				let link = {};
+
+				link.element = tmp;
+				link.href = '';
+
+				if (content.indexOf('@') !== -1)
+					link.href = 'mailto:' + content;
+				else if ((/\d+/).test(content))
+					link.href = 'tel:' + content;
+				else if (content.indexOf(' ') === -1 && content.indexOf(',') === -1 && content.indexOf('.') !== -1)
+					link.href = (/http(s):\/\//).test(content) ? content : ('https://' + content);
+
+				link.target = link.href.indexOf('.') !== -1 && link.href.indexOf(location.hostname) === -1 ? '_blank' : '';
+				link.instance = self;
+
+				self.close();
+				self.iframe_toolbar().hide();
+
+				if (config.link) {
+					self.EXEC(config.link, link);
+				} else {
+					SET('cmslinkform @default', link);
+					SET('cmseditor.form', 'cmslinkform');
+				}
+			}
+		};
+
+		self.backup = function(el) {
+
+			if (!el)
+				return;
+
+			var node = $(el);
+			var clone = el.clone();
+			var rem = 'CMS_selected CMS_operation';
+			clone.rclass(rem).find('.CMS_selected,.CMS_operation').rclass(rem);
+			temporary.history.push({ node: node[0], clone: clone, html: clone.html() });
+			undobutton.rclass('hidden');
+		};
+
+		self.setter = function(value, path, flags) {
+
+			if (init === 0) {
+				init = 1;
+				self.write('<ht' + 'ml><bo' + 'dy><div id="CMS"></div></bo' + 'dy></ht' + 'ml>');
+				return;
+			}
+
+			if (init != 2)
+				return;
+
+			if (!flags.norender) {
+				// temporary.copypaste = null;
+				temporary.copypasteparent = null;
+
+				// Sets the current instance of editor to global variable
+				temporary.history = [];
+				backup.innerHTML = '';
+				undobutton.aclass('hidden');
+				iframe.aclass('invisible');
+			}
+
+			if (value) {
+
+				var css = [];
+
+				if (value.widgets) {
+					if (value.widgets instanceof Array) {
+						for (var w of value.widgets)
+							css.push(w.css);
+					} else {
+						for (var key in value.widgets)
+							css.push(value.widgets[key].css);
+					}
+				}
+
+				if (flags.norender) {
+					var tmpbody = self.iframe_body();
+					tmpbody.find('#cmscss').remove();
+					$(('<sty' + 'le type="text/css" id="cmscss">{0}</sty' + 'le>').format(css.join(''))).appendTo(tmpbody.find('head'));
+					return;
+				}
+
+				scripts = [];
+				self.write(value.layout.replace(new RegExp('<scr' + 'ipt.*?</scr' + 'ipt>', 'g'), function(text) {
+					var key = '<!-' + '-' + HASH(text).toString(36) + '-' + '->';
+					scripts.push({ id: key, html: text });
+					return key;
+				}).replace('</head>', ('<sty' + 'le id="cmscsseditor">{0}</sty' + 'le>').format($('#cmseditorcss').html()) + ('<sty' + 'le id="cmscss">{0}</sty' + 'le>').format(css.join('')) + '</head>').replace('</body>', '<div id="CMS_panel" class="invisible"><div id="CMS_panel_buttons_move"><span class="ti ti-arrow-up" data-name="up" title="@(Move up)"></span><span class="ti ti-arrow-down" data-name="down" title="@(Move down)"></span></div><div id="CMS_panel_buttons_reposition"><span class="ti ti-chevron-up" data-name="up2" title="@(Move up current repeated element)"></span><span class="ti ti-chevron-down" data-name="down2" title="@(Move down current repeated element)"></span></div><div id="CMS_panel_info"></div><div class="CMS_panel_buttons"><span class="ti ti-pencil" title="@(Edit)" data-name="edit"></span><span class="ti ti-cog-alt" title="@(Widget settings)" data-name="settings"></span><span class="ti ti-link" title="@(Change link)" data-name="link"></span><span class="ti ti-quote-left" title="@(Change attributes)" data-name="attribute"></span><span class="ti ti-copy" title="@(Duplicate)" data-name="repeat"></span></span><span class="ti ti-plus-circle" title="@(Add a widget)" data-name="widgets"></span><span class="ti ti-trash" title="@(Remove)" data-name="remove"></span><span class="ti ti-caret-square-down" title="@(Hide)" data-name="hide"></span></div><div id="CMS_panel_buttons_copy"><span class="ti ti-paste" data-name="paste" title="@(Paste widget)"></span><span class="ti ti-copy" data-name="copy" title="@(Copy widget)"></span></div><div id="CMS_panel_buttons_body"><span class="ti ti-arrows-v" data-name="CMS_mv" title="@(Toggle vertical margin)"></span><span class="ti ti-arrows-h" data-name="CMS_mh" title="@(Toggle horizontal margin)"></span><span class="ti ti-selection" data-name="selectwidget" title="@(Select widget)"></span><span class="ti ti-code" data-name="sourcecode" title="@(Source code)"></span></div></div></body>'));
+
+				if (flags.norender)
+					return;
+
+				var body = self.iframe_body();
+				var cms = body.find('#CMS');
+
+				body.find('body').aclass('CMS_preview');
+
+				if (value.type !== 'layout') {
+
+					var cache = document.createElement('DIV');
+
+					while (cms[0].children.length)
+						cache.appendChild(cms[0].children[0]);
+
+					body.find('.CMS_edit,.CMS_remove,.CMS_repeat,.CMS_attribute,.CMS_widgets').rclass('CMS_edit CMS_remove CMS_repeat CMS_attribute CMS_widgets');
+					body.find('.CMS_render').remove();
+
+					while (cache.children.length)
+						cms.append(cache.children[0]);
+				}
+
+				if (value.html && cms.length)
+					cms.html(value.html);
+
+				if (!value.layout && !value.html) {
+					var html = cms.html();
+					cms.empty();
+					body.find('.CMS_edit,.CMS_remove,.CMS_repeat,.CMS_attribute,.CMS_multiline,.CMS_widgets').rclass('CMS_edit CMS_remove CMS_repeat CMS_attribute CMS_multiline CMS_widgets');
+					cms.html(html);
+				}
+
+				body.find('img').on('error', function() {
+					var t = this;
+					var w = t.getAttribute('data-cms-width');
+					var h = t.getAttribute('data-cms-height');
+					t.src = w && h ? self.makeimage(+w, +h) : emptyimage;
+				});
+
+				setTimeout(self.clean, 50);
+
+			} else
+				self.write('');
+
+			self.iframe_refresh();
+			iframe.rclass('invisible', 500);
+		};
+
+	});
+
+	function onImageError(img) {
+		img.onerror = null;
+		img.src = img.getAttribute('data-empty');
+		return true;
+	}
+
+</script>

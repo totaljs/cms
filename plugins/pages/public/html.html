@@ -1,0 +1,111 @@
+<ui-component name="box" path="*form" config="if:CLASS;title:@(Edit content);icon:ti ti-file;autofocus:1;reload:?/reload;submit:?/submit;width:2500;hide:?/hide" class="hidden" plugin="CLASS">
+	<nav>
+		<button class="exec" data-exec="?/source"><i class="ti ti-code"></i>@(HTML source-code)</button>
+		<button class="exec highlight" data-exec="?/preview"><i class="ti ti-eye"></i><b>@(Save and Preview)</b></button>
+	</nav>
+	<div>
+		<ui-component name="cmseditor" path="?.cms" config="margin:0;marginiframe:50;parent:;generate:?/generate;links:?/links;widgetsource:?/widgetsource;image:?/image;files:?/files;$assign:?|editor;CMS_mh:false;save:?/quicksave" source="/cms.html"></ui-component>
+	</div>
+	<nav>
+		<ui-component name="validate" path="?">
+			<button name="submit" disabled><i class="ti ti-check-circle mr5"></i>@(SUBMIT)</button>
+			<button name="cancel">@(Cancel)</button>
+		</ui-component>
+	</nav>
+</ui-component>
+
+<script>
+
+
+	PLUGIN(function(exports) {
+
+		let caller = null;
+		let widgets = null;
+
+		exports.cmseditor = true;
+		exports.reload = function(com) {
+
+			if (!caller)
+				caller = exports.caller;
+
+			let model = exports.model;
+
+			exports.set('|layouts', caller.layouts);
+			com.reconfigure({ title: '@(Edit:) ' + model.name });
+
+			if (model.id)
+				location.hash = model.id;
+
+			exports.tapi('Widgets', function(response) {
+
+				widgets = response;
+
+				for (let item of widgets) {
+					if (item.editor)
+						item.js = new Function('$', item.editor.trim());
+				}
+
+				widgets.quicksort('name');
+
+				if (model.layoutid) {
+					exports.tapi('Layouts|read ERROR', { id: model.layoutid }, function(response) {
+						exports.set('cms', { html: model.html || '<div class="CMS_widgets"></div>', layout: response.html, type: 'html', widgets: widgets });
+					});
+				} else
+					exports.ajax('GET /_pages/template.txt', response => exports.set('cms', { html: model.html || '<div class="CMS_widgets"></div>', layout: response, type: 'html', widgets: widgets }));
+			});
+
+		};
+
+		exports.preview = function() {
+			let model = CLONE(exports.form);
+			model.html = exports.editor.response();
+			delete model.cms;
+			exports.tapi('Pages|save|html @showloading ERROR', model, function() {
+				FLAGS('@saved @hideloading');
+				W.open(model.url);
+			});
+		};
+
+		exports.quicksave = function() {
+			let model = CLONE(exports.form);
+			model.html = exports.editor.response();
+			delete model.cms;
+			exports.tapi('Pages|save|html @showloading ERROR', model, function() {
+				FLAGS('@saved @hideloading');
+			});
+		};
+
+		exports.submit = function(hide) {
+			let model = CLONE(exports.form);
+			model.html = exports.editor.response();
+			delete model.cms;
+			exports.tapi('Pages|save|html @showloading ERROR', model, function() {
+				hide();
+				FLAGS('@saved @hideloading');
+				// caller.exec('refresh @saved');
+			});
+		};
+
+		exports.source = function() {
+
+			let model = exports.model;
+			let opt = {};
+
+			opt.body = exports.editor.response();
+			opt.name = '@(HTML source-code)';
+
+			opt.callback = function(value) {
+				exports.set('cms.html', value || '<div class="CMS_widgets"></div>');
+			};
+
+			FUNC.code(opt);
+		};
+
+		exports.hide = function() {
+			location.hash = '';
+		};
+
+	});
+
+</script>

@@ -13,6 +13,8 @@
 	.CLASS .ui-statsbarsimple { border-radius: var(--radius); padding: 0; border: 0; }
 	.CLASS .ui-statsbarsimple-table > div:first-child { border-radius: var(--radius) 0 0 var(--radius); }
 	.CLASS .ui-statsbarsimple-table > div:last-child { border-radius: 0 var(--radius) var(--radius) 0; }
+	.CLASS .history .link { color: #888; }
+	.CLASS .history .selected { font-weight: bold; color: var(--color); }
 
 	.CLASS .legend-1 { color: #3182BD; }
 	.CLASS .legend-2 { color: #FD8D3C; }
@@ -56,38 +58,35 @@
 	}
 </style>
 
-<div class="virtualwire hidden" data-if="~PATH~">
-	<ui-plugin>
-		<div class="pull-right">
-			<button class="exec" data-exec="?/refresh"><i class="ti ti-refresh"></i>@(Refresh)</button>
-		</div>
-	</ui-plugin>
-</div>
+<ui-plugin class="CLASS" style="background:#F5F5F5">
 
-<ui-plugin class="CLASS">
-	<ui-component name="viewbox" path="common.page" config="parent:auto;margin:60;scrollbar:1;scrollbarshadow:1;visibleY:1" class="invisible">
-		<div class="auto" style="max-width:1400px">
-			<ui-component name="extend" config="name:dashboard"></ui-component>
+	<div class="toolbar pin">
+		<button class="exec" data-exec="?/refresh"><i class="ti ti-refresh"></i>@(Refresh)</button>
+	</div>
+
+	<ui-component name="viewbox" path="*page" config="parent:auto;margin:0;scrollbar:1;scrollbarshadow:1;visibleY:1" class="invisible">
+		<div class="maxwidth">
+			<br />
 			<div class="padding">
 				<div class="grid row1">
 					<div class="panelbody">
 						<div style="position:relative">
 							<div class="dashboard-online-position hidden">
-								<ui-bind path="?.stats.today.online" config="html:value ? value : 0" class="dashboard-online block">0</ui-bind>
+								<ui-bind path="?.stats.today.online" config="html:value ? value : '0'" class="dashboard-online block">0</ui-bind>
 								<div class="dashboard-online-date"><b>@(Last visitor:)</b> <ui-bind path="?.stats.today.last" config="html:value ? Thelpers.time(value) : '...'"></ui-bind></div>
 							</div>
-							<ui-component name="donutchart" path="?.stats.sources" config="tooltip:false;redraw:?/redrawSources;select:?/selectSource;animate:false"></ui-component>
+							<ui-component name="donutchart" path="?.stats.sources" config="tooltip:false;redraw:?/redrawsources;select:?/selectsource;animate:false"></ui-component>
 						</div>
 						<div class="stats m">
-							<ui-bind path="?.stats.today.robots" config="html:?/count(value)" class="value"></ui-bind>
+							<ui-bind path="?.stats.today.robots" config="html:Thelpers.dashboardformat(value)" class="value"></ui-bind>
 							<div class="key">@(Robots / Crawlers)</div>
 						</div>
 						<div class="stats">
-							<ui-bind path="?.stats.today.mobile" config="html:?/count(value)" class="value"></ui-bind>
+							<ui-bind path="?.stats.today.mobile" config="html:Thelpers.dashboardformat(value)" class="value"></ui-bind>
 							<div class="key"><i class="ti ti-square-alt" style="color:#EF914E"></i>@(Mobile devices)</div>
 						</div>
 						<div class="stats" style="border-bottom:0">
-							<ui-bind path="?.stats.today.desktop" config="html:?/count(value)" class="value"></ui-bind>
+							<ui-bind path="?.stats.today.desktop" config="html:Thelpers.dashboardformat(value)" class="value"></ui-bind>
 							<div class="key"><i class="ti ti-square-alt" style="color:#4781B8"></i>@(Desktop)</div>
 						</div>
 						<ui-component name="statsbarsimple" path="?.stats.today.devices" style="margin:7px 0">
@@ -101,23 +100,23 @@
 							<div class="panelbody">
 								<div class="caption"><i class="ti ti-globe"></i>@(Sources today)</div>
 								<div class="stats" id="dashboard-sources-social">
-									<ui-bind path="?.stats.today.social" config="html:?/count(value)" class="value"></ui-bind>
+									<ui-bind path="?.stats.today.social" config="html:Thelpers.dashboardformat(value)" class="value"></ui-bind>
 									<div class="key"><i class="ti ti-square-alt" style="color:#649BD0"></i>@(From social networks)</div>
 								</div>
 								<div class="stats" id="dashboard-sources-advert">
-									<ui-bind class="value" path="?.stats.today.advert" config="html:?/count(value)"></ui-bind>
+									<ui-bind class="value" path="?.stats.today.advert" config="html:Thelpers.dashboardformat(value)"></ui-bind>
 									<div class="key"><i class="ti ti-square-alt" style="color:#FD8D3C"></i>@(From adverts)</div>
 								</div>
 								<div class="stats" id="dashboard-sources-search">
-									<ui-bind class="value" path="?.stats.today.search" config="html:?/count(value)"></ui-bind>
+									<ui-bind class="value" path="?.stats.today.search" config="html:Thelpers.dashboardformat(value)"></ui-bind>
 									<div class="key"><i class="ti ti-square-alt" style="color:#74C476"></i>@(From organic search)</div>
 								</div>
 								<div class="stats" id="dashboard-sources-direct">
-									<ui-bind class="value" path="?.stats.today.direct" config="html:?/count(value)"></ui-bind>
+									<ui-bind class="value" path="?.stats.today.direct" config="html:Thelpers.dashboardformat(value)"></ui-bind>
 									<div class="key"><i class="ti ti-square-alt" style="color:#9E9AC8"></i>@(Direct visitors)</div>
 								</div>
 								<div class="stats" id="dashboard-sources-unknown">
-									<ui-bind class="value" path="?.stats.today.unknown" config="html:?/count(value)"></ui-bind>
+									<ui-bind class="value" path="?.stats.today.unknown" config="html:Thelpers.dashboardformat(value)"></ui-bind>
 									<div class="key"><i class="ti ti-square-alt" style="color:#969696"></i>@(From unknown source)</div>
 								</div>
 							</div>
@@ -125,23 +124,23 @@
 							<div class="panelbody">
 								<div class="caption"><i class="ti ti-users"></i>@(Today statistics)</div>
 								<div class="stats">
-									<ui-bind class="value" path="?.stats.today.hits" config="html:?/count(value)"></ui-bind>
+									<ui-bind class="value" path="?.stats.today.hits" config="html:Thelpers.dashboardformat(value)"></ui-bind>
 									<div class="key">@(Hits)</div>
 								</div>
 								<div class="stats">
-									<ui-bind class="value" path="?.stats.today.count" config="html:?/count(value)"></ui-bind>
+									<ui-bind class="value" path="?.stats.today.count" config="html:Thelpers.dashboardformat(value)"></ui-bind>
 									<div class="key">@(Visitors)</div>
 								</div>
 								<div class="stats">
-									<ui-bind class="value" path="?.stats.today.unique" config="html:?/count(value)"></ui-bind>
+									<ui-bind class="value" path="?.stats.today.unique" config="html:Thelpers.dashboardformat(value)"></ui-bind>
 									<div class="key">@(Unique visitors)</div>
 								</div>
 								<div class="stats">
-									<ui-bind class="value" path="?.stats.today.uniquemonth" config="html:?/count(value)"></ui-bind>
+									<ui-bind class="value" path="?.stats.today.uniquemonth" config="html:Thelpers.dashboardformat(value)"></ui-bind>
 									<div class="key">@(Unique visitors per month)</div>
 								</div>
 								<div class="stats">
-									<ui-bind class="value" path="?.stats.today.pages" config="html:?/count(value)"></ui-bind>
+									<ui-bind class="value" path="?.stats.today.pages" config="html"></ui-bind>
 									<div class="key">@(Visited pages per user)</div>
 								</div>
 							</div>
@@ -178,13 +177,16 @@
 				</div>
 				<ui-bind path="?.stats.visitors" config="show" class="block hidden">
 					<div class="panelbody">
-						<ui-bind path="?.stats.history" config="template" style="margin-top:-3px" class="block">
-							<script type="text/html">
-							{{ foreach m in value }}
-								<span class="exec fs12 link" style="margin-right:15px" data-exec="?/history" data-year="{{ m }}"><i class="ti ti-calendar mr5"></i>{{ m }}</span>
-							{{ end }}
-							</script>
-						</ui-bind>
+
+						<ui-component name="selected" path="?.stats.year" config="selector:span;attr:year;datasource:?.stats.history">
+							<ui-bind path="?.stats.history" config="template" style="margin-top:-3px" class="block history">
+								<script type="text/html">
+								{{ foreach m in value }}
+									<span class="exec fs12 link" style="margin-right:15px" data-exec="?/history" data-year="{{ m }}"><i class="ti ti-calendar mr5"></i>{{ m }}</span>
+								{{ end }}
+								</script>
+							</ui-bind>
+						</ui-component>
 
 						<hr style="margin:10px 0"/>
 
@@ -324,6 +326,10 @@
 
 <script>
 
+	Thelpers.dashboardformat = function(value) {
+		return (value || 0).format(0) + 'x';
+	};
+
 	PLUGIN(function(exports) {
 
 		var interval, historystats, prevsource;
@@ -342,7 +348,7 @@
 			exports.getOnline();
 
 			setTimeout(function() {
-				exports.tapi('dashboard_stats', function(response) {
+				exports.tapi('Dashboard|stats', function(response) {
 					var keys = Object.keys(response);
 					var years = {};
 
@@ -356,7 +362,6 @@
 					years.sort();
 					years.reverse();
 					years = years.take(7);
-					years.reverse();
 
 					historystats = response;
 
@@ -372,7 +377,7 @@
 					}
 
 					exports.set('stats.history', years);
-					years.length && exports.history(years.last());
+					years.length && exports.history(years[0]);
 				});
 			}, 500);
 		};
@@ -389,7 +394,7 @@
 				return;
 			}
 
-			exports.tapi('dashboard_online', function(response) {
+			exports.tapi('Dashboard|online', function(response) {
 
 				exports.set('stats.sources', [{ name: '@(Social networks)', value: response.social, id: 'social' }, { name: '@(Visitors from advert)', value: response.advert, id: 'advert' }, { name: '@(Organic search)', value: response.search, id: 'search' }, { name: '@(Direct visitors)', value: response.direct, id: 'direct' }, { name: '@(From unknown sources)', value: response.unknown, id: 'unknown' }]);
 
@@ -452,36 +457,32 @@
 		};
 
 		exports.referers = function(year) {
-			exports.tapi('dashboard_referers' + (year ? ('?year=' + year) : ''), function(response) {
+			exports.tapi('Dashboard|referers' + (year ? ('?year=' + year) : ''), function(response) {
 				exports.set('stats.referers', response);
-				exports.tapi('dashboard_browsers' + (year ? ('?year=' + year) : ''), function(response) {
+				exports.tapi('Dashboard|browsers' + (year ? ('?year=' + year) : ''), function(response) {
 					exports.set('stats.browsers', response);
-					exports.tapi('dashboard_pages' + (year ? ('?year=' + year) : ''), 'stats.pages');
+					exports.tapi('Dashboard|pages' + (year ? ('?year=' + year) : ''), 'stats.pages');
 				});
 			});
 		};
 
 		exports.history = function(el) {
-			var year = +(typeof(el) === 'string' ? el : el.attrd('year'));
 
-			exports.set('stats.visitors', exports.getStats(year, ['count', 'unique']));
-			exports.set('stats.devices', exports.getStats(year, ['desktop', 'mobile']));
-			exports.set('stats.visitorssum', exports.getStatsSum(year, ['count', 'unique']));
-			exports.set('stats.devicessum', exports.getStatsSum(year, ['desktop', 'mobile']));
+			let year = +(typeof(el) === 'string' ? el : el.attrd('year'));
 
-			var source = exports.getStatsSum(year, ['search', 'direct', 'advert', 'unknown', 'social']);
-			var sum = 0;
-			var keys = Object.keys(source);
+			exports.set('stats.visitors', exports.getstats(year, ['count', 'unique']));
+			exports.set('stats.devices', exports.getstats(year, ['desktop', 'mobile']));
+			exports.set('stats.visitorssum', exports.getstatssum(year, ['count', 'unique']));
+			exports.set('stats.devicessum', exports.getstatssum(year, ['desktop', 'mobile']));
 
-			keys.forEach(function(key) {
-				sum += source[key];
-			});
+			let source = exports.getstatssum(year, ['search', 'direct', 'advert', 'unknown', 'social']);
+			let sum = 0;
+			let keys = Object.keys(source);
 
-			keys.forEach(function(key) {
-				source[key] = ((source[key] / sum) * 100).floor(2);
-			});
+			keys.forEach(key => sum += source[key]);
+			keys.forEach(key => source[key] = ((source[key] / sum) * 100).floor(2));
 
-			var sourcearr = [];
+			let sourcearr = [];
 			sourcearr.push({ name: '@(From social networks)', value: source.social, color: '#649BD0' });
 			sourcearr.push({ name: '@(From adverts)', value: source.advert, color: '#EF914E' });
 			sourcearr.push({ name: '@(From search engines)', value: source.search, color: '#87C17E' });
@@ -490,10 +491,11 @@
 
 			exports.set('stats.sourcessum', source);
 			exports.set('stats.sourcesarr', sourcearr);
+			exports.set('stats.year', year + '');
 			exports.referers(year);
 		};
 
-		exports.getStatsSum = function(year, names) {
+		exports.getstatssum = function(year, names) {
 
 			var stats = {};
 
@@ -508,7 +510,7 @@
 			return stats;
 		};
 
-		exports.getStats = function(year, names) {
+		exports.getstats = function(year, names) {
 
 			var stats = [];
 
@@ -528,11 +530,11 @@
 			return stats;
 		};
 
-		exports.redrawSources = function() {
+		exports.redrawsources = function() {
 			$('.dashboard-online-position').rclass('hidden');
 		};
 
-		exports.selectSource = function(item) {
+		exports.selectsource = function(item) {
 			prevsource && prevsource.rclass('selected');
 			prevsource = $('#dashboard-sources-' + item.id);
 			prevsource.aclass('selected');
@@ -546,39 +548,6 @@
 		if (value > 9999)
 			return (value / 1000).format(2) + ' K';
 		return value.format(0);
-	};
-
-	Thelpers.time = function(value) {
-
-		if (!value)
-			return;
-
-		var diff = Date.now() - value.parseDate().getTime();
-		var minutes = ((diff / 1000) / 60) >> 0;
-
-		if (minutes <= 1) {
-			var seconds = (diff / 1000) >> 0;
-			if (seconds < 60)
-				return @(seconds + ' ' + Tangular.helpers.pluralize(seconds >> 0, 'seconds', 'second', 'seconds', 'seconds') + ' ago');
-		}
-
-		if (minutes < 60)
-			return minutes < 2 ? '@(less than a minute)' : @(minutes + ' minutes ago');
-
-		var hours = (minutes / 60) >> 0;
-		if (hours < 24)
-			return @(hours + ' ' + Tangular.helpers.pluralize(hours, 'hours', 'hour', 'hours', 'hours') + ' ago');
-
-		var days = (hours / 24) >> 0;
-		if (days < 30)
-			return @(days + ' ' + Tangular.helpers.pluralize(days, 'days', 'day', 'days', 'days') + ' ago');
-
-		var months = (days / 29) >> 0;
-		if (months < 12)
-			return @(months + ' ' + Tangular.helpers.pluralize(months, 'months', 'month', 'months', 'months') + ' ago');
-
-		var years = (months / 12) >> 0;
-		return @(years + ' ' + Tangular.helpers.pluralize(years, 'years', 'year', 'years', 'years') + ' ago');
 	};
 
 </script>

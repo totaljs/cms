@@ -8,14 +8,8 @@ exports.import = 'extensions.html';
 exports.install = function() {
 
 	// Uploading
-	ROUTE('+POST    ?/upload/          @upload <10MB    --> Files/insert');
-	ROUTE('+POST    ?/upload/base64/           <10MB    --> Files/insert');
-
-	// API
-	ROUTE('+API     ?    -files_list           --> Files/list');
-	ROUTE('+API     ?    -files_rename         --> Files/rename');
-	ROUTE('+API     ?    -files_clear          --> Files/clear');
-	ROUTE('+API     ?    +files_remove         --> Files/remove');
+	ROUTE('+POST    ?/upload/          @upload <10MB    --> Files|insert');
+	ROUTE('+POST    ?/upload/base64/           <10MB    --> Files|insert');
 
 	// Public
 	ROUTE('FILE     /download/*.*', files);
@@ -33,7 +27,7 @@ function files($) {
 	id = id.substring(0, id.lastIndexOf('.'));
 
 	opt.id = id;
-	opt.download = $.url.lastIndexOf('download=1') !== -1;
+	opt.download = $.query.download == '1';
 	opt.check = checkmeta;
 
 	if ($.query.s) {
@@ -50,5 +44,109 @@ function files($) {
 		}
 	}
 
-	Total.filestorage(MAIN.id).http($, opt);
+	Total.filestorage(MAIN.cms.id).http($, opt);
 }
+
+NEWACTION('Files', {
+	route: '+API ?',
+	user: true,
+	action: function($) {
+		MAIN.cms.db.fs.browse2(function(err, response) {
+			var arr = [];
+			for (var file of response) {
+				if (file.custom && file.custom.public)
+					arr.push(file);
+			}
+			$.callback(arr);
+		});
+	}
+});
+
+NEWACTION('Files|insert', {
+	name: 'Insert files',
+	route: '+API ?',
+	query: 'name:String',
+	input: 'data:DataURI',
+	user: true,
+	action: function($, model) {
+
+		let response = [];
+
+		// Base64
+		if (model.data) {
+
+			let data = model.data;
+			let ext;
+
+			switch (data.type) {
+				case 'image/png':
+					ext = 'png';
+					break;
+				case 'image/jpeg':
+					ext = 'jpg';
+					break;
+				case 'image/gif':
+					ext = 'gif';
+					break;
+				default:
+					$.callback(response);
+					return;
+			}
+
+			let meta = {};
+			meta.id = UID();
+			meta.size = data.buffer.length;
+			meta.type = data.type;
+			meta.ext = ext;
+			meta.name = ($.query.name || (U.random_string(10) + '_base64')).replace(/\.[0-9a-z]+$/i, '').max(40) + '.' + ext;
+			meta.url = '/download/' + meta.id + '.' + meta.ext;
+			response.push(meta);
+			MAIN.cms.db.fs.save(meta.id, meta.name, data.buffer, { public: 1 }, () => $.callback(response));
+
+		} else {
+			$.files.wait(function(file, next) {
+				let meta = {};
+				meta.id = UID();
+				meta.name = file.filename;
+				meta.type = file.type;
+				meta.ext = file.ext;
+				meta.size = file.size;
+				meta.url = '/download/' + meta.id + '.' + meta.ext;
+				response.push(meta);
+				file.fs(MAIN.cms.id, meta.id, { public: 1 }, next);
+			}, () => $.callback(response));
+		}
+	}
+});
+
+NEWACTION('Files|rename', {
+	name: 'Rename file',
+	route: '+API ?',
+	input: '*id,*name',
+	permissions: 'files,admin',
+	user: true,
+	action: function($, model) {
+		MAIN.cms.db.fs.rename(model.id, model.name, $.done(model.id));
+	}
+});
+
+NEWACTION('Files|clear', {
+	name: 'Clear files',
+	route: '+API ?',
+	permissions: 'files,admin',
+	user: true,
+	action: function($) {
+		MAIN.cms.db.fs.clear($.done());
+	}
+});
+
+NEWACTION('Files|remove', {
+	name: 'Remove files',
+	route: '+API ?',
+	input: '*id:String',
+	permissions: 'files,admin',
+	user: true,
+	action: function($, model) {
+		MAIN.cms.db.fs.remove(model.id, $.done());
+	}
+});

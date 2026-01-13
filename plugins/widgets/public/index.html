@@ -3,54 +3,47 @@
 	.CLASS figure { cursor: pointer; margin-bottom: var(--gap); }
 	.CLASS figure > section { border-radius: var(--radius); border: 1px solid #eaeaea; margin: 10px 10px 0; padding: 0; text-align: left; background-color: #fff; }
 	.CLASS figure .meta { padding: 18px 0 5px 15px; border-top: 1px solid #eaeaea; height: 56px; }
-	.CLASS figure .name { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; font-weight: bold; }
+	.CLASS figure .name { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
 	.CLASS figure .options { float: right; margin: 0 15px 0 0; color: gray; }
 	.CLASS figure .options:hover { color: #333; }
 	.CLASS figure img { border-radius: var(--radius) var(--radius) 0 0; width: 100%; max-width: 234px; }
 </style>
 
-<div class="virtualwire hidden" data-if="~PATH~">
-	<ui-plugin>
-		<ui-component name="searchinput" path="?.search" config="placeholder:@(Search widgets)" class="pull-right"></ui-component>
-		<div class="pull-right">
-			<button class="exec b" data-exec="?/import"><i class="ti ti-arrow-circle-down"></i>@(Import)</button>
-			<button class="exec" data-exec="?/refresh"><i class="ti ti-refresh"></i>@(Refresh)</button>
-			<button class="exec" data-exec="?/menu"><i class="ti ti-cog"></i>@(Options)</button>
-		</div>
-	</ui-plugin>
-</div>
-
 <ui-plugin class="CLASS">
 
-	<ui-component name="searchdata" path="?.search" config="datasource:?.items;output:?.filtered">
-		<ui-component name="empty" path="?.filtered" config="parent:auto" class="invisible">
+	<div class="toolbar pin">
+		<button class="exec" data-exec="?/create"><i class="ti ti-plus-circle green mr5"></i>@(Create)</button>
+		<button class="exec b" data-exec="?/import"><i class="ti ti-arrow-circle-down mr5"></i>@(Import)</button>
+		<button class="exec" data-exec="?/refresh"><i class="ti ti-refresh mr5"></i>@(Refresh)</button>
+	</div>
 
-			<script type="text/html">
-				@(No data found)
-			</script>
+	<ui-component name="empty" path="?.items" config="parent:auto" class="invisible">
 
-			<ui-component name="viewbox" path="common.page" config="parent:auto;margin:60;scrollbarshadow:1">
-				<div style="max-width:1400px;margin:0 auto">
-					<ui-component name="display" class="padding invisible">
-						<h3>@(Widgets)</h3>
-						<ui-bind path="?.filtered" config="template:figure" class="grid-5">
-							<script type="text/html">
-								{{ foreach m in value }}
-									<figure data-id="{{ m.id }}" data-search="{{ m.name }}" class="exec" data-exec="?/edit">
-										<section>
-											<img src="{{ if m.preview }}{{ m.preview }}{{ else }}/~ID~/empty.png{{ fi }}" onerror="onImageError(this)" data-empty="/~ID~/empty.png" class="img-responsive" loading="lazy" />
-											<div class="meta">
-												<span class="exec options" data-exec="?/options" data-prevent="true"><i class="ti ti-cog"></i></span>
-												<div class="name">{{ m.name }}</div>
-											</div>
-										</section>
-									</figure>
-								{{ end }}
-							</script>
-						</ui-bind>
-					</ui-component>
-				</div>
-			</ui-component>
+		<script type="text/html">
+			@(No data found)
+		</script>
+
+		<ui-component name="viewbox" path="*page" config="parent:auto;margin:0;scrollbarshadow:1">
+			<div class="maxwidth">
+				<ui-component name="display" class="padding invisible">
+					<h2 style="padding-left:10px;margin-bottom:5px">@(Widgets)</h2>
+					<ui-bind path="?.items" config="template:figure" class="grid-lg-5 grid-md-4 grid-sm-3 grid-xs-2">
+						<script type="text/html">
+							{{ foreach m in value }}
+								<figure data-id="{{ m.id }}" class="exec" data-exec="?/edit">
+									<section>
+										<img src="{{ if m.preview }}{{ m.preview }}{{ else }}/~ID~/empty.png{{ fi }}" onerror="onImageError(this)" data-empty="/~ID~/empty.png" class="img-responsive" loading="lazy" />
+										<div class="meta">
+											<span class="exec options" data-exec="?/options" data-prevent="true"><i class="ti ti-cog"></i></span>
+											<div class="name">{{ m.name }}</div>
+										</div>
+									</section>
+								</figure>
+							{{ end }}
+						</script>
+					</ui-bind>
+				</ui-component>
+			</div>
 		</ui-component>
 	</ui-component>
 
@@ -67,13 +60,12 @@
 
 		exports.create = function() {
 			var opt = {};
-			exports.ajax('GET /widget.txt', function(response) {
+			exports.ajax('GET /~ID~/widget.txt', function(response) {
 				opt.body = response || '';
 				opt.callback = function(value, hide) {
 					var model = {};
 					model.html = value;
-					exports.tapi('widgets_save @showloading ERROR', model, function() {
-						exports.scope();
+					exports.tapi('Widgets|save @showloading ERROR', model, function() {
 						exports.refresh();
 						hide();
 					});
@@ -89,7 +81,7 @@
 
 		exports.refresh = function(el) {
 			el && el.find('i').aclass('ti-spin').rclass('ti-spin', 800);
-			exports.tapi('widgets_list?list=1 ERROR', function(response) {
+			exports.tapi('Widgets?list=1 @showloading ERROR', function(response) {
 				for (var item of response) {
 					if (item.name) {
 						item.html = '<img src="{0}" style="width:30px" class="mr10" />{1}'.format(item.preview, item.name.encode());
@@ -104,15 +96,14 @@
 
 		exports.edit = function(el) {
 			var id = ATTRD(el);
-			exports.tapi('widgets_read @showloading ERROR', { id: id }, function(response) {
+			exports.tapi('Widgets|read @showloading ERROR', { id: id }, function(response) {
 				var opt = {};
 				opt.body = response.html;
 				opt.callback = function(value, hide) {
 					var model = {};
 					model.id = id;
 					model.html = value;
-					exports.tapi('widgets_save ERROR', model, function() {
-						exports.scope();
+					exports.tapi('Widgets|save ERROR @saved', model, function() {
 						exports.refresh();
 						hide();
 					});
@@ -120,66 +111,6 @@
 				SETTER('loading/hide', 1000);
 				FUNC.code(opt);
 			});
-		};
-
-		exports.search = function() {
-			var model = exports.data;
-			var opt = {};
-			opt.id = 'widgets';
-			opt.search = function(q, next) {
-				q = q.toSearch();
-				var arr = [];
-				for (var m of model.items) {
-					if (m.search.indexOf(q) !== -1)
-						arr.push(m);
-				}
-				next(arr.take(30));
-			};
-			opt.callback = function(item) {
-				exports.edit(item);
-			};
-			SETTER('spotlight/show', opt);
-		};
-
-		exports.menu = function(el) {
-
-			var model = exports.model;
-			var opt = {};
-			opt.element = el;
-			opt.align = 'right';
-			opt.items = [];
-
-			opt.items.push({ id: 'create', name: '@(Create)', icon: 'ti ti-plus-circle green' });
-			opt.items.push({ id: 'import', name: '@(Import)', icon: 'ti ti-arrow-circle-down' });
-
-			if (model.selection && model.selection.length) {
-				opt.items.push('-');
-				opt.items.push({ id: 'remove', name: '@(Remove selected ({0}x))'.format(model.selection.length), icon: 'ti ti-trash red' });
-			}
-
-			opt.callback = function(item) {
-
-				if (item.id === 'create' || item.id === 'enterprise' || item.id === 'import') {
-					exports[item.id]();
-					return;
-				}
-
-				if (item.id === 'remove') {
-					SETTER('approve/show', '@(Are you sure you want to remove selected ({0}x) widgets?)'.format(model.selection.length), '"ti ti-trash" @(Clear)', function() {
-						exports.scope();
-						SETTER('loading/show');
-						model.selection.wait(function(id, next) {
-							exports.tapi('widgets_remove', { id: id }, next);
-						}, function() {
-							exports.scope();
-							exports.refresh();
-						});
-					});
-					return;
-				}
-
-			};
-			SETTER('menu/show', opt);
 		};
 
 		exports.options = function(el) {
@@ -201,9 +132,9 @@
 				}
 
 				if (item.id === 'remove') {
-					SETTER('approve/show', '@(Are you sure you want to remove the "{name}" widget?)'.arg(data, 'escape'), '"ti ti-trash" @(Remove)', function() {
-						exports.tapi('widgets_remove', { id: id }, function() {
-							exports.scope();
+					SETTER('approve/show', '@(Are you sure you want to remove the "{name}" widget?)'.args(data, 'escape'), '"ti ti-trash" @(Remove)', function() {
+						exports.tapi('Widgets|remove @showloading', { id: id }, function() {
+							FLAGS('@removed');
 							exports.refresh();
 						});
 					});
@@ -213,9 +144,8 @@
 			SETTER('menu/show', opt);
 		};
 
-		ON('refresh_widgets', function() {
+		ON('Widgets/refresh', function() {
 			setTimeout(function() {
-				exports.scope();
 				exports.refresh();
 			}, 1000);
 		});

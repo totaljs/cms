@@ -1,0 +1,61 @@
+<style>
+	.account { float: right; margin: 12px 0 0 5px; border-left: 1px solid rgba(0,0,0,0.1); padding: 0 0 0 10px; }
+	.account .initials { cursor: pointer !important; }
+</style>
+
+<ui-component name="importer" path="*form" config="if:formcredentials;url:/~ID~/password.html"></ui-component>
+
+<script>
+
+	WAIT('user', function() {
+		let nick = Thelpers.initials(user.name);
+		$('header.top').prepend('<div class="account" title="{name}"><div class="exec" data-exec="useraccount">{0}</div></div>'.format(nick).args(user));
+		NAV.query.password && usercredentials();
+	});
+
+	function useraccount(el) {
+		var opt = {};
+		opt.element = el;
+		opt.items = [];
+
+		if (user.openplatform) {
+			if (!user.iframe) {
+				opt.items.push({ id: 'openplatform', name: '@(Browse modules)', icon: 'ti ti-menu' });
+				opt.items.push({ id: 'password', name: '@(Change credentials)', icon: 'ti ti-key' });
+			}
+		} else
+			opt.items.push({ id: 'account', name: '@(Change credentials)', icon: 'ti ti-key' });
+
+		if (!user.iframe)
+			opt.items.push({ id: 'logout', name: '@(Logout)', icon: 'ti ti-power-off red' });
+
+		opt.align = 'right';
+		opt.callback = function(selected) {
+
+			switch (selected.id) {
+				case 'openplatform':
+					location.href = user.openplatform;
+					break;
+				case 'password':
+					location.href = user.openplatform + '?password=1';
+					break;
+				case 'account':
+					TAPI('Admin|read', function(response) {
+						SET('formcredentials @reset', response);
+						SET('*form', 'formcredentials');
+					});
+					break;
+				case 'logout':
+					TAPI('Logout @showloading', () => location.href = (DEF.api === '/api/' ? '/' : DEF.api) + '?login=1');
+					break;
+			}
+
+		};
+
+		if (opt.items.length > 1)
+			SETTER('menu/show', opt);
+	}
+
+	ROUTE('/auth/', () => REDIRECT('/'), 'init');
+
+</script>

@@ -1,0 +1,59 @@
+<ui-component name="box" path="*form2" config="if:CLASS;icon:ti ti-align-justify;autofocus:true;reload:?/reload;scrollbar:1;submit:?/submit;width:500" class="hidden" plugin="CLASS">
+	<div>
+		<div class="padding bg-smoke">
+			<p>@(The identifier below is important for rendering navitation at the specific location on the website.)</p>
+			<div class="grid-3">
+				<ui-component name="input" path="?.uid" config="type:id;required:1;monospace:1;align:1">@(Identifier)</ui-component>
+			</div>
+		</div>
+		<div class="padding" style="padding-bottom:10px">
+			<ui-component name="input" path="?.name" config="required:1" class="m">@(Name)</ui-component>
+			<ui-component name="input" path="?.title" config="placeholder:@(A navigation title)">@(Title)</ui-component>
+		</div>
+		<hr />
+		<div class="padding npt">
+			<div class="grid-3">
+				<div class="m">
+					<ui-component name="input" path="?.color" config="type:color">@(Color)</ui-component>
+				</div>
+				<div class="m">
+					<ui-component name="input" path="?.icon" config="type:icon">@(Icon)</ui-component>
+				</div>
+			</div>
+		</div>
+	</div>
+	<nav>
+		<ui-component name="validate" path="?">
+			<button name="submit" disabled><i class="ti ti-check-circle"></i>@(SUBMIT)</button>
+			<button name="cancel">@(Cancel)</button>
+		</ui-component>
+	</nav>
+</ui-component>
+
+<script>
+
+	PLUGIN(function(exports) {
+
+		let caller;
+
+		exports.reload = function(com) {
+
+			if (!caller)
+				caller = exports.caller;
+
+			let model = exports.model;
+			let id = model ? model.id : null;
+			com.reconfigure({ title: id ? '@(Update navigation)' : '@(Create navigation)' });
+		};
+
+		exports.submit = function(hide) {
+			let model = exports.form;
+			exports.tapi('Nav|save ERROR', model, function() {
+				caller.exec('refresh');
+				hide();
+			});
+		};
+
+	});
+
+</script>

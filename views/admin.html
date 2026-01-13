@@ -9,101 +9,251 @@
 	<meta name="format-detection" content="telephone=no" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<meta name="robots" content="all,follow" />
-	<link href="@{'%cdn'}/spa.min@19.css" rel="stylesheet" />
-	<script src="@{'%cdn'}/spa.min@19.js"></script>
+	<link href="/spa.min@20.css" rel="stylesheet" />
+	<script src="/spa.min@20.js"></script>
 	<script src="@{REPO.ui}"></script>
-	@{if user.color}
-	<style>:root{--color:@{user.color};}</style>
+	@{import('meta', 'head', 'favicon.ico')}
+	@{if REPO.css}
+	<link rel="stylesheet" href="@{REPO.css}" />
 	@{fi}
-	@{import('meta', 'head', 'default.js + func.js', 'default.css', 'favicon.ico')}
-</head>
-<body class="invisible">
+	@{if REPO.js}
+	<script src="@{REPO.js}"></script>
+	@{fi}
+	<style>
+		html, body { overflow: hidden; }
 
+		:root {
+			--radius: 5px;
+			--color: @{user.color};
+		}
+
+		.bg-white { background-color: #FFF; }
+		.bg-highlight { background-color: #fcf8e8; }
+
+		.ui-viewbox-scrolled header { border-bottom: 1px solid #E0E0E0; }
+		header { height: 60px; padding: 0 15px; }
+		header label, header > span { line-height: 60px; font-weight: bold; font-size: 15px; float: left; color: #000; }
+		header > span:hover { text-decoration: none; }
+		header label i, header > span i { margin-right: 7px; }
+
+		.pin { position: absolute; top: 17px; right: 72px; }
+		.ui-directory-container .initials { width: 24px; height: 24px; line-height: 24px; float: left; font-size: 10px; margin: 3px 5px 0 0; }
+
+		h1 { margin: 0 0 20px; font-size: 24px; padding: 0 0 8px; border-bottom: 1px solid #E0E0E0; }
+		h1 i { margin-right: 10px; }
+		h2 { margin: 0 0 15px; font-size: 20px; padding: 0; }
+		h2 i { margin-right: 8px; }
+
+		.ui-edit-window { z-index: 100; }
+		.toolbar2.pin { float: right; }
+		.toolbar2 { margin: 0; }
+		.toolbar2 button { min-width: 26px; font-size: 13px; height: 26px; padding: 0 6px; border-radius: var(--radius); background-color: transparent; float: left; border: 1px solid transparent; margin-left: 5px; color: #777; }
+		.toolbar2 button i { font-size: 14px; }
+		.toolbar2 button.highlight i { color: var(--color); }
+		.toolbar2 button.highlight { border-color: rgba(0,0,0,0.1); }
+		.toolbar2 button:disabled {  background-color: transparent !important; color: #B0B0B0 !important; cursor: not-allowed; }
+		.toolbar2 button:disabled i { color: #B0B0B0 !important; }
+		.toolbar2 button:hover { background-color: #F0F0F0; border-color: #F0F0F0; }
+		.toolbar2 button:first-child { margin-left: 0; }
+		.nav nav hr { margin: 10px 0; }
+
+		.radius { border-radius: var(--radius); }
+		.inline { position: relative; display: inline-block; }
+
+		.ui-columns-col .padding { padding: 15px; }
+		.maxwidth { max-width: 1300px; margin: 0 auto; }
+		.auto { margin: 0 auto; }
+
+		.button { border: 0; margin: 15px 0 0; background-color: #F0F0F0; height: 34px; padding: 0 20px; color: #000; cursor: pointer; font-family: Arial; line-height: 34px; vertical-align: middle; outline: 0; font-size: 14px; text-decoration: none; transition: all 0.3s; width: 100%; }
+		.button i { width: 15px; text-align: center; margin-right: 5px; }
+		.button:hover { opacity: 0.8; }
+		.button:active { background-color: #D0D0D0; }
+		.button:disabled { background-color: #F5F5F5 !important; border-color: #E0E0E0 !important; color: silver !important; cursor: not-allowed; box-shadow: none; }
+		.button:disabled i { color: silver !important; }
+		.button:first-child { border-top-left-radius: var(--radius); border-bottom-left-radius: var(--radius); }
+		.button:last-child { border-top-right-radius: var(--radius); border-bottom-right-radius: var(--radius); }
+		.button[name='submit'] { font-weight: bold; background-color: var(--color); color: #FFF; }
+
+		.exec { cursor: pointer; }
+		.nav { background: none; }
+		.border { border: 1px solid #E0E0E0; }
+
+		.user { float: right; line-height: 60px; font-size: 14px; padding: 0 10px 0 0; }
+		.top { border-bottom: 1px solid #E0E0E0; background-color: #FBFBFD; }
+		.top .ui-breadcrumb-style2 { margin-left: 10px; float: left; }
+		.top > span { font-size: 16px; }
+		.top > span i { background-color: var(--color); padding: 7px; color: #FFF; border-radius: var(--radius); font-size: 18px; margin-right: 10px; }
+
+		dl { font-size: 13px; margin: 0; padding: 0; }
+		dt { margin: 0; padding: 0; float: left; width: 30%; color: gray; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+		dt i, dd i { margin-right: 5px; }
+		dd { margin: 0 0 0 30%; padding: 0; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+		dd:before { content: ':'; margin-right: 8px; color: gray; }
+
+		.ui-clcolor { background-color: #F0F0F0; }
+		.ui-directory .ui-clcolor { line-height: 18px; margin: 6px 0 0; padding-left: 5px; padding-right: 5px; }
+
+		.rating .ti-star-alt { color: #EF9D4B; }
+		.rating .ti-star { color: #A0A0A0; }
+
+		.ui-listform-items .toolbar { height: 34px; }
+		.ui-listform-items .toolbar button { height: 34px; font-size: 12px; }
+
+		.controls { float: right; margin-right: 10px; }
+		.controls button { width: 20px; height: 20px; border: 0; background-color: #FFF; line-height: 20px; padding: 0; border-radius: var(--radius); margin-left: 2px; }
+		.controls button:first-child { margin-left: 0; }
+		.controls button:hover { background-color: #F0F0F0; }
+
+		.toolbar .ui-searchinput { float: left; margin-left: 15px; height: 30px; }
+		.toolbar .ui-searchinput input { height: 28px; }
+		.toolbar .ui-searchinput span { line-height: 28px; }
+
+		.ui-searchinput { border-radius: var(--radius); height: 30px; background-color: #FFF; }
+		.ui-searchinput input { color: #000; }
+
+		.ui-box .ui-box-title > nav > div { float: right; }
+		.ui-box nav .ui-searchinput { float: right; height: 28px; margin: 15px 0 0; }
+		.ui-box nav .ui-searchinput i { margin-right: 0; }
+		.ui-menu-area { z-index: 500; }
+		.ui-spotlight-layer { z-index: 1000 !important; }
+
+		.mr15 { margin-right: 15px; }
+		.ui-approve { z-index: 150; }
+
+		.plugins a span { position:absolute; font-size: 10px; color: #FFF; background-color: #EA706B; border-radius: 100px; width: 16px; line-height: 16px; text-align: center; margin: -3px 0 0 10px; }
+		.plugins a i { margin-right: 0 !important; font-size: 16px; width: auto !important; }
+		.plugins a { text-align: center; height: 34px !important; line-height: 34px !important; position: relative; }
+		.plugins a div { display: none; }
+		.fullmenu a span { right: 0; margin: 7px 10px 0 0; width: 20px; height: 20px; line-height: 20px; }
+		.fullmenu a { text-align: left; }
+		.fullmenu .plugins a div { line-height: 34px; margin-left: 8px; display: inline-block; }
+
+		.listing .controls, .listing2 .controls { float: right; font-size: 15px; color: #333; margin-right: 0; }
+		.listing .controls > span, .listing2 .controls > span { margin-left: 10px; }
+		.listing .controls > span:first-child, .listing2 .controls > span:first-child { margin-left: 0; }
+		.listing .controls span:hover, .listing2 .controls span:hover { color: #888	; }
+		.img-viewer { cursor: pointer; }
+		.ui-imageviewer { z-index: 1001; }
+
+		.empty { padding: 20px; text-align: center; color: #999; border: 1px solid #E0E0E0; margin: 15px 0; border-radius: var(--radius); font-size: 12px; display: block; }
+		.empty i { margin-right: 5px; }
+
+		.ui-notify-container { z-index: 1001; }
+		.ui-table-empty { border-radius: var(--radius); }
+		.toolbar-bg { height: 60px; padding: 17px 20px 0; background-color: #FFF; border-bottom: 1px solid #E0E0E0; }
+		.ui-windows-item { box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+		.ui-iframeviewer { z-index: 100; }
+
+	</style>
+</head>
+<body@{if CONF.fullmenu} class="fullmenu"@{fi}>
+
+	<ui-component name="hashchange" config="middleware:init;delay:500"></ui-component>
 	<ui-component name="exec"></ui-component>
 	<ui-component name="errorhandler"></ui-component>
 	<ui-component name="locale" config="requests:1;language:@{language}"></ui-component>
 	<ui-component name="imageviewer" config="unknown:@(Unknown image)"></ui-component>
 	<ui-component name="datepicker" config="today:@(Today);days:@(Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday);clear:@(Clear);months:@(January,February,March,April,May,Juny,July,August,September,October,November,December)"></ui-component>
+	<ui-component name="windows" path="*windows"></ui-component>
+	<ui-component name="markdown" config="cdn:/"></ui-component>
 
+	<ui-component name="LAZY iframeviewer"></ui-component>
+	<ui-component name="LAZY totaltemplates"></ui-component>
 	<ui-component name="LAZY icons"></ui-component>
+	<ui-component name="LAZY filesaver"></ui-component>
+	<ui-component name="LAZY filereader"></ui-component>
+	<ui-component name="LAZY spotlight"></ui-component>
 	<ui-component name="LAZY autocomplete"></ui-component>
 	<ui-component name="LAZY directory" config="placeholder:@(Search);create:@(Create)"></ui-component>
 	<ui-component name="LAZY menu" config="style:2"></ui-component>
-	<ui-component name="LAZY message"></ui-component>
+	<ui-component name="LAZY message" config="button:@(OK)"></ui-component>
 	<ui-component name="LAZY colorpicker"></ui-component>
 	<ui-component name="LAZY notify" config="position:bottom right"></ui-component>
-	<ui-component name="LAZY approve"></ui-component>
+	<ui-component name="LAZY approve" config="cancel:@(Cancel)"></ui-component>
 	<ui-component name="LAZY floatingbox"></ui-component>
+	<ui-component name="LAZY floatinginput"></ui-component>
 	<ui-component name="LAZY filebrowser"></ui-component>
-	<ui-component name="LAZY filereader"></ui-component>
 	<ui-component name="LAZY fileuploader"></ui-component>
 	<ui-component name="LAZY features"></ui-component>
 	<ui-component name="LAZY spotlight"></ui-component>
 	<ui-component name="LAZY clipboard"></ui-component>
 	<ui-component name="LAZY prompt" config="cancel:@(Cancel);submit:@(OK);zindex:200"></ui-component>
+	<ui-component name="LAZY timepicker"></ui-component>
+	<ui-component name="LAZY qrcode"></ui-component>
+	<ui-component name="LAZY printer"></ui-component>
+	<ui-component name="LAZY inlineproperties" config="dateformat:[date];dirsearch:@(Search);close:@(Close)"></ui-component>
 
 	<ui-component name="edit"></ui-component>
 	<ui-component name="shortcuts"></ui-component>
 	<ui-component name="loading" class="hidden"></ui-component>
-	<ui-component name="dropfiles" config="exec:common/dropfiles;check:common/dropcheck" class="hidden">@(Drag &amp; Drop files here)</ui-component>
+	<ui-component name="dropfiles" config="exec:*/dropfiles;check:*/dropcheck" class="hidden">@(Drag &amp; Drop files here)</ui-component>
 
-	<header>
-		@{if user.openplatform}
-		<a href="@{user.openplatform}" title="@(Browse modules)" class="openplatform"><i class="ti ti-menu"></i></a><label>@{CONF.name}</label>
-		@{else}
-		<a href="/" title="@(Website)" class="openplatform"><i class="ti ti-globe"></i></a><label>@{CONF.name}</label>
-		@{fi}
-		<ui-component name="breadcrumb" path="common.breadcrumb" config="$assign:BREADCRUMB;style:2;root:@(Home);icon:ti ti-home;rooturl:/admin/;title:@{'%name'}" class="invisible">
-			<ui-component name="virtualwire" path="common.page" class="toolbar" style="float:right"></ui-component>
-		</ui-component>
-	</header>
+	<ui-plugin path="*">
 
-	<ui-component name="navlayout" path="?.menu" config="parent:window;width:200" class="invisible">
-		<section>
-			<ui-component name="aselected" path="common.page" config="selector:div.item;attr:data-url">
-				<ui-component name="viewbox" path="common.page" config="parent:window;margin:60">
-					<div class="nav">
-						<ui-bind path="common.plugins" config="template" class="block">
-							<script type="text/html">
-								<nav>
-								{{ foreach m in value }}
-									{{ if !m.hidden }}
-									<div data-url="{{ m.url }}" class="item hellip exec{{ if m.class }} {{ m.class }}{{ fi }}" data-if="{{ m.id }}" data-exec="common/redirect"><i class="{{ m.icon }}"></i>{{ m.name }}</div>
-									{{ fi }}
-								{{ end }}
-								</nav>
-							</script>
+		<ui-component name="restart" path="?.restart" class="hidden"><i class="ti ti-bullhorn"></i>@(New update.) <b>@(Reload)</b></ui-component>
+
+		<header class="top">
+			@{if user.openplatform && !user.iframe}
+			<span><a href="@{user.openplatform}"><i class="ti ti-menu"></i></a>@{CONF.name}</span>
+			@{else}
+			<span class="logo"><i class="@{CONF.icon}"></i>@{CONF.name}</span>
+			@{fi}
+			<div@{if CONF.breadcrumb == false} class="hidden"@{fi}><ui-component name="breadcrumb" path="?.breadcrumb" config="$assign:BREADCRUMB;style:2;root:@(Home);icon:ti ti-home;rooturl:/" class="invisible"></ui-component></div>
+		</header>
+
+		@{if repository.menu}
+		<ui-component name="columns" config="parent:window;margin:[margin]" class="hidden invisible">
+
+			<section data-size="@{if CONF.fullmenu}200@{else}66@{fi}">
+				<ui-component name="aselected" path="?.projectid" config="watch:?.projects">
+					<ui-component name="viewbox" config="parent:window;margin:[margin]">
+						<ui-bind path="?.plugins" config="template" child="nav" class="block nav" style="margin-top:15px">
+							<nav style="padding:0 10px" class="plugins">
+								<script type="text/html">
+									{{ foreach m in value }}
+										{{ if !m.hidden }}
+										{{ if m.divider }}<hr />{{ fi }}
+										<a href="{{ m.url }}" class="hellip jR{{ if m.class }} {{ m.class }}{{ fi }}" data-if="{{ m.id }}" title="{{ m.name }}"><i class="{{ m.icon }}"></i><div>{{ m.name }}</div></a>
+										{{ fi }}
+									{{ end }}
+								</script>
+							</nav>
+							<br />
 						</ui-bind>
-					</div>
+					</ui-component>
 				</ui-component>
-			</ui-component>
-		</section>
+			</section>
+			<section>
+		@{fi}
 
-		<main>
-			<ui-bind path="common.plugins" config="template" class="block">
+			<ui-bind path="?.plugins" config="template" class="block">
 				<script type="text/html">
 					{{ foreach m in value }}
-						{{ if !m.hidden }}
-						<ui-component name="page" path="common.page" config="if:plugin{{ m.id }};url:/_{{ m.id }}/index.html;reload:?/reload;hidden:?/hide;id:_{{ m.id }}" class="hidden invisible"></ui-component>
-						{{ if m.routes }}
-							{{ foreach route in m.routes }}
-							<ui-component name="page" path="common.page" config="if:plugin{{ m.id }}{{ route.html }};url:/_{{ m.id }}/{{ route.html }}.html;reload:?/reload;hidden:?/hide;id:_{{ m.id }}" class="hidden invisible"></ui-component>
-							{{ end }}
+						{{ if !m.special }}
+							<ui-component name="page" path="?.page" config="if:plugin{{ m.id }};url:/_{{ m.id }}/index.html;reload:?/reload;hidden:?/hide;id:_{{ m.id }}" class="hidden invisible"></ui-component>
+							{{ if m.routes }}
+								{{ foreach route in m.routes }}
+									{{ if route.html }}
+										<ui-component name="page" path="?.page" config="if:plugin{{ m.id }}{{ route.html }};url:/_{{ m.id }}/{{ route.html }}.html;reload:?/reload;hidden:?/hide;id:_{{ m.id }}" class="hidden invisible"></ui-component>
+									{{ fi }}
+								{{ end }}
+							{{ fi }}
 						{{ fi }}
-					{{ fi }}
 					{{ end }}
 				</script>
 			</ui-bind>
-			<ui-component name="page" path="common.page" config="if:welcome;url:@{#}/pages/index.html;reload:?/reload" class="hidden"></ui-component>
-			<ui-component name="page" path="common.page" config="if:editor;url:@{#}/pages/editor.html;reload:?/reload" class="hidden"></ui-component>
-		</main>
-	</ui-component>
+			<ui-component name="page" path="?.page" config="if:pagewelcome;url:/landing.html;reload:?/reload" class="hidden invisible"></ui-component>
 
-	<ui-component name="importer" path="common.form2" config="if:formcode;url:/forms/code.html"></ui-component>
-	<ui-component name="importer" path="common.form2" config="if:formwidgets;url:/_widgets/form.html"></ui-component>
-	<ui-component name="importer" path="common.form3" config="if:formfiles;url:/_files/list.html"></ui-component>
+		@{if repository.menu}
+			</section>
+		</ui-component>
+		@{fi}
 
-	@{json(model, 'pluginsdata')}
+		<ui-component name="importer" path="?.form2" config="if:formcode;url:/code.html"></ui-component>
+
+	</ui-plugin>
+
+	@{json(model, 'metadata')}
 
 	@{if user.iframe}
 	<script src="@{user.iframe}"></script>
@@ -111,51 +261,101 @@
 
 	<script>
 
-		ENVIRONMENT('cms');
+		// Component: Tangular-Time
+		// Version: 1
+		// Updated: 2023-01-12 15:18
+		Thelpers.time=function(value){if(!value)return value;var diff=Date.now()-(value instanceof Date?value:value.parseDate()).getTime();var minutes=((diff/1000)/60)>>0;if(minutes<60){if(minutes<3)return'@(now)';return Thelpers.pluralize(minutes,'@(# minutes ago,# minute ago,# minutes ago,# minutes ago)')}var hours=(minutes/60)>>0;if(hours<24)return Thelpers.pluralize(hours,'@(# hours ago,# hour ago,# hours ago,# hours ago)');var days=(hours/24)>>0;if(days<30)return Thelpers.pluralize(days,'@(# days ago,# day ago,# days ago,# days ago)');var months=(days/29)>>0;if(months<12)return Thelpers.pluralize(months,'@(# months ago,# month ago,# months ago,# months ago)');var years=(months/12)>>0;return Thelpers.pluralize(years,'@(# years ago,# year ago,# years ago,# years ago)')};Thelpers.time2=function(value){return value?'<span class="ta-time" data-time="{0}" title="{2}">{1}</span>'.format(value.getTime(),Thelpers.time(value),value.format(null)):value};ON('service',function(){$('.ta-time').each(function(){var el=$(this);el.html(Thelpers.time(new Date(+el.attrd('time'))))})});
+		// End: Tangular-Time
+
+		CONFIG('code', 'url:/1.min.html');
 
 		var user = null;
 		var common = {};
 
 		common.breadcrumb = [];
+		common.windows = [];
 		common.clientid = GUID(5) + Date.now().toString(36);
 		common.name = document.title;
 		common.openplatform = NAV.query.openplatform || '';
-		common.plugins = PARSE('#pluginsdata');
-		common.api = common.root = '@{CONF.$api}';
+
+		common.root = '@{CONF.$api}';
+		common.api = '@{CONF.$api}';
 		common.redirect = REDIRECT;
+		common.cl = false;
+		common.cdn = '@{CONF.cdn}';
 
 		ENV('indentation', 201);
 		ENV('margin', 60);
+		ENV('locality', 'Banská Bystrica, Slovakia');
 
+		DEF.cdn = common.cdn;
 		DEF.fallback = '@{#}/cdn/j-{0}.html';
-		DEF.versionhtml = '@{CONF.version}';
-		DEF.languagehtml = '@{user.language}';
+		DEF.version = '@{CONF.version}';
+		DEF.language = '@{language}';
+
+		DEF.cl.boolean = [{ id: true, name: '@(Yes)' }, { id: false, name: '@(No)' }];
+
+		DEF.currencies.current = function(val) {
+			return val.format(2) + ' &euro;';
+		};
 
 		// Injects Token to every API request
 		(function() {
-			var openplatform = NAV.query.openplatform || '';
+
+			let meta = PARSE('#metadata');
+			common.plugins = meta.plugins;
+
+			let openplatform = NAV.query.openplatform || '';
 			if (openplatform) {
-				var hostname = openplatform.substring(0, openplatform.indexOf('/', 10));
+				let hostname = openplatform.substring(0, openplatform.indexOf('/', 10));
 				openplatform = '?openplatform=' + encodeURIComponent(openplatform);
 			}
 			common.ready = true;
 			DEF.api = common.api + openplatform;
+			DEF.pipe = common.root + 'pipe/' + openplatform;
 			common.openplatform = openplatform;
 			$('body').rclass('invisible', 200);
 		})();
 
+		CLINIT('cl', function(next) {
+			TAPI('CL', function(response) {
+
+				for (let key in response) {
+					for (let m of response[key]) {
+						m.text = m.name;
+						if (m.color) {
+							m.icon = m.icon || 'ti ti-square-alt';
+							m.name = '<i class="{icon} mr5" style="color:{color}"></i>{name}'.args(m, 'escape');
+						} else if (key === 'users')
+							m.html = Thelpers.initials(m.name) + m.name.encode();
+					}
+				}
+
+				next(response, true);
+				common.cl = true;
+			});
+		}, true);
+
 		NAV.clientside('.jR');
 
-		if (W.top !== W && common.openplatform)
-			NAV.custom();
+		W.REDIRECT = function(url) {
 
-		REDIRECT = function(url) {
+			let index = url.indexOf('#');
+			let hashtag = '';
+
+			if (index !== -1) {
+				hashtag = url.substring(index + 1);
+				url = url.substring(0, index);
+			}
+
 			if (url.charAt(0) !== '.' && url.substring(0, common.root.length) !== common.root)
 				url = common.root + url.substring(1);
+
 			common.redirect(url);
+			hashtag && setTimeout(hashtag => location.hash = hashtag, 500, hashtag);
 		};
 
-		PLUGIN('common', function(exports) {
+		PLUGIN('*', function(exports) {
 
 			var model = exports.model;
 
@@ -164,8 +364,10 @@
 				model.plugins.forEach(function(plugin) {
 					plugin.url = model.root + plugin.id + '/';
 					if (!plugin.hidden) {
+						if (plugin.welcome)
+							plugin.url = common.root;
 						ROUTE(plugin.url, function() {
-							plugin.loaded = true;
+							model.welcome = true;
 							exports.set('page', 'plugin' + plugin.id);
 						}, 'init');
 						plugin.routes && plugin.routes.forEach(item => ROUTE('@{#}' + item.url, () => exports.set('page', 'plugin' + plugin.id + item.html), 'init'));
@@ -175,15 +377,33 @@
 			})();
 
 			exports.refresh = function() {
-				TAPI('account', 'user');
+				TAPI('Account', function(response, err) {
+					if (response && response.id && response.name) {
+						response.admin = response.sa || response.su || response.permissions.includes('admin');
+						response.can = permission => response.admin || response.permissions.includes(permission);
+						response.permitted = function(permission, arr) {
+							if (response.sa || response.su)
+								return true;
+							if (!arr || !arr.length)
+								return true;
+							permission = permission.split('|');
+							for (let p of permission) {
+								for (let g of response.groups) {
+									if (arr.includes(p + g))
+										return true;
+								}
+							}
+						};
+						if (W.user && W.user.version !== response.version)
+							exports.set('restart', true);
+						SET('user', response);
+					} else
+						location.href = model.root;
+				});
 			};
 
 			exports.redirect = function(el) {
 				REDIRECT(el.attrd('url'));
-			};
-
-			exports.navigation = function(el) {
-				REDIRECT('/');
 			};
 
 			exports.dropfiles = function(e) {
@@ -214,67 +434,294 @@
 				exports.ajax('GET @{#}{0}logout/ ERROR'.format(model.root), () => location.href = model.root);
 			};
 
-			ON('service', function(counter) {
+			exports.on('service', function(counter) {
 				if (counter % 5 === 0)
 					exports.refresh();
 			});
 
-			ON('ready', exports.refresh);
+			// Evaluates "edit" method in every plugin if the hashtag contains ID
+			exports.on('hash', function(value) {
+
+				if (model.form || model.form2 || !value)
+					return;
+
+				let load = function(counter) {
+
+					let plugin = PLUGINS[model.page];
+					if (plugin) {
+						if (plugin.hashtag || plugin.hash) {
+							plugin.exec('edit', value);
+							return;
+						}
+					}
+
+					if (counter < 2)
+						setTimeout2('hash', load, 1000, 3, counter + 1);
+				};
+
+				load(0);
+
+			});
+
+			exports.on('ready', exports.refresh);
 
 		});
 
 		MIDDLEWARE('init', function(next) {
-			WAIT(() => common.ready && W.user && common.breadcrumb && W.BREADCRUMB, next, null, 60000);
+			WAIT(() => common.ready && W.user && common.breadcrumb && W.BREADCRUMB && common.cl, next, null, 60000);
 		});
-
-		ROUTE('/', function() {
-			REDIRECT(common.root);
-		}, 'init');
 
 		ROUTE(common.root, function() {
-			var dashboard = common.plugins.findItem('id', 'dashboard');
-			if (dashboard && !dashboard.loaded) {
-				REDIRECT(dashboard.url);
-			} else {
+			if (common.welcome) {
 				BREADCRUMB.add();
-				SET('common.page', 'welcome');
+				SET('*page', 'pagewelcome');
+			} else {
+				common.welcome = true;
+				for (let m of common.plugins) {
+					if (!m.hidden) {
+						REDIRECT(m.url);
+						break;
+					}
+				}
 			}
 		}, 'init');
 
-		ON('@flag diff', function(path, value) {
-			FUNC.diff(path, value, 'id');
+		ON('@flag saved', function() {
+			SETTER('notify/success', '@(Saved.)');
 		});
 
-		ON('@flag showloading', function() {
-			SETTER('loading/show');
+		ON('@flag done', function() {
+			SETTER('notify/info', '@(Done.)');
 		});
 
-		ON('@flag hideloading', function() {
-			SETTER('loading/hide', 1000);
+		ON('@flag copied', function() {
+			SETTER('notify/success', '@(Copied.)');
 		});
 
-		CLINIT('links', function(next) {
-			TAPI('pages_links', response => next(FUNC.sitemap(response)));
-		}, true);
+		ON('@flag removed', function() {
+			SETTER('notify/success', '@(Removed.)');
+		});
 
-		CLINIT('nav', function(next) {
-			TAPI('nav_editor', next);
-		}, true);
+		Thelpers.rating = function(val) {
+			var builder = [];
+			for (let i = 0; i < val; i++)
+				builder.push('<i class="ti ti-star-alt"></i>');
+			for (let i = val; i < 5; i++)
+				builder.push('<i class="ti ti-star"></i>');
+			return '<span class="rating">{0}</span>'.format(builder.join(''));
+		};
 
-		// Prevent browsing through the arrows
-		$(W).on('keydown', function(e) {
-			if (e.metaKey || e.ctrlKey) {
-				switch (e.keyCode) {
-					case 37:
-					case 39:
-						e.stopPropagation();
-						e.preventDefault();
-						break;
+		// Intialize CMS editor
+		ON('plugin', function(plugin) {
+
+			if (!plugin.cmseditor)
+				return;
+
+			plugin.files = function(meta, next) {
+				var opt = {};
+				if (meta.isimage) {
+					opt.type = 'images';
+					opt.width = meta.width;
+					opt.height = meta.height;
+				}
+				FUNC.files(opt, file => next(file.url));
+			};
+
+			plugin.links = function(next) {
+				TAPI('Pages', next);
+			};
+
+			plugin.upload = function(file, next) {
+				var opt = {};
+				opt.url = ENV('upload');
+				opt.files = [file];
+				opt.height = file.height;
+				opt.width = file.width;
+				opt.onlylarger = true;
+				opt.callback = function(response) {
+					if (response && response[0] && response[0].id)
+						next('/download/' + response[0].id + '.' + response[0].ext);
+				};
+				SETTER('fileuploader/upload', opt);
+			};
+
+			plugin.image = function(meta, next) {
+
+				if (meta.files && meta.files[0] && meta.files[0].type.substring(0, 6) !== 'image/')
+					return;
+
+				var opt = {};
+				opt.url = ENV('upload');
+				opt.width = meta.width;
+				opt.height = meta.height;
+				opt.files = meta.files;
+				opt.onlylarger = true;
+
+				opt.callback = function(response) {
+					if (response && response[0] && response[0].id)
+						next('/download/' + response[0].id + '.' + response[0].ext);
+				};
+
+				SETTER('fileuploader/upload', opt);
+			};
+
+			plugin.widgetsource = function(widget) {
+				plugin.tapi('Widgets|read ERROR', { id: widget.config.id }, function(response) {
+					var opt = {};
+					var data = plugin.model;
+					opt.body = response.html;
+					opt.callback = function(value, hide) {
+						var model = {};
+						model.id = widget.config.id;
+						model.html = value;
+						plugin.tapi('Widgets|save ERROR', model, function() {
+							plugin.tapi('Widgets|detail ERROR', { id: model.id }, function(response) {
+
+								hide();
+
+								var index = data.cms.widgets.findIndex('id', model.id);
+
+								if (response.editor)
+									response.js = new Function('$', response.editor.trim());
+
+								data.cms.widgets[index] = response;
+								plugin.element.SETTER('cmseditor/clearwidgetcache', model.id);
+								plugin.element.SETTER('cmseditor/refresh_widgets');
+							});
+						});
+					};
+					SETTER('loading/hide', 1000);
+					FUNC.code(opt);
+				});
+			};
+
+			plugin.on('Widgets/refresh', function() {
+				plugin.tapi('Widgets', function(response) {
+					response.quicksort('name');
+					plugin.set('cms.widgets @norender', response);
+					SETTER('cmseditor/refresh_widgets');
+				});
+			});
+
+		});
+
+		// External functions
+		FUNC.tree = function(response) {
+
+			var tree = [];
+			var children = {};
+			var list = {};
+
+			var prepare = function(obj) {
+				list[obj.id] = obj;
+				for (let item of response) {
+					if (item.parentid === obj.id) {
+						item.parent = obj;
+						if (!obj.children)
+							obj.children = [];
+						obj.children.push(item);
+						prepare(item);
+					}
+				}
+			};
+
+			var readchildren = function(arr, item) {
+				for (let child of item.children) {
+					arr.push(child.id);
+					child.children && readchildren(arr, child);
+				}
+			};
+
+			response.quicksort('parentid', true);
+
+			for (let item of response) {
+				if (!item.parentid) {
+					prepare(item);
+					tree.push(item);
 				}
 			}
+
+			for (let item of response) {
+				if (item.parentid) {
+					var parent = item.parent;
+					var path = [];
+					var url = [];
+					while (parent) {
+						url.push(parent);
+						path.push(parent.name);
+						parent = parent.parent;
+					}
+					url.reverse();
+					path.reverse();
+					url.push(item);
+					path.push(item.name);
+					item.url = url;
+					item.path = path;
+				} else {
+					item.url = [item];
+					item.path = [item.name];
+				}
+
+				if (item.children) {
+					children[item.id] = [item.id];
+					readchildren(children[item.id], item);
+				} else
+					children[item.id] = [item.id];
+				item.text = item.path.join(' / ');
+			}
+
+			response.quicksort('name');
+			tree.quicksort('sortindex');
+
+			return { all: response, tree: tree, children: children, list: list };
+		};
+
+		// Counts TAX
+		FUNC.vat = function(val, vat) {
+			return vat ? (val + ((val / 100) * vat)) : val;
+		};
+
+		// Counts a discount
+		FUNC.discount = function(val, discount) {
+			return discount ? (val - ((val / 100) * discount)) : val;
+		};
+
+		// Opens Code editor
+		FUNC.code = function(opt, callback) {
+			SET('*form2', 'formcode');
+			EXEC('formcode/init @important', opt, callback);
+		};
+
+		// Opens Files form
+		FUNC.files = function(opt, callback) {
+			SET('*form3', 'formfiles');
+			EXEC('formfiles/init @important', opt, function(response, hide) {
+				callback(response);
+				hide();
+			});
+		};
+
+		// It creates an HTML string with jComponent library
+		FUNC.iframehtml = function(content) {
+			return '<!DOCTYPE html><html><head><meta charset="utf-8" /><SCR src="{0}/spa.min@20.js"></SCR><link href="{0}/spa.min@20.css" rel="stylesheet" /></head><SCR>DEF.fallback="@{#}/cdn/j-{2}.html"</SCR><body>{1}</body></html>'.format(common.cdn, content || '', '{0}').replace(/SCR/g, 'scr' + 'ipt');
+		};
+
+		COMPONENT('elementid', function(self) {
+			self.setter = function(value) {
+				self.attrd('id', value == null ? '' : value);
+			};
 		});
 
+		Thelpers.today = function(ts) {
+			if (ts && NOW.format('yyyyMMdd') === ts.format('yyyyMMdd'))
+				return '<span class="badge badge-small badge-green ml5">@(today)</span>';
+		};
+
 	</script>
+
+	@{foreach m in REPO.extensions}
+	@{!m}
+	@{end}
 
 </body>
 </html>

@@ -1,12 +1,16 @@
-if (window.DEF)
-	window.DEF.fallback = '/cdn/j-{0}.html';
-
 // Online statistics for visitors
+// MIT License
+// Copyright 2024-2026 (c) Peter Širka <petersirka@gmail.com> | Total.js
+
 (function() {
 
 	var W = window;
 	var N = navigator;
 	var LS = W.localStorage;
+
+	// jComponent v20
+	if (W.DEF)
+		W.DEF.fallback = '/cdn/j-{0}.html';
 
 	if ((N.onLine != null && !N.onLine) || !LS)
 		return;

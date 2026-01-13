@@ -1,0 +1,103 @@
+<ui-component name="box" path="*form2" config="if:CLASS;title:@(Source-code);icon:ti ti-laptop-code;autofocus:true;reload:?/reload;scrollbar:0;submit:?/submit;width:2000;zindex:30" class="hidden" plugin="CLASS">
+	<nav>
+		<ui-bind path="?.toolbar" config="template:button">
+			<script type="text/html">
+				{{ foreach m in value }}
+					<button class="exec" data-exec="?/click" data-id="{{ $index }}"><i class="{{ m.icon }}"></i>{{ m.name }}</button>
+				{{ end }}
+			</script>
+		</ui-bind>
+	</nav>
+	<div>
+		<ui-component name="code" path="?.body" config="parent:auto;$id:code;contextmenu:?/menu"></ui-component>
+	</div>
+	<nav>
+		<button name="submit"><i class="ti ti-check-circle"></i>@(SUBMIT)</button>
+		<button name="cancel">@(Cancel)</button>
+	</nav>
+</ui-component>
+
+<script>
+
+	PLUGIN(function(exports) {
+
+		let meta;
+		let box;
+
+		exports.reload = function(com) {
+			box = com;
+		};
+
+		exports.init = function(opt, callback) {
+			let title = opt.name || opt.title || '@(Source-code)';
+			WAIT(() => box, () => box.reconfigure({ title: title }));
+			exports.set('?', { body: opt.html || opt.code || opt.body || '', toolbar: opt.toolbar || EMPTYARRAY });
+			SETTER('#code/reconfigure @important @hideloading', { type: opt.type || 'clientside' });
+			meta = opt;
+			if (callback)
+				meta.callback = callback;
+		};
+
+		exports.click = function(el) {
+			let index = +ATTRD(el);
+			let button = meta.toolbar[index];
+			SETTER('#code/save', function(value) {
+				button.callback(value, () => NUL('*form2'));
+			});
+		};
+
+		exports.submit = function(hide) {
+			SETTER('#code/save', function(value) {
+				hide();
+				meta.callback(value, hide);
+			});
+		};
+
+		exports.dropcheck = function() {
+			return true;
+		};
+
+		exports.dropfiles = function(e) {
+			var opt = {};
+			opt.url = ENV('upload');
+			opt.files = e;
+			opt.callback = function(response, err) {
+				var builder = [];
+				for (var item of response)
+					builder.push('/download/' + item.id + '.' + item.ext);
+				builder.length && SETTER('#code/insert', builder.join('\n'));
+			};
+			SETTER('fileuploader/upload', opt);
+		};
+
+		exports.menu = function(e) {
+			var opt = {};
+			opt.x = e.x;
+			opt.y = e.y;
+			opt.items = [];
+			opt.items.push({ id: 'upload', name: '@(Insert file)', icon: 'ti ti-cloud-upload' });
+			opt.items.push({ id: 'icons', name: '@(Insert icon)', icon: 'ti ti-icons' });
+			opt.callback = function(selected) {
+				switch (selected.id) {
+					case 'icons':
+						opt.items = null;
+						opt.callback = function(selected) {
+							SETTER('#code/insert', selected);
+						};
+						SETTER('icons/show', opt);
+						break;
+					case 'upload':
+						SET('*form3', 'formfiles');
+						EXEC('formfiles/init @important', {}, function(item, hide) {
+							SETTER('#code/insert', item.url);
+							hide();
+						});
+						break;
+				}
+			};
+			SETTER('menu/show', opt);
+		};
+
+	});
+
+</script>

@@ -1,0 +1,89 @@
+<ui-component name="miniform" path="*form4" config="if:CLASS;icon:ti ti-link;autofocus:true;reload:?/reload;submit:?/submit;width:450;zindex:40" class="hidden" plugin="CLASS">
+	<div class="padding">
+		<ui-component name="input" path="?.name" config="required:1" class="m">@(Name)</ui-component>
+		<ui-component name="input" path="?.url" config="icon:globe;required:1">@(URL address)</ui-component>
+		<div class="m mt10 fs12">
+			<span class="link exec mr15" data-exec="?/find" data-type="find"><i class="ti ti-folder mr5"></i>@(Find page)</span>
+			<span class="link exec mr15" data-exec="?/files" data-type="upload"><i class="ti ti-folder mr5"></i>@(Browse files)</span>
+			<span class="link exec mr15" data-exec="?/type" data-type="email"><i class="ti ti-envelope mr5"></i>@(Email)</span>
+			<span class="link exec" data-exec="?/type" data-type="phone"><i class="ti ti-phone mr5"></i>@(Phone number)</span>
+		</div>
+		<hr />
+		<div class="grid-2">
+			<div class="m">
+				<ui-component name="input" path="?.target" config="dirsource:|@(Current tab),_blank|@(New tab)" default="''">@(Target)</ui-component>
+			</div>
+			<div class="m">
+				<ui-component name="input" path="?.arg">@(Custom argument)</ui-component>
+			</div>
+		</div>
+		<div class="grid-2">
+			<div class="m">
+				<ui-component name="input" path="?.icon" config="type:icon">@(Icon)</ui-component>
+			</div>
+			<div class="m">
+				<ui-component name="input" path="?.color" config="type:color">@(Color)</ui-component>
+			</div>
+		</div>
+		<hr style="margin-top:10px" />
+		<ui-component name="input" path="?.highlight" config="type:checkbox">@(Highlight in navigation)</ui-component>
+		<ui-component name="input" path="?.hidden" config="type:checkbox">@(Hidden in navigation)</ui-component>
+	</div>
+	<nav>
+		<ui-component name="validate" path="?">
+			<button name="submit" disabled><i class="ti ti-check-circle"></i>@(SUBMIT)</button>
+			<button name="cancel">@(Cancel)</button>
+		</ui-component>
+	</nav>
+</ui-component>
+
+<script>
+
+	PLUGIN(function(exports) {
+
+		let caller;
+
+		exports.reload = function(com) {
+			let model = exports.model;
+			let id = model ? model.id : null;
+			com.reconfigure({ title: id ? '@(Update link)' : '@(Create link)' });
+		};
+
+		exports.submit = function(hide) {
+			var model = exports.form;
+			model.callback(model);
+			hide();
+		};
+
+		exports.find = function(el) {
+			var model = exports.model;
+			exports.tapi('Pages?fields=id,name', function(response) {
+				var opt = {};
+				opt.element = el;
+				opt.offsetWidth = 490;
+				opt.items = response;
+				opt.callback = selected => exports.set('url @change', selected.url);
+				SETTER('directory/show', opt);
+			});
+		};
+
+		exports.files = function() {
+			FUNC.files({}, file => exports.set('url @change', file.url));
+		};
+
+		exports.type = function(el) {
+			var r = /^(tel|mailto)\:/;
+			var model = exports.model;
+			switch (el.attrd('type')) {
+				case 'email':
+					exports.set('url', 'mailto:' + model.url.replace(r, ''));
+					break;
+				case 'phone':
+					exports.set('url', 'tel:' + model.url.replace(r, ''));
+					break;
+			}
+		};
+
+	});
+
+</script>

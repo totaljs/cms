@@ -27,7 +27,7 @@
 		var noscroll = false;
 
 		exports.refresh = function() {
-			exports.tapi('files_list', function(response) {
+			exports.tapi('Files', function(response) {
 
 				for (var item of response)
 					item.dimension = (item.width && item.height ? (item.width + 'x' + item.height) : '');
@@ -55,7 +55,7 @@
 
 		exports.submit = function(row, grid, row_el) {
 			row.url = '/download/' + row.id + '.' + row.ext;
-			meta.callback(row, () => NULL('common.form3'));
+			meta.callback(row, () => NULL('*form3'));
 		};
 
 		exports.button = function(name, row) {
@@ -66,7 +66,7 @@
 				opt.name = '@(Rename file)';
 				opt.callback = function(val) {
 					noscroll = true;
-					exports.tapi('files_rename ERROR', { id: row.id, name: val }, () => exports.refresh());
+					exports.tapi('Files|rename ERROR', { id: row.id, name: val }, () => exports.refresh());
 				};
 				SETTER('prompt/show', opt);
 			}
@@ -80,7 +80,7 @@
 			if (e && !(e instanceof jQuery))
 				opt.files = e;
 
-			opt.url = ENV('upload');
+			opt.url = 'POST ' + ENV('upload');
 			opt.multiple = true;
 			opt.width = meta.width;
 			opt.height = meta.height;
@@ -93,7 +93,6 @@
 			}
 
 			opt.callback = function(response, err) {
-				exports.scope();
 				exports.refresh();
 			};
 

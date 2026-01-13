@@ -1,0 +1,787 @@
+<script total>
+
+	// This extension extends app by adding CMS functionality
+	// MIT License
+	// Copyright 2026 (c) Peter Širka <petersirka@gmail.com> | Total.js
+
+	const PARSER = { settings: '<settings>', css: '<style>', total: '<script total>', html: '<body>', js: '<script>', template: '<template>', readme: '<readme>' };
+	const REG_CLASS = /CLASS/g;
+	const REG_META = /<\/head>/;
+	const REG_UI = /@\{ui\}/i;
+	const REG_YEAR = /@\{year\}/i;
+	const REG_VARS = /\$[a-z0-9A-Z]+/g;
+
+	var cms = {};
+	MAIN.cms = cms;
+
+	cms.id = 'db';
+	cms.db = {};
+
+	cms.recompile = function(item) {
+
+		var meta = item.html.parseComponent(PARSER);
+
+		item.ref = {};
+		try {
+			(new Function('exports', meta.total))(item.ref);
+		} catch(e) {
+			// tries to compile only meta data
+			var metadata = meta.total.match(/exports\..*?;/g);
+			if (metadata.length) {
+				try {
+					(new Function('exports', metadata.join('\n')))(item.ref);
+					console.log(e + '', metadata.join('\n'));
+				} catch (e) {
+					console.log(e + '', metadata.join('\n'));
+				}
+			} else
+				console.log(e + '', metadata);
+		}
+
+		if (!item.ref.id)
+			item.ref.id = item.ref.name;
+
+		var uid = item.ref.id.slug().replace(/\-/g, '');
+
+		meta.cls = uid;
+
+		if (meta.css)
+			meta.css = meta.css.replace(REG_CLASS, 'w-' + uid);
+
+		if (meta.settings)
+			meta.settings = meta.settings.replace(REG_CLASS, 'w-' + uid);
+
+		if (meta.template)
+			meta.template = meta.template.replace(REG_CLASS, 'w-' + uid);
+
+		if (meta.js)
+			meta.js = meta.js.replace(REG_CLASS, 'w-' + uid);
+
+		if (meta.html)
+			meta.html = meta.html.replace(REG_CLASS, 'w-' + uid);
+
+		if (item.ref.dependencies) {
+
+			if (typeof(item.ref.dependencies) === 'string')
+				item.ref.dependencies = item.ref.dependencies.split(/,|;/).trim();
+
+			var arr = [];
+			for (let i = 0; i < item.ref.dependencies.length; i++) {
+				let m = item.ref.dependencies[i];
+				if (m.includes('<'))
+					arr.push(m);
+				else if (m.endsWith('.js'))
+					arr.push(('<scri' + 'pt src="{0}"></scr' + 'ipt>').format(m));
+				else if (m.endsWith('.css'))
+					arr.push('<link rel="stylesheet" href="{0}">'.format(m));
+			}
+
+			item.ref.dependencies = arr.join('');
+		}
+
+		item.ref.ui = meta;
+
+		let index = (meta.html || '').indexOf('<scr' + 'ipt>');
+
+		if (index !== -1)
+			meta.editor = meta.html.substring(index + 8, meta.html.indexOf('</scr' + 'ipt>', index + 8));
+
+		delete item.ref.total;
+	};
+
+	cms.breadcrumb = function(url) {
+		let page = cms.db.pages.findItem('url', url);
+		let arr = [];
+		let processed = {};
+		if (page) {
+
+			arr.push({ id: page.id, parentid: page.id, url: page.url, name: page.name, title: page.title, color: page.color, icon: page.icon, language: page.language });
+			processed[page.id] = 1;
+
+			while (page) {
+
+				let tmp = page.parentid ? cms.db.pages.findItem('id', page.parentid) : null;
+				if (tmp) {
+					if (tmp === page)
+						break;
+					if (processed[tmp.id])
+						break;
+					else
+						processed[tmp.id] = 1;
+				}
+
+				page = tmp;
+				page && arr.unshift({ id: page.id, parentid: page.id, url: page.url, name: page.name, title: page.title, color: page.color, icon: page.icon, language: page.language });
+			}
+
+			arr[0].first = true;
+			arr[arr.length - 1].last = true;
+		}
+
+		return arr;
+	};
+
+	function children(links, parent) {
+		var cleaned = [];
+		for (let item of parent.children) {
+			item.parent = parent;
+			links.push(item);
+			if (!item.hidden)
+				cleaned.push(item);
+			if (item.children.length)
+				children(links, item);
+		}
+		parent.children = cleaned;
+	}
+
+	cms.refresh = function() {
+
+		cms.cache = {};
+
+		let db = cms.db;
+		let cache = cms.cache;
+
+		// Internal cache for rendered navigation & breadcrumb
+		cache.pages = {};
+
+		db.widgets.quicksort('dtcreated_desc');
+		cache.widgets = [];
+		cache.dependencies = '';
+
+		for (let item of db.widgets) {
+			if (item.ref) {
+				cache.widgets.push(item.ref);
+				if (item.ref.dependencies && item.ref.dependencies.length)
+					cache.dependencies += item.ref.dependencies;
+			}
+		}
+
+		cache.nav = {};
+
+		for (let item of db.nav) {
+
+			item = CLONE(item);
+			item.links = [];
+
+			if (!item.children)
+				item.children = [];
+
+			let cleaned = [];
+
+			for (let m of item.children) {
+				item.links.push(m);
+
+				if (!m.hidden)
+					cleaned.push(m);
+
+				if (m.children.length)
+					children(item.links, m);
+			}
+
+			item.children = cleaned;
+
+			for (let m of item.links) {
+
+				let level = 0;
+				let parent = m.parent;
+
+				while (parent) {
+					level++;
+					parent = parent.parent;
+				}
+
+				m.level = level;
+			}
+
+			cache.nav[item.uid] = item;
+		}
+	};
+
+	cms.save = function() {
+
+		var site = cms.db;
+		var model = {};
+
+		model.id = site.id;
+		model.dtcreated = site.dtcreated;
+		model.dtupdated = NOW;
+		model.name = site.name;
+		model.pages = site.pages;
+		model.layouts = site.layouts || [];
+		model.redirects = site.redirects || [];
+		model.vars = site.vars;
+		model.config = MAIN.db.config; // read from the internal "admin" system
+		model.widgets = [];
+		model.nav = site.nav;
+		model.storage = site.storage || {};
+
+		for (let item of site.widgets) {
+			let obj = {};
+			for (let key in item) {
+				if (key !== 'ref')
+					obj[key] = item[key];
+			}
+			model.widgets.push(obj);
+		}
+
+		FILESTORAGE(cms.id).savejson('meta', model);
+	};
+
+	cms.unload = function(callback) {
+
+		let db = cms.db;
+
+		if (PLUGINS.widgets) {
+			for (let item of PLUGINS.widgets.instances) {
+				if (item.uninstall) {
+					try {
+						item.uninstall.call(db, db);
+					} catch (e) {
+						Total.error(e, 'Uninstalling CMS widget: ' + item.id);
+					}
+				}
+			}
+		}
+
+		FILESTORAGE(cms.id).drop(callback);
+		EMIT('unload');
+
+	};
+
+	function variables(text) {
+		let val = cms.db.vars[text.substring(1)];
+		return val == null ? text : val;
+	}
+
+	function navigation(id) {
+
+		let nav = this.nav[id] || { children: EMPTYARRAY };
+
+		nav.current = null;
+
+		if (nav.links) {
+			for (let m of nav.links) {
+				if (!nav.current && m.url === this.url)
+					nav.current = m;
+				m.selected = false;
+			}
+		}
+
+		let parent = nav.current;
+
+		while (parent) {
+			parent.selected = true;
+			parent = parent.parent;
+		}
+
+		nav.url = this.url;
+		nav.page = this.page;
+
+		return nav;
+	}
+
+	async function compile_page(id, html, widgets, callback, nocache) {
+
+		if (html == null)
+			html = (await cms.db.fs.readbuffer(id)).toString('utf8');
+
+		let value = {};
+		value.id = id;
+		value.html = html;
+		value.widgets = widgets;
+		TRANSFORM('page', value, function(err, value) {
+			let compiled = F.TCMS.compile(value.html.replace(REG_UI, REPO.webui).replace(REG_YEAR, NOW.getFullYear() + ''), widgets);
+			if (nocache != true)
+				cms.views[id] = compiled;
+			callback(null, compiled);
+		});
+	}
+
+	async function compile_layout(id, html, widgets, callback, nocache) {
+
+		if (html == null)
+			html = (await cms.db.fs.readbuffer(id)).toString('utf8');
+
+		let value = {};
+		value.id = id;
+		value.html = html;
+		value.widgets = widgets;
+
+		TRANSFORM('layout', value, function(err, value) {
+			let compiled = F.TCMS.compile(value.html.replace(REG_UI, REPO.webui).replace(REG_YEAR, NOW.getFullYear() + ''), widgets).importcss().importjs();
+			if (nocache != true)
+				cms.views[id] = compiled;
+			callback(null, compiled);
+		});
+
+	}
+
+	cms.render_layout = function($, id, callback) {
+
+		cms.db.fs.readbuffer(id, function(err, buffer) {
+			compile_layout(null, buffer ? buffer.toString('utf8') : '', cms.cache.widgets || EMPTYARRAY, function(err, response) {
+
+				let opt = {};
+				let cache = cms.cache.pages;
+				let url = $.url;
+
+				opt.inlinecache = {};
+				opt.controller = $;
+				opt.vars = cms.db.vars;
+				opt.refs = cms.db.refs;
+				opt.widgets = cms.cache.widgets || EMPTYARRAY;
+				opt.nav = cms.cache.nav;
+				opt.url = $.url;
+				opt.user = $.user;
+				opt.ua = $.headers['user-agent'];
+
+				if (opt.ua)
+					opt.ua = opt.ua.parseUA(true);
+				else
+					opt.ua = EMPTYOBJECT;
+
+				opt.mobile = $.mobile;
+				opt.robot = $.robot;
+				opt.breadcrumb = cms.breadcrumb(url);
+				// opt.page = page;
+				opt.navigation = navigation;
+
+				response.render(opt, function(err, response) {
+					callback(err, response ? response.replace(REG_VARS, variables) : '');
+				});
+
+			}, true);
+		});
+	};
+
+	cms.render = function($, page) {
+
+		// layout.id, layout.html
+		// Optional: page.id, page.html
+
+		let db = cms.db;
+		let url = $.url;
+
+		if (!db.refs)
+			db.refs = {};
+
+		if (!db.vars)
+			db.vars = {};
+
+		let opt = {};
+		let cache = cms.cache.pages;
+		let key = page.id;
+
+		if (!cache[key])
+			cache[key] = {};
+
+		opt.inlinecache = cache[key];
+		opt.controller = $;
+		opt.vars = db.vars;
+		opt.refs = db.refs;
+		opt.widgets = cms.cache.widgets || EMPTYARRAY;
+		opt.nav = cms.cache.nav;
+		opt.url = url;
+		opt.user = $.user;
+		opt.ua = $.req.headers['user-agent'];
+
+		if (opt.ua)
+			opt.ua = opt.ua.parseUA(true);
+		else
+			opt.ua = EMPTYOBJECT;
+
+		opt.mobile = $.mobile;
+		opt.robot = $.robot;
+		opt.breadcrumb = cms.breadcrumb(url);
+		opt.page = page;
+		opt.navigation = navigation;
+
+		opt.callback = function(err, response) {
+			TRANSFORM('render', response, function(err, response) {
+				if (response.css && response.css.length)
+					response.html = response.html.replace(/<\/style>/, '\n' + U.minify_css(response.css.join('')) + '</style>');
+				$.html(response.html);
+			}, $);
+		};
+
+		var title = page.title || page.name;
+		var meta = '';
+
+		if (title)
+			meta += '<title>' + title.safehtml() + (opt.url !== '/' ? (' - ' + CONF.name) : '') + '</title>';
+
+		if (page.description)
+			meta += '<meta name="description" content="' + page.description.safehtml() + '" />';
+
+		if (page.keywords)
+			meta += '<meta name="keywords" content="' + page.keywords.safehtml() + '" />';
+
+		meta += '<scri' + 'pt src="/visitors.js"></scr' + 'ipt>' + MAIN.cms.cache.dependencies;
+
+		var cmspage = cms.views[page.id];
+		var cmslayout = page.layoutid ? cms.views[page.layoutid] : 1;
+
+		if (cmslayout && cmslayout.scripts && cmslayout.scripts.length) {
+			for (var m of cmslayout.scripts)
+				meta += '<scri' + 'pt src="' + m + '"></scr' + 'ipt>';
+		}
+
+		if (cmspage && cmslayout) {
+			opt.cache = cmspage.cache;
+			cmspage.render(opt, cmslayout === 1 ? null : cmslayout, function(err, response) {
+				if (err) {
+					$.fallback(404);
+				} else {
+					$.response.minify = false;
+					$.html(response.replace(REG_META, meta).replace(REG_VARS, variables));
+				}
+			});
+		} else if (cmspage && !cmslayout) {
+			compile_layout(page.layoutid, null, opt.widgets, function(err, cmslayout) {
+
+				if (err) {
+					$.fallback(404);
+					return;
+				}
+
+				cmspage.render(opt, cmslayout === 1 ? null : cmslayout, function(err, response) {
+					if (err) {
+						$.fallback(404);
+					} else {
+						$.response.minify = false;
+						$.html(response.replace(REG_META, meta).replace(REG_VARS, variables));
+					}
+				});
+			});
+		} else if (!cmspage && cmslayout) {
+			compile_page(page.id, null, opt.widgets, function(err, cmspage) {
+
+				if (err) {
+					$.fallback(404);
+					return;
+				}
+
+				opt.cache = cmspage.cache;
+				cmspage.render(opt, cmslayout === 1 ? null : cmslayout, function(err, response) {
+					if (err) {
+						$.fallback(404);
+					} else {
+						$.response.minify = false;
+						$.html(response.replace(REG_META, meta).replace(REG_VARS, variables));
+					}
+				});
+			}, page.nocache);
+		} else {
+			compile_page(page.id, null, opt.widgets, function(err, cmspage) {
+
+				if (err) {
+					$.fallback(404);
+					return;
+				}
+
+				compile_layout(page.layoutid, null, opt.widgets, function(err, cmslayout) {
+
+					if (err) {
+						$.fallback(404);
+						return;
+					}
+
+					opt.cache = cmspage.cache;
+					cmspage.render(opt, cmslayout === 1 ? null : cmslayout, function(err, response) {
+						if (err) {
+							$.fallback(404);
+						} else {
+							$.response.minify = false;
+							$.html(response.replace(REG_META, meta).replace(REG_VARS, variables));
+						}
+					});
+				});
+			}, page.nocache);
+		}
+	};
+
+	cms.load = function(callback) {
+		FILESTORAGE(cms.id).readjson('meta', function(err, value) {
+
+			var empty = false;
+
+			if (!value) {
+				value = { id: cms.id, widgets: [], pages: [], layouts: [], vars: {}, nav: [], config: null, storage: {} };
+				empty = true;
+			}
+
+			if (value.config) {
+				// Re-assign values from the meta to the main "admin" configuration
+				for (let key in value.config)
+					MAIN.db.config[key] = value.config[key];
+			} else
+				value.config = MAIN.db.config;
+
+			value.config.$tapi = true;
+			cms.db = value;
+			cms.views = {};
+
+			if (!value.redirects)
+				value.redirects = [];
+
+			if (!value.storage)
+				value.storage = {};
+
+			value.ready = true;
+			value.fs = FILESTORAGE(cms.id);
+
+			var rem = [];
+
+			for (var item of value.widgets) {
+
+				if (item.html)
+					cms.recompile(item);
+
+				if (!item.ref.name)
+					rem.push(item);
+
+				if (!item.id)
+					item.id = item.ref.id;
+			}
+
+			if (rem.length) {
+				for (var m of rem)
+					value.widgets.splice(value.widgets.indexOf(m), 1);
+			}
+
+			for (var item of value.widgets) {
+				if (item.ref.install) {
+					try {
+						item.ref.install.call(value, value);
+					} catch (e) {
+						// what next?
+						console.log('install', e);
+					}
+				}
+			}
+
+			if (!empty)
+				FUNC.reconfigure();
+
+			cms.refresh();
+			callback && callback();
+			empty && cms.save();
+
+			EMIT('reload', cms.db);
+		});
+	};
+
+	ON('service', function(counter) {
+		if (counter % 2 === 0)
+			cms.views = {};
+	});
+
+	ON('ready', function() {
+
+		// WebUI
+		COMPONENTATOR('webui', 'errorhandler,exec,locale,uibuilder,directory,uistudio,message,approve,datepicker,menu,icons,input,imageviewer,mobilecarousel', true);
+
+		// Load CMS meta data
+		setTimeout(cms.load, 500);
+
+		// Public
+		ROUTE('GET  /*', render);
+		ROUTE('FILE /sitemap.xml', sitemap);
+
+		// Internal
+		ROUTE('+GET     ?backup/          <60s', backup);
+		ROUTE('+POST    ?restore/ @upload <60s <100MB', restore);
+		ROUTE('+GET     ?clear/           <60s', clear);
+	});
+
+	function render($) {
+
+		let db = cms.db;
+		let url = $.url;
+		let page = null;
+
+		if (!db.ready) {
+			$.fallback(404);
+			return;
+		}
+
+		for (let item of db.redirects) {
+			if (!item.disabled && item.url === url) {
+				$.redirect(item.target, item.permanent == true);
+				return;
+			}
+		}
+
+		// Try to find pages for authorized users
+		if ($.user) {
+			for (let item of db.pages) {
+				if (!item.disabled && item.auth && item.url === url && (!item.language || item.language === $.language)) {
+					page = item;
+					break;
+				}
+			}
+		}
+
+		if (!page) {
+			for (let item of db.pages) {
+				if (!item.disabled && !item.auth && item.url === url && (!item.language || item.language === $.language)) {
+					page = item;
+					break;
+				}
+			}
+		}
+
+		if (!page) {
+			if (url === '/')
+				$.redirect('/admin/');
+			else
+				$.fallback(404);
+			return;
+		}
+
+		cms.render($, page);
+	}
+
+	function sitemap($) {
+
+		let builder = [];
+		let hostname = $.hostname();
+
+		if (cms.db.pages) {
+			for (let item of cms.db.pages) {
+				if (!item.disabled || item.url[0] !== '/')
+					builder.push('<url><loc>{0}{1}</loc><lastmod>{2}</lastmod></url>'.format(hostname, item.url, (item.dtcreated || item.dtupdated).format('yyyy-MM-dd')));
+			}
+		}
+
+		$.xml('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{0}</urlset>'.format(builder.join('')));
+	}
+
+	function backup($) {
+
+		if (UNAUTHORIZED($, 'admin'))
+			return;
+
+		let filename = CONF.name.slug() + '-{0}.txt'.format(NOW.format('yyyy-MM-dd'));
+
+		cms.db.fs.backup(PATH.temp(filename), function(err, meta) {
+			if (meta)
+				$.file(meta.filename, filename);
+			else
+				$.invalid(err);
+		});
+	}
+
+	function clear($) {
+		if (UNAUTHORIZED($, 'admin'))
+			return;
+		cms.unload(() => cms.load($.done()));
+	}
+
+	function restore($) {
+		if (UNAUTHORIZED($, 'admin'))
+			return;
+		cms.unload(function() {
+			cms.db.fs.restore($.files[0].path, function(err, meta) {
+				if (meta && meta.files)
+					cms.load($.done());
+				else
+					$.success();
+			});
+		});
+	}
+
+</script>
+
+<script>
+
+	ON('ready', function() {
+		$('.logo').find('i').wrap('<a href="/" target="_blank"></a>');
+	});
+
+	FUNC.code = function(opt, callback) {
+		SET('*form2', 'formcode');
+		EXEC('formcode/init @important', opt, callback);
+	};
+
+	FUNC.sitemap = function(items, skip) {
+
+		var arr = [];
+
+		for (var i = 0; i < items.length; i++) {
+			var item = items[i];
+			var builder = [item.name];
+			var tmp = item;
+			while (true) {
+				if (tmp.parentid) {
+					var parent = items.findItem('id', tmp.parentid);
+					if (parent) {
+						builder.push(parent.name);
+						tmp = parent;
+					} else
+						break;
+				} else
+					break;
+			}
+
+			builder.reverse();
+
+			if (skip && builder.length > 1)
+				builder.splice(0, skip);
+
+			arr.push({ id: item.id, parentid: item.parentid, url: item.url, name: builder.join(' / ') });
+		}
+
+		arr.quicksort('name');
+		return arr;
+	};
+
+	(function() {
+
+		var cache = {};
+
+		FUNC.diff = function(id, items, pk) {
+
+			if (items == null) {
+				delete cache[id];
+				return;
+			}
+
+			if (!pk)
+				pk = 'id';
+
+			var meta = cache[id];
+
+			if (meta) {
+
+				for (var item of items) {
+					delete item.newbie;
+					delete item.changed;
+					var checksum = HASH(item);
+					var uid = item[pk];
+					var is = meta.checksum.indexOf(checksum) === -1;
+					if (uid && meta.changes.indexOf(uid) !== -1) {
+						item.modified = is;
+					} else {
+						item.newbie = is;
+						meta.changes.push(uid);
+					}
+					meta.checksum.push(checksum);
+				}
+
+			} else {
+				cache[id] = { checksum: [], changes: [] };
+				for (var item of items) {
+					var uid = item[pk];
+					var checksum = HASH(item);
+					cache[id].checksum.push(checksum);
+					uid && cache[id].changes.push(uid);
+				}
+			}
+
+			return items;
+		};
+
+	})();
+
+</script>

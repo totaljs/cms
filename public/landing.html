@@ -1,0 +1,53 @@
+<style>
+	.CLASS figure { height: 100%; height: 140px; margin-bottom: var(--gap); }
+	.CLASS figure button { width: 80%; height: 90%; border: 1px solid #EAEAEA; background-color: #FFF; font-size: 14px; border-radius: 5px; margin: 5% 0 0 10%; }
+	.CLASS figure button.highlight { background-color: #F9F9F9; }
+	.CLASS figure button i { font-size: 25px; display: block; margin-bottom: 15px; }
+	.CLASS figure button:hover { background-color: #f8f8f8; }
+</style>
+
+<ui-plugin class="CLASS">
+	<ui-component name="viewbox" path="*page" config="parent:window;centered:1;margin:[margin];shadowscrollbar:1" class="emptybody">
+		<div style="width:100%;max-width:800px;margin:0 auto;text-align:left;padding:0 30px">
+			<br />
+			<ui-bind path="?.plugins" config="template" class="apps grid-4 grid-xs-2 grid-sm-3 grid-md-3" style="column-gap:0 !important">
+				<script type="text/html">
+					{{ foreach m in value }}
+					<figure>
+						<button class="exec" {{ if m.exec }}data-exec="?/exec" data-id="{{ m.id }}"{{ else }}data-exec="common/redirect" data-url="{{ m.url }}"{{ fi }}><i class="{{ m.icon }}"></i><span>{{ m.name }}</span></button>
+					</figure>
+					{{ end }}
+				</script>
+			</ui-bind>
+			<br />
+		</div>
+	</ui-component>
+</ui-plugin>
+
+<script>
+
+	PLUGIN(function(exports) {
+
+		exports.reload = function() {
+
+			var plugins = common.plugins;
+			var items = [];
+
+			for (var m of plugins) {
+				if (!m.hidden)
+					items.push(m);
+			}
+
+			BREADCRUMB.root();
+			exports.set('plugins', items);
+
+		};
+
+		exports.exec = function(el) {
+			var id = ATTRD(el);
+			exports[id]();
+		};
+
+	});
+
+</script>

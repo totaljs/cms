@@ -1,4 +1,4 @@
-<ui-component name="box" path="common.form" config="if:~PATH~;icon:ti ti-copy;autofocus:true;reload:?/reload;scrollbar:1;submit:?/submit;width:800" class="hidden" plugin="~PATH~">
+<ui-component name="box" path="*form" config="if:CLASS;icon:ti ti-file;autofocus:1;reload:?/reload;submit:?/submit;width:800" class="hidden" plugin="CLASS">
 	<div>
 		<div class="padding bg-smoke npb">
 			<div class="row">
@@ -7,57 +7,52 @@
 					<div class="help">@(A short page name)</div>
 				</div>
 				<div class="col-md-6 m">
-					<ui-component name="input" path="?.url" config="placeholder:@(Auto generator)">@(URL address)</ui-component>
+					<ui-component name="input" path="?.url" config="placeholder:@(Auto generator);monospace:1">@(URL address)</ui-component>
 					<div class="help"><i class="ti ti-question-circle"></i>@(Add a relative URL address)</div>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-md-6 m">
-					<ui-component name="input" path="?.layoutid" config="required:1;dirsource:pluginpages.layouts;placeholder:@(Choose layout)" class="m">@(Layout)</ui-component>
+					<ui-component name="input" path="?.layoutid" config="required:1;dirsource:?|layouts;placeholder:@(Choose layout)" class="m">@(Layout)</ui-component>
 				</div>
 				<div class="col-md-6 m">
-					<ui-component name="input" path="?.parentid" config="dirsource:%sitemap;placeholder:@(Without parent page);dirempty:@(No parent)" class="m">@(Parent)</ui-component>
+					<ui-component name="input" path="?.parentid" config="dirsource:?|sitemap;placeholder:@(Without parent page);dirempty:@(No parent)" class="m">@(Parent)</ui-component>
 				</div>
 			</div>
 		</div>
 		<div class="padding">
 
-			<ui-component name="input" path="?.disabled" config="type:checkbox" class="b">@(Disable page for visitors)</ui-component>
+			<ui-component name="input" path="?.disabled" config="type:checkbox" class="b">@(Temporary disable page for visitors)</ui-component>
 			<ui-component name="input" path="?.auth" config="type:checkbox">@(For authorized users only)</ui-component>
 			<ui-component name="input" path="?.nocache" config="type:checkbox">@(Disable caching)</ui-component>
 			<ui-component name="input" path="?.pinned" config="type:checkbox" class="m">@(Pinned)<i class="ti ti-pin-alt orange ml5"></i></ui-component>
 			<hr />
-
-			<div class="row">
-				<div class="col-md-3 m">
+			<div class="grid-4">
+				<div class="m">
 					<ui-component name="input" path="?.language" config="maxlength:2;type:lower;align:1">@(Language)</ui-component>
 				</div>
-				<div class="col-md-3 m">
+				<div class="m">
 					<ui-component name="input" path="?.color" config="type:color">@(Color)</ui-component>
 				</div>
-				<div class="col-md-3 m">
+				<div class="m">
 					<ui-component name="input" path="?.icon" config="type:icon">@(Icon)</ui-component>
 				</div>
 			</div>
-
-			<div class="caption">
-				<label>@(HTML meta tags)</label>
-			</div>
-			<br />
+			<hr />
 			<div class="m">
 				<ui-component name="input" path="?.title">@(Title)</ui-component>
 			</div>
 			<div class="m">
 				<ui-component name="input" path="?.description">@(Description)</ui-component>
 			</div>
-			<div class="m">
+			<div>
 				<ui-component name="input" path="?.keywords">@(Keywords)</ui-component>
 			</div>
 		</div>
 	</div>
 	<nav>
 		<ui-component name="validate" path="?">
-			<button name="submit" disabled><i class="ti ti-check-circle"></i>@(SUBMIT)</button>
+			<button name="submit" disabled><i class="ti ti-check-circle mr5"></i>@(SUBMIT)</button>
 			<button name="cancel">@(Cancel)</button>
 		</ui-component>
 	</nav>
@@ -67,25 +62,41 @@
 
 	PLUGIN(function(exports) {
 
+		let caller = null;
+		let widgets = null;
+
+		exports.cmseditor = true;
 		exports.reload = function(com) {
-			var model = exports.model;
-			var id = model ? model.id : null;
-			com.reconfigure({ title: id ? '@(Update page)' : '@(Create page)' });
-			var arr = pluginpages.sitemap.slice(0);
-			if (id)
-				arr = arr.remove('id', id);
-			SET('%sitemap', arr);
+
+			if (!caller)
+				caller = exports.caller;
+
+			let model = exports.model;
+			com.reconfigure({ title: model.id ? '@(Edit page)' : '@(Create page)' });
+
+			exports.set('|layouts', caller.layouts);
+			exports.set('|sitemap', caller.sitemap);
 		};
 
 		exports.submit = function(hide) {
-			var model = exports.form;
-			exports.tapi('pages_save ERROR', model, function(response) {
+			var model = CLONE(exports.form);
+
+			if (!model.url) {
+
+				let url = '';
+				if (model.parentid)
+					url = caller.sitemap.findValue('id', model.parentid, 'url');
+
+				url = url + model.name.slug() + '/';
+				url = url.replace(/\/{2,}/, '/');
+				model.url = url;
+			}
+
+			exports.tapi('Pages|save @showloading ERROR', model, function() {
+				caller.exec('refresh @saved');
 				hide();
-				EXEC('pluginpages/refresh');
-				CLRELOAD('links');
 			});
 		};
-
 	});
 
 </script>
