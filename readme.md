@@ -1,4 +1,4 @@
-# Total.js CMS
+# Total.js CMS v17
 
 - [Documentation](https://docs.totaljs.com/cms/)
 - [Join Total.js Telegram](https://t.me/totaljs)
