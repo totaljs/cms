@@ -9,12 +9,11 @@ let Storage = MEMORIZE('account');
 MAIN.admin = Storage;
 
 exports.install = function() {
-	ROUTE('-GET  /*', login);
+	ROUTE('-GET  ?/*', login);
 	ROUTE('-GET  /auth/', auth);
 };
 
 function login($) {
-
 	if (CONF.op && CONF.op_reqtoken && CONF.op_restoken) {
 		if ($.query.login && CONF.openplatform)
 			$.redirect(CONF.openplatform);
@@ -155,7 +154,7 @@ NEWACTION('Logout', {
 async function auth($) {
 	if ($.query.token)
 		$.cookie(CONF.op_cookie, $.query.token, '1 month');
-	$.redirect('/?authorized=1');
+	$.redirect(CONF.$api + '?authorized=1');
 }
 
 if (!Storage.user) {

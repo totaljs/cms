@@ -54,7 +54,10 @@ DEF.onAudit = function(name, data) {
 	payload.url = data.url;
 	payload.ip = data.ip;
 	payload.ua = data.ua;
-	DATA.insert('tbl_log', data).schema(CONF.schema);
+	if (CONF.database)
+		DATA.insert('tbl_log', payload).schema(CONF.schema);
+	else
+		NOSQL('audit').insert(payload);
 };
 
 // Fixed settings
