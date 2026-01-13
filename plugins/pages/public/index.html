@@ -130,7 +130,6 @@
 				exports.set('sitemap', exports.makesitemap(response));
 
 				for (let item of response) {
-					console.log(item.breadcrumb);
 					if (!item.parentid)
 						arr.push(item);
 				}
