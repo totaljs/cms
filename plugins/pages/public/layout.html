@@ -1,5 +1,6 @@
 <ui-component name="box" path="*form2" config="if:CLASS;icon:ti ti-layer-group;autofocus:true;reload:?/reload;scrollbar:1;submit:?/submit;hide:?/hide;width:2500" class="hidden" plugin="CLASS">
 	<nav>
+		<button class="exec highlight" data-exec="?/quicksave"><i class="ti ti-save"></i>@(Quick save)</button>
 		<button class="exec highlight" data-exec="?/preview"><i class="ti ti-eye"></i><b>@(Save and Preview)</b></button>
 	</nav>
 	<div>
@@ -45,12 +46,23 @@
 		};
 
 		exports.preview = function() {
-			let model = exports.form;
-			exports.tapi('Layouts|save ERROR', model, function(response) {
-				if (!model.id)
-					model.id = response.value;
-				W.open(common.root + 'layouts/preview/?id=' + response.value);
+			exports.quicksave(function(id) {
+				W.open(common.root + 'layouts/preview/?id=' + id);
 			});
+		};
+
+		exports.quicksave = function(callback) {
+			FLAGS('@showloading');
+			setTimeout(function() {
+				let model = exports.form;
+				exports.tapi('Layouts|save ERROR', model, function(response) {
+					FLAGS('@hideloading @saved');
+					if (!model.id)
+						model.id = response.value;
+					if (typeof(callback) === 'function')
+						callback(model.id);
+				});
+			}, 500);
 		};
 
 		exports.hide = function() {

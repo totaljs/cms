@@ -22,6 +22,7 @@ NEWACTION('Settings|read', {
 		}
 
 		model.items = [];
+		model.version = CONF.version;
 
 		for (let key in Total.plugins) {
 
