@@ -4,6 +4,7 @@ exports.position = 25;
 exports.permissions = [{ id: 'widgets', name: 'Widgets' }];
 exports.visible = user => user.sa || user.permissions.includes('widgets');
 exports.import = 'extensions.html';
+exports.config = [{ id: 'widgets', name: 'URL address to the widget list', value: 'https://cdn.totaljs.com/cms/db.json' }];
 exports.instances = [];
 
 ON('reload', function() {
@@ -108,17 +109,16 @@ NEWACTION('Widgets|save', {
 			item.dtupdated = NOW;
 			item.html = model.html;
 			item.name = widget.name;
+			item.ref = widget;
 		} else {
 			model.id = widget.id;
 			model.name = widget.name;
 			model.dtcreated = NOW;
+			model.ref = widget;
 			cms.db.widgets.push(model);
 		}
 
 		cms.db.widgets.quicksort('name');
-		cms.refresh();
-		cms.save();
-		cms.views = {};
 
 		if (widget) {
 			try {
@@ -127,6 +127,10 @@ NEWACTION('Widgets|save', {
 				Total.error(e, 'Installing CMS widget: ' + widget.id);
 			}
 		}
+
+		cms.views = {};
+		cms.refresh();
+		cms.save();
 
 		$.success(model.id);
 		$.notify(model.id);
@@ -184,5 +188,15 @@ NEWACTION('Widgets|detail', {
 			$.callback({ id: meta.id, name: meta.name, preview: meta.preview, author: meta.author, version: meta.version, config: meta.config, css: meta.ui.css, html: meta.ui.html, settings: meta.ui.settings });
 		else
 			$.invalid(404);
+	}
+});
+
+NEWACTION('Widgets|config', {
+	name: 'A global configuration for widgets',
+	route: '+API ?',
+	user: true,
+	permissions: 'widgets',
+	action: function($) {
+		$.callback({ url: CONF.widgets });
 	}
 });

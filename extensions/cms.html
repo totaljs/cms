@@ -17,78 +17,6 @@
 	cms.id = 'db';
 	cms.db = {};
 
-	cms.recompile = function(item) {
-
-		var meta = item.html.parseComponent(PARSER);
-
-		item.ref = {};
-		try {
-			(new Function('exports', meta.total))(item.ref);
-		} catch(e) {
-			// tries to compile only meta data
-			var metadata = meta.total.match(/exports\..*?;/g);
-			if (metadata.length) {
-				try {
-					(new Function('exports', metadata.join('\n')))(item.ref);
-					console.log(e + '', metadata.join('\n'));
-				} catch (e) {
-					console.log(e + '', metadata.join('\n'));
-				}
-			} else
-				console.log(e + '', metadata);
-		}
-
-		if (!item.ref.id)
-			item.ref.id = item.ref.name;
-
-		var uid = item.ref.id.slug().replace(/\-/g, '');
-
-		meta.cls = uid;
-
-		if (meta.css)
-			meta.css = meta.css.replace(REG_CLASS, 'w-' + uid);
-
-		if (meta.settings)
-			meta.settings = meta.settings.replace(REG_CLASS, 'w-' + uid);
-
-		if (meta.template)
-			meta.template = meta.template.replace(REG_CLASS, 'w-' + uid);
-
-		if (meta.js)
-			meta.js = meta.js.replace(REG_CLASS, 'w-' + uid);
-
-		if (meta.html)
-			meta.html = meta.html.replace(REG_CLASS, 'w-' + uid);
-
-		if (item.ref.dependencies) {
-
-			if (typeof(item.ref.dependencies) === 'string')
-				item.ref.dependencies = item.ref.dependencies.split(/,|;/).trim();
-
-			var arr = [];
-			for (let i = 0; i < item.ref.dependencies.length; i++) {
-				let m = item.ref.dependencies[i];
-				if (m.includes('<'))
-					arr.push(m);
-				else if (m.endsWith('.js'))
-					arr.push(('<scri' + 'pt src="{0}"></scr' + 'ipt>').format(m));
-				else if (m.endsWith('.css'))
-					arr.push('<link rel="stylesheet" href="{0}">'.format(m));
-			}
-
-			item.ref.dependencies = arr.join('');
-		}
-
-		item.ref.ui = meta;
-
-		let index = (meta.html || '').indexOf('<scr' + 'ipt>');
-
-		if (index !== -1)
-			meta.editor = meta.html.substring(index + 8, meta.html.indexOf('</scr' + 'ipt>', index + 8));
-
-		delete item.ref.total;
-	};
-
 	cms.breadcrumb = function(url) {
 		let page = cms.db.pages.findItem('url', url);
 		let arr = [];
@@ -404,8 +332,8 @@
 			}, $);
 		};
 
-		var title = page.title || page.name;
-		var meta = '';
+		let title = page.title || page.name;
+		let meta = '';
 
 		if (title)
 			meta += '<title>' + title.safehtml() + (opt.url !== '/' ? (' - ' + CONF.name) : '') + '</title>';
@@ -418,11 +346,11 @@
 
 		meta += '<scri' + 'pt src="/visitors.js"></scr' + 'ipt>' + MAIN.cms.cache.dependencies;
 
-		var cmspage = cms.views[page.id];
-		var cmslayout = page.layoutid ? cms.views[page.layoutid] : 1;
+		let cmspage = cms.views[page.id];
+		let cmslayout = page.layoutid ? cms.views[page.layoutid] : 1;
 
 		if (cmslayout && cmslayout.scripts && cmslayout.scripts.length) {
-			for (var m of cmslayout.scripts)
+			for (let m of cmslayout.scripts)
 				meta += '<scri' + 'pt src="' + m + '"></scr' + 'ipt>';
 		}
 
@@ -530,12 +458,12 @@
 			value.ready = true;
 			value.fs = FILESTORAGE(cms.id);
 
-			var rem = [];
+			let rem = [];
 
-			for (var item of value.widgets) {
+			for (let item of value.widgets) {
 
 				if (item.html)
-					cms.recompile(item);
+					item.ref = Total.TCMS.run(item.html);
 
 				if (!item.ref.name)
 					rem.push(item);
@@ -545,11 +473,11 @@
 			}
 
 			if (rem.length) {
-				for (var m of rem)
+				for (let m of rem)
 					value.widgets.splice(value.widgets.indexOf(m), 1);
 			}
 
-			for (var item of value.widgets) {
+			for (let item of value.widgets) {
 				if (item.ref.install) {
 					try {
 						item.ref.install.call(value, value);

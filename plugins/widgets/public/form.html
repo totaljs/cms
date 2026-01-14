@@ -46,12 +46,17 @@
 
 	PLUGIN(function(exports) {
 
+		let url;
+
 		exports.reload = function(com) {
-			exports.refresh();
+			exports.tapi('Widgets|config', function(config) {
+				url = config.url;
+				exports.refresh();
+			});
 		};
 
 		exports.refresh = function() {
-			exports.ajax('GET https://cdn.totaljs.com/cms/db.json', function(response) {
+			exports.ajax('GET ' + url, function(response) {
 				var items = PARSE(response);
 				exports.tapi('Widgets?list=1', function(response) {
 					for (var item of items) {
