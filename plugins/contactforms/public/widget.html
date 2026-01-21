@@ -1,0 +1,20 @@
+<h2>Contact form</h2>
+
+<ui-plugin path="? contactform">
+	<ui-component class="m" name="input" path="?.name" config="required:1">Name</ui-component>
+	<ui-component class="m" name="input" path="?.email" config="required:1;type:email">E-mail</ui-component>
+	<ui-component class="m" name="input" path="?.phone" config="type:phone">Phone</ui-component>
+	<ui-component class="m" name="input" path="?.body" config="required:1;type:multiline">Message</ui-component>
+	<ui-component name="validate" path="?">
+		<button name="submit" class="exec" data-exec="?/submit" disabled>SUBMIT</button>
+	</ui-component>
+</ui-plugin>
+
+<script>
+	PLUGIN('contactform', function(exports) {
+		exports.submit = function() {
+			let model = exports.form;
+			console.log(model);
+		};
+	});
+</script>

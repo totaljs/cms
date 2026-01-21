@@ -112,7 +112,7 @@
 		.ui-searchinput input { color: #000; }
 
 		.ui-box .ui-box-title > nav > div { float: right; }
-		.ui-box nav .ui-searchinput { float: right; height: 28px; margin: 15px 0 0; }
+		.ui-box nav .ui-searchinput { float: right; height: 28px; margin: 15px 0 0; line-height: 27px; }
 		.ui-box nav .ui-searchinput i { margin-right: 0; }
 		.ui-menu-area { z-index: 500; }
 		.ui-spotlight-layer { z-index: 1000 !important; }
@@ -143,6 +143,7 @@
 		.toolbar-bg { height: 60px; padding: 17px 20px 0; background-color: #FFF; border-bottom: 1px solid #E0E0E0; }
 		.ui-windows-item { box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
 		.ui-iframeviewer { z-index: 100; }
+		.ui-detail-style-3 .ui-detail-group { padding: 10px 15px; }
 
 	</style>
 </head>
@@ -203,7 +204,6 @@
 
 		@{if repository.menu}
 		<ui-component name="columns" config="parent:window;margin:[margin]" class="hidden invisible">
-
 			<section data-size="@{if CONF.fullmenu}200@{else}66@{fi}">
 				<ui-component name="aselected" path="?.projectid" config="watch:?.projects">
 					<ui-component name="viewbox" config="parent:window;margin:[margin]">

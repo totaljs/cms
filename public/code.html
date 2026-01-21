@@ -77,6 +77,7 @@
 			opt.items = [];
 			opt.items.push({ id: 'upload', name: '@(Insert file)', icon: 'ti ti-cloud-upload' });
 			opt.items.push({ id: 'icons', name: '@(Insert icon)', icon: 'ti ti-icons' });
+			opt.items.push({ id: 'color', name: '@(Insert color)', icon: 'ti ti-paint-brush' });
 			opt.callback = function(selected) {
 				switch (selected.id) {
 					case 'icons':
@@ -85,6 +86,13 @@
 							SETTER('#code/insert', selected);
 						};
 						SETTER('icons/show', opt);
+						break;
+					case 'color':
+						opt.items = null;
+						opt.callback = function(selected) {
+							SETTER('#code/insert', selected);
+						};
+						SETTER('colorpicker/show', opt);
 						break;
 					case 'upload':
 						SET('*form3', 'formfiles');

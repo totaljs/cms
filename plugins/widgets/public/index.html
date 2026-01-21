@@ -1,6 +1,6 @@
 <style>
 	.CLASS h3 { margin: 0 10px; }
-	.CLASS figure { cursor: pointer; margin-bottom: var(--gap); }
+	.CLASS figure { cursor: pointer; margin-bottom: var(--gap); position: relative; }
 	.CLASS figure > section { border-radius: var(--radius); border: 1px solid #eaeaea; margin: 10px 10px 0; padding: 0; text-align: left; background-color: #fff; }
 	.CLASS figure .meta { padding: 18px 0 5px 15px; border-top: 1px solid #eaeaea; height: 56px; }
 	.CLASS figure .name { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
@@ -30,11 +30,16 @@
 					<ui-bind path="?.items" config="template:figure" class="grid-lg-5 grid-md-4 grid-sm-3 grid-xs-2">
 						<script type="text/html">
 							{{ foreach m in value }}
-								<figure data-id="{{ m.id }}" class="exec" data-exec="?/edit">
+								<figure data-id="{{ m.id }}"{{ if !m.external }} class="exec" data-exec="?/edit"{{ else }} style="cursor:default"{{ fi }}>
 									<section>
+										{{ if m.external }}
+										<span class="badge badge-red badge-small" style="position:absolute;right:20px;top:20px">@(Internal)</span>
+										{{ fi }}
 										<img src="{{ if m.preview }}{{ m.preview }}{{ else }}/~ID~/empty.png{{ fi }}" onerror="onImageError(this)" data-empty="/~ID~/empty.png" class="img-responsive" loading="lazy" />
 										<div class="meta">
+											{{ if !m.external }}
 											<span class="exec options" data-exec="?/options" data-prevent="true"><i class="ti ti-cog"></i></span>
+											{{ fi }}
 											<div class="name">{{ m.name }}</div>
 										</div>
 									</section>

@@ -1,0 +1,75 @@
+<ui-component name="box" path="*form" config="if:CLASS;title:@(Update contact form);icon:ti ti-envelope;autofocus:true;scrollbar:1;reload:?/reload;submit:?/submit;width:800;zindex:30;scrollbarshadow:1;hide:?/hide" class="hidden" plugin="CLASS">
+	<div>
+		<ui-component name="detail" path="?" config="style:3;defaultgroup:">
+			<script type="text/plain">
+				[
+					{ name: '@(IP address)', path: 'ip', type: 'string' },
+					{ name: '@(User-agent)', path: 'ua', type: 'string' },
+					{ name: '@(Created)', path: 'dtcreated', type: 'datetime' }
+				]
+			</script>
+		</ui-component>
+		<div class="padding">
+			<div class="m">
+				<ui-component name="input" path="?.subject" config="required:1">@(Subject)</ui-component>
+			</div>
+			<div class="m">
+				<ui-component name="input" path="?.name" config="required:1">@(Name)</ui-component>
+			</div>
+			<hr style="margin:30px 0" />
+			<div class="grid-3">
+				<div class="m">
+					<ui-component name="input" path="?.email" config="type:email;required:1">@(E-mail address)</ui-component>
+				</div>
+				<div class="m">
+					<ui-component name="input" path="?.phone" config="type:phone">@(Phone number)</ui-component>
+				</div>
+			</div>
+		</div>
+		<div class="padding bg-smoke">
+			<ui-component name="input" path="?.note" class="m">@(Internal note)</ui-component>
+			<ui-component name="input" path="?.processed" config="type:checkbox"><b>@(The contact form is processed)</b></ui-component>
+		</div>
+		<div class="padding">
+			<ui-component name="input" path="?.body" config="type:multiline;monospace:1;required:1;height:200">@(Message)</ui-component>
+		</div>
+	</div>
+	<nav>
+		<ui-component name="validate" path="?" config="changes:1">
+			<button name="submit" disabled><i class="ti ti-check-circle"></i>@(SUBMIT)</button>
+			<button name="cancel">@(Cancel)</button>
+		</ui-component>
+	</nav>
+</ui-component>
+
+<script>
+
+	PLUGIN(function(exports) {
+
+		let caller;
+
+		exports.reload = function() {
+
+			if (!caller)
+				caller = exports.caller;
+
+			let model = exports.model;
+			if (model.id)
+				location.hash = model.id;
+		};
+
+		exports.submit = function(hide) {
+			let model = exports.form;
+			exports.tapi('ContactForms|save ERROR @showloading', model, function(response) {
+				hide();
+				caller.exec('refresh');
+			});
+		};
+
+		exports.hide = function() {
+			location.hash = '';
+		};
+
+	});
+
+</script>

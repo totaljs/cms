@@ -15,6 +15,11 @@
 
 		$font  : 'Source Sans Pro', Arial;
 
+		:root {
+			--radius: 5px;
+			--color: #4285F4;
+		}
+
 		.img-viewer { cursor: pointer; }
 
 		html,body { margin: 0; padding: 0; }

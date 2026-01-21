@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{{ value.subject }}</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+	<meta name="format-detection" content="telephone=no" />
+	<meta name="format-detection" content="date=no" />
+	<meta name="format-detection" content="address=no" />
+	<meta name="format-detection" content="email=no" />
+	<style type="text/css">
+		* { font-family: Arial; margin: 0; padding: 0; }
+		body { -webkit-text-size-adjust: none; height: 100%; background-color: #FFF; }
+	</style>
+</head>
+<body style="margin:0;padding:0;background-color:#F6F6F6">
+	<div style="background-color:#F6F6F6;padding:20px;font-family:Arial;font-size:16px;line-height:22px;margin:0">
+		<table align="center" style="margin:0 auto;max-width:600px;font-size:16px;width:100%">
+			<tr>
+				<td>
+					<div style="background-color:#FFF;padding:30px;border-radius:5px">
+						<div style="margin-bottom:25px;font-size:30px;font-weight:bold"><a href="{{ value.app_url }}" target="_blank" style="text-decoration:none;color:#000">{{ value.app_name }}</a></div>
+						<div style="color:#000">
+							<div>Name: <b>{{ value.name }}</b></div>
+							<div>E-mail: <b>{{ value.email }}</b></div>
+							{{ if value.phone }}<div>Phone: {{ value.phone }}</div>{{ fi }}
+							<div style="border-top:1px solid #E0E0E0;padding:25px 0 0;margin:20px 0 0;white-space:break-spaces">{{ value.body }}</div>
+						</div>
+					</div>
+					<div style="font-size:12px;margin:0;padding:15px 0 10px 30px;color:#888;line-height:16px">All rights reserved &copy; 2026</div>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<script type="text/json">
+		{
+			"app_name": "Total.js CMS",
+			"app_url": "https://www.totaljs.com",
+			"name": "Peter Širka",
+			"subject": "Contact form",
+			"body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat.\n\nThank you",
+			"email": "info@totaljs.com"
+		}
+	</script>
+</body>
+</html>

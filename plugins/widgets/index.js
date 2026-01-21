@@ -7,7 +7,7 @@ exports.import = 'extensions.html';
 exports.config = [{ id: 'widgets', name: 'URL address to the widget list', value: 'https://cdn.totaljs.com/cms/db.json' }];
 exports.instances = [];
 
-ON('reload', function() {
+ON('reload', function refresh() {
 
 	let cms = MAIN.cms;
 
@@ -26,6 +26,8 @@ ON('reload', function() {
 
 	for (let item of cms.db.widgets) {
 		let instance = Total.TCMS.run(item.html);
+		if (instance.external)
+			continue;
 		exports.instances.push(instance);
 		instance.dtcreated = item.dtcreated;
 		instance.dtupdated = item.dtupdated;
@@ -48,9 +50,9 @@ NEWACTION('Widgets', {
 		for (let meta of exports.instances) {
 			if (meta.name) {
 				if ($.query.list)
-					arr.push({ id: meta.id, name: meta.name, preview: meta.preview, author: meta.author, version: meta.version, dtcreated: meta.dtcreated, dtupdated: meta.dtupdated });
+					arr.push({ id: meta.id, name: meta.name, preview: meta.preview, author: meta.author, version: meta.version, dtcreated: meta.dtcreated, dtupdated: meta.dtupdated, external: meta.external });
 				else
-					arr.push({ id: meta.id, name: meta.name, preview: meta.preview, author: meta.author, version: meta.version, config: meta.config, css: meta.ui.css, html: meta.ui.html, settings: meta.ui.settings, editor: meta.ui.editor, dtcreated: meta.dtcreated, dtupdated: meta.dtupdated });
+					arr.push({ id: meta.id, name: meta.name, preview: meta.preview, author: meta.author, version: meta.version, config: meta.config, css: meta.ui.css, html: meta.ui.html, settings: meta.ui.settings, editor: meta.ui.editor, dtcreated: meta.dtcreated, dtupdated: meta.dtupdated, external: meta.external });
 			}
 		}
 		$.callback(arr);
@@ -79,7 +81,7 @@ NEWACTION('Widgets|read', {
 
 NEWACTION('Widgets|save', {
 	name: 'Create or Update widget',
-	input: '*html,singleton:Boolean',
+	input: '*html',
 	route: '+API ?',
 	user: true,
 	permissions: 'widgets',
@@ -129,8 +131,12 @@ NEWACTION('Widgets|save', {
 		}
 
 		cms.views = {};
+		cms.cache.pages = {};
+
 		cms.refresh();
-		cms.save();
+
+		if (!widget.external)
+			cms.save();
 
 		$.success(model.id);
 		$.notify(model.id);

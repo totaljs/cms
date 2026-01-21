@@ -1,0 +1,97 @@
+<script total>
+
+	exports.id = 'contactform';
+	exports.name = 'Contact form';
+	exports.author = 'Peter Širka | Total.js';
+	exports.version = '1';
+	exports.group = 'Forms';
+	exports.config = {};
+	exports.preview = 'data:image/gif;base64,R0lGODdhLAHIAPcAAP///+v1//+oq//P0AAAAGKs//703v5SVwJ6//y4JxmG///24/3em////wICAv39/vz8/MLCwvT09Pf39wsLC6enpxYWFigoKBsbGw4ODioqKhISEuLi4lZWVtPT0/Ly8pubmwEBAYaGhnFxcf9sccXFxfy5KaGhof5TWNfX1/5UWQcHB8rKyu7u7ujo6PX19SYmJkJCQt7e3kVFRTQ0NPn5+V5eXry8vBQUFJ6ennR0dB0dHfHx8cDAwCuQ//3KXP/U1Qx//wR7//3RcVmo/8/Pz4mJiT6a/4jB/yKL/xkZGVJSUtnr/xKC///89VtbWz09Pbq6umJiYuvr67S0tDc3Ny8vL46OjgUFBQJv6ElJSc3NzampqSAgICEYBYODg0cXGHx8fP+Okv+Ym/+IjOfy///q629vb9HR0f9kaf/09IO+//+usf/9+K/V//P5///y8v/+/Py6LPzCQ4GBgf3OZ3d3d/+Chv+Slf++wP/Bw/94fP7nt/3YiP/6+v9gZdXV1f/46yQkJP7pvf/t7v7z2v/DxWqx/8vk/2ZmZtnZ2ZKSkre3t4eHh9ra2pSUlKWlpXh4eJiYmNvb22lpafr6+kdHR+Xl5X5+fnRVEm6z/zk5Of/57fy+OqrS//zFTf7ouvy7L9Dm///78fy/Pf/57PzCRe72/x2I//3UfRqG/4uLi3q5//7vzv/36P/V1v7goP3aj/3clf/14I/E//7hoxKA+RWC+5R1MtjQvZZ3NKuij7CwsK9/gQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwAAAAALAHIAAAI/wABCBxIsKDBgwgTKlzIsKHDhxAjSpxIsaLFixgzatzIsaPHjyBDihxJsqTJkyhTqlzJsqXLlzBjypxJs6bNmzhz6tzJs6fPn0CDCh1KtKjRo0iTKl3KtKnTp1CjSp1KtarVq1izat3KtavXr2DDih1LtqzZs2jTql3Ltq3bt3Djyp1Lt67du3jz6t3Lt6/fv4ADo2RyKEkQBIgTK17MuLHjxwiC+GBVRvBcJEIga97MmXEQT5bhrulMurRmN6HbispsurVrBE1OpV5L5LVt00hmq21yuzfnI7rRvvFNHHKS4GcDFF/OWAFys8qZS0fg/DnZ6NOXV7cuFnt24tu5g//1/r13ePFeyZe3fR49V/XrXbd3rxV+fNPz6WO1f590fv1W8dcfZ/8BSJWAA2pWoIFSIZjgYwsyCJWDDzZmSxRbvCDhVRRWuFgWBBAQQhda2BHBAxtG1aGHiYEY4osEYBBJCyk6tSKLCLgI44sZGAFBjUvdyOItKdywSCJQrLDjDDQCiZSQHp7Hwwk0wAhDk04WBWWF+XGBw4sxVJKlljj6lxAHGrx4xphEbflggRxY8GIRbArlZoILluBAiFLUGdSdA0a4RIgrTOHnT4D2F2EPLzZyqE+J3hchAFaEeMGjPUUa36RXhBjCB5jupOl6qjQUwYs9hKrTA6yVqZkPDX3/EEKIV6iqkw+ubkaEQzCEaIOtOY2WK2SoNdRBiFUAi9MbqAzr2BENOESJpcrihAhvziqWRGUORRIiBtXixMQR2SJGRAAQNRIiBeHmhAgShxQg77z01mvvvfjmW4AmtDAh0SMvotguX5C8iOXAeVHxogwI78VoiGg0rBcLL7IgcV5bvFjCxXihoTHHd3mAKsh2pfDiDSTX5ciLUaRMlwwvMuLyXBy8SMXMck3xIhc4x1XJi5L0HFcGIYogNFw7hKjD0W9VSkCfTLc1Q4gxQNQAH3V0ksDWXHft9ddghx22HHOkUkjUKY0QogUPlfKD2HDHLXfYJsQSLdol5fCiCw05//HJ3IAHHncfeJeUcYgtM9SH4Iw33nUrhY80wZ4ErMKQE3I4rrngdUQ+UpoEbMLQIJuXPncocXgeEh0vKrJQLabHDncgqoMkw6wEhLEQA7L3/vUCtYMERYg7CIwQ774nnwDwwXukd4iLKIS88r0z3zxHH2ywLsPHU++79ddvVHCIUIh50PTemw5++BoNGmIHxhOEfvqbr88+Ri58GeISoBY0P/2Os9/9LsICollqC/4DoPoG2JEIUOBFIXgC9wDwPwUKToAMtAggQBciB1iCCy+ooAUBh8EMVkQCiaDci7CAixFqroQmrIgHtLCjTLgwgDH8CBpGoD8b3pBxMMyhRf8qcQNM6OKHjNvFJYQYEhEiMWxeIAANcjABJnbEiU/8WhRDhANM8M2KGcFiFru2xRWOQENgtIgYx7i1XHwBAzsSRATSWJE1shF4lYBEFWDkgDPSUSJ2HCP4etCrF1VBAn+ESCCzuL4J6ECFM6hBIh2yyCcKsARJe1/8Jtk9NsYNg5OQU4hAwMndefKTCSmCATdgqFJ28pRhgyEIXqQ7Vx4EFrAUmysU8oAqEaALm7QlAPiQS7CZIHUKmWWIUiVMgnDCBMX02g8YwgMlPa2ZBRlCNLs2CGOFKANoxCYAAkGKbSZgCA5RWIgqIM6BFGIO0RxCGxxSCVFqoZ0DcYIsTOH/SRP8ABQROUMHv4hPgYxiFgZIqEIXytCGOvShDl3APCVyOALUqqBFAZ0VMFoUI7woYhwVyiUot7SQCmVqBFDCj0wKlBOwjKVAkcADCfAEmALFBuvq30WAIIY0qOAAQA2qUIdK1KIa9ahB/cMd9HA3Ot7gRSe4iB/wgNSqWvWqR90DIf74ADgSoGoVaQAZsErWslqVBGr4ox06yIGK5MGscI3rUMfwR0C8yGgUIYFc9wpXFcDhj76EQTAbYga+GrashvjjIl7ETokA4bCQtSob/pg9Sw12IQOIrGaNKoBEioCxEsnsZkcb1M5SVnsE0MBlEyJa0o7WtH/87Doj0lrX/2oWtnSsLAEEgciH1Na2kMUtHb/wol/5FribFW4aX3ABqB4XuZFVbhrRYE0KAMIhv4XuXqWbRkm8SAnXZUh2tRtX7qbxWGuzGGbJe1jzgvEFMVghHVaKkPGyt6zufa8lYHQBEFTxIPa9L1bzC8YJTAtGFrBBDhwRTgAEWMBWJXAaGaGEHb2IAl3YQQbAAGG5SjiNPDCCVy0cIg53GK4fpmMenzBiGJn4xPg16SR4AQIRjEAHX+gFjM2aYmw+eMdE7XEzfwxkoQpZmEQuMlCPbMskK5nJrnRykaFcSikDmcqctPKOsTxJLcOYy4n08onB/Ecxd5jMdDQzhNGcxlco+WOqk7XpQAr75qomVs4D0WudjepXPA/krXsuKl39LBCxBnqoaCX0QKZ6aKBqVdEF4alPlaxUpkL60pjOtKY3zelOe/rToA61qEdN6lKb+tSoTrWqV83qVrv61bCOtaxnTWtRBwQAOw==';
+	exports.render = function(opt, next) {
+		let index = opt.body.indexOf('<b>') + 3;
+		let subject = opt.body.substring(index, opt.body.indexOf('</b>', index));
+		let cls = [];
+		if (opt.body.includes('CMS_mv'))
+			cls.push('CMS_mv');
+		if (opt.body.includes('CMS_mh'))
+			cls.push('CMS_mh');
+		if (cls.length)
+			cls.unshift('');
+		next('<div class="contactform{0}" data-subject="{1}" data-api="{2}">{3}</div>'.format(cls.join(' '), subject, CONF.$api, opt.template), true, true);
+	};
+
+</script>
+
+<style>
+
+	.CMS_preview .CLASS-content { padding: 20px; background-color: #FFFED1; border-radius: var(--radius); outline: 2px solid var(--color); }
+	.CMS_preview .CLASS-name { font-size: 17px; font-weight: bold; margin-bottom: 10px; }
+
+	.contactform { margin-bottom: 20px; }
+	.contactform button { border: 0; margin: 15px 0 0; min-width: 200px; background-color: #F0F0F0; height: 45px; padding: 0 20px; color: #000; cursor: pointer; font-family: Arial; line-height: 45px; vertical-align: middle; outline: 0; font-size: 14px; text-decoration: none; transition: all 0.3s; }
+	.contactform button i { width: 15px; text-align: center; margin-right: 5px; }
+	.contactform button:hover { opacity: 0.8; }
+	.contactform button:active { background-color: #D0D0D0; }
+	.contactform button:disabled { background-color: #F5F5F5 !important; border-color: #E0E0E0 !important; color: silver !important; cursor: not-allowed; box-shadow: none; }
+	.contactform button:disabled i { color: silver !important; }
+	.contactform button:first-child { border-top-left-radius: var(--radius); border-bottom-left-radius: var(--radius); }
+	.contactform button:last-child { border-top-right-radius: var(--radius); border-bottom-right-radius: var(--radius); }
+	.contactform button[name='submit'] { font-weight: bold; background-color: var(--color); color: #FFF; }
+	.contactform .success { color: #68B25B; font-size: 14px; border: 2px solid #68B25B; padding: 10px; border-radius: var(--radius); display: block; }
+	.contactform .success i { margin-right: 5px; }
+	.contactform .error { color: #E8483F; font-size: 14px; border: 2px solid #E8483F; padding: 10px; border-radius: var(--radius); display: block; }
+	.contactform .error i { margin-right: 5px; }
+
+</style>
+
+<body>
+	<div class="CLASS-content">
+		<div class="CLASS-name"><i class="ti ti-envelope mr5"></i><b class="CMS_edit">Contact form</b></div>
+		<div class="CMS_input">Name</div>
+		<div class="CMS_input">E-mail</div>
+		<div class="CMS_input">Message</div>
+	</div>
+</body>
+
+<template>
+
+	<h2>Contact form</h2>
+
+	<ui-plugin path="? contactform">
+		<ui-bind path="?.success" config="show" class="hidden success">
+			<i class="ti ti-check-circle"></i><b>Thank you.</b> The form has been submitted successfully.
+		</ui-bind>
+		<ui-bind path="?.success" config="hide" class="hidden">
+			<ui-component class="m" name="input" path="?.name" config="required:1">Name</ui-component>
+			<ui-component class="m" name="input" path="?.email" config="required:1;type:email">E-mail</ui-component>
+			<ui-component class="m" name="input" path="?.body" config="required:1;type:multiline">Message</ui-component>
+			<ui-bind path="?.error" config="template;show" class="hidden error">
+				<script type="text/html">
+					{{ foreach m in value }}
+					<div><i class="ti ti-warning"></i>{{ m.error }}</div>
+					{{ end }}
+				</script>
+			</ui-bind>
+			<ui-component name="validate" path="?">
+				<button name="submit" class="exec" data-exec="?/submit" disabled><i class="ti ti-envelope"></i>SUBMIT</button>
+			</ui-component>
+		</ui-bind>
+	</ui-plugin>
+
+	<script>
+		PLUGIN('contactform', function(exports) {
+			exports.submit = function() {
+				let api = ATTRD(exports.element, 'api');
+				let model = exports.form;
+				model.subject = ATTRD(exports.element, 'subject');
+				API(api, 'ContactForms|create', model, function(response) {
+					if (ERROR(response))
+						exports.set('error', response);
+					else
+						exports.set('success', true);
+				});
+			};
+		});
+	</script>
+
+</template>

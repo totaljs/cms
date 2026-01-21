@@ -7,18 +7,17 @@ exports.divider = false;
 
 NEWACTION('Pages', {
 	route: '+API ?',
-	user: true,
 	permissions: 'pages,admin',
+	user: true,
 	action: function($) {
 		$.callback(MAIN.cms.db.pages);
 	}
 });
 
-
 NEWACTION('Pages|layouts', {
 	route: '+API ?',
-	user: true,
 	permissions: 'pages,admin',
+	user: true,
 	action: function($) {
 
 		let arr = [];
@@ -32,8 +31,8 @@ NEWACTION('Pages|layouts', {
 NEWACTION('Pages|read', {
 	input: '*id',
 	route: '+API ?',
-	user: true,
 	permissions: 'pages,admin',
+	user: true,
 	action: function($, model) {
 		let item = MAIN.cms.db.pages.findItem('id', model.id);
 		if (item)
@@ -44,10 +43,10 @@ NEWACTION('Pages|read', {
 });
 
 NEWACTION('Pages|save', {
-	input: 'id,layoutid,parentid:String2,*name,*url:Lower,icon,color,language,title,description,keywords,nocache:Boolean,disabled:Boolean,pinned:Boolean,auth:Boolean',
+	input: 'id,layoutid,parentid:String2,*name,*url:Lower,icon,color,language,title,description,keywords,nocache:Boolean,disabled:Boolean,pinned:Boolean,auth:Boolean,updatedby,html',
 	route: '+API ?',
-	user: true,
 	permissions: 'pages,admin',
+	user: true,
 	action: function($, model) {
 
 		let db = MAIN.cms.db;
@@ -69,6 +68,9 @@ NEWACTION('Pages|save', {
 		if (model.url[0] !== '/')
 			model.url = '/' + model.url;
 
+		let html = model.html;
+		delete model.html;
+
 		if (model.id) {
 
 			let item = db.pages.findItem('id', model.id);
@@ -88,6 +90,7 @@ NEWACTION('Pages|save', {
 			}
 
 			item.dtupdated = NOW;
+			item.updatedby = $.user.name;
 			item.name = model.name;
 			item.url = model.url;
 			item.parentid = model.parentid;
@@ -107,9 +110,15 @@ NEWACTION('Pages|save', {
 		} else {
 			model.id = UID();
 			model.dtcreated = NOW;
+			model.dtupdated = NOW;
+			model.updatedby = $.user.name;
 			db.fs.save(model.id, model.id + '.html', Buffer.alloc(0), NOOP);
 			db.pages.push(model);
 		}
+
+		// Save HTML
+		if (html)
+			db.fs.save(model.id, model.id + '.html', Buffer.from(html, 'utf8'), NOOP);
 
 		MAIN.cms.save();
 		urlchange && MAIN.cms.refresh();
@@ -122,8 +131,8 @@ NEWACTION('Pages|save', {
 NEWACTION('Pages|remove', {
 	input: '*id',
 	route: '+API ?',
-	user: true,
 	permissions: 'pages,admin',
+	user: true,
 	action: async function($, model) {
 
 		let id = model.id;
@@ -157,8 +166,8 @@ NEWACTION('Pages|remove', {
 NEWACTION('Pages|read|html', {
 	input: '*id',
 	route: '+API ?',
-	user: true,
 	permissions: 'pages,admin',
+	user: true,
 	action: function($, model) {
 		let db = MAIN.cms.db;
 		let item = db.pages.findItem('id', model.id);
@@ -186,13 +195,14 @@ NEWACTION('Pages|read|html', {
 NEWACTION('Pages|save|html', {
 	route: '+API ?',
 	input: '*id,html',
-	user: true,
 	permissions: 'pages,admin',
+	user: true,
 	action: async function($, model) {
 		let cms = MAIN.cms;
 		let db = cms.db;
 		let page = db.pages.findItem('id', model.id);
 		if (page) {
+			page.updatedby = $.user.name;
 			page.dtupdated = NOW;
 			db.fs.save(model.id, model.id + '.html', Buffer.from(model.html, 'utf8'), $.done());
 			cms.cache.pages = {};
@@ -236,6 +246,7 @@ NEWACTION('Pages|clone', {
 	route: '+API ?',
 	input: '*id',
 	permissions: 'pages,admin',
+	user: true,
 	action: async function($, model) {
 
 		let id = model.id;
@@ -268,6 +279,7 @@ NEWACTION('Pages|clone', {
 NEWACTION('Layouts', {
 	route: '+API ?',
 	permissions: 'layouts,admin',
+	user: true,
 	action: function($) {
 		let arr = [];
 		for (let item of MAIN.cms.db.layouts)
@@ -280,6 +292,7 @@ NEWACTION('Layouts|read', {
 	route: '+API ?',
 	input: '*id',
 	permissions: 'layouts,admin',
+	user: true,
 	action: function($, model) {
 		let db = MAIN.cms.db;
 		let item = db.layouts.findItem('id', model.id);
@@ -297,6 +310,7 @@ NEWACTION('Layouts|save', {
 	route: '+API ? <5MB',
 	input: 'id,*name,icon:Icon,color:Color,html',
 	permissions: 'layouts,admin',
+	user: true,
 	action: function($, model) {
 		importwidgets(model, function() {
 
@@ -315,6 +329,7 @@ NEWACTION('Layouts|save', {
 				}
 
 				item.dtupdated = NOW;
+				item.updatedby = $.user.name;
 				item.name = model.name;
 				item.color = model.color;
 				item.icon = model.icon;
@@ -324,6 +339,8 @@ NEWACTION('Layouts|save', {
 			} else {
 				model.id = UID();
 				model.dtcreated = NOW;
+				model.dtupdated = NOW;
+				model.updatedby = $.user.name;
 				html && db.fs.save(model.id, model.id + '.html', html ? Buffer.from(html, 'utf8') : Buffer.alloc(0), NOOP);
 				db.layouts.push(model);
 			}
@@ -342,6 +359,7 @@ NEWACTION('Layouts|import', {
 	route: '+API ?',
 	input: '*name,*html',
 	permissions: 'layouts,admin',
+	user: true,
 	action: async function($, model) {
 
 		let db = MAIN.cms.db;
@@ -384,6 +402,7 @@ NEWACTION('Layouts|remove', {
 	route: '+API ?',
 	input: '*id',
 	permissions: 'layouts,admin',
+	user: true,
 	action: async function($, model) {
 		let cms = MAIN.cms;
 		let id = model.id;
@@ -404,6 +423,7 @@ NEWACTION('Layouts|clone', {
 	route: '+API ?',
 	input: '*id',
 	permissions: 'layouts,admin',
+	user: true,
 	action: async function($, model) {
 		let id = model.id;
 		let db = MAIN.cms.db;
@@ -463,6 +483,7 @@ NEWACTION('Layouts|save|html', {
 	route: '+API ? <5MB',
 	input: '*id,html',
 	permissions: 'layouts,admin',
+	user: true,
 	action: async function($, model) {
 
 		let db = MAIN.cms.db;
@@ -492,8 +513,8 @@ NEWSCHEMA('@Nav/Link', 'id,icon:Icon,color:Color,*name,title,*url,arg,target,hid
 NEWACTION('Nav', {
 	name: 'List of all navigation',
 	route: '+API ?',
-	user: true,
 	permissions: 'navigation',
+	user: true,
 	action: function($) {
 		let arr = [];
 		for (let item of MAIN.cms.db.nav)
@@ -506,8 +527,8 @@ NEWACTION('Nav|read', {
 	name: 'Read nav',
 	input: '*id',
 	route: '+API ?',
-	user: true,
 	permissions: 'navigation',
+	user: true,
 	action: function($, model) {
 		let id = model.id;
 		let item = MAIN.cms.db.nav.findItem('id', id);
@@ -522,8 +543,8 @@ NEWACTION('Nav|save', {
 	name: 'Save nav',
 	input: 'id,uid:Lower,*name,title,icon:Icon,color:Color,children:[@Nav/Link]',
 	route: '+API ?',
-	user: true,
 	permissions: 'navigation',
+	user: true,
 	action: function($, model) {
 
 		let cms = MAIN.cms;
@@ -551,10 +572,13 @@ NEWACTION('Nav|save', {
 			item.title = model.title;
 			item.children = model.children;
 			item.dtupdated = NOW;
+			item.updatedby = $.user.name;
 
 		} else {
 			model.id = UID();
 			model.dtcreated = NOW;
+			model.dtupdated = NOW;
+			model.updatedby = $.user.name;
 			db.nav.push(model);
 		}
 
@@ -567,8 +591,8 @@ NEWACTION('Nav|save', {
 NEWACTION('Nav|remove', {
 	input: '*id',
 	route: '+API ?',
-	user: true,
 	permissions: 'navigation',
+	user: true,
 	action: function($, model) {
 		let cms = MAIN.cms;
 		let id = model.id;
@@ -586,6 +610,7 @@ NEWACTION('Nav|remove', {
 NEWACTION('Redirects', {
 	route: '+API ?',
 	permissions: 'redirects,admin',
+	user: true,
 	action: function($) {
 		let arr = [];
 		for (let item of MAIN.cms.db.redirects)
@@ -598,6 +623,7 @@ NEWACTION('Redirects|read', {
 	route: '+API ?',
 	input: '*id',
 	permissions: 'redirects,admin',
+	user: true,
 	action: function($, model) {
 		let item = MAIN.cms.db.redirects.findItem('id', model.id);
 		if (item)
@@ -611,6 +637,7 @@ NEWACTION('Redirects|save', {
 	route: '+API ?',
 	input: 'id,*url,*target,ispermanent:Boolean',
 	permissions: 'redirects,admin',
+	user: true,
 	action: function($, model) {
 
 		let db = MAIN.cms.db;
@@ -631,12 +658,15 @@ NEWACTION('Redirects|save', {
 			}
 
 			item.dtupdated = NOW;
+			item.updatedby = $.user.name;
 			item.url = model.url;
 			item.target = model.target;
 			item.permanent = model.permanent;
 		} else {
 			model.id = UID();
 			model.dtcreated = NOW;
+			model.dtupdated = NOW;
+			model.updatedby = $.user.name;
 			db.redirects.push(model);
 		}
 
