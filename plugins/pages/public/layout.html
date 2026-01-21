@@ -19,7 +19,7 @@
 				</div>
 			</div>
 		</div>
-		<ui-component name="code" path="?.html" config="type:htmlmixed;margin:112" style="border-top:1px solid #E0E0E0"></ui-component>
+		<ui-component name="code" path="?.html" config="type:htmlmixed;margin:112;contextmenu:?/menu" style="border-top:1px solid #E0E0E0"></ui-component>
 	</div>
 	<nav>
 		<ui-component name="validate" path="?">
@@ -75,6 +75,43 @@
 				hide();
 				caller.exec('refresh');
 			});
+		};
+
+		exports.menu = function(e) {
+			let code = exports.element.find('ui-component[name="code"]').component();
+			let opt = {};
+			opt.x = e.x;
+			opt.y = e.y;
+			opt.items = [];
+			opt.items.push({ id: 'upload', name: '@(Insert file)', icon: 'ti ti-cloud-upload' });
+			opt.items.push({ id: 'icons', name: '@(Insert icon)', icon: 'ti ti-icons' });
+			opt.items.push({ id: 'color', name: '@(Insert color)', icon: 'ti ti-paint-brush' });
+			opt.callback = function(selected) {
+				switch (selected.id) {
+					case 'icons':
+						opt.items = null;
+						opt.callback = function(selected) {
+							code.insert(selected);
+						};
+						SETTER('icons/show', opt);
+						break;
+					case 'color':
+						opt.items = null;
+						opt.callback = function(selected) {
+							code.insert(selected);
+						};
+						SETTER('colorpicker/show', opt);
+						break;
+					case 'upload':
+						SET('*form3', 'formfiles');
+						EXEC('formfiles/init @important', {}, function(item, hide) {
+							code.insert(item.url);
+							hide();
+						});
+						break;
+				}
+			};
+			SETTER('menu/show', opt);
 		};
 
 	});
