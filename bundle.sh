@@ -18,7 +18,6 @@ console.log('| |--', 'app.bundle');
 Total.backup(path + '/app.bundle', PATH.root(), function() {
 	F.Fs.readdir(PATH.root('plugins'), function(err, response) {
 		response.wait(function(key, next) {
-
 			switch (key) {
 				case 'dashboard':
 				case 'account':
@@ -48,7 +47,7 @@ Total.backup(path + '/app.bundle', PATH.root(), function() {
 	if (!p[0] || (p.length === 1 && p[0] === 'plugins'))
 		return true;
 
-	var allowed = ['controllers', 'definitions', 'modules', 'public', 'schemas', 'views', 'plugins/pages', 'plugins/layouts', 'plugins/widgets', 'plugins/settings', 'plugins/files', 'plugins/nav', 'plugins/variables', 'plugins/dashboard', 'plugins/redirects'];
+	var allowed = ['extensions', 'modules', 'public', 'views', 'plugins/pages', 'plugins/account', 'plugins/widgets', 'plugins/settings', 'plugins/files', 'plugins/variables', 'plugins/dashboard', 'plugins/account'];
 
 	for (var m of allowed) {
 		if (path.indexOf(m) === 1)
