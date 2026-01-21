@@ -737,7 +737,7 @@ function importnavigation(model, html, callback) {
 		let item = nav.findItem('uid', uid);
 
 		if (!item) {
-			nav.push({ id: UID(), uid: id, name: name.capitalize(), dtcreated: NOW, children: [] });
+			nav.push({ id: UID(), uid: uid, name: name.capitalize(), dtcreated: NOW, children: [] });
 			refresh = true;
 		}
 
