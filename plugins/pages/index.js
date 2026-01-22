@@ -193,7 +193,7 @@ NEWACTION('Pages|read|html', {
 });
 
 NEWACTION('Pages|save|html', {
-	route: '+API ?',
+	route: '+API ? <10MB',
 	input: '*id,html',
 	permissions: 'pages,admin',
 	user: true,

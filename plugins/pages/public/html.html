@@ -1,10 +1,10 @@
-<ui-component name="box" path="*form" config="if:CLASS;title:@(Edit content);icon:ti ti-file;autofocus:1;reload:?/reload;submit:?/submit;width:2500;hide:?/hide" class="hidden" plugin="CLASS">
+<ui-component name="box" path="*form" config="if:CLASS;title:@(Edit content);icon:ti ti-file;autofocus:1;reload:?/reload;submit:?/submit;width:2500;hide:?/hide;scrollbar:1" class="hidden" plugin="CLASS">
 	<nav>
 		<button class="exec" data-exec="?/source"><i class="ti ti-code"></i>@(HTML source-code)</button>
 		<button class="exec highlight" data-exec="?/preview"><i class="ti ti-eye"></i><b>@(Save and Preview)</b></button>
 	</nav>
 	<div>
-		<ui-component name="cmseditor" path="?.cms" config="margin:0;marginiframe:50;parent:;generate:?/generate;links:?/links;widgetsource:?/widgetsource;image:?/image;files:?/files;$assign:?|editor;CMS_mh:false;save:?/quicksave" source="/cms.html"></ui-component>
+		<ui-component name="cmseditor" path="?.cms" config="margin:0;marginiframe:50;parent:auto;generate:?/generate;links:?/links;widgetsource:?/widgetsource;image:?/image;files:?/files;$assign:?|editor;CMS_mh:false;save:?/quicksave" source="/cms.html"></ui-component>
 	</div>
 	<nav>
 		<ui-component name="validate" path="?">
@@ -51,8 +51,12 @@
 					exports.tapi('Layouts|read ERROR', { id: model.layoutid }, function(response) {
 						exports.set('cms', { html: model.html || '<div class="CMS_widgets"></div>', layout: response.html, type: 'html', widgets: widgets });
 					});
-				} else
-					exports.ajax('GET /_pages/template.txt', response => exports.set('cms', { html: model.html || '<div class="CMS_widgets"></div>', layout: response, type: 'html', widgets: widgets }));
+				} else {
+					if (model.html.includes('<body'))
+						exports.set('cms', { html: model.html, type: 'layout', widgets: widgets });
+					else
+						exports.ajax('GET /_pages/template.txt', response => exports.set('cms', { html: model.html || '<div class="CMS_widgets"></div>', layout: response, type: 'html', widgets: widgets }));
+				}
 			});
 
 		};

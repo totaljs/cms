@@ -1567,10 +1567,11 @@
 			return (content.find('#CMS').html() || '').trim().replace(/&nbsp;/g, ' ').replace(offsetter, '');
 		};
 
-		self.iframe_html = function() {
+		self.iframe_cms = function() {
 			target && self.close();
-			var body = self.iframe_body();
-			var content = body.find('#CMS').clone(true);
+			let body = self.iframe_body();
+			let cms = body.find('#CMS');
+			let content = cms.clone(true);
 			content.find('.CMS_preview').rclass('CMS_preview');
 			content.find('[contenteditable]').rattr('contenteditable');
 			content.find('.CMS_selected').rclass('CMS_selected');
@@ -1586,33 +1587,36 @@
 			content.find('#CMS_panel').remove();
 			content.find('#cmscss,#cmscsseditor').remove();
 
-			var html = (content.html() || '').trim().replace(offsetter, '');
-			for (var scr of scripts)
+			let html = (content.html() || '').trim().replace(offsetter, '');
+			for (let scr of scripts)
 				html = html.replace(scr.id, scr.html);
 
 			return html;
 		};
 
-		self.iframe_layout = function() {
+		self.iframe_html = function() {
 			target && self.close();
-			var body = self.iframe_body();
-			var content = $(body[0].documentElement).clone(true);
+			let body = self.iframe_body();
+			let content = $(body[0].documentElement).clone(true);
 			content.find('.CMS_preview').rclass('CMS_preview');
 			content.find('[contenteditable]').rattr('contenteditable');
 			content.find('.CMS_selected').rclass('CMS_selected');
 			content.find('.CMS_edit:empty,.CMS_remove:empty,.CMS_widgets:empty').each(function() {
-				var tag = this.nodeName;
+				let tag = this.nodeName;
 				if (tag !== 'IMG' && tag !== 'IFRAME') {
-					var cls = this.getAttribute('class');
+					let cls = this.getAttribute('class');
 					if (cls.indexOf('CMS_widget') === -1 && cls.indexOf('ti') === -1)
 						$(this).detach().remove();
 				}
 			});
 			content.find('#cmscss,#cmscsseditor').remove();
 			content.find('#CMS_panel').remove();
-			var html = '<!DOCTYPE html>\n<html>\n' + (content.html() || '').trim().replace(offsetter, '') + '\n</html>';
 
-			for (var scr of scripts)
+
+			let raw = (content.html() || '').trim().replace(offsetter, '');
+			let html = raw.includes('<html') ? raw : ('<!DOCTYPE html>\n<html>\n' + raw + '\n</html>');
+
+			for (let scr of scripts)
 				html = html.replace(scr.id, scr.html);
 
 			return html;
@@ -1690,7 +1694,7 @@
 
 		self.response = function() {
 			var model = self.get();
-			return model.type === 'layout' ? self.iframe_layout() : self.iframe_html();
+			return model.type === 'layout' ? self.iframe_html() : self.iframe_cms();
 		};
 
 		// Removes non-exist widgets
@@ -1764,6 +1768,7 @@
 			var touch = { time: 0, target: null };
 
 			body.off('click touchstart touchmove touchend dblclick keydown');
+			body.find('#CMS_panel').off('click');
 
 			$(self.iframe_window()).on('keydown', function(e) {
 				if (e.which === 27 && target) {
@@ -2654,6 +2659,7 @@
 
 						target.attr('contenteditable', true).focus();
 						self.bind('@modified @notify @touched');
+
 						break;
 
 					case 'remove':
@@ -2986,6 +2992,24 @@
 			undobutton.rclass('hidden');
 		};
 
+		self.replace_scripts = function(text, css) {
+
+			while (true) {
+				let index = text.indexOf('<scr' + 'ipt');
+				if (index === -1)
+					break;
+				let js = text.substring(index, text.indexOf('</scr' + 'ipt>', index + 1) + 9);
+				let key = '<!-' + '-' + HASH(text).toString(36) + '-' + '->';
+				scripts.push({ id: key, html: js });
+				text = text.replace(js, key);
+			}
+
+			if (css)
+				return text.replace('</head>', ('<sty' + 'le id="cmscsseditor">{0}</sty' + 'le>').format($('#cmseditorcss').html()) + ('<sty' + 'le id="cmscss">{0}</sty' + 'le>').format(css.join('')) + '</head>').replace('</body>', '<div id="CMS_panel" class="invisible"><div id="CMS_panel_buttons_move"><span class="ti ti-arrow-up" data-name="up" title="@(Move up)"></span><span class="ti ti-arrow-down" data-name="down" title="@(Move down)"></span></div><div id="CMS_panel_buttons_reposition"><span class="ti ti-chevron-up" data-name="up2" title="@(Move up current repeated element)"></span><span class="ti ti-chevron-down" data-name="down2" title="@(Move down current repeated element)"></span></div><div id="CMS_panel_info"></div><div class="CMS_panel_buttons"><span class="ti ti-pencil" title="@(Edit)" data-name="edit"></span><span class="ti ti-cog-alt" title="@(Widget settings)" data-name="settings"></span><span class="ti ti-link" title="@(Change link)" data-name="link"></span><span class="ti ti-quote-left" title="@(Change attributes)" data-name="attribute"></span><span class="ti ti-copy" title="@(Duplicate)" data-name="repeat"></span></span><span class="ti ti-plus-circle" title="@(Add a widget)" data-name="widgets"></span><span class="ti ti-trash" title="@(Remove)" data-name="remove"></span><span class="ti ti-caret-square-down" title="@(Hide)" data-name="hide"></span></div><div id="CMS_panel_buttons_copy"><span class="ti ti-paste" data-name="paste" title="@(Paste widget)"></span><span class="ti ti-copy" data-name="copy" title="@(Copy widget)"></span></div><div id="CMS_panel_buttons_body"><span class="ti ti-arrows-v" data-name="CMS_mv" title="@(Toggle vertical margin)"></span><span class="ti ti-arrows-h" data-name="CMS_mh" title="@(Toggle horizontal margin)"></span><span class="ti ti-selection" data-name="selectwidget" title="@(Select widget)"></span><span class="ti ti-code" data-name="sourcecode" title="@(Source code)"></span></div></div></body>');
+
+			return text;
+		};
+
 		self.setter = function(value, path, flags) {
 
 			if (init === 0) {
@@ -2998,6 +3022,7 @@
 				return;
 
 			if (!flags.norender) {
+
 				// temporary.copypaste = null;
 				temporary.copypasteparent = null;
 
@@ -3030,39 +3055,40 @@
 				}
 
 				scripts = [];
-				self.write(value.layout.replace(new RegExp('<scr' + 'ipt.*?</scr' + 'ipt>', 'g'), function(text) {
-					var key = '<!-' + '-' + HASH(text).toString(36) + '-' + '->';
-					scripts.push({ id: key, html: text });
-					return key;
-				}).replace('</head>', ('<sty' + 'le id="cmscsseditor">{0}</sty' + 'le>').format($('#cmseditorcss').html()) + ('<sty' + 'le id="cmscss">{0}</sty' + 'le>').format(css.join('')) + '</head>').replace('</body>', '<div id="CMS_panel" class="invisible"><div id="CMS_panel_buttons_move"><span class="ti ti-arrow-up" data-name="up" title="@(Move up)"></span><span class="ti ti-arrow-down" data-name="down" title="@(Move down)"></span></div><div id="CMS_panel_buttons_reposition"><span class="ti ti-chevron-up" data-name="up2" title="@(Move up current repeated element)"></span><span class="ti ti-chevron-down" data-name="down2" title="@(Move down current repeated element)"></span></div><div id="CMS_panel_info"></div><div class="CMS_panel_buttons"><span class="ti ti-pencil" title="@(Edit)" data-name="edit"></span><span class="ti ti-cog-alt" title="@(Widget settings)" data-name="settings"></span><span class="ti ti-link" title="@(Change link)" data-name="link"></span><span class="ti ti-quote-left" title="@(Change attributes)" data-name="attribute"></span><span class="ti ti-copy" title="@(Duplicate)" data-name="repeat"></span></span><span class="ti ti-plus-circle" title="@(Add a widget)" data-name="widgets"></span><span class="ti ti-trash" title="@(Remove)" data-name="remove"></span><span class="ti ti-caret-square-down" title="@(Hide)" data-name="hide"></span></div><div id="CMS_panel_buttons_copy"><span class="ti ti-paste" data-name="paste" title="@(Paste widget)"></span><span class="ti ti-copy" data-name="copy" title="@(Copy widget)"></span></div><div id="CMS_panel_buttons_body"><span class="ti ti-arrows-v" data-name="CMS_mv" title="@(Toggle vertical margin)"></span><span class="ti ti-arrows-h" data-name="CMS_mh" title="@(Toggle horizontal margin)"></span><span class="ti ti-selection" data-name="selectwidget" title="@(Select widget)"></span><span class="ti ti-code" data-name="sourcecode" title="@(Source code)"></span></div></div></body>'));
+
+				if (value.layout)
+					self.write(self.replace_scripts(value.layout, css));
+				else
+					self.write(self.replace_scripts(value.html, css));
+
+				let body = self.iframe_body();
+				let cms = body.find('#CMS');
+
+				if (value.layout)
+					cms.html(self.replace_scripts(value.html));
 
 				if (flags.norender)
 					return;
 
-				var body = self.iframe_body();
-				var cms = body.find('#CMS');
+				let htmlbody = body.find('body');
+				htmlbody.aclass('CMS_preview');
 
-				body.find('body').aclass('CMS_preview');
+				if (cms.length === 0)
+					cms = htmlbody;
 
-				if (value.type !== 'layout') {
+				var cache = document.createElement('DIV');
 
-					var cache = document.createElement('DIV');
+				while (cms[0].children.length)
+					cache.appendChild(cms[0].children[0]);
 
-					while (cms[0].children.length)
-						cache.appendChild(cms[0].children[0]);
+				body.find('.CMS_edit,.CMS_remove,.CMS_repeat,.CMS_attribute,.CMS_widgets').rclass('CMS_edit CMS_remove CMS_repeat CMS_attribute CMS_widgets');
+				body.find('.CMS_render').remove();
 
-					body.find('.CMS_edit,.CMS_remove,.CMS_repeat,.CMS_attribute,.CMS_widgets').rclass('CMS_edit CMS_remove CMS_repeat CMS_attribute CMS_widgets');
-					body.find('.CMS_render').remove();
+				while (cache.children.length)
+					cms.append(cache.children[0]);
 
-					while (cache.children.length)
-						cms.append(cache.children[0]);
-				}
-
-				if (value.html && cms.length)
-					cms.html(value.html);
-
-				if (!value.layout && !value.html) {
-					var html = cms.html();
+				if (!value.html) {
+					let html = cms.html();
 					cms.empty();
 					body.find('.CMS_edit,.CMS_remove,.CMS_repeat,.CMS_attribute,.CMS_multiline,.CMS_widgets').rclass('CMS_edit CMS_remove CMS_repeat CMS_attribute CMS_multiline CMS_widgets');
 					cms.html(html);
