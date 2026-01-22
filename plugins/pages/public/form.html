@@ -13,7 +13,7 @@
 			</div>
 			<div class="row">
 				<div class="col-md-6 m">
-					<ui-component name="input" path="?.layoutid" config="dirsource:?|layouts;dirempty:@(Without layout);placeholder:@(Choose layout)" class="m">@(Layout)</ui-component>
+					<ui-component name="input" path="?.layoutid" config="dirsource:?|layouts;dirempty:@(Without layout)" class="m">@(Layout)</ui-component>
 				</div>
 				<div class="col-md-6 m">
 					<ui-component name="input" path="?.parentid" config="dirsource:?|sitemap;placeholder:@(Without parent page);dirempty:@(No parent)" class="m">@(Parent)</ui-component>
@@ -39,6 +39,9 @@
 				</div>
 			</div>
 			<hr />
+			<div class="caption m">
+				<label><i class="ti ti-search-plus mr5"></i>@(Metadata)</label>
+			</div>
 			<div class="m">
 				<ui-component name="input" path="?.title">@(Title)</ui-component>
 			</div>

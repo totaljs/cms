@@ -5,12 +5,12 @@
 	<meta name="format-detection" content="telephone=no" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 	<meta name="robots" content="all,follow" />
+	<!-- ICONS ONLY <link rel="stylesheet" href="/icons.min.css" /> -->
 	<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Sans+Pro:400,200,700" />
 	<link rel="stylesheet" href="/spa.min@20.css" />
-	<!-- ICONS ONLY <link rel="stylesheet" href="/icons.min.css" /> -->
-	<link rel="icon" href="/favicon.ico" type="image/x-icon" />
 	<script src="/spa.min@20.js"></script>
 	<script src="@{ui}"></script>
+	<link rel="icon" href="/favicon.ico" type="image/x-icon" />
 	<style>
 
 		$font  : 'Source Sans Pro', Arial;
