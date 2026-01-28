@@ -18,9 +18,11 @@
 	cms.db = {};
 
 	cms.breadcrumb = function(url) {
+
 		let page = cms.db.pages.findItem('url', url);
 		let arr = [];
 		let processed = {};
+
 		if (page) {
 
 			arr.push({ id: page.id, parentid: page.id, url: page.url, name: page.name, title: page.title, color: page.color, icon: page.icon, language: page.language });
@@ -76,11 +78,11 @@
 		cache.widgets = [];
 		cache.dependencies = '';
 
-		for (let item of db.widgets) {
-			if (item.ref) {
-				cache.widgets.push(item.ref);
-				if (item.ref.dependencies && item.ref.dependencies.length)
-					cache.dependencies += item.ref.dependencies;
+		if (PLUGINS.widgets) {
+			for (let item of PLUGINS.widgets.instances) {
+				cache.widgets.push(item);
+				if (item.dependencies && item.dependencies.length)
+					cache.dependencies += item.dependencies;
 			}
 		}
 
@@ -127,8 +129,8 @@
 
 	cms.save = function() {
 
-		var site = cms.db;
-		var model = {};
+		let site = cms.db;
+		let model = {};
 
 		model.id = site.id;
 		model.dtcreated = site.dtcreated;
@@ -144,11 +146,17 @@
 		model.storage = site.storage || {};
 
 		for (let item of site.widgets) {
+
+			// External widgets are not stored in the main DB.
+			if (item.external || item.ref?.external)
+				continue;
+
 			let obj = {};
 			for (let key in item) {
 				if (key !== 'ref')
 					obj[key] = item[key];
 			}
+
 			model.widgets.push(obj);
 		}
 
@@ -257,7 +265,7 @@
 				opt.controller = $;
 				opt.vars = cms.db.vars;
 				opt.refs = cms.db.refs;
-				opt.widgets = cms.cache.widgets || EMPTYARRAY;
+				opt.widgets = PLUGINS.widgets.instances || EMPTYARRAY;
 				opt.nav = cms.cache.nav;
 				opt.url = $.url;
 				opt.user = $.user;
@@ -307,7 +315,7 @@
 		opt.controller = $;
 		opt.vars = db.vars;
 		opt.refs = db.refs;
-		opt.widgets = cms.cache.widgets || EMPTYARRAY;
+		opt.widgets = PLUGINS.widgets.instances || EMPTYARRAY;
 		opt.nav = cms.cache.nav;
 		opt.url = url;
 		opt.user = $.user;
@@ -446,6 +454,7 @@
 				value.config = MAIN.db.config;
 
 			value.config.$tapi = true;
+
 			cms.db = value;
 			cms.views = {};
 
@@ -457,36 +466,6 @@
 
 			value.ready = true;
 			value.fs = FILESTORAGE(cms.id);
-
-			let rem = [];
-
-			for (let item of value.widgets) {
-
-				if (item.html)
-					item.ref = Total.TCMS.run(item.html);
-
-				if (!item.ref.name)
-					rem.push(item);
-
-				if (!item.id)
-					item.id = item.ref.id;
-			}
-
-			if (rem.length) {
-				for (let m of rem)
-					value.widgets.splice(value.widgets.indexOf(m), 1);
-			}
-
-			for (let item of value.widgets) {
-				if (item.ref.install) {
-					try {
-						item.ref.install.call(value, value);
-					} catch (e) {
-						// what next?
-						console.log('install', e);
-					}
-				}
-			}
 
 			if (!empty)
 				FUNC.reconfigure();
@@ -507,7 +486,7 @@
 	ON('ready', function() {
 
 		// WebUI
-		COMPONENTATOR('webui', 'errorhandler,exec,locale,uibuilder,directory,uistudio,message,approve,datepicker,menu,icons,input,imageviewer,mobilecarousel', true);
+		COMPONENTATOR('webui', 'errorhandler,exec,locale,uibuilder,directory,uistudio,message,approve,datepicker,menu,icons,input,imageviewer,mobilecarousel,validate', true);
 
 		// Load CMS meta data
 		setTimeout(cms.load, 500);
@@ -520,6 +499,7 @@
 		ROUTE('+GET     ?backup/          <60s', backup);
 		ROUTE('+POST    ?restore/ @upload <60s <100MB', restore);
 		ROUTE('+GET     ?clear/           <60s', clear);
+
 	});
 
 	function render($) {
