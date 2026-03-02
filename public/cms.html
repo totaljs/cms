@@ -131,7 +131,6 @@
 	<script type="text/html">
 		<ui-component name="form" path="cmseditor.form" config="if:--IMAGES--;width:900;reload:?/reload;submit:?/submit;scrollbar:true;$id:--IMAGES--;title:@(Image editor);icon:camera;zindex:30" class="hidden" plugin="--IMAGES--">
 			<div>
-				<br />
 				<ui-component name="crop" path="?.url" config="width:200;height:100;$id:cmsimagecrop;browse:?/browse"></ui-component>
 				<hr class="nmt nmb" />
 				<div class="padding">
@@ -757,8 +756,8 @@
 			target.attr('alt', model.alt);
 			// model.href && target.parent('a').attr('href', model.href);
 
-			// Is the picture changed?
-			if (cropper.config.touched || cropper.config.modified) {
+			// Is the picture not changed?
+			if (!cropper.config.touched && !cropper.config.modified) {
 				model.instance.bind('@touched @modified @notify');
 				hide();
 				return;

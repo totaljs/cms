@@ -533,7 +533,7 @@
 
 			plugin.upload = function(file, next) {
 				var opt = {};
-				opt.url = ENV('upload');
+				opt.url = 'POST ' + ENV('upload');
 				opt.files = [file];
 				opt.height = file.height;
 				opt.width = file.width;
@@ -551,7 +551,7 @@
 					return;
 
 				var opt = {};
-				opt.url = ENV('upload');
+				opt.url = 'POST ' + ENV('upload');
 				opt.width = meta.width;
 				opt.height = meta.height;
 				opt.files = meta.files;
