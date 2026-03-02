@@ -724,7 +724,8 @@
 		exports.reload = function() {
 			var model = exports.model;
 			if (model.files && model.files[0] && model.files[0].type.substring(0, 6) === 'image/')
-				setTimeout(ASETTER(true, '#cmsimagecrop/load', model.files[0]), 1500);
+				setTimeout(ASETTER('#cmsimagecrop/load @important', model.files[0]), 1500);
+			SETTER('#cmsimagecrop/reconfigure @important', 'width:{0};height:{1};background:{2}'.format(model.width, model.height, model.bg));
 		};
 
 		exports.browse = function(set) {
@@ -1967,8 +1968,8 @@
 				var text = e.originalEvent.clipboardData.getData('text/plain');
 				if (target) {
 					if (!target.hclass('CMS_multiline'))
-						text = text.replace(/\n\r|\n|\r/g, ' ');
-					self.iframe_document().execCommand('insertText', false, text.trim().replace(/\s{2,}/g, ' ').replace(/\&nbsp;/g, ' '));
+						text = text.replace(/\n\r|\n|\r/g, ' ').replace(/\s{2,}/g, ' ');
+					self.iframe_document().execCommand('insertText', false, text.trim().replace(/\&nbsp;/g, ' '));
 				}
 			});
 
@@ -2033,8 +2034,6 @@
 				opt.ishref = !!opt.href;
 
 				if (w && h) {
-					// show crop editor
-					FIND('#cmsimagecrop', com => com.reconfigure('width:{0};height:{1};background:{2}'.format(opt.width, opt.height, opt.bg)));
 					SET('cmsimageform @default', opt);
 					SET('cmseditor.form', 'cmsimageform');
 				} else if (config.image) {
@@ -2401,10 +2400,10 @@
 
 							var arr = container[0].querySelectorAll('img');
 
-							for (var t of arr) {
+							for (let t of arr) {
 								if (!t.src) {
-									var w = t.getAttribute('data-cms-width');
-									var h = t.getAttribute('data-cms-height');
+									let w = t.getAttribute('data-cms-width');
+									let h = t.getAttribute('data-cms-height');
 									t.src = w && h ? self.makeimage(+w, +h) : emptyimage;
 								}
 							}
@@ -2636,9 +2635,7 @@
 								opt.href = parent.attr('href');
 
 							opt.ishref = !!opt.href;
-
 							if (opt.width && opt.height) {
-								FIND('#cmsimagecrop', com => com.reconfigure('width:{0};height:{1};background:{2}'.format(opt.width, opt.height, opt.bg)));
 								SET('cmsimageform @default', opt);
 								SET('cmseditor.form', 'cmsimageform');
 							} else {
