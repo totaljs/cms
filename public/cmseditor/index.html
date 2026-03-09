@@ -1089,7 +1089,7 @@
 					case 'generate':
 
 						var toolbar = self.iframe_toolbar();
-						var t = temporary.wrap || target;
+						var t = target || temporary.wrap;
 						var opt = {};
 						var offset = toolbar.position();
 						var editor = self.element.offset();
@@ -1102,7 +1102,7 @@
 
 						opt.isimage = t[0].tagName === 'IMG';
 						opt.instance = self;
-						opt.text = $(t).text();
+						opt.text = $(target).text();
 
 						if (opt.isimage) {
 
