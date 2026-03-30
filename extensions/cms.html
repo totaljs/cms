@@ -216,7 +216,7 @@
 		return nav;
 	}
 
-	async function compile_page(id, html, widgets, callback, nocache) {
+	async function compile_page(id, html, widgets, callback, nocache, islayout) {
 
 		if (html == null)
 			html = (await cms.db.fs.readbuffer(id)).toString('utf8');
@@ -227,6 +227,10 @@
 		value.widgets = widgets;
 		TRANSFORM('page', value, function(err, value) {
 			let compiled = F.TCMS.compile(value.html.replace(REG_UI, REPO.webui).replace(REG_YEAR, NOW.getFullYear() + ''), widgets);
+
+			if (!islayout)
+				compiled = compiled.importcss().importjs();
+
 			if (nocache != true)
 				cms.views[id] = compiled;
 			callback(null, compiled);
@@ -332,14 +336,6 @@
 		opt.page = page;
 		opt.navigation = navigation;
 
-		opt.callback = function(err, response) {
-			TRANSFORM('render', response, function(err, response) {
-				if (response.css && response.css.length)
-					response.html = response.html.replace(/<\/style>/, '\n' + U.minify_css(response.css.join('')) + '</style>');
-				$.html(response.html);
-			}, $);
-		};
-
 		let title = page.title || page.name;
 		let meta = '';
 
@@ -406,7 +402,7 @@
 						$.html(response.replace(REG_META, meta).replace(REG_VARS, variables));
 					}
 				});
-			}, page.nocache);
+			}, page.nocache, cmslayout && cmslayout !== 1);
 		} else {
 			compile_page(page.id, null, opt.widgets, function(err, cmspage) {
 
@@ -432,7 +428,7 @@
 						}
 					});
 				});
-			}, page.nocache);
+			}, page.nocache, true);
 		}
 	};
 
