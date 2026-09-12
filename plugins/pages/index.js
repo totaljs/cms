@@ -727,7 +727,7 @@ function importnavigation(model, html, callback) {
 			name = uid;
 		} else {
 			reg = scr.match(/name=".*?"/i)[0];
-			uid = reg[0];
+			uid = reg;
 			uid = uid.substring(6, uid.length - 1);
 			name = uid;
 			uid = HASH(uid).toString(36); // Backward compatibility with old CMS
