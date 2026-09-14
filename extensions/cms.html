@@ -509,17 +509,21 @@
 			return;
 		}
 
+		let language = $.language;
+
 		for (let item of db.redirects) {
 			if (!item.disabled && item.url === url) {
-				$.redirect(item.target, item.permanent == true);
-				return;
+				if (!item.language || (language.includes(item.language) || item.language.includes(language))) {
+					$.redirect(item.target, item.permanent == true);
+					return;
+				}
 			}
 		}
 
 		// Try to find pages for authorized users
 		if ($.user) {
 			for (let item of db.pages) {
-				if (!item.disabled && item.auth && item.url === url && (!item.language || item.language === $.language)) {
+				if (!item.disabled && item.auth && item.url === url && (!item.language || item.language === language)) {
 					page = item;
 					break;
 				}
@@ -528,7 +532,7 @@
 
 		if (!page) {
 			for (let item of db.pages) {
-				if (!item.disabled && !item.auth && item.url === url && (!item.language || item.language === $.language)) {
+				if (!item.disabled && !item.auth && item.url === url && (!item.language || item.language === language)) {
 					page = item;
 					break;
 				}

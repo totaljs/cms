@@ -56,15 +56,13 @@
 		};
 
 		exports.find = function(el) {
-			var model = exports.model;
-			exports.tapi('Pages?fields=id,name', function(response) {
-				var opt = {};
-				opt.element = el;
-				opt.offsetWidth = 490;
-				opt.items = response;
-				opt.callback = selected => exports.set('url @change', selected.url);
-				SETTER('directory/show', opt);
-			});
+			let model = exports.model;
+			let opt = {};
+			opt.element = el;
+			opt.offsetWidth = 490;
+			opt.items = CLONE('#pages');
+			opt.callback = selected => exports.set('url @change', selected.url);
+			SETTER('directory/show', opt);
 		};
 
 		exports.files = function() {

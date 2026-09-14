@@ -83,9 +83,37 @@
 			opt.items = [];
 			opt.items.push({ id: 'sitemap', name: '@(Open)', classname: 'b', icon: 'ti ti-bars' });
 			opt.items.push({ id: 'form', name: '@(Edit)', icon: 'ti ti-pencil' });
+
+			let arr = [];
+			for (let m of items) {
+				if (m.id !== id) {
+					let tmp = {};
+					tmp.id = 'copy';
+					tmp.itemid = m.id;
+					tmp.icon = 'ti ti-copy';
+					tmp.name = m.name;
+					arr.push(tmp);
+				}
+			}
+
+			if (arr.length)
+				opt.items.push({ id: 'copy', name: '@(Copy to)', icon: 'ti ti-copy', children: arr });
+
 			opt.items.push('-');
 			opt.items.push({ id: 'remove', name: '@(Remove)', icon: 'ti ti-trash red' });
 			opt.callback = function(item) {
+
+				if (item.id === 'copy') {
+					exports.tapi('Nav|read @showloading ERROR', { id: id }, function(parent) {
+						exports.tapi('Nav|read ERROR', { id: item.itemid }, function(response) {
+							response.children = parent.children;
+							exports.tapi('Nav|save ERROR', response, function() {
+								FLAGS('@done @hideloading');
+							});
+						});
+					});
+					return;
+				}
 
 				if (item.id === 'form') {
 					exports.editform(id);

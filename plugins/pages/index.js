@@ -615,6 +615,7 @@ NEWACTION('Redirects', {
 		let arr = [];
 		for (let item of MAIN.cms.db.redirects)
 			arr.push({ id: item.id, url: item.url, permanent: item.permanent, target: item.target, dtcreated: item.dtcreated, dtupdated: item.dtupdated });
+		arr.quicksort('dtcreated', true);
 		$.callback(arr);
 	}
 });
@@ -635,7 +636,7 @@ NEWACTION('Redirects|read', {
 
 NEWACTION('Redirects|save', {
 	route: '+API ?',
-	input: 'id,*url,*target,ispermanent:Boolean',
+	input: 'id,*url,*target,language,ispermanent:Boolean',
 	permissions: 'redirects,admin',
 	user: true,
 	action: function($, model) {
@@ -661,14 +662,20 @@ NEWACTION('Redirects|save', {
 			item.updatedby = $.user.name;
 			item.url = model.url;
 			item.target = model.target;
+			item.language = model.language;
 			item.permanent = model.permanent;
+			item.sortindex = model.language ? 1 : 0;
 		} else {
 			model.id = UID();
 			model.dtcreated = NOW;
 			model.dtupdated = NOW;
 			model.updatedby = $.user.name;
+			model.createdby = $.user.name;
+			model.sortindex = model.language ? 1 : 0;
 			db.redirects.push(model);
 		}
+
+		db.redirects.quicksort('sortindex', false);
 
 		MAIN.cms.save();
 		$.success();

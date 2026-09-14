@@ -1,12 +1,26 @@
 <ui-component name="miniform" path="*form2" config="if:CLASS;icon:ti ti-exchange;autofocus:true;reload:?/reload;scrollbar:1;submit:?/submit;width:400;zindex:20" class="hidden" plugin="CLASS">
+	<div class="padding bg-smoke">
+		<div>
+			<ui-component name="input" path="?.url" config="required:1;placeholder:@(Relative URL address);monospace:1">@(Relative URL)</ui-component>
+			<div class="help">
+				<span class="link exec mr15" data-exec="?/find" data-type="url"><i class="ti ti-folder mr5"></i>@(Find page)</span>
+			</div>
+			<hr />
+			<ui-component name="input" path="?.ispermanent" config="type:checkbox">@(Permanent redirect)</ui-component>
+		</div>
+	</div>
 	<div class="padding">
 		<div class="m">
-			<ui-component name="input" path="?.url" config="required:1;placeholder:@(Relative URL address)">@(URL)</ui-component>
+			<ui-component name="input" path="?.target" config="required:1;monospace:1">@(Target URL)</ui-component>
+			<div class="help">
+				<span class="link exec mr15" data-exec="?/find" data-type="target"><i class="ti ti-folder mr5"></i>@(Find page)</span>
+			</div>
 		</div>
+		<hr />
 		<div class="m">
-			<ui-component name="input" path="?.target" config="required:1">@(Target URL)</ui-component>
+			<p><i class="ti ti-language mr5"></i>@(<b>Optional.</b> The language value is compared with the browser's language and the redirect is applied accordingly.)</p>
+			<ui-component name="input" path="?.language" config="type:lower;monospace:1">@(Language)</ui-component>
 		</div>
-		<ui-component name="input" path="?.ispermanent" config="type:checkbox">@(Permanent redirect)</ui-component>
 	</div>
 	<nav>
 		<ui-component name="validate" path="?">
@@ -34,10 +48,22 @@
 
 		exports.submit = function(hide) {
 			let model = exports.form;
-			exports.tapi('Redirects|save ERROR', model, function() {
+			exports.tapi('Redirects|sav @showloading ERROR', model, function() {
 				hide();
 				caller.exec('refresh @saved');
 			});
+		};
+
+		exports.find = function(el) {
+			let model = exports.model;
+			let opt = {};
+			opt.element = el;
+			opt.offsetWidth = 490;
+			opt.items = CLONE('#pages');
+			opt.callback = function(selected) {
+				exports.set(el.attrd('type') + ' @change', selected.url);
+			};
+			SETTER('directory/show', opt);
 		};
 
 	});
