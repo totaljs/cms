@@ -223,17 +223,22 @@ AUTH(function($) {
 		return;
 	}
 
-	let token = $.query.token || $.headers['x-token'];
-	if (token) {
-		if (FUNC.authtoken)
-			FUNC.authtoken($, token);
+	if (path === CONF.$api.substring(1, CONF.$api.length - 1)) {
+		let token = $.query.token || $.headers['x-token'];
+		if (token) {
+			if (FUNC.authtoken)
+				FUNC.authtoken($, token);
+			else
+				$.invalid();
+		} else if (CONF.op && CONF.op_reqtoken && CONF.op_restoken)
+			OpenPlatform.auth($);
+		else if (FUNC.authadmin)
+			FUNC.authadmin($);
 		else
-			$.invalid();
-	} else if (CONF.op && CONF.op_reqtoken && CONF.op_restoken)
-		OpenPlatform.auth($);
-	else if (FUNC.authadmin)
-		FUNC.authadmin($);
-	else
+			$.success(ADMIN);
+	} else if (FUNC.authuser) {
+		FUNC.authuser($);
+	} else
 		$.success(ADMIN);
 
 });
