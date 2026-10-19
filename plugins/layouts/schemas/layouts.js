@@ -226,11 +226,23 @@ function importnavigation(model, html, callback) {
 		var end = html.indexOf('</script>', index);
 
 		var scr = html.substring(beg, html.indexOf('>', index));
-		var name = scr.match(/name=".*?"/i)[0];
 
-		name = name.substring(6, name.length - 1);
+		// The same rules as the compiler: the attribute "id" first, then "name" (its id is the hash of the name)
+		var attrid = scr.match(/id=".*?"/i);
+		var attrname = scr.match(/name=".*?"/i);
+		var id, name;
 
-		var id = HASH(name).toString(36);
+		if (attrid) {
+			id = attrid[0].substring(4, attrid[0].length - 1);
+			name = id.capitalize();
+		} else if (attrname) {
+			name = attrname[0].substring(6, attrname[0].length - 1);
+			id = HASH(name).toString(36);
+		} else {
+			index = end;
+			continue;
+		}
+
 		var item = nav.findItem('id', id);
 
 		if (!item) {

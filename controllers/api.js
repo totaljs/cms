@@ -2,7 +2,7 @@ exports.install = function() {
 	// Internal
 	ROUTE('+GET     ?backup/          <60s', backup);
 	ROUTE('+POST    ?restore/ @upload <60s <100MB', restore);
-	ROUTE('+GET     ?clear/           <60s', clear);
+	ROUTE('+POST    ?clear/           <60s', clear);
 };
 
 function backup($) {
