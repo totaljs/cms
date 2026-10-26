@@ -15,7 +15,8 @@ AUTH(function($) {
 			if (token === CONF.token) {
 				BLOCKED($, -1);
 				$.success(BOT);
-			}
+			} else
+				$.invalid();
 
 		} else if (CONF.op_reqtoken && CONF.op_restoken)
 			OpenPlatform.auth($);

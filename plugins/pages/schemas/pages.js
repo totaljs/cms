@@ -90,6 +90,7 @@ NEWACTION('Pages/save', {
 			item.icon = model.icon;
 			item.color = model.color;
 			item.auth = model.auth;
+			item.permissions = model.permissions;
 			delete MAIN.views[item.id];
 		} else {
 			model.id = UID();

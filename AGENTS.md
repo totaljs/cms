@@ -18,7 +18,7 @@ License: MIT
 - `config` contains application configuration such as `$api`, `salt`, and CDN settings.
 - `definitions/` contains bootstrap, authentication, database initialization, and shared functions.
 - `controllers/default.js` handles admin entry, public rendering, sitemap, page/layout compilation, redirects, and visitor script injection.
-- `controllers/api.js` handles internal admin backup, restore, and cache clearing.
+- `controllers/api.js` handles internal admin backup, restore, and clearing the whole content (`POST /admin/clear/`).
 - `modules/` contains integrations such as CDN, OpenPlatform, and visitors.
 - `views/admin.html` is the admin shell.
 - `public/` contains admin/frontend assets, CMS editor UI, forms, pages, CSS, and JavaScript.

@@ -117,6 +117,28 @@ function compile_layout(id, widgets, callback) {
 	});
 }
 
+// The meta tags and the scripts go before the end of the head, which is kept
+function addmeta(html, meta) {
+	return html.replace(REG_META, () => meta + '</head>');
+}
+
+// A page for authorized users can ask for permissions: the user needs one of them (the administrators pass)
+function permitted(user, permissions) {
+	if (!permissions || !permissions.length)
+		return true;
+	if (!user)
+		return false;
+	if (user.sa)
+		return true;
+	if (!user.permissions)
+		return false;
+	for (let permission of permissions) {
+		if (user.permissions.includes(permission))
+			return true;
+	}
+	return false;
+}
+
 function render($) {
 
 	var db = MAIN.db;
@@ -138,7 +160,7 @@ function render($) {
 	// Try to find pages for authorized users
 	if ($.user) {
 		for (let item of db.pages) {
-			if (!item.disabled && item.auth && item.url === url && (!item.language || item.language === $.language)) {
+			if (!item.disabled && item.auth && item.url === url && (!item.language || item.language === $.language) && permitted($.user, item.permissions)) {
 				page = item;
 				break;
 			}
@@ -233,7 +255,7 @@ function render($) {
 				$.fallback(404);
 			} else {
 				$.response.minify = false;
-				$.html(response.replace(REG_META, meta).replace(REG_VARS, variables));
+				$.html(addmeta(response, meta).replace(REG_VARS, variables));
 			}
 		});
 	} else if (cmspage && !cmslayout) {
@@ -249,7 +271,7 @@ function render($) {
 					$.fallback(404);
 				} else {
 					$.response.minify = false;
-					$.html(response.replace(REG_META, meta).replace(REG_VARS, variables));
+					$.html(addmeta(response, meta).replace(REG_VARS, variables));
 				}
 			});
 		});
@@ -267,7 +289,7 @@ function render($) {
 					$.fallback(404);
 				} else {
 					$.response.minify = false;
-					$.html(response.replace(REG_META, meta).replace(REG_VARS, variables));
+					$.html(addmeta(response, meta).replace(REG_VARS, variables));
 				}
 			});
 		});
@@ -292,7 +314,7 @@ function render($) {
 						$.fallback(404);
 					} else {
 						$.response.minify = false;
-						$.html(response.replace(REG_META, meta).replace(REG_VARS, variables));
+						$.html(addmeta(response, meta).replace(REG_VARS, variables));
 					}
 				});
 			});

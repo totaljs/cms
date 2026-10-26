@@ -69,7 +69,7 @@
 				return;
 
 			SETTER('approve/show', '@(Are you sure you want to clear entire content?)', '"ti ti-trash" @(Clear)', function() {
-				exports.ajax('GET /admin/clear/', ASETTER('message/response @hideloading', '@(Done, the content has been cleared)'));
+				exports.ajax('POST /admin/clear/', ASETTER('message/response @hideloading', '@(Done, the content has been cleared)'));
 			});
 		};
 
